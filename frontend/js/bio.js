@@ -106,6 +106,7 @@ function openStoryModal() {
   const en = document.getElementById('story-text-en');
   const bar = document.getElementById('story-progress');
   const btn = document.getElementById('backToTopBtn');
+  const expandBtn = document.querySelector('.expand-toggle');
 
   modal.classList.add('show');
   it.classList.remove('show');
@@ -116,6 +117,10 @@ function openStoryModal() {
   active.scrollTop = 0;
   bar.style.width = '0%';
   btn.classList.remove('visible');
+
+  // ✅ aggiorna i testi dei pulsanti
+  expandBtn.textContent = lang === 'en' ? 'Expand' : 'Espandi';
+  btn.textContent = lang === 'en' ? 'Back to top' : 'Torna su';
 }
 
 function closeStoryModal() {
@@ -165,28 +170,25 @@ function toggleText(id, btn) {
     : (isItalian ? 'Leggi di più' : 'Read more');
 }
 function toggleExclusiveText(id, btn) {
-  // Chiudi tutti gli altri box visibili (bio + curriculum)
-  document.querySelectorAll('#bio-container .hidden, #curriculum-container .hidden').forEach(el => {
-    el.classList.add('hidden');
-  });
-
-  // Reimposta i testi di tutti i pulsanti
+  // Chiudi tutti gli altri
+  document.querySelectorAll('.bio-box .hidden').forEach(el => el.classList.add('hidden'));
   document.querySelectorAll('.read-more-btn').forEach(b => {
-    const targetId = b.getAttribute('onclick')?.match(/'([^']+)'/)?.[1] || '';
-    const isItalian = targetId.includes('-it');
-    b.textContent = isItalian ? 'Leggi di più' : 'Read more';
+    if (b !== btn) {
+      const otherLang = localStorage.getItem('preferredLang') === 'en' ? 'Read more' : 'Leggi di più';
+      b.textContent = otherLang;
+    }
   });
 
   // Apri solo il selezionato
   const el = document.getElementById(id);
-  const isHidden = el?.classList.contains('hidden');
-  if (el && isHidden) {
+  const isHidden = el.classList.contains('hidden');
+  const lang = localStorage.getItem('preferredLang') || 'it';
+
+  if (isHidden) {
     el.classList.remove('hidden');
-    const isItalian = id.includes('-it');
-    btn.textContent = isItalian ? 'Leggi di meno' : 'Read less';
-  } else if (el) {
+    btn.textContent = lang === 'en' ? 'Read less' : 'Leggi di meno';
+  } else {
     el.classList.add('hidden');
-    const isItalian = id.includes('-it');
-    btn.textContent = isItalian ? 'Leggi di più' : 'Read more';
+    btn.textContent = lang === 'en' ? 'Read more' : 'Leggi di più';
   }
 }
