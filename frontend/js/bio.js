@@ -165,22 +165,26 @@ function toggleText(id, btn) {
     : (isItalian ? 'Leggi di più' : 'Read more');
 }
 function toggleExclusiveText(id, btn) {
-  // Chiudi tutti gli altri
-  document.querySelectorAll('.bio-box .hidden').forEach(el => el.classList.add('hidden'));
+  // Chiudi tutti gli altri box visibili (bio + curriculum)
+  document.querySelectorAll('#bio-container .hidden, #curriculum-container .hidden').forEach(el => {
+    el.classList.add('hidden');
+  });
+
+  // Reimposta i testi di tutti i pulsanti
   document.querySelectorAll('.read-more-btn').forEach(b => {
-    if (b !== btn) {
-      b.textContent = b.textContent.includes('less') ? 'Read more' : 'Leggi di più';
-    }
+    const targetId = b.getAttribute('onclick')?.match(/'([^']+)'/)?.[1] || '';
+    const isItalian = targetId.includes('-it');
+    b.textContent = isItalian ? 'Leggi di più' : 'Read more';
   });
 
   // Apri solo il selezionato
   const el = document.getElementById(id);
-  const isHidden = el.classList.contains('hidden');
-  if (isHidden) {
+  const isHidden = el?.classList.contains('hidden');
+  if (el && isHidden) {
     el.classList.remove('hidden');
     const isItalian = id.includes('-it');
     btn.textContent = isItalian ? 'Leggi di meno' : 'Read less';
-  } else {
+  } else if (el) {
     el.classList.add('hidden');
     const isItalian = id.includes('-it');
     btn.textContent = isItalian ? 'Leggi di più' : 'Read more';
