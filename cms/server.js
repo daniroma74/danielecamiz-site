@@ -1,20 +1,14 @@
-// 🚀 Test deploy con mongodb correttamente incluso
+// server.js aggiornato per MongoDB con avvio ritardato
+
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const fileUpload = require('express-fileupload');
-const { MongoClient } = require('mongodb')
+const { MongoClient } = require('mongodb');
 
 const uri = "mongodb+srv://admin:bIVzZzyxep0dvANr@cluster0.xrs3l1h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri);
 let db;
-
-client.connect().then(() => {
-  db = client.db("danieleCMS");
-  console.log("✅ Connesso a MongoDB Atlas");
-}).catch(err => {
-  console.error("❌ Errore connessione MongoDB:", err);
-});
 
 const app = express();
 app.use(express.json());
@@ -43,7 +37,7 @@ app.use((req, res, next) => {
 // === Utility SEO ===
 function toSEOFriendly(str) {
   return str
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
@@ -194,8 +188,20 @@ app.post('/upload/copertina', (req, res) => {
 // === ROOT ===
 app.use('/', express.static(frontendDir));
 
-// === START SERVER ===
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server CMS avviato su http://localhost:${PORT}`);
-});
+// === AVVIO SERVER RITARDATO ===
+async function startServer() {
+  try {
+    await client.connect();
+    db = client.db("danieleCMS");
+    console.log("✅ Connesso a MongoDB Atlas");
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server CMS avviato su http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Errore connessione MongoDB:", err);
+  }
+}
+
+startServer();
