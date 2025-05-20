@@ -1,9 +1,9 @@
-
-// 🚀 Test deploy con mongodb correttamente inclusoconst express = require('express');
+// 🚀 Test deploy con mongodb correttamente incluso
+const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const fileUpload = require('express-fileupload');
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require('mongodb')
 
 const uri = "mongodb+srv://admin:bIVzZzyxep0dvANr@cluster0.xrs3l1h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const client = new MongoClient(uri);
