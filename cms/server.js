@@ -162,7 +162,7 @@ app.post('/upload/copertina', (req, res) => {
 app.use('/', express.static(frontendDir));
 
 // === START SERVER ===
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server CMS avviato su http://localhost:${PORT}`);
 });
