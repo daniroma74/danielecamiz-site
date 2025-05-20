@@ -192,3 +192,28 @@ function toggleExclusiveText(id, btn) {
     btn.textContent = lang === 'en' ? 'Read more' : 'Leggi di più';
   }
 }
+function updateReadMoreButtons() {
+  const lang = localStorage.getItem('preferredLang') || 'it';
+
+  document.querySelectorAll('.read-more-btn').forEach(btn => {
+    if (btn.textContent.includes('Read') || btn.textContent.includes('Leggi')) {
+      const isExpanded = btn.textContent.includes('less') || btn.textContent.includes('meno');
+      btn.textContent = isExpanded
+        ? (lang === 'en' ? 'Read less' : 'Leggi di meno')
+        : (lang === 'en' ? 'Read more' : 'Leggi di più');
+    }
+  });
+
+  const expandBtn = document.querySelector('.expand-toggle');
+  if (expandBtn) {
+    const isFullscreen = document.getElementById('modalBox')?.classList.contains('fullscreen');
+    expandBtn.textContent = lang === 'en'
+      ? (isFullscreen ? 'Collapse' : 'Expand')
+      : (isFullscreen ? 'Riduci' : 'Espandi');
+  }
+
+  const topBtn = document.getElementById('backToTopBtn');
+  if (topBtn) {
+    topBtn.textContent = lang === 'en' ? 'Back to top' : 'Torna su';
+  }
+}

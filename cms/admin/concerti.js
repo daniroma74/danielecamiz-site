@@ -183,11 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
     concerti[anno].unshift(nuovo);
 
     await salvaConcerti();
-    renderTimeline(concerti);
-    formNuovo.reset();
-    previewLocandina.innerHTML = "";
-    modalNuovo.classList.add("hidden");
-    modalNuovo.classList.remove("show");
+alert("✅ Concerto salvato con successo!");
+renderTimeline(concerti);
+formNuovo.reset();
+previewLocandina.innerHTML = "";
+modalNuovo.classList.add("hidden");
+modalNuovo.classList.remove("show");
   });
 
   timelineContainer.addEventListener("click", (e) => {
@@ -265,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     await salvaConcerti();
-
+    alert("✅ Concerto salvato con successo!");
 // Rendi visibile subito il blocco dell’anno modificato
 renderTimeline(concerti);
 

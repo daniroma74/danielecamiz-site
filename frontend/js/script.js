@@ -29,7 +29,9 @@ function switchLang(lang) {
   if (typeof updateVideoLanguage === 'function') updateVideoLanguage(lang);
   if (typeof updateConcertButtonsLanguage === 'function') updateConcertButtonsLanguage(lang);
   if (typeof updateModalLanguage === 'function') updateModalLanguage(lang);
+  if (typeof updateReadMoreButtons === 'function') updateReadMoreButtons();
 }
+
 
 // ========== INIZIALIZZAZIONE ==========
 function initLanguage() {
