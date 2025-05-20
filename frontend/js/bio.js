@@ -49,27 +49,27 @@ function populateBioContent(data, lang) {
   const curr = data.curriculum[lang];
   const currOther = data.curriculum[otherLang];
   const currHTML = `
-    <div class="lang-${lang} visible">
-      <h3>${curr.titolo}</h3>
-      <p>${curr.testoBreve}</p>
-      <div class="hidden" id="curriculum-more-${lang}">
-        <p>${curr.testoEsteso}</p>
-      </div>
-      <button class="read-more-btn" onclick="toggleExclusiveText('bio-more-${lang}', this)">
-        ${lang === 'en' ? 'Read more' : 'Leggi di più'}
-      </button>
+  <div class="lang-${lang} visible">
+    <h3>${curr.titolo}</h3>
+    <p>${curr.testoBreve}</p>
+    <div class="hidden" id="curriculum-more-${lang}">
+      <p>${curr.testoEsteso}</p>
     </div>
-    <div class="lang-${otherLang}">
-      <h3>${currOther.titolo}</h3>
-      <p>${currOther.testoBreve}</p>
-      <div class="hidden" id="curriculum-more-${otherLang}">
-        <p>${currOther.testoEsteso}</p>
-      </div>
-      <button class="read-more-btn" onclick="toggleExclusiveText('bio-more-${lang}', this)">
-        ${otherLang === 'en' ? 'Read more' : 'Leggi di più'}
-      </button>
+    <button class="read-more-btn" onclick="toggleExclusiveText('curriculum-more-${lang}', this)">
+      ${lang === 'en' ? 'Read more' : 'Leggi di più'}
+    </button>
+  </div>
+  <div class="lang-${otherLang}">
+    <h3>${currOther.titolo}</h3>
+    <p>${currOther.testoBreve}</p>
+    <div class="hidden" id="curriculum-more-${otherLang}">
+      <p>${currOther.testoEsteso}</p>
     </div>
-  `;
+    <button class="read-more-btn" onclick="toggleExclusiveText('curriculum-more-${otherLang}', this)">
+      ${otherLang === 'en' ? 'Read more' : 'Leggi di più'}
+    </button>
+  </div>
+`;
   document.getElementById('curriculum-container').innerHTML = currHTML;
 
   // === STORIA ===
