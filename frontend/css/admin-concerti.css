@@ -168,6 +168,8 @@ h1 {
   color: white;
   position: relative;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .modal-box h2 {
