@@ -30,10 +30,10 @@ app.use((req, res, next) => {
 // === Utility: funzione SEO ===
 function toSEOFriendly(str) {
   return str
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // rimuove accenti
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')                     // sostituisce spazi e simboli
-    .replace(/^-+|-+$/g, '');                        // rimuove trattini iniziali/finali
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function isSEOName(filename) {
@@ -98,7 +98,7 @@ app.post('/delete-locandina', (req, res) => {
   });
 });
 
-// === UPLOAD IMMAGINI GALLERIA (con nome SEO) ===
+// === UPLOAD IMMAGINI GALLERIA ===
 app.post('/upload/galleria', (req, res) => {
   if (!req.files?.file || !req.body.categoria) {
     return res.status(400).json({ error: 'Dati mancanti.' });
@@ -112,7 +112,7 @@ app.post('/upload/galleria', (req, res) => {
   const baseName = titolo || didascalia || path.parse(file.name).name;
   const seoBase = toSEOFriendly(baseName);
   const ext = path.extname(file.name).toLowerCase();
-  let finalName = isSEOName(file.name) ? file.name : `${Date.now()}-${seoBase}${ext}`;
+  const finalName = isSEOName(file.name) ? file.name : `${Date.now()}-${seoBase}${ext}`;
 
   const destDir = path.join(galleryDir, categoria);
   if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
@@ -126,7 +126,7 @@ app.post('/upload/galleria', (req, res) => {
       originale: file.name,
       suggerito: isSEOName(file.name) ? null : finalName
     });
-});
+  });
 });
 
 // === UPLOAD COPERTINA GALLERIA ===
@@ -158,8 +158,13 @@ app.post('/upload/copertina', (req, res) => {
   });
 });
 
+// === SERVE index.html ALLA ROOT "/"
+app.get('/', (req, res) => {
+  res.sendFile(path.join(frontendDir, 'index.html'));
+});
+
 // === START SERVER ===
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Server CMS avviato su http://localhost:${PORT}`);
 });
