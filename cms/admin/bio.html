@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Bio</title>
+  <link rel="stylesheet" href="../frontend/css/style.css">
   <style>
     body {
       background: #121212;
       color: #e0e0e0;
       font-family: Arial, sans-serif;
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 2rem auto;
       padding: 1rem;
     }
@@ -16,6 +17,19 @@
       text-align: center;
       color: #f0b700;
       margin-bottom: 1rem;
+    }
+    .top-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    #backBtn {
+      background: #333;
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
     }
     .controls {
       text-align: center;
@@ -42,7 +56,7 @@
       display: flex;
       flex-direction: row;
       gap: 1rem;
-      align-items: stretch;
+      flex-wrap: nowrap;
     }
     .editor-column {
       flex: 1;
@@ -100,7 +114,12 @@
   </style>
 </head>
 <body>
-  <h1>Pannello Admin – Biografia</h1>
+
+  <div class="top-controls">
+    <h1>Pannello Admin – Biografia</h1>
+    <a href="index.html" id="backBtn">← Torna al pannello principale</a>
+  </div>
+
   <div class="controls">
     <label>Modalità:
       <select id="modo" onchange="caricaEditor()">
@@ -196,10 +215,14 @@
       const daMostrare = modo === 'singolo' ? [campoSelezionato] : campi;
 
       daMostrare.forEach(campo => {
-        ['it', 'en'].forEach(lang => {
-          const val = dati[sezione]?.[lang]?.[campo] || '';
-          container.innerHTML += creaEditor(lang, campo, val);
-        });
+        container.innerHTML += `
+          <div style="display: flex; gap: 1rem;">
+            ${['it', 'en'].map(lang => {
+              const val = dati[sezione]?.[lang]?.[campo] || '';
+              return creaEditor(lang, campo, val);
+            }).join('')}
+          </div>
+        `;
       });
     }
 
