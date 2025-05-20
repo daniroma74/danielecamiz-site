@@ -159,9 +159,7 @@ app.post('/upload/copertina', (req, res) => {
 });
 
 // === SERVE index.html ALLA ROOT "/"
-app.get('/', (req, res) => {
-  res.sendFile(path.join(frontendDir, 'index.html'));
-});
+app.use('/', express.static(frontendDir));
 
 // === START SERVER ===
 const PORT = process.env.PORT || 10000;
