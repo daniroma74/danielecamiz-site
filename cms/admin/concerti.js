@@ -1,3 +1,5 @@
+// concerti.js aggiornato per MongoDB - completo
+
 document.addEventListener("DOMContentLoaded", () => {
   const btnNuovo = document.getElementById("btn-nuovo-concerto");
   const modalNuovo = document.getElementById("modal-nuovo-concerto");
@@ -183,12 +185,11 @@ document.addEventListener("DOMContentLoaded", () => {
     concerti[anno].unshift(nuovo);
 
     await salvaConcerti();
-alert("✅ Concerto salvato con successo!");
-renderTimeline(concerti);
-formNuovo.reset();
-previewLocandina.innerHTML = "";
-modalNuovo.classList.add("hidden");
-modalNuovo.classList.remove("show");
+    renderTimeline(concerti);
+    formNuovo.reset();
+    previewLocandina.innerHTML = "";
+    modalNuovo.classList.add("hidden");
+    modalNuovo.classList.remove("show");
   });
 
   timelineContainer.addEventListener("click", (e) => {
@@ -234,9 +235,7 @@ modalNuovo.classList.remove("show");
         await fetch("/delete-locandina", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            filename: c.locandina.split("/").pop()
-          }),
+          body: JSON.stringify({ filename: c.locandina.split("/").pop() }),
         });
       }
 
@@ -251,34 +250,16 @@ modalNuovo.classList.remove("show");
         body: formData,
       });
 
-      if (!upload.ok) {
-        alert("Errore nel caricamento della nuova locandina.");
-        return;
-      }
-
       const res = await upload.json();
-      if (!res.path) {
-        alert("Errore: nessun path locandina ricevuto.");
-        return;
+      if (res.path) {
+        c.locandina = res.path;
       }
-
-      c.locandina = res.path;
     }
 
     await salvaConcerti();
-    alert("✅ Concerto salvato con successo!");
-// Rendi visibile subito il blocco dell’anno modificato
-renderTimeline(concerti);
-
-setTimeout(() => {
-  const header = Array.from(document.querySelectorAll(".anno-toggle"))
-    .find(h => h.textContent === annoInModifica);
-  if (header) header.click();
-}, 100);
-
-// Chiudi la modale
-modalModifica.classList.remove("show");
-modalModifica.classList.add("hidden");
+    renderTimeline(concerti);
+    modalModifica.classList.remove("show");
+    modalModifica.classList.add("hidden");
   });
 
   btnElimina.addEventListener("click", async () => {
@@ -290,9 +271,7 @@ modalModifica.classList.add("hidden");
       await fetch("/delete-locandina", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          filename: concerto.locandina.split("/").pop()
-        }),
+        body: JSON.stringify({ filename: concerto.locandina.split("/").pop() })
       });
     }
 
