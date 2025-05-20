@@ -1,6 +1,6 @@
 // ========== INIZIALIZZAZIONE ==========
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('http://localhost:3000/api/bio')
+  fetch("/api/bio")
     .then(res => res.json())
     .then(data => {
       const lang = localStorage.getItem('preferredLang') || 'it';
