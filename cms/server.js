@@ -6,7 +6,7 @@ const fs = require('fs');
 const fileUpload = require('express-fileupload');
 const { MongoClient } = require('mongodb');
 
-const uri = "mongodb+srv://admin:bIVzZzyxep0dvANr@cluster0.xrs3l1h.mongodb.net/danieleCMS?retryWrites=true&w=majority&tls=true";
+const uri = "mongodb+srv://admin:bIVzZzyxep0dvANr@danielecms.df4zxkp.mongodb.net/danieleCMS?retryWrites=true&w=majority&appName=danieleCMS";
 const client = new MongoClient(uri);
 let db;
 
