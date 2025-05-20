@@ -1,0 +1,244 @@
+/* ====== TIMELINE CONCERTI ====== */
+
+#timeline {
+  padding: var(--section-padding);
+  max-width: var(--max-width);
+  margin: auto;
+}
+
+.timeline-intro-block {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+#counter {
+  font-style: italic;
+  color: var(--light-accent);
+  margin-top: 0.3rem;
+}
+
+.year-block {
+  border-left: 3px solid var(--accent-color);
+  margin-bottom: 3rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.year-block .year-header {
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: var(--light-accent);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.year-arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.year-block.expanded .year-arrow {
+  transform: rotate(180deg);
+}
+
+.year-content {
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+
+.concert-block {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+  border-left: 4px solid var(--accent-color);
+}
+
+.concert-poster {
+  width: 120px;
+  height: auto;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.concert-info h3 {
+  margin: 0 0 0.4rem;
+  color: var(--light-accent);
+}
+
+.concert-toggle {
+  background: transparent;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.concert-toggle .arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
+}
+
+.concert-toggle.active .arrow {
+  transform: rotate(180deg);
+}
+
+.concert-toggle:hover {
+  background-color: var(--accent-color);
+  color: black;
+}
+
+.full-details {
+  margin-top: 0.7rem;
+}
+/* ====== LIGHTBOX CONCERTI ====== */
+#concert-lightbox {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#concert-lightbox.show {
+  opacity: 1;
+}
+
+.concert-lightbox-content {
+  background: #0f0f0f;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px solid var(--accent-color);
+  max-width: 1000px;
+  width: 90%;
+  position: relative;
+}
+
+.concert-lightbox-body {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.concert-lightbox-img {
+  flex: 1 1 40%;
+}
+
+.concert-lightbox-img img {
+  width: 100%;
+  border-radius: 6px;
+}
+
+.concert-lightbox-info {
+  flex: 1 1 50%;
+  text-align: left;
+  font-size: 1rem;
+  color: #ddd;
+  line-height: 1.6;
+}
+
+.concert-lightbox-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.6rem;
+  color: var(--accent-color);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  background-color: #0f0f0f;
+  border-radius: 50%;
+  padding: 0.2rem 0.5rem;
+}
+
+.concert-lightbox-close:hover {
+  transform: scale(1.2);
+}
+
+/* === Lightbox concerti mobile & tablet migliorato === */
+@media (max-width: 1024px) {
+  #concert-lightbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .concert-lightbox-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .concert-lightbox-img img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .concert-lightbox-close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    color: white;
+    background: transparent;
+    border: none;
+    z-index: 10000;
+    cursor: pointer;
+  }
+}
+/* ====== SEZIONE CONCERTI SPECIFICA ====== */
+#concerti {
+  padding: var(--section-padding);
+  max-width: var(--max-width);
+  margin: auto;
+}
+
+/* Intestazioni personalizzate della pagina concerti */
+#concerti h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-bottom: 2.5rem;
+}
+
+/* Eventuale separatore visivo */
+.timeline-intro-block {
+  margin-top: 2rem;
+  margin-bottom: 2.5rem;
+  font-style: italic;
+  color: var(--light-accent);
+}

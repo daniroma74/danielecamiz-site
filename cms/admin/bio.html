@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Bio</title>
+  <style>
+    body {
+      background: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h1 {
+      text-align: center;
+      color: #f0b700;
+      margin-bottom: 1rem;
+    }
+    .controls {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .controls select {
+      padding: 0.4rem;
+      margin: 0 0.5rem;
+      border-radius: 4px;
+      border: none;
+    }
+    .section {
+      border: 1px solid #f0b700;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      background: #1d1d1d;
+    }
+    .section h2 {
+      margin-top: 0;
+      color: #f0b700;
+    }
+    .editor-block {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: stretch;
+    }
+    .editor-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      border: 1px solid #f0b700;
+      border-radius: 4px;
+      padding: 0.5rem;
+      background: #1e1e1e;
+      color: #fff;
+      font-family: monospace;
+      resize: vertical;
+    }
+    .preview {
+      flex: 1;
+      background: #2b2b2b;
+      border: 1px solid #444;
+      padding: 0.5rem;
+      border-radius: 4px;
+      overflow-y: auto;
+      max-height: 300px;
+    }
+    .save-btn {
+      margin-top: 0.5rem;
+      font-weight: bold;
+      background: #f0b700;
+      color: #111;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+    }
+    .toolbar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .toolbar button {
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #888;
+      background: #333;
+      color: #f0f0f0;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pannello Admin – Biografia</h1>
+  <div class="controls">
+    <label>Modalità:
+      <select id="modo" onchange="caricaEditor()">
+        <option value="tutti">Tutti i campi</option>
+        <option value="singolo">Campo singolo</option>
+      </select>
+    </label>
+    <label>Sezione:
+      <select id="sezione" onchange="caricaEditor()">
+        <option value="biografia">Biografia</option>
+        <option value="curriculum">Curriculum</option>
+        <option value="storia">Storia</option>
+      </select>
+    </label>
+    <label>Campo:
+      <select id="campoSingolo" onchange="caricaEditor()">
+        <option value="title">Titolo</option>
+        <option value="intro">Intro</option>
+        <option value="more">Contenuto</option>
+        <option value="titolo">Titolo</option>
+        <option value="testoBreve">Intro</option>
+        <option value="testoEsteso">Contenuto</option>
+        <option value="contenuto">Contenuto</option>
+      </select>
+    </label>
+  </div>
+
+  <div id="editori"></div>
+
+  <script>
+    let dati = {};
+
+    const labelMap = {
+      title: "Titolo", intro: "Intro", more: "Contenuto",
+      titolo: "Titolo", testoBreve: "Intro", testoEsteso: "Contenuto",
+      contenuto: "Contenuto"
+    };
+
+    const campiDisponibili = {
+      biografia: ["title", "intro", "more"],
+      curriculum: ["titolo", "testoBreve", "testoEsteso"],
+      storia: ["titolo", "intro", "contenuto"]
+    };
+
+    async function caricaDati() {
+      const res = await fetch('/api/bio');
+      dati = await res.json();
+      caricaEditor();
+    }
+
+    function markdownToHtml(md) {
+      return md
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+        .replace(/\n/gim, '<br>');
+    }
+
+    function creaEditor(lang, campo, valore) {
+      const id = `${campo}-${lang}`;
+      const label = `${labelMap[campo] || campo} (${lang})`;
+
+      return `
+        <div class="section">
+          <h2>${label}</h2>
+          <div class="editor-block">
+            <div class="editor-column">
+              <div class="toolbar">
+                <button onclick="inserisci('${id}', '**', '**')">B</button>
+                <button onclick="inserisci('${id}', '*', '*')">i</button>
+                <button onclick="inserisci('${id}', '# ', '')">H1</button>
+              </div>
+              <textarea id="${id}" oninput="aggiornaAnteprima('${id}')">${valore}</textarea>
+              <button class="save-btn" onclick="salva('${lang}', '${campo}')">Salva</button>
+            </div>
+            <div class="preview" id="prev-${id}">${markdownToHtml(valore)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function caricaEditor() {
+      const modo = document.getElementById('modo').value;
+      const sezione = document.getElementById('sezione').value;
+      const campoSelezionato = document.getElementById('campoSingolo').value;
+
+      const container = document.getElementById('editori');
+      container.innerHTML = '';
+
+      const campi = campiDisponibili[sezione];
+      const daMostrare = modo === 'singolo' ? [campoSelezionato] : campi;
+
+      daMostrare.forEach(campo => {
+        ['it', 'en'].forEach(lang => {
+          const val = dati[sezione]?.[lang]?.[campo] || '';
+          container.innerHTML += creaEditor(lang, campo, val);
+        });
+      });
+    }
+
+    function aggiornaAnteprima(id) {
+      const val = document.getElementById(id).value;
+      document.getElementById(`prev-${id}`).innerHTML = markdownToHtml(val);
+    }
+
+    function inserisci(id, inizio, fine) {
+      const textarea = document.getElementById(id);
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selected = textarea.value.substring(start, end);
+      const before = textarea.value.substring(0, start);
+      const after = textarea.value.substring(end);
+      textarea.value = before + inizio + selected + fine + after;
+      aggiornaAnteprima(id);
+    }
+
+    async function salva(lang, campo) {
+      const sezione = document.getElementById('sezione').value;
+      const id = `${campo}-${lang}`;
+      const nuovoTesto = document.getElementById(id).value;
+      dati[sezione][lang][campo] = nuovoTesto;
+
+      const res = await fetch('/api/bio', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dati)
+      });
+
+      if (res.ok) alert('Salvato con successo!');
+      else alert('Errore nel salvataggio.');
+    }
+
+    caricaDati();
+  </script>
+</body>
+</html>

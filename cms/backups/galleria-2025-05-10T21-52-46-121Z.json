@@ -1,0 +1,66 @@
+[
+  {
+    "categoria": "concerto",
+    "titolo_it": "In concerto",
+    "titolo_en": "In concert",
+    "immagini": [
+      {
+        "file": "daniele_camiz_in_concerto31.jpg",
+        "alt_it": "Daniele Camiz dirige un concerto",
+        "alt_en": "Daniele Camiz conducting a concert",
+        "didascalia_it": "Concerto a Roma, 2022",
+        "didascalia_en": "Concert in Rome, 2022"
+      },
+      {
+        "file": "daniele_camiz_in_concerto18.jpg",
+        "alt_it": "Dettaglio della direzione",
+        "alt_en": "Detail of conducting",
+        "didascalia_it": "",
+        "didascalia_en": ""
+      },
+      {
+        "file": "",
+        "alt_it": "",
+        "alt_en": "",
+        "didascalia_it": "",
+        "didascalia_en": ""
+      }
+    ],
+    "cover": "covers/cover-concerto-1746912917760.jpg"
+  },
+  {
+    "categoria": "ufficiali",
+    "titolo_it": "Foto ufficiali",
+    "titolo_en": "Official photos",
+    "immagini": [
+      {
+        "alt_it": "Ritratto ufficiale con bacchetta",
+        "alt_en": "Official portrait with baton",
+        "didascalia_it": "Daniele Camiz con bacchetta",
+        "didascalia_en": "Daniele Camiz with baton",
+        "file": "1746911671819-1746797354000-daniele_camiz_bacchetta_viso_intero.jpg"
+      },
+      {
+        "file": "1746911697555-daniele_camiz_bacchetta_mento_nero.jpg",
+        "alt_it": "Daniele ",
+        "alt_en": "Daniele",
+        "didascalia_it": "Daniele Camiz mano al mento",
+        "didascalia_en": "Daniele Camiz"
+      }
+    ]
+  },
+  {
+    "categoria": "prove",
+    "titolo_it": "In prova",
+    "titolo_en": "Rehearsals",
+    "immagini": [
+      {
+        "file": "daniele_camiz_in_prova2.jpg",
+        "alt_it": "Durante una prova orchestrale",
+        "alt_en": "During an orchestral rehearsal",
+        "didascalia_it": "",
+        "didascalia_en": ""
+      }
+    ]
+  }
+]

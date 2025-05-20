@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daniele Camiz – Video</title>
+  <link rel="stylesheet" href="css/style.css">
+ <!-- Favicon base -->
+<link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16.png">
+
+<!-- Icona alta risoluzione per dispositivi Android -->
+<link rel="icon" type="image/png" sizes="192x192" href="img/icons/favicon-192.png">
+
+<!-- Icona per Safari/iOS -->
+<link rel="apple-touch-icon" sizes="180x180" href="img/icons/favicon-180.png">
+
+<!-- Manifesto per PWA (opzionale, ma utile se vuoi farlo apparire come app) -->
+<link rel="manifest" href="manifest.json">
+
+</head>
+<body>
+
+<!-- ====== NAVBAR ====== -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="index.html" class="logo">Daniele Camiz</a>
+  </div>
+
+  <div class="nav-center">
+    <div class="menu" id="mainMenu">
+      <a href="index.html" class="lang-it">Home</a>
+      <a href="index.html" class="lang-en">Home</a>
+      <a href="bio2.html" class="lang-it">Chi sono</a>
+      <a href="bio2.html" class="lang-en">About</a>
+      <a href="concerti.html" class="lang-it">Concerti</a>
+      <a href="concerti.html" class="lang-en">Concerts</a>
+      <a href="galleria.html" class="lang-it">Galleria</a>
+      <a href="galleria.html" class="lang-en">Gallery</a>
+      <a href="video.html" class="lang-it">Video</a>
+      <a href="video.html" class="lang-en">Videos</a>
+      <a href="repertorio.html" class="lang-it">Repertorio</a>
+      <a href="repertorio.html" class="lang-en">Repertoire</a>
+      <a href="press.html" class="lang-it">Press</a>
+      <a href="press.html" class="lang-en">Press & Media</a>
+      <a href="index.html#contact" class="lang-it">Contatti</a>
+      <a href="index.html#contact" class="lang-en">Contact</a>
+    </div>
+  </div>
+
+  <div class="nav-right">
+    <div class="lang-switch">
+      <span id="btn-it" onclick="switchLang('it')">IT</span> |
+      <span id="btn-en" onclick="switchLang('en')">EN</span>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ====== SEZIONE VIDEO ====== -->
+<section id="video">
+  <h2 class="lang-it visible">Video</h2>
+  <h2 class="lang-en">Videos</h2>
+
+  <div class="video-grid">
+    <div class="video-item" onclick="openVideoLightbox('https://www.youtube.com/embed/0nxE-M1Oii0?autoplay=1')">
+      <div class="video-thumb">
+        <img src="https://img.youtube.com/vi/0nxE-M1Oii0/hqdefault.jpg" alt="Video 1">
+      </div>
+      <div class="video-title">
+        <span class="lang-it visible">Prova video 1</span>
+        <span class="lang-en">Sample video 1</span>
+      </div>
+    </div>
+
+    <div class="video-item" onclick="openVideoLightbox('https://www.youtube.com/embed/mkimMMDGNY0?autoplay=1')">
+      <div class="video-thumb">
+        <img src="https://img.youtube.com/vi/mkimMMDGNY0/hqdefault.jpg" alt="Video 2">
+      </div>
+      <div class="video-title">
+        <span class="lang-it visible">Prova video 2</span>
+        <span class="lang-en">Sample video 2</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== LIGHTBOX VIDEO ====== -->
+<div id="video-lightbox">
+  <div class="lightbox-overlay" onclick="closeVideoLightbox()"></div>
+  <div class="lightbox-video-content">
+    <span class="lightbox-close" onclick="closeVideoLightbox()">×</span>
+    <iframe id="video-frame" src="" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- ====== SCRIPTS ====== -->
+<script src="js/script.js" defer></script>
+
+</body>
+</html>

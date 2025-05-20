@@ -1,0 +1,50 @@
+[
+  {
+    "categoria": "concerto",
+    "titolo_it": "In concerto",
+    "titolo_en": "In concert",
+    "immagini": [
+      {
+        "file": "daniele_camiz_in_concerto31.jpg",
+        "alt_it": "Daniele Camiz dirige un concerto",
+        "alt_en": "Daniele Camiz conducting a concert",
+        "didascalia_it": "Concerto a Roma, 2022",
+        "didascalia_en": "Concert in Rome, 2022"
+      },
+      {
+        "file": "daniele_camiz_in_concerto18.jpg",
+        "alt_it": "Dettaglio della direzione",
+        "alt_en": "Detail of conducting",
+        "didascalia_it": "",
+        "didascalia_en": ""
+      }
+    ]
+  },
+  {
+    "categoria": "ufficiali",
+    "titolo_it": "Foto ufficiali",
+    "titolo_en": "Official photos",
+    "immagini": [
+      {
+        "alt_it": "Ritratto ufficiale con bacchetta",
+        "alt_en": "Official portrait with baton",
+        "didascalia_it": "Daniele Camiz con bacchetta",
+        "didascalia_en": "Daniele Camiz with baton"
+      }
+    ]
+  },
+  {
+    "categoria": "prove",
+    "titolo_it": "In prova",
+    "titolo_en": "Rehearsals",
+    "immagini": [
+      {
+        "file": "daniele_camiz_in_prova2.jpg",
+        "alt_it": "Durante una prova orchestrale",
+        "alt_en": "During an orchestral rehearsal",
+        "didascalia_it": "",
+        "didascalia_en": ""
+      }
+    ]
+  }
+]

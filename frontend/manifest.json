@@ -1,0 +1,20 @@
+{
+  "name": "Daniele Camiz",
+  "short_name": "Camiz",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#e2c471",
+  "icons": [
+    {
+      "src": "img/icons/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "img/icons/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

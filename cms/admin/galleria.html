@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pannello Galleria</title>
+  <link rel="stylesheet" href="../frontend/css/style.css" />
+  <link rel="stylesheet" href="../frontend/css/admin-galleria.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="../frontend/img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../frontend/img/icons/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../frontend/img/icons/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../frontend/img/icons/favicon-180.png">
+</head>
+<body>
+
+  <a href="index.html" id="backBtn">← Torna al pannello principale</a>
+  <h1>Pannello Galleria</h1>
+  <button id="btn-aggiungi-galleria">+ Aggiungi galleria</button>
+
+  <div class="galleria-list" id="lista-gallerie"></div>
+
+  <!-- Modale Copertina -->
+  <div id="modale-copertina" class="modal-overlay">
+    <div class="modal-box">
+      <span class="modal-close" id="chiudi-copertina">×</span>
+      <h2>Modifica Copertina</h2>
+      <label>Carica Copertina:
+        <input type="file" id="copertina-input" accept="image/*">
+      </label>
+      <div><img id="copertina-preview" class="image-preview" alt="Anteprima copertina"></div>
+      <button id="btn-salva-copertina">Salva Copertina</button>
+    </div>
+  </div>
+
+  <!-- Modale Immagini -->
+  <div id="modale-immagini" class="modal-overlay">
+    <div class="modal-box">
+      <span class="modal-close" id="chiudi-immagini">×</span>
+      <h2>Modifica Immagini Galleria</h2>
+
+      <div id="preview-galleria"></div>
+
+      <div id="upload-section">
+        <label>Carica nuova immagine:
+          <input type="file" id="input-immagine" accept="image/*">
+        </label>
+        <div id="seo-suggestion" class="seo-suggestion"></div>
+        <button id="btn-upload-immagine">Aggiungi immagine</button>
+      </div>
+
+      <div id="lista-immagini"></div>
+
+      <button id="btn-salva-ordine">Salva ordine</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="galleria_admin.js"></script>
+
+</body>
+</html>

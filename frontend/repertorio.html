@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daniele Camiz – Repertorio</title>
+  <link rel="stylesheet" href="css/style.css">
+ <!-- Favicon base -->
+<link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16.png">
+
+<!-- Icona alta risoluzione per dispositivi Android -->
+<link rel="icon" type="image/png" sizes="192x192" href="img/icons/favicon-192.png">
+
+<!-- Icona per Safari/iOS -->
+<link rel="apple-touch-icon" sizes="180x180" href="img/icons/favicon-180.png">
+
+<!-- Manifesto per PWA (opzionale, ma utile se vuoi farlo apparire come app) -->
+<link rel="manifest" href="manifest.json">
+
+</head>
+<body>
+
+<!-- ====== NAVBAR ====== -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="index.html" class="logo">Daniele Camiz</a>
+  </div>
+
+  <div class="nav-center">
+    <div class="menu" id="mainMenu">
+      <a href="index.html" class="lang-it active">Home</a>
+      <a href="index.html" class="lang-en active">Home</a>
+      <a href="bio2.html" class="lang-it">Chi sono</a>
+      <a href="bio2.html" class="lang-en">About</a>
+      <a href="concerti.html" class="lang-it">Concerti</a>
+      <a href="concerti.html" class="lang-en">Concerts</a>
+      <a href="galleria.html" class="lang-it">Galleria</a>
+      <a href="galleria.html" class="lang-en">Gallery</a>
+      <a href="video.html" class="lang-it">Video</a>
+      <a href="video.html" class="lang-en">Videos</a>
+      <a href="repertorio.html" class="lang-it">Repertorio</a>
+      <a href="repertorio.html" class="lang-en">Repertoire</a>
+      <a href="press.html" class="lang-it">Press</a>
+      <a href="press.html" class="lang-en">Press & Media</a>
+      <a href="index.html#contact" class="lang-it">Contatti</a>
+      <a href="index.html#contact" class="lang-en">Contact</a>
+    </div>
+  </div>
+
+  <div class="nav-right">
+    <div class="lang-switch">
+      <span id="btn-it" onclick="switchLang('it')">IT</span> |
+      <span id="btn-en" onclick="switchLang('en')">EN</span>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- ====== REPERTORIO ====== -->
+<section id="repertorio">
+
+  <!-- Italiano -->
+  <div class="lang-it visible">
+    <h2>Repertorio</h2>
+
+    <h3>Sinfonie</h3>
+    <ul>
+      <li>L. van Beethoven – Sinfonia n.2 op.36</li>
+      <li>L. van Beethoven – Sinfonia n.5 op.67</li>
+      <li>F. Mendelssohn Bartholdy – Sinfonia n.3 op.56 “Scozzese”</li>
+      <li>F. Mendelssohn Bartholdy – Sinfonia n.4 op.90 “Italiana”</li>
+      <li>F. Mendelssohn Bartholdy – Sinfonia n.5 op.107 “La Riforma”</li>
+      <li>A. Dvořák – Sinfonia n.9 op.95 “Dal Nuovo Mondo”</li>
+      <li>F. Schubert – Sinfonia “Incompiuta” D759</li>
+      <li>R. Schumann – Sinfonia n.4 op.120</li>
+      <li>W.A. Mozart – Sinfonie K16, K19, K19a, K22, K42a, K43, K45, K45a, K45b, K48, K73, K74, K75, K81, K84, K95, K96, K97, K110, K112, K114, K120, K124, K128, K129, K130, K132, K133, K134, K141a, K162, K181, K182, K183, K184, K199, K200, K201, K202, K297 "Parigi", K318, K319, K338, K551</li>
+    </ul>
+
+    <h3>Ouverture e Ouverture-Fantasia</h3>
+    <ul>
+      <li>L. van Beethoven – Egmont Ouverture op.84</li>
+      <li>L. van Beethoven – Ouverture da Coriolano op.62</li>
+      <li>L. van Beethoven – Ouverture "Per la consacrazione della casa" op.122</li>
+      <li>G. Rossini – Sinfonia da La gazza ladra</li>
+      <li>G. Rossini – Sinfonia da L’italiana in Algeri</li>
+      <li>W.A. Mozart – Ouverture da Don Giovanni K527</li>
+      <li>W.A. Mozart – Ouverture da Die Entführung aus dem Serail K384</li>
+      <li>W.A. Mozart – Ouverture da Die Zauberflöte K620</li>
+      <li>W.A. Mozart – Ouverture da L’impresario teatrale K486</li>
+      <li>W.A. Mozart – Ouverture da Le nozze di Figaro K492</li>
+      <li>W.A. Mozart – Ouverture da La clemenza di Tito K621</li>
+      <li>F. Mendelssohn Bartholdy – Ouverture per Il sogno di una notte di mezza estate</li>
+      <li>F. Mendelssohn Bartholdy – Le Ebridi "Fingal’s Cave" op.26</li>
+      <li>F. Mendelssohn Bartholdy – Das Märchen von der schönen Melusine op.32</li>
+      <li>F. Schubert – Ouverture in stile italiano</li>
+      <li>F. Schubert – Ouverture in re maggiore "Im italiano stile" D590</li>
+      <li>P.I. Tchaikovsky – Romeo e Giulietta, Ouverture-fantasia</li>
+    </ul>
+
+    <h3>Concerti per Strumento Solista e Orchestra</h3>
+    <ul>
+      <li>L. van Beethoven – Concerti n.1, n.2, n.3, n.5 completi</li>
+      <li>F. Mendelssohn Bartholdy – Concerto n.1 op.25 completo</li>
+      <li>E. Grieg – Concerto op.16 completo</li>
+      <li>F. Chopin – Concerti n.1 op.11 e n.2 op.21 completi</li>
+      <li>W.A. Mozart – Concerti K299, K414, K466, K488 completi</li>
+      <li>G. Paisiello – Concerto in Fa maggiore completo</li>
+      <li>J. Sibelius – Concerto per violino op.47 completo</li>
+    </ul>
+
+    <h3>Musica Vocale e Scene Drammatiche</h3>
+    <ul>
+      <li>G. Verdi – Aria di Manrico da Il trovatore</li>
+      <li>G. Verdi – "Pace, pace, mio Dio" da La forza del destino</li>
+      <li>G. Verdi – "Nel dì della vittoria" da Macbeth</li>
+      <li>G. Verdi – "Parigi, o cara" da La traviata</li>
+      <li>G. Verdi – "Ritorna vincitor" da Aida</li>
+      <li>G. Verdi – "De' miei bollenti spiriti" da La traviata</li>
+      <li>G. Puccini – "Un bel dì vedremo" da Madama Butterfly</li>
+      <li>G. Puccini – "Sogno di Doretta" da La rondine</li>
+      <li>G. Puccini – "Vissi d'arte" da Tosca</li>
+      <li>W.A. Mozart – "Come scoglio" da Così fan tutte</li>
+      <li>W.A. Mozart – "In quegli anni in cui val poco" da Le nozze di Figaro</li>
+      <li>G. Donizetti – "Chiedi all’aura lusinghiera" da L’elisir d’amore</li>
+      <li>G. Rossini – "Una voce poco fa" da Il barbiere di Siviglia</li>
+      <li>G. Rossini – "Ecco ridente in cielo" da Il barbiere di Siviglia</li>
+      <li>G. Rossini – "Miei rampolli femminini" da La Cenerentola</li>
+      <li>F. Mendelssohn (Fanny) – Hero und Leander</li>
+    </ul>
+
+    <h3>Musica Orchestrale – Suite e Danze</h3>
+    <ul>
+      <li>E. Grieg – Peer Gynt Suite n.1 op.46</li>
+      <li>E. Grieg – Holberg Suite</li>
+      <li>E. Grieg – Danze norvegesi op.35</li>
+      <li>C. Saint-Saëns – Fossiles da Le carnaval des animaux</li>
+      <li>J. Strauss Jr. – Ägyptischer Marsch op.335</li>
+      <li>J. Strauss Jr. – Wein, Weib und Gesang op.333</li>
+      <li>J. Strauss Jr. – An der schönen blauen Donau op.314</li>
+      <li>P. Mascagni – Intermezzo da Cavalleria rusticana</li>
+      <li>O. Respighi – Antiche danze e arie per liuto, Suite n.3</li>
+      <li>P. Warlock – Capriol Suite</li>
+      <li>B. Smetana – Vltava da Má Vlast</li>
+      <li>E. Elgar – Serenata per archi</li>
+      <li>S. Barber – Adagio per archi</li>
+    </ul>
+  </div>
+
+ <!-- Inglese -->
+<div class="lang-en">
+  <h2>Repertoire</h2>
+
+  <h3>Symphonies</h3>
+  <ul>
+    <li>L. van Beethoven – Symphony No.2 Op.36</li>
+    <li>L. van Beethoven – Symphony No.5 Op.67</li>
+    <li>F. Mendelssohn Bartholdy – Symphony No.3 Op.56 “Scottish”</li>
+    <li>F. Mendelssohn Bartholdy – Symphony No.4 Op.90 “Italian”</li>
+    <li>F. Mendelssohn Bartholdy – Symphony No.5 Op.107 “Reformation”</li>
+    <li>A. Dvořák – Symphony No.9 Op.95 “From the New World”</li>
+    <li>F. Schubert – “Unfinished” Symphony D759</li>
+    <li>R. Schumann – Symphony No.4 Op.120</li>
+    <li>W.A. Mozart – Symphonies K16, K19, K19a, K22, K42a, K43, K45, K45a, K45b, K48, K73, K74, K75, K81, K84, K95, K96, K97, K110, K112, K114, K120, K124, K128, K129, K130, K132, K133, K134, K141a, K162, K181, K182, K183, K184, K199, K200, K201, K202, K297 “Paris”, K318, K319, K338, K551</li>
+  </ul>
+
+  <h3>Overtures and Fantasy Overtures</h3>
+  <ul>
+    <li>L. van Beethoven – Egmont Overture Op.84</li>
+    <li>L. van Beethoven – Coriolan Overture Op.62</li>
+    <li>L. van Beethoven – Consecration of the House Overture Op.122</li>
+    <li>G. Rossini – Overture to La gazza ladra</li>
+    <li>G. Rossini – Overture to L’italiana in Algeri</li>
+    <li>W.A. Mozart – Overture to Don Giovanni K527</li>
+    <li>W.A. Mozart – Overture to Die Entführung aus dem Serail K384</li>
+    <li>W.A. Mozart – Overture to The Magic Flute K620</li>
+    <li>W.A. Mozart – Overture to The Impresario K486</li>
+    <li>W.A. Mozart – Overture to The Marriage of Figaro K492</li>
+    <li>W.A. Mozart – Overture to La clemenza di Tito K621</li>
+    <li>F. Mendelssohn Bartholdy – Overture to A Midsummer Night’s Dream</li>
+    <li>F. Mendelssohn Bartholdy – The Hebrides “Fingal’s Cave” Op.26</li>
+    <li>F. Mendelssohn Bartholdy – The Fair Melusine Op.32</li>
+    <li>F. Schubert – Overture in Italian Style</li>
+    <li>F. Schubert – Overture in D major “Im italiano stile” D590</li>
+    <li>P.I. Tchaikovsky – Romeo and Juliet, Fantasy Overture</li>
+  </ul>
+
+  <h3>Concertos for Soloist and Orchestra</h3>
+  <ul>
+    <li>L. van Beethoven – Piano Concertos No.1, No.2, No.3, No.5 (complete)</li>
+    <li>F. Mendelssohn Bartholdy – Piano Concerto No.1 Op.25 (complete)</li>
+    <li>E. Grieg – Piano Concerto Op.16 (complete)</li>
+    <li>F. Chopin – Piano Concertos No.1 Op.11 and No.2 Op.21 (complete)</li>
+    <li>W.A. Mozart – Concertos K299 (Flute and Harp), K414, K466, K488 (complete)</li>
+    <li>G. Paisiello – Concerto in F major (complete)</li>
+    <li>J. Sibelius – Violin Concerto Op.47 (complete)</li>
+  </ul>
+
+  <h3>Vocal and Dramatic Works</h3>
+  <ul>
+    <li>G. Verdi – Manrico’s Aria from Il trovatore</li>
+    <li>G. Verdi – “Pace, pace, mio Dio” from La forza del destino</li>
+    <li>G. Verdi – “Nel dì della vittoria” from Macbeth</li>
+    <li>G. Verdi – “Parigi, o cara” from La traviata</li>
+    <li>G. Verdi – “Ritorna vincitor” from Aida</li>
+    <li>G. Verdi – “De’ miei bollenti spiriti” from La traviata</li>
+    <li>G. Puccini – “Un bel dì vedremo” from Madama Butterfly</li>
+    <li>G. Puccini – “Sogno di Doretta” from La rondine</li>
+    <li>G. Puccini – “Vissi d’arte” from Tosca</li>
+    <li>W.A. Mozart – “Come scoglio” from Così fan tutte</li>
+    <li>W.A. Mozart – “In quegli anni in cui val poco” from The Marriage of Figaro</li>
+    <li>G. Donizetti – “Chiedi all’aura lusinghiera” from The Elixir of Love</li>
+    <li>G. Rossini – “Una voce poco fa” from The Barber of Seville</li>
+    <li>G. Rossini – “Ecco ridente in cielo” from The Barber of Seville</li>
+    <li>G. Rossini – “Miei rampolli femminini” from La Cenerentola</li>
+    <li>F. Mendelssohn (Fanny) – Hero und Leander</li>
+  </ul>
+
+  <h3>Orchestral Music – Suites and Dances</h3>
+  <ul>
+    <li>E. Grieg – Peer Gynt Suite No.1 Op.46</li>
+    <li>E. Grieg – Holberg Suite</li>
+    <li>E. Grieg – Norwegian Dances Op.35</li>
+    <li>C. Saint-Saëns – Fossiles from Le carnaval des animaux</li>
+    <li>J. Strauss Jr. – Ägyptischer Marsch Op.335</li>
+    <li>J. Strauss Jr. – Wine, Women and Song Op.333</li>
+    <li>J. Strauss Jr. – The Blue Danube Op.314</li>
+    <li>P. Mascagni – Intermezzo from Cavalleria rusticana</li>
+    <li>O. Respighi – Ancient Airs and Dances, Suite No.3</li>
+    <li>P. Warlock – Capriol Suite</li>
+    <li>B. Smetana – Vltava from Má Vlast</li>
+    <li>E. Elgar – Serenade for Strings</li>
+    <li>S. Barber – Adagio for Strings</li>
+  </ul>
+</div>
+</section>
+
+<!-- ====== SCRIPT ====== -->
+<script src="js/script.js" defer></script>
+
+</body>
+</html>

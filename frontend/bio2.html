@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daniele Camiz – Chi sono</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/bio.css" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="index.html" class="logo">Daniele Camiz</a>
+  </div>
+  <div class="nav-center">
+    <div class="menu" id="mainMenu">
+      <a href="index.html" class="lang-it">Home</a>
+      <a href="index.html" class="lang-en">Home</a>
+      <a href="bio2.html" class="lang-it">Chi sono</a>
+      <a href="bio2.html" class="lang-en">About</a>
+      <a href="concerti.html" class="lang-it">Concerti</a>
+      <a href="concerti.html" class="lang-en">Concerts</a>
+      <a href="galleria.html" class="lang-it">Galleria</a>
+      <a href="galleria.html" class="lang-en">Gallery</a>
+      <a href="video.html" class="lang-it">Video</a>
+      <a href="video.html" class="lang-en">Videos</a>
+      <a href="repertorio.html" class="lang-it">Repertorio</a>
+      <a href="repertorio.html" class="lang-en">Repertoire</a>
+      <a href="press.html" class="lang-it">Press</a>
+      <a href="press.html" class="lang-en">Press & Media</a>
+      <a href="index.html#contact" class="lang-it">Contatti</a>
+      <a href="index.html#contact" class="lang-en">Contact</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="lang-switch">
+      <span id="btn-it" onclick="switchLang('it')">IT</span> |
+      <span id="btn-en" onclick="switchLang('en')">EN</span>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
+    </div>
+  </div>
+</nav>
+
+<!-- TITOLO -->
+<h2 class="section-title lang-it">Chi sono</h2>
+<h2 class="section-title lang-en">About</h2>
+
+<!-- BIOGRAFIA -->
+<div class="bio-wrapper">
+  <img src="img/daniele-camiz-ritratto.jpg" alt="Daniele Camiz" class="bio-photo" />
+  <div class="bio-columns">
+    <div class="bio-box" id="bio-container"></div>
+    <div class="bio-box" id="curriculum-container"></div>
+    <div class="bio-box" id="story-container"></div>
+  </div>
+</div>
+
+<!-- MODALE -->
+<div id="story-modal" class="modal-overlay">
+  <div class="modal-box" id="modalBox">
+    <span class="modal-close" onclick="closeStoryModal()">×</span>
+    <button class="expand-toggle" onclick="toggleFullScreen()">Espandi</button>
+    <div class="progress-bar" id="story-progress"></div>
+    <div id="story-text-it" class="modal-text lang-it"><p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vel velit eget metus cursus sagittis. Mauris feugiat, magna nec viverra lacinia, sapien quam convallis lorem, id ultricies justo massa in nisl.</p>
+<p>Aliquam erat volutpat. Sed nec bibendum nibh. Curabitur feugiat metus sed sapien ullamcorper, non condimentum lorem accumsan. Pellentesque ac neque at sem interdum efficitur.</p>
+<p>Morbi fermentum posuere turpis, ac lobortis leo dapibus nec. Suspendisse potenti. Proin nec diam at justo gravida feugiat. Maecenas congue, sem sed eleifend varius, metus neque finibus est, ut rhoncus augue arcu id dolor.</p>
+<p>Fusce non lacus nec libero porta vestibulum. Integer vestibulum vestibulum sapien, ut pretium lorem suscipit in. Nulla facilisi. Donec dignissim nec est ut gravida. Sed hendrerit est magna, ac convallis ligula volutpat at.</p>
+<p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean convallis, sapien id posuere malesuada, est leo pretium risus, ut sodales lacus orci in arcu. Nam vulputate vehicula mauris.</p>
+<p>Etiam lacinia imperdiet nulla, a lacinia turpis accumsan in. Quisque mattis, erat ac lobortis maximus, eros odio fermentum metus, non placerat turpis felis sed odio. Pellentesque ac vestibulum sapien.</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vel velit eget metus cursus sagittis. Mauris feugiat, magna nec viverra lacinia, sapien quam convallis lorem, id ultricies justo massa in nisl.</p>
+<p>Aliquam erat volutpat. Sed nec bibendum nibh. Curabitur feugiat metus sed sapien ullamcorper, non condimentum lorem accumsan. Pellentesque ac neque at sem interdum efficitur.</p>
+<p>Morbi fermentum posuere turpis, ac lobortis leo dapibus nec. Suspendisse potenti. Proin nec diam at justo gravida feugiat. Maecenas congue, sem sed eleifend varius, metus neque finibus est, ut rhoncus augue arcu id dolor.</p>
+<p>Fusce non lacus nec libero porta vestibulum. Integer vestibulum vestibulum sapien, ut pretium lorem suscipit in. Nulla facilisi. Donec dignissim nec est ut gravida. Sed hendrerit est magna, ac convallis ligula volutpat at.</p>
+<p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean convallis, sapien id posuere malesuada, est leo pretium risus, ut sodales lacus orci in arcu. Nam vulputate vehicula mauris.</p>
+<p>Etiam lacinia imperdiet nulla, a lacinia turpis accumsan in. Quisque mattis, erat ac lobortis maximus, eros odio fermentum metus, non placerat turpis felis sed odio. Pellentesque ac vestibulum sapien.</p>…</p></div>
+    <div id="story-text-en" class="modal-text lang-en"><p>E<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vel velit eget metus cursus sagittis. Mauris feugiat, magna nec viverra lacinia, sapien quam convallis lorem, id ultricies justo massa in nisl.</p>
+<p>Aliquam erat volutpat. Sed nec bibendum nibh. Curabitur feugiat metus sed sapien ullamcorper, non condimentum lorem accumsan. Pellentesque ac neque at sem interdum efficitur.</p>
+<p>Morbi fermentum posuere turpis, ac lobortis leo dapibus nec. Suspendisse potenti. Proin nec diam at justo gravida feugiat. Maecenas congue, sem sed eleifend varius, metus neque finibus est, ut rhoncus augue arcu id dolor.</p>
+<p>Fusce non lacus nec libero porta vestibulum. Integer vestibulum vestibulum sapien, ut pretium lorem suscipit in. Nulla facilisi. Donec dignissim nec est ut gravida. Sed hendrerit est magna, ac convallis ligula volutpat at.</p>
+<p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean convallis, sapien id posuere malesuada, est leo pretium risus, ut sodales lacus orci in arcu. Nam vulputate vehicula mauris.</p>
+<p>Etiam lacinia imperdiet nulla, a lacinia turpis accumsan in. Quisque mattis, erat ac lobortis maximus, eros odio fermentum metus, non placerat turpis felis sed odio. Pellentesque ac vestibulum sapien.</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vel velit eget metus cursus sagittis. Mauris feugiat, magna nec viverra lacinia, sapien quam convallis lorem, id ultricies justo massa in nisl.</p>
+<p>Aliquam erat volutpat. Sed nec bibendum nibh. Curabitur feugiat metus sed sapien ullamcorper, non condimentum lorem accumsan. Pellentesque ac neque at sem interdum efficitur.</p>
+<p>Morbi fermentum posuere turpis, ac lobortis leo dapibus nec. Suspendisse potenti. Proin nec diam at justo gravida feugiat. Maecenas congue, sem sed eleifend varius, metus neque finibus est, ut rhoncus augue arcu id dolor.</p>
+<p>Fusce non lacus nec libero porta vestibulum. Integer vestibulum vestibulum sapien, ut pretium lorem suscipit in. Nulla facilisi. Donec dignissim nec est ut gravida. Sed hendrerit est magna, ac convallis ligula volutpat at.</p>
+<p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean convallis, sapien id posuere malesuada, est leo pretium risus, ut sodales lacus orci in arcu. Nam vulputate vehicula mauris.</p>
+<p>Etiam lacinia imperdiet nulla, a lacinia turpis accumsan in. Quisque mattis, erat ac lobortis maximus, eros odio fermentum metus, non placerat turpis felis sed odio. Pellentesque ac vestibulum sapien.</p></p></div>
+    <button class="back-to-top" id="backToTopBtn" onclick="scrollToTop()">Torna su</button>
+  </div>
+</div>
+
+<!-- SCRIPT -->
+<script src="js/script.js" defer></script>
+<script src="js/bio.js" defer></script>
+
+</body>
+</html>

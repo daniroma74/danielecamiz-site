@@ -1,0 +1,188 @@
+:root {
+    --accent-color: #f0b700;
+  }
+  
+  /* === GALLERIA COVER === */
+  .gallery-covers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  .cover-block {
+    cursor: pointer;
+    text-align: center;
+    max-width: 300px;
+  }
+  .cover-block img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--accent-color);
+    transition: transform 0.3s ease;
+  }
+  .cover-block img:hover {
+    transform: scale(1.03);
+  }
+  .cover-title {
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: white;
+    font-size: 1.1rem;
+  }
+  
+  /* === GALLERY TABS === */
+  .gallery-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+  .gallery-tabs button {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .gallery-tabs button.active,
+  .gallery-tabs button:hover {
+    background: var(--accent-color);
+    color: black;
+  }
+  
+  /* === GALLERY GRID === */
+  .gallery-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0 1rem;
+  }
+  .gallery-grid img {
+    max-width: 240px;
+    height: auto;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border: 2px solid var(--accent-color);
+  }
+  .gallery-grid img:hover {
+    transform: scale(1.02);
+  }
+  
+  /* === LIGHTBOX === */
+  #lightbox {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  #lightbox.show {
+    display: block;
+    opacity: 1;
+  }
+  .lightbox-image-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 95vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10000;
+  }
+  .lightbox-image-wrapper img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 10px;
+    border: 3px solid var(--accent-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    object-fit: contain;
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    color: var(--accent-color);
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    z-index: 10001;
+    transition: transform 0.2s ease;
+  }
+  .lightbox-close:hover {
+    transform: scale(1.2);
+    background: var(--accent-color);
+    color: black;
+  }
+  .lightbox-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.8rem;
+    color: var(--accent-color);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 10001;
+  }
+  .lightbox-arrow.left {
+    left: 2%;
+  }
+  .lightbox-arrow.right {
+    right: 2%;
+  }
+  .lightbox-arrow:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  /* === COUNTER === */
+  .lightbox-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+    color: var(--accent-color);
+    background: rgba(0,0,0,0.5);
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    z-index: 10001;
+  }
+  
+  /* === TORNA === */
+  .return-to-gallery-tabs {
+    text-align: center;
+    margin: 2rem 0 1rem;
+  }
+  .btn-return {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 0.6rem 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  .btn-return:hover {
+    background-color: var(--accent-color);
+    color: black;
+  }

@@ -1,0 +1,306 @@
+/* ====== HERO ====== */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+.hero-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(15, 15, 15, 0) 0%, rgba(15, 15, 15, 1) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.motto {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3.6rem;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.5px;
+  color: #e2c471;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  animation: fadeInSoft 2s ease-out forwards, glowPulse 2.5s ease-in-out infinite;
+  z-index: 3;
+  text-align: center;
+}
+
+/* ====== RESPONSIVE HERO ====== */
+@media (max-width: 768px) {
+  .hero {
+    position: relative;
+    height: 75dvh;
+    overflow: hidden;
+  }
+
+  .hero-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    transform: translateX(-22%);
+  }
+
+  .motto {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.8rem;
+    text-align: center;
+  }
+
+  .overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to bottom, rgba(15, 15, 15, 0) 0%, rgba(15, 15, 15, 1) 100%);
+    pointer-events: none;
+  }
+}
+@media (max-width: 1024px) and (orientation: landscape) {
+  .hero {
+    height: 100vh;
+  }
+
+  .hero-img {
+    transform: translate(+15%, +25%) scale(1.8);
+    object-fit: contain;
+  }
+
+  .motto {
+    top: 80%;
+    font-size: 2.4rem;
+  }
+
+  .overlay {
+    height: 50%;
+  }
+}
+/* ====== RESPONSIVE HERO – TABLET E PICCOLI SCHERMI DESKTOP ====== */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .hero {
+    height: 85vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    transform: translateX(-18%);
+  }
+
+  .motto {
+    position: absolute;
+    top: 58%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3.2rem;
+    text-align: center;
+  }
+
+  .overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 35%;
+    background: linear-gradient(to bottom, rgba(15, 15, 15, 0) 0%, rgba(15, 15, 15, 1) 100%);
+    pointer-events: none;
+  }
+}
+/* ====== ANIMAZIONI ====== */
+@keyframes fadeInSoft {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.45);
+  }
+  50% {
+    text-shadow:
+      2px 2px 14px rgba(240, 200, 100, 0.9),
+      0 0 12px rgba(255, 190, 80, 0.5);
+  }
+}
+
+/* ====== TIMELINE (home) ====== */
+#timeline {
+  padding: var(--section-padding);
+  max-width: var(--max-width);
+  margin: auto;
+}
+
+.timeline-intro-block {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+#counter {
+  font-style: italic;
+  color: var(--light-accent);
+  margin-top: 0.3rem;
+}
+
+.year-block {
+  border-left: 3px solid var(--accent-color);
+  margin-bottom: 3rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.year-block .year-header {
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: var(--light-accent);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.year-arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.year-block.expanded .year-arrow {
+  transform: rotate(180deg);
+}
+
+.year-content {
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+
+/* ====== CONTATTI (home) ====== */
+#contact {
+  padding: var(--section-padding);
+  max-width: var(--max-width);
+  margin: auto;
+  text-align: center;
+}
+
+.contact-wrapper {
+  margin: 3rem auto;
+  padding: 2rem 2.2rem 1.8rem;
+  background-color: #111;
+  border: 1.5px solid var(--accent-color);
+  border-radius: 10px;
+  max-width: 580px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 0.8rem;
+  background: #222;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.contact-form button {
+  margin-top: 1rem;
+  background: var(--accent-color);
+  color: black;
+  border: none;
+  padding: 0.7rem 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.contact-form button:hover {
+  background-color: var(--light-accent);
+}
+
+.contact-icons {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.contact-icons img {
+  width: 30px;
+  height: 30px;
+  filter: brightness(1.2);
+  transition: transform 0.3s ease;
+}
+
+.contact-icons img:hover {
+  transform: scale(1.1);
+}
+
+/* ====== ANIMAZIONI (solo per home) ====== */
+@keyframes fadeInSoft {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.45);
+  }
+  50% {
+    text-shadow:
+      2px 2px 14px rgba(240, 200, 100, 0.9),
+      0 0 12px rgba(255, 190, 80, 0.5);
+  }
+}

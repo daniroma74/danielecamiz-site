@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galleria – Daniele Camiz</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/galleria.css">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icons/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/icons/favicon-180.png">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- ====== NAVBAR ====== -->
+<nav class="navbar">
+  <div class="nav-left"><a href="index.html" class="logo">Daniele Camiz</a></div>
+  <div class="nav-center">
+    <div class="menu" id="mainMenu">
+      <a href="index.html" class="lang-it active">Home</a>
+      <a href="index.html" class="lang-en active">Home</a>
+      <a href="bio2.html" class="lang-it">Chi sono</a>
+      <a href="bio2.html" class="lang-en">About</a>
+      <a href="concerti.html" class="lang-it">Concerti</a>
+      <a href="concerti.html" class="lang-en">Concerts</a>
+      <a href="galleria.html" class="lang-it">Galleria</a>
+      <a href="galleria.html" class="lang-en">Gallery</a>
+      <a href="video.html" class="lang-it">Video</a>
+      <a href="video.html" class="lang-en">Videos</a>
+      <a href="repertorio.html" class="lang-it">Repertorio</a>
+      <a href="repertorio.html" class="lang-en">Repertoire</a>
+      <a href="press.html" class="lang-it">Press</a>
+      <a href="press.html" class="lang-en">Press & Media</a>
+      <a href="index.html#contact" class="lang-it">Contatti</a>
+      <a href="index.html#contact" class="lang-en">Contact</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="lang-switch">
+      <span id="btn-it" onclick="switchLang('it')">IT</span> |
+      <span id="btn-en" onclick="switchLang('en')">EN</span>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()"><div></div><div></div><div></div></div>
+  </div>
+</nav>
+
+<!-- ====== GALLERIA ====== -->
+<section id="galleria">
+  <h2 class="lang-it visible">Galleria fotografica</h2>
+  <h2 class="lang-en">Photo Gallery</h2>
+
+  <div class="return-to-gallery-tabs" style="display:none;">
+    <button onclick="tornaAllaGalleria()" class="btn-return lang-it visible">← Torna alla galleria</button>
+    <button onclick="tornaAllaGalleria()" class="btn-return lang-en">← Back to gallery</button>
+  </div>
+
+  <div class="gallery-covers"></div>
+  <div class="gallery-tabs" style="display:none;"></div>
+</section>
+
+<!-- ====== LIGHTBOX ====== -->
+<div id="lightbox" style="display: none;">
+  <div class="lightbox-image-wrapper">
+    <span class="lightbox-close" onclick="closeLightbox()">×</span>
+    <img id="lightbox-img" src="" alt="Foto grande">
+    <div class="lightbox-arrow left" onclick="prevImage(event)">&#10094;</div>
+    <div class="lightbox-arrow right" onclick="nextImage(event)">&#10095;</div>
+  </div>
+  <div class="lightbox-counter" id="counter"></div>
+</div>
+
+<script src="js/script.js" defer></script>
+<script src="js/galleria_script.js" defer></script>
+</body>
+</html>

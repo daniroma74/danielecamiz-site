@@ -1,0 +1,278 @@
+/* Admin Concerti CSS */
+:root {
+  --bg-color: #0f0f0f;
+  --text-color: #ffffff;
+  --accent-color: #cba135;
+  --light-accent: #e6c46a;
+  --section-padding: 4rem 1rem;
+  --max-width: 900px;
+}
+
+/* Admin Section */
+#admin-concerti {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Cormorant Garamond', serif;
+  padding: var(--section-padding);
+  max-width: var(--max-width);
+  margin: auto;
+}
+
+/* Add Concert Button */
+.btn-aggiungi {
+  background: var(--accent-color);
+  color: black;
+  padding: 1rem 2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-aggiungi:hover {
+  background-color: var(--light-accent);
+}
+
+/* Timeline Section */
+.concerti-container {
+  margin-top: 2rem;
+}
+
+.blocco-anno {
+  margin-bottom: 2rem;
+  background: #1a1a1a;
+  padding: 1rem;
+  border-radius: 8px;
+  color: var(--text-color);
+}
+
+.blocco-anno h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.concerto-compatto {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: #2b2b2b;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+  flex-wrap: wrap;
+}
+
+.concerto-compatto h3 {
+  font-size: 1.2rem;
+  color: var(--light-accent);
+}
+
+.concerto-compatto p {
+  color: var(--text-color);
+}
+
+.concerto-compatto button {
+  background-color: var(--accent-color);
+  color: black;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.concerto-compatto button:hover {
+  background-color: var(--light-accent);
+}
+.locandina-miniatura {
+  width: 100px;
+  height: auto;
+  max-height: 140px;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid #555;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.dati-concerto {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Modal Style */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.85);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 2rem;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-box {
+  background-color: #1a1a1a;
+  padding: 2rem;
+  border-radius: 8px;
+  border: 2px solid var(--accent-color);
+  max-width: 700px;
+  width: 100%;
+  color: white;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--accent-color);
+}
+
+.modal-close:hover {
+  color: var(--light-accent);
+}
+.modal-box h2 {
+  font-size: 1.5rem;
+  color: var(--accent-color);
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 1rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 0.8rem;
+  background: #2b2b2b;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+button.save-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--accent-color);
+  border: none;
+  border-radius: 4px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.save-btn:hover {
+  background-color: var(--light-accent);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .concert-entry {
+    flex-direction: column;
+  }
+
+  .concert-entry label,
+  .concert-entry input,
+  .concert-entry textarea {
+    width: 100%;
+  }
+}
+.hidden {
+  display: none !important;
+}
+.blocco-anno {
+  position: relative;
+  padding-top: 2.5rem;
+}
+
+.btn-chiudi-anno {
+  position: sticky;
+  top: 0;
+  float: right;
+  margin-left: auto;
+  background: #1a1a1a;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--accent-color);
+  cursor: pointer;
+  z-index: 5;
+  padding: 0.3rem 0.8rem;
+  border-radius: 0 0 0 6px;
+  transition: color 0.3s ease, background 0.3s ease;
+}
+
+.btn-chiudi-anno:hover {
+  color: var(--light-accent);
+  background: #2b2b2b;
+}
+
+.dati-concerto {
+  flex: 1;
+  min-width: 200px;
+}
+#edit-locandina-preview img,
+.poster-preview {
+  max-width: 150px;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid #555;
+  margin-top: 0.5rem;
+}
+.modal-box {
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+.modal-close {
+  position: sticky;
+  top: 0;
+  right: 0;
+  float: right;
+  background: transparent;
+  font-size: 1.8rem;
+  color: var(--accent-color);
+  border: none;
+  cursor: pointer;
+  z-index: 20;
+  padding: 0.2rem 0.6rem;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+  color: var(--light-accent);
+}
+.concert-entry label {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.concert-entry input,
+.concert-entry textarea {
+  padding: 0.5rem;
+  font-size: 0.95rem;
+}

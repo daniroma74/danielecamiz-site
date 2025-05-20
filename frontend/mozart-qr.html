@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Eventbrite</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      background-color: #111;
+      font-family: Georgia, serif;
+      text-align: center;
+      padding: 2rem;
+      color: white;
+    }
+
+    .qr-card {
+      display: inline-block;
+      background-color: #000;
+      border: 1.5px solid #f26522;
+      border-radius: 10px;
+      padding: 8px;
+      width: 220px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .qr-card img {
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .qr-text {
+      font-size: 12px;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .qr-text span {
+      opacity: 0.8;
+    }
+
+    .eventbrite-logo {
+      height: 22px;
+    }
+
+    button {
+      margin-top: 1rem;
+      background: #f26522;
+      color: black;
+      font-weight: bold;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background: #d6531d;
+    }
+  </style>
+</head>
+<body>
+
+<div id="qrCard" class="qr-card">
+  <img src="img/mozart-symphonies-challenge18-qr.png" alt="QR Eventbrite" />
+  <div class="qr-text">
+    Prenota su<br><span>Book on</span>
+  </div>
+  <img src="img/icons/eventbrite.png" alt="Eventbrite" class="eventbrite-logo" />
+</div>
+
+<button onclick="downloadCard()">Scarica immagine</button>
+
+<script>
+  function downloadCard() {
+    const card = document.getElementById("qrCard");
+    html2canvas(card).then(canvas => {
+      const link = document.createElement("a");
+      link.download = "qr_eventbrite.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  }
+</script>
+
+</body>
+</html>

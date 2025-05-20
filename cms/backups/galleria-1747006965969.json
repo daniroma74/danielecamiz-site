@@ -1,0 +1,67 @@
+[
+  {
+    "categoria": "concerto",
+    "titolo_it": "In concerto",
+    "titolo_en": "In concert",
+    "cover": "covers/cover-concerto-1746919502622.JPG",
+    "immagini": [
+      {
+        "file": "1747005590817-daniele-camiz-concerto-enarmonia2017.jpg",
+        "alt_it": "",
+        "alt_en": ""
+      },
+      {
+        "file": "1747005612422-daniele-camiz-in-concerto7.jpg",
+        "alt_it": "",
+        "alt_en": ""
+      }
+    ]
+  },
+  {
+    "categoria": "ufficiali",
+    "titolo_it": "Foto ufficiali",
+    "titolo_en": "Official photos",
+    "cover": "covers/cover-ufficiali-1746918927994.jpg",
+    "immagini": [
+      {
+        "file": "1746913952916-daniele_camiz_bacchetta_mento_nero.jpg",
+        "alt_it": "Ritratto ufficiale con bacchetta",
+        "alt_en": "Official portrait with baton",
+        "didascalia_it": "Daniele Camiz con bacchetta",
+        "didascalia_en": "Daniele Camiz with baton"
+      },
+      {
+        "file": "1746913963894-daniele_camiz_braccia_incrociate_nero.jpg",
+        "alt_it": "Daniele",
+        "alt_en": "Daniele",
+        "didascalia_it": "Daniele Camiz mano al mento",
+        "didascalia_en": "Daniele Camiz"
+      }
+    ]
+  },
+  {
+    "categoria": "prove",
+    "titolo_it": "In prova",
+    "titolo_en": "Rehearsals",
+    "cover": "covers/cover-prove-1746919624567.JPG",
+    "immagini": [
+      {
+        "file": "1746915813182-daniele_camiz_prova_cantante_corea2.jpg",
+        "alt_it": "Durante una prova orchestrale",
+        "alt_en": "During an orchestral rehearsal",
+        "didascalia_it": "",
+        "didascalia_en": ""
+      },
+      {
+        "file": "1747006768458-daniele-camiz-durante-una-prova-in-corea.jpg",
+        "didascalia_it": "Daniele Camiz durante una prova in Corea",
+        "didascalia_en": "Daniele Camiz durante una prova in Corea"
+      },
+      {
+        "file": "1747005207643-daniele-camiz-in-prova3.jpg",
+        "alt_it": "Daniele Camiz prova Mozart",
+        "alt_en": "Daniele Camiz rehearses Mozart"
+      }
+    ]
+  }
+]

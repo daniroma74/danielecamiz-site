@@ -1,0 +1,208 @@
+/* ===== BIO SPECIFICO ===== */
+.bio-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 2rem auto;
+  max-width: 1000px;
+  padding: 1rem;
+}
+
+.bio-photo {
+  flex: 1 1 300px;
+  max-width: 340px;
+  width: 100%;
+  border-radius: 8px;
+  border: 2px solid var(--accent-color);
+  object-fit: cover;
+}
+
+.bio-columns {
+  flex: 2 1 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.bio-box {
+  background-color: #1a1a1a;
+  border: 1px solid var(--accent-color);
+  border-radius: 6px;
+  padding: 2rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-color);
+  text-align: left;
+}
+
+.bio-box * {
+  text-align: left !important;
+}
+.bio-box h3 {
+  color: var(--light-accent);
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  font-size: 1.4rem; /* aumentato da 1.2rem */
+}
+
+.read-more-btn {
+  background-color: var(--accent-color);
+  color: #0f0f0f;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  padding: 0.6rem 1.2rem;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+.hidden {
+  display: none;
+}
+
+.lang-it, .lang-en {
+  display: none;
+}
+
+.lang-it.visible, .lang-en.visible {
+  display: block;
+}
+
+/* ===== MODALE ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-box {
+  background: #1a1a1a;
+  color: white;
+  width: 100%;
+  max-width: 800px;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  padding: 2rem;
+  position: relative;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 2rem;
+  color: var(--accent-color);
+  cursor: pointer;
+}
+
+.expand-toggle {
+  background: var(--accent-color);
+  color: #0f0f0f;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--accent-color);
+  width: 0%;
+  transition: width 0.2s ease;
+  border-radius: 2px;
+  margin-bottom: 0.6rem;
+}
+
+.modal-text {
+  overflow-y: auto;
+  max-height: 60vh;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  display: none;
+  text-align: justify;
+  padding-right: 1rem;
+}
+
+.modal-text.show {
+  display: block;
+}
+
+.back-to-top {
+  margin-top: 1.2rem;
+  background: var(--accent-color);
+  color: black;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.back-to-top.visible {
+  display: inline-block;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .bio-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .modal-box {
+    padding: 1.5rem;
+  }
+
+  .modal-text {
+    font-size: 1rem;
+  }
+}
+.section-title {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-top: 2rem;
+}
+/* === Modal fullscreen === */
+.modal-box.fullscreen {
+  width: 95%;
+  max-width: 1000px;
+  height: 95vh;
+  max-height: none;
+}
+.modal-box.fullscreen .modal-text {
+  max-height: calc(95vh - 120px); /* Adatta se necessario */
+  overflow-y: auto;
+}
+/* === Accessibilità focus === */
+.modal-close:focus,
+.expand-toggle:focus,
+.back-to-top:focus {
+  outline: 2px solid var(--accent-color);
+}
+
+@media (max-width: 768px) {
+  .bio-photo {
+    width: 90%;
+  }
+}

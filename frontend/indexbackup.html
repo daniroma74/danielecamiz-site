@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daniele Camiz – Homepage</title>
+  <link rel="stylesheet" href="style.css">
+
+ <!-- Favicon base -->
+<link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16.png">
+
+<!-- Icona alta risoluzione per dispositivi Android -->
+<link rel="icon" type="image/png" sizes="192x192" href="img/icons/favicon-192.png">
+
+<!-- Icona per Safari/iOS -->
+<link rel="apple-touch-icon" sizes="180x180" href="img/icons/favicon-180.png">
+
+<!-- Manifesto per PWA (opzionale, ma utile se vuoi farlo apparire come app) -->
+<link rel="manifest" href="manifest.json">
+
+</head>
+<body>
+
+<!-- ====== NAVBAR ====== -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="index.html" class="logo">Daniele Camiz</a>
+  </div>
+
+  <div class="nav-center">
+    <div class="menu" id="mainMenu">
+      <a href="index.html" class="lang-it">Home</a>
+      <a href="index.html" class="lang-en">Home</a>
+      <a href="bio.html" class="lang-it">Chi sono</a>
+      <a href="bio.html" class="lang-en">About</a>
+      <a href="concerti.html" class="lang-it">Concerti</a>
+      <a href="concerti.html" class="lang-en">Concerts</a>
+      <a href="galleria.html" class="lang-it">Galleria</a>
+      <a href="galleria.html" class="lang-en">Gallery</a>
+      <a href="video.html" class="lang-it">Video</a>
+      <a href="video.html" class="lang-en">Videos</a>
+      <a href="repertorio.html" class="lang-it">Repertorio</a>
+      <a href="repertorio.html" class="lang-en">Repertoire</a>
+      <a href="press.html" class="lang-it">Press</a>
+      <a href="press.html" class="lang-en">Press & Media</a>
+      <a href="index.html#contact" class="lang-it">Contatti</a>
+      <a href="index.html#contact" class="lang-en">Contact</a>
+    </div>
+  </div>
+
+  <div class="nav-right">
+    <div class="lang-switch">
+      <span id="btn-it" onclick="switchLang('it')">IT</span> |
+      <span id="btn-en" onclick="switchLang('en')">EN</span>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
+    </div>
+  </div>
+</nav>
+<!-- ====== HEADER HERO ====== -->
+<header id="home">
+  <div class="hero">
+    <img src="img/home.jpg" alt="Daniele Camiz" class="hero-img">
+    <div class="overlay"></div>
+    <h1 class="motto">Music is magic</h1>
+  </div>
+</header>
+
+<!-- ====== BIOGRAFIA ====== -->
+<section id="bio">
+  <h2 class="lang-it">Chi sono</h2>
+  <h2 class="lang-en">About</h2>
+
+  <div class="lang-it">
+    <p>
+      Direttore d’orchestra, pianista e insegnante, Daniele Camiz è diplomato in Direzione d’orchestra presso l'ABRSM, in pianoforte presso il Conservatorio “G.Rossini” di Pesaro, e in Musica da Camera presso “S.Cecilia” di Roma.
+    </p>
+    <a href="bio.html" class="bio-link">Scopri di più &rarr;</a>
+  </div>
+
+  <div class="lang-en">
+    <p>
+      Conductor, pianist, and teacher, Daniele Camiz graduated in Orchestral Conducting (ABRSM), Piano (G. Rossini Conservatory, Pesaro), and Chamber Music (S. Cecilia Conservatory, Rome).
+    </p>
+    <a href="bio.html" class="bio-link">Read more &rarr;</a>
+  </div>
+</section>
+
+<!-- ====== PROSSIMI CONCERTI ====== -->
+<section id="timeline">
+  <h2 class="lang-it">Prossimi concerti</h2>
+  <h2 class="lang-en">Upcoming concerts</h2>
+  <div id="concertiHome"></div>
+</section>
+
+<!-- ====== CONTATTI ====== -->
+<section id="contact">
+  <h2 class="lang-it">Contatti</h2>
+  <h2 class="lang-en">Contact</h2>
+
+  <div class="contact-wrapper">
+    <form class="contact-form">
+      <input type="text" id="name" placeholder="Nome">
+      <input type="email" id="email" placeholder="Email">
+      <textarea rows="5" id="message" placeholder="Messaggio"></textarea>
+      <button type="submit">Invia</button>
+    </form>
+
+    <div class="contact-icons">
+      <a href="mailto:daniele.camiz@gmail.com" target="_blank"><img src="img/icons/email.svg" alt="Email"></a>
+      <a href="https://youtube.com/@danielecamiz" target="_blank"><img src="img/icons/youtube.svg" alt="YouTube"></a>
+      <a href="https://www.instagram.com/danielecamiz/" target="_blank"><img src="img/icons/instagram.svg" alt="Instagram"></a>
+      <a href="https://www.facebook.com/danielecamizConductor/" target="_blank"><img src="img/icons/facebook.svg" alt="Facebook"></a>
+      <a href="https://www.linkedin.com/in/danielecamiz/" target="_blank"><img src="img/icons/linkedin.svg" alt="LinkedIn"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ====== LIGHTBOX CONCERTI ORIZZONTALE ====== -->
+<div id="concert-lightbox" style="display:none;">
+  <div class="concert-lightbox-content">
+    <span class="concert-lightbox-close" onclick="closeConcertLightbox()">×</span>
+    <div class="concert-lightbox-body">
+      <div class="concert-lightbox-img">
+        <img id="concert-poster" src="" alt="Locandina concerto">
+      </div>
+      <div class="concert-lightbox-info" id="concert-details"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SCRIPTS ====== -->
+<script src="script.js" defer></script>
+<script src="concerti/script_concerti.js" defer></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const preferredLang = localStorage.getItem('preferredLang') || 'it';
+    switchLang(preferredLang);
+    
+    // Gestione clic e selezione attiva
+    const btnIt = document.getElementById('btn-it');
+    const btnEn = document.getElementById('btn-en');
+
+    if (btnIt && btnEn) {
+      btnIt.addEventListener('click', () => {
+        btnIt.classList.add('active');
+        btnEn.classList.remove('active');
+        switchLang('it');
+      });
+
+      btnEn.addEventListener('click', () => {
+        btnEn.classList.add('active');
+        btnIt.classList.remove('active');
+        switchLang('en');
+      });
+    }
+  });
+</script>
+</body>
+</html>
