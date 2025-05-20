@@ -10,8 +10,8 @@
 <body>
 
   <div class="admin-header">
+    <a href="index.html" class="btn-back">← Torna al pannello principale</a>
     <h1>Gestione Concerti</h1>
-    <a href="index.html" class="btn-back">Torna al pannello principale</a>
   </div>
 
   <!-- Pulsante centrale -->
@@ -19,63 +19,58 @@
     <button id="btn-nuovo-concerto" class="btn-aggiungi">+ Aggiungi concerto</button>
   </div>
 
- <!-- Modale Nuovo Concerto -->
-<div id="modal-nuovo-concerto" class="modal-overlay hidden">
-  <div class="modal-box">
-    <span class="modal-close" id="chiudi-nuovo-concerto">&times;</span>
-    <h2>Aggiungi Nuovo Concerto</h2>
-    <form id="form-nuovo-concerto">
-      <div class="concert-entry">
-        <label>Data: <input type="date" id="new-data" required></label>
-        <label>Luogo: <input type="text" id="new-luogo"></label>
-        <label>Titolo: <input type="text" id="new-titolo"></label>
-        <label>Interpreti: <textarea id="new-interpreti"></textarea></label>
-        <label>Programma: <textarea id="new-programma"></textarea></label>
-        <label>Link Eventbrite: <input type="url" id="new-eventbrite"></label>
-        <label>Link YouTube: <input type="url" id="new-youtube"></label>
-
-        <label>Carica locandina:
-          <input type="file" id="new-locandina" accept="image/*">
-        </label>
-        <div class="anteprima-locandina" id="preview-locandina"></div>
-
-        <button type="submit" class="save-btn">Salva Concerto</button>
-      </div>
-    </form>
+  <!-- Modale Nuovo Concerto -->
+  <div id="modal-nuovo-concerto" class="modal-overlay hidden">
+    <div class="modal-box">
+      <span class="modal-close" id="chiudi-nuovo-concerto">&times;</span>
+      <h2>Aggiungi Nuovo Concerto</h2>
+      <form id="form-nuovo-concerto">
+        <div class="concert-entry">
+          <label>Data: <input type="date" id="new-data" required></label>
+          <label>Luogo: <input type="text" id="new-luogo"></label>
+          <label>Titolo: <input type="text" id="new-titolo"></label>
+          <label>Interpreti: <textarea id="new-interpreti"></textarea></label>
+          <label>Programma: <textarea id="new-programma"></textarea></label>
+          <label>Link Eventbrite: <input type="url" id="new-eventbrite"></label>
+          <label>Link YouTube: <input type="url" id="new-youtube"></label>
+          <label>Carica locandina:
+            <input type="file" id="new-locandina" accept="image/*">
+          </label>
+          <div class="anteprima-locandina" id="preview-locandina"></div>
+          <button type="submit" class="save-btn">Salva Concerto</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
   <!-- Timeline concerti -->
   <div id="timeline-concerti" class="concerti-container"></div>
 
   <!-- Modale Modifica Concerto -->
-<div id="modal-modifica-concerto" class="modal-overlay hidden">
-  <div class="modal-box">
-    <span class="modal-close" id="chiudi-modifica-concerto">&times;</span>
-    <h2>Modifica Concerto</h2>
-    <form id="form-modifica-concerto">
-      <div class="concert-entry">
-        <label>Data: <input type="date" id="edit-data" required></label>
-        <label>Luogo: <input type="text" id="edit-luogo"></label>
-        <label>Titolo: <input type="text" id="edit-titolo"></label>
-        <label>Interpreti: <textarea id="edit-interpreti"></textarea></label>
-        <label>Programma: <textarea id="edit-programma"></textarea></label>
-        <label>Link Eventbrite: <input type="url" id="edit-eventbrite"></label>
-        <label>Link YouTube: <input type="url" id="edit-youtube"></label>
-
-        <label>Locandina attuale:</label>
-        <div id="edit-locandina-preview" class="anteprima-locandina"></div>
-
-        <label>Nuova locandina: <input type="file" id="edit-locandina" accept="image/*"></label>
-
-        <div class="concert-buttons">
-          <button type="submit" class="save-btn">Salva modifiche</button>
-          <button type="button" id="btn-elimina-concerto" class="concert-button">Elimina concerto</button>
+  <div id="modal-modifica-concerto" class="modal-overlay hidden">
+    <div class="modal-box">
+      <span class="modal-close" id="chiudi-modifica-concerto">&times;</span>
+      <h2>Modifica Concerto</h2>
+      <form id="form-modifica-concerto">
+        <div class="concert-entry">
+          <label>Data: <input type="date" id="edit-data" required></label>
+          <label>Luogo: <input type="text" id="edit-luogo"></label>
+          <label>Titolo: <input type="text" id="edit-titolo"></label>
+          <label>Interpreti: <textarea id="edit-interpreti"></textarea></label>
+          <label>Programma: <textarea id="edit-programma"></textarea></label>
+          <label>Link Eventbrite: <input type="url" id="edit-eventbrite"></label>
+          <label>Link YouTube: <input type="url" id="edit-youtube"></label>
+          <label>Locandina attuale:</label>
+          <div id="edit-locandina-preview" class="anteprima-locandina"></div>
+          <label>Nuova locandina: <input type="file" id="edit-locandina" accept="image/*"></label>
+          <div class="concert-buttons">
+            <button type="submit" class="save-btn">Salva modifiche</button>
+            <button type="button" id="btn-elimina-concerto" class="btn-delete">Elimina concerto</button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
-</div>
 
   <script src="/admin/concerti.js"></script>
 </body>
