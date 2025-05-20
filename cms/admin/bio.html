@@ -135,15 +135,7 @@
       </select>
     </label>
     <label>Campo:
-      <select id="campoSingolo" onchange="caricaEditor()">
-        <option value="title">Titolo</option>
-        <option value="intro">Intro</option>
-        <option value="more">Contenuto</option>
-        <option value="titolo">Titolo</option>
-        <option value="testoBreve">Intro</option>
-        <option value="testoEsteso">Contenuto</option>
-        <option value="contenuto">Contenuto</option>
-      </select>
+      <select id="campoSingolo"></select>
     </label>
   </div>
 
@@ -204,27 +196,36 @@
     }
 
     function caricaEditor() {
-      const modo = document.getElementById('modo').value;
-      const sezione = document.getElementById('sezione').value;
-      const campoSelezionato = document.getElementById('campoSingolo').value;
+  const modo = document.getElementById('modo').value;
+  const sezione = document.getElementById('sezione').value;
+  const campoSelezionato = document.getElementById('campoSingolo').value;
+  const container = document.getElementById('editori');
+  container.innerHTML = '';
 
-      const container = document.getElementById('editori');
-      container.innerHTML = '';
+  // Aggiorna dinamicamente i campi del select solo se in modalità singolo
+  if (modo === 'singolo') {
+    const campoSelect = document.getElementById('campoSingolo');
+    campoSelect.innerHTML = ''; // svuota le opzioni
 
-      const campi = campiDisponibili[sezione];
-      const daMostrare = modo === 'singolo' ? [campoSelezionato] : campi;
+    campiDisponibili[sezione].forEach(c => {
+      const label = labelMap[c] || c;
+      const option = document.createElement('option');
+      option.value = c;
+      option.textContent = label;
+      campoSelect.appendChild(option);
+    });
+  }
 
-      daMostrare.forEach(campo => {
-        container.innerHTML += `
-          <div style="display: flex; gap: 1rem;">
-            ${['it', 'en'].map(lang => {
-              const val = dati[sezione]?.[lang]?.[campo] || '';
-              return creaEditor(lang, campo, val);
-            }).join('')}
-          </div>
-        `;
-      });
-    }
+  const campi = campiDisponibili[sezione];
+  const daMostrare = modo === 'singolo' ? [campoSelezionato] : campi;
+
+  daMostrare.forEach(campo => {
+    ['it', 'en'].forEach(lang => {
+      const val = dati[sezione]?.[lang]?.[campo] || '';
+      container.innerHTML += creaEditor(lang, campo, val);
+    });
+  });
+}
 
     function aggiornaAnteprima(id) {
       const val = document.getElementById(id).value;
