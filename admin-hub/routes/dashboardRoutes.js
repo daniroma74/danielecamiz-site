@@ -2,11 +2,11 @@
 
 const express = require('express');
 const router = express.Router();
-const { 
-    showDashboard, 
-    getModuleDetails, 
-    updateModuleStatus 
-} = require('../controllers/dashboard.controller');
+const {
+    showDashboard,
+    getModuleDetails,
+    updateModuleStatus
+} = require('../controllers/dashboardController');
 const { requireRole } = require('../middleware/auth');
 
 // Dashboard principale

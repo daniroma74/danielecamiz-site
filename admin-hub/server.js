@@ -52,13 +52,13 @@ if (process.env.NODE_ENV !== 'production') {
 // Importa middleware personalizzati
 const { setupSecurity } = require('./middleware/security');
 const { authMiddleware, isAuthenticated } = require('./middleware/auth');
-const { createRateLimiter } = require('./middleware/rateLimit');
+const { createRateLimiter } = require('./middleware/rateLimits');
 
 // Importa routes
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const apiRoutes = require('./routes/apiRoutes');
-const settingsRoutes = require('./routes/settingsRoutes');
+const settingsRoutes = require('./routes/settingRoutes');
 
 // Inizializza Express
 const app = express();
@@ -104,11 +104,11 @@ const corsOptions = {
             allowedDomains.push('http://localhost:3103');
         }
         
-        // Permetti richieste senza origin (es. Postman) in dev
-        if (!origin && process.env.NODE_ENV === 'development') {
+        // Permetti richieste senza origin (direct browser access, Postman, curl, etc.)
+        if (!origin) {
             return callback(null, true);
         }
-        
+
         if (allowedDomains.indexOf(origin) !== -1) {
             callback(null, true);
         } else {

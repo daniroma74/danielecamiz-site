@@ -14,10 +14,10 @@ const {
 } = require('../controllers/authController');
 
 // Pagina login (GET)
-router.get('/login', isAuthenticated, showLogin);
+router.get('/login', showLogin);
 
 // Processo login (POST)
-router.post('/login', isAuthenticated, processLogin);
+router.post('/login', processLogin);
 
 // Pagina 2FA (GET)
 router.get('/two-factor', show2FA);

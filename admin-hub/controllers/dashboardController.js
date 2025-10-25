@@ -8,8 +8,8 @@ const showDashboard = async (req, res) => {
     try {
         // Carica moduli dal database
         const dbModules = await all(
-            `SELECT * FROM modules 
-             WHERE status != 'disabled' 
+            `SELECT * FROM hub_modules
+             WHERE status != 'disabled'
              ORDER BY order_index ASC`
         );
         
@@ -65,28 +65,28 @@ async function getDashboardStats(userId) {
     try {
         // Moduli attivi
         const activeModules = await get(
-            "SELECT COUNT(*) as count FROM modules WHERE status = 'active'"
+            "SELECT COUNT(*) as count FROM hub_modules WHERE status = 'active'"
         );
-        
+
         // Utenti online (sessioni attive ultima ora)
         const onlineUsers = await get(
-            `SELECT COUNT(DISTINCT user_id) as count 
-             FROM user_sessions 
+            `SELECT COUNT(DISTINCT user_id) as count
+             FROM hub_sessions
              WHERE expires_at > datetime('now')`
         );
-        
+
         // Ultima attività
         const lastActivity = await get(
-            `SELECT created_at FROM activity_logs 
-             WHERE user_id = ? 
-             ORDER BY created_at DESC 
+            `SELECT created_at FROM hub_activity_logs
+             WHERE user_id = ?
+             ORDER BY created_at DESC
              LIMIT 1`,
             [userId]
         );
-        
+
         // Status sicurezza
         const user = await get(
-            'SELECT two_factor_enabled FROM users WHERE id = ?',
+            'SELECT two_factor_enabled FROM hub_users WHERE id = ?',
             [userId]
         );
         
@@ -116,9 +116,9 @@ async function getDashboardStats(userId) {
 async function getRecentActivities(userId) {
     try {
         const activities = await all(
-            `SELECT a.*, u.username 
-             FROM activity_logs a
-             LEFT JOIN users u ON a.user_id = u.id
+            `SELECT a.*, u.username
+             FROM hub_activity_logs a
+             LEFT JOIN hub_users u ON a.user_id = u.id
              ORDER BY a.created_at DESC
              LIMIT 10`
         );
@@ -146,7 +146,7 @@ const getModuleDetails = async (req, res) => {
         const { moduleId } = req.params;
         
         const module = await get(
-            'SELECT * FROM modules WHERE id = ?',
+            'SELECT * FROM hub_modules WHERE id = ?',
             [moduleId]
         );
         
@@ -208,7 +208,7 @@ const updateModuleStatus = async (req, res) => {
         }
         
         const result = await run(
-            'UPDATE modules SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            'UPDATE hub_modules SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
             [status, moduleId]
         );
         
@@ -221,7 +221,7 @@ const updateModuleStatus = async (req, res) => {
         
         // Log attività
         await run(
-            `INSERT INTO activity_logs (user_id, action, details)
+            `INSERT INTO hub_activity_logs (user_id, action, details)
              VALUES (?, ?, ?)`,
             [
                 req.user.id,
