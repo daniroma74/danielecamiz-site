@@ -1,0 +1,88 @@
+
+
+<main id="event_new" class="admin-event new-event">
+  <header class="page-header">
+    <h1 class="page-title"><%= title %></h1>
+    <p class="page-subtitle">Compila i dettagli di base e salva per creare l'evento.</p>
+  </header>
+
+  <form id="event_form" class="form" action="/admin/events" method="post" novalidate>
+    <section class="form-section">
+      <h2 class="section-title">Dettagli</h2>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="title">Titolo *</label>
+          <input id="title" name="title" class="input" type="text" required autocomplete="off" value="<%= event.title || '' %>">
+        </div>
+        <div class="form-field">
+          <label for="subtitle">Sottotitolo</label>
+          <input id="subtitle" name="subtitle" class="input" type="text" autocomplete="off" value="<%= event.subtitle || '' %>">
+        </div>
+        <div class="form-field">
+          <label for="slug">Slug (opzionale)</label>
+          <input id="slug" name="slug" class="input" type="text" autocomplete="off" placeholder="es. concerto-autunno-2025" value="<%= event.slug || '' %>">
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="section-title">Data e orari</h2>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="date">Data</label>
+          <input id="date" name="date" class="input" type="date" value="<%= event.date || '' %>">
+        </div>
+        <div class="form-field">
+          <label for="time_start">Ora inizio</label>
+          <input id="time_start" name="time_start" class="input" type="time" step="60" value="<%= event.time_start || '' %>">
+        </div>
+        <div class="form-field">
+          <label for="time_end">Ora fine</label>
+          <input id="time_end" name="time_end" class="input" type="time" step="60" value="<%= event.time_end || '' %>">
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="section-title">Luogo</h2>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="city">Città</label>
+          <input id="city" name="city" class="input" type="text" autocomplete="off" value="<%= event.city || '' %>">
+        </div>
+        <div class="form-field">
+          <label for="venue">Venue</label>
+          <input id="venue" name="venue" class="input" type="text" autocomplete="off" value="<%= event.venue || '' %>">
+        </div>
+        <div class="form-field">
+          <label for="location">Indirizzo/Località</label>
+          <input id="location" name="location" class="input" type="text" autocomplete="off" value="<%= event.location || '' %>">
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="section-title">Stato e note</h2>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="status">Stato</label>
+          <select id="status" name="status" class="input">
+            <option value="" <%= !event.status ? 'selected' : '' %>></option>
+            <option value="draft" <%= event.status === 'draft' ? 'selected' : '' %>>Bozza</option>
+            <option value="published" <%= event.status === 'published' ? 'selected' : '' %>>Pubblicato</option>
+            <option value="cancelled" <%= event.status === 'cancelled' ? 'selected' : '' %>>Annullato</option>
+          </select>
+        </div>
+        <div class="form-field form-field--full">
+          <label for="program_notes">Note programma</label>
+          <textarea id="program_notes" name="program_notes" class="input" rows="4" placeholder="(facoltative)"><%= event.program_notes || '' %></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-actions">
+      <a href="/admin/events" class="btn btn-secondary">Annulla</a>
+      <button type="submit" class="btn btn-primary">Crea evento</button>
+    </section>
+  </form>
+</main>

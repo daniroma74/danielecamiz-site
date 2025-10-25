@@ -1,0 +1,124 @@
+cd ~/danielecamiz-site/cms/views/pages/frontend
+
+# 1) Backup del file attuale
+cp contact.ejs contact.ejs.bak-$(date +%F-%H%M)
+
+# 2) Sovrascrivi con la versione robusta
+cat > contact.ejs <<'EOF'
+<%-
+  // Dati attesi:
+  //   contactData (avatar, title, role, highlightsTitle, highlights[], onlineTitle, socialLinks[], extraTitle, extraLinks[])
+  //   t() disponibile in res.locals.t
+-%>
+<%
+  // ——— Guardie sicure per lingua/traduzioni ———
+  const _langCandidate =
+    (typeof lang !== 'undefined' && lang) ||
+    (typeof i18n !== 'undefined' && i18n && i18n.language) ||
+    (typeof locals !== 'undefined' && locals && locals.lang) ||
+    'it';
+  const _lang = String(_langCandidate || 'it').toLowerCase();
+  const isEn  = _lang.startsWith('en');
+
+  const _t = (k, def='') => {
+    try {
+      const v = (typeof t === 'function') ? t(k) : '';
+      return (v && v !== k) ? v : def;
+    } catch { return def; }
+  };
+
+  const d = contactData || {};
+
+  const pageTitle = d.title || _t('contact.title',            isEn ? 'Contacts'           : 'Contatti');
+  const pageRole  = d.role  || _t('contact.role',             '');
+  const hlTitle   = d.highlightsTitle || _t('contact.highlights_title', isEn ? 'Highlights' : 'In evidenza');
+  const onTitle   = d.onlineTitle     || _t('contact.online_title',     isEn ? 'Online'     : 'Online');
+  const exTitle   = d.extraTitle      || _t('contact.extra_title',      isEn ? 'More links' : 'Altri link');
+
+  const emptyHighlights = _t('contact.no_highlights', isEn ? 'No highlighted links' : 'Nessun link in evidenza');
+  const emptySocial     = _t('contact.no_social',     isEn ? 'No social links'      : 'Nessun link social');
+  const emptyExtra      = _t('contact.no_extra_links',isEn ? 'No extra links'       : 'Nessun link extra');
+
+  const safeArray = (arr) => Array.isArray(arr) ? arr : [];
+%>
+
+<section id="contact_linktree">
+
+  <!-- Avatar e titolo -->
+  <div class="linktree-avatar">
+    <img id="contact_avatar"
+         src="<%= d.avatar || '/img/daniele-camiz-foto-profilo.png' %>"
+         alt="<%= pageTitle %>" />
+  </div>
+
+  <h1 id="contact_title" class="linktree-title"><%= pageTitle %></h1>
+  <% if (pageRole) { %>
+    <div id="contact_role" class="linktree-role"><%= pageRole %></div>
+  <% } %>
+
+  <!-- Highlights -->
+  <h2 id="contact_highlights_title" class="section-highlight"><%= hlTitle %></h2>
+  <div id="contact_highlights" class="linktree-links">
+    <% if (safeArray(d.highlights).length) { %>
+      <% safeArray(d.highlights).forEach(link => { %>
+        <% if (link && link.url) { %>
+          <a href="<%= link.url %>" target="_blank" rel="noopener" class="linktree-btn">
+            <% if (link.icon) { %>
+              <img src="<%= link.icon %>" alt="<%= link.alt || '' %>" class="icon" />
+            <% } %>
+            <%= link.text || link.url %>
+          </a>
+        <% } %>
+      <% }) %>
+    <% } else { %>
+      <div class="empty"><%= emptyHighlights %></div>
+    <% } %>
+  </div>
+
+  <!-- Online -->
+  <h2 id="contact_online_title" class="section-title"><%= onTitle %></h2>
+  <div id="contact_social" class="linktree-links">
+    <% if (safeArray(d.socialLinks).length) { %>
+      <% safeArray(d.socialLinks).forEach(link => { %>
+        <% if (link && link.url) { %>
+          <a class="linktree-btn" href="<%= link.url %>" target="_blank" rel="noopener">
+            <% if (link.iconGold) { %>
+              <img src="<%= link.iconGold %>" alt="<%= link.altGold || '' %>" class="icon gold" />
+            <% } %>
+            <% if (link.iconBlack) { %>
+              <img src="<%= link.iconBlack %>" alt="<%= link.altBlack || '' %>" class="icon black" />
+            <% } %>
+            <%= link.text || link.url %>
+          </a>
+        <% } %>
+      <% }) %>
+    <% } else { %>
+      <div class="empty"><%= emptySocial %></div>
+    <% } %>
+  </div>
+
+  <!-- Extra Links -->
+  <h2 id="contact_extra_title" class="section-highlight"><%= exTitle %></h2>
+  <div id="contact_extra" class="section-extra-links">
+    <% if (safeArray(d.extraLinks).length) { %>
+      <% safeArray(d.extraLinks).forEach(link => { %>
+        <% if (link && link.url) { %>
+          <a class="linktree-btn" href="<%= link.url %>" target="_blank" rel="noopener">
+            <% if (link.iconGold) { %>
+              <img src="<%= link.iconGold %>" alt="<%= link.altGold || '' %>" class="icon gold" />
+            <% } %>
+            <% if (link.iconBlack) { %>
+              <img src="<%= link.iconBlack %>" alt="<%= link.altBlack || '' %>" class="icon black" />
+            <% } %>
+            <%= link.text || link.url %>
+          </a>
+        <% } %>
+      <% }) %>
+    <% } else { %>
+      <div class="empty"><%= emptyExtra %></div>
+    <% } %>
+  </div>
+
+</section>
+EOF
+

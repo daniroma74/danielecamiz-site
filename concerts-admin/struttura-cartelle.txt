@@ -1,0 +1,56 @@
+.
+├── config
+│   └── database.js
+├── controllers
+│   ├── concertsController.js
+│   └── repertoireController.js
+├── ecosystem.config.cjs
+├── .env
+├── logs
+│   ├── combined-16.log
+│   ├── combined-17.log
+│   ├── combined.log
+│   ├── err-16.log
+│   ├── err-17.log
+│   ├── err.log
+│   ├── out-16.log
+│   ├── out-17.log
+│   └── out.log
+├── middleware
+│   ├── errorHandler.js
+│   └── simpleAuth.js
+├── package.json
+├── package-lock.json
+├── public
+│   ├── css
+│   │   ├── admin.css
+│   │   ├── concert-editor.css
+│   │   ├── concerts-admin.css
+│   │   └── repertoire.css
+│   └── js
+│       ├── concert-editor.js
+│       ├── concerts-admin.js
+│       ├── repertoire-admin.js
+│       └── search.js
+├── routes
+│   ├── admin.js
+│   ├── api.js
+│   └── auth.js
+├── scripts
+├── server.js
+├── services
+│   └── cloudinaryService.js
+├── struttura-cartelle.txt
+└── views
+    ├── error.ejs
+    ├── errors
+    │   ├── 404.ejs
+    │   └── 500.ejs
+    └── pages
+        ├── concert-editor.ejs
+        ├── dashboard.ejs
+        ├── login.ejs
+        ├── repertoire.ejs
+        └── search.ejs
+
+14 directories, 40 files

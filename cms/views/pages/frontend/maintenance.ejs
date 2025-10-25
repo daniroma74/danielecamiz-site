@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= type === 'global' ? 'Sito in manutenzione' : `Pagina ${page.toUpperCase()} in manutenzione` %></title>
+  <style>
+    body {
+      background: #111;
+      color: #ffd700;
+      font-family: 'Cormorant Garamond', serif;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <% if (type === 'global') { %>
+      <h1>Sito in manutenzione</h1>
+      <p>Il sito è temporaneamente non disponibile per aggiornamenti. Torna a visitarci a breve.</p>
+    <% } else { %>
+      <h1>Pagina <%= page.toUpperCase() %> in manutenzione</h1>
+      <p>Ti invitiamo a tornare più tardi. Grazie per la pazienza!</p>
+    <% } %>
+    <p>Per urgenze: <a href="mailto:info@danielecamiz.com" style="color:#ffd700;">info@danielecamiz.com</a></p>
+  </div>
+</body>
+</html>

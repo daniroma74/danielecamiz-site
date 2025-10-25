@@ -1,0 +1,21 @@
+{
+  "home": {
+    "project_title": "My Projects",
+    "news_title": "News / Blog",
+    "video_title": "Latest Videos",
+    "bandcamp": {
+      "title": "Latest releases",
+      "cta": "Listen on Bandcamp"
+    },
+    "concert_title": "Upcoming Concerts",
+    "concert_more": "All concerts",
+    "contact_title": "Contact",
+    "contact_mail": "info@danielecamiz.com",
+    "contact_more": "Other contacts →",
+    "hero": {
+      "name": "Daniele Camiz",
+      "role": "Conductor",
+      "claim": "Music is a magic"
+    }
+  }
+}

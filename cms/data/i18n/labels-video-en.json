@@ -1,0 +1,10 @@
+{
+    "video": {
+      "title": "Video Gallery",
+      "claim": "Here are some of the videos I have, so you can take a look",
+      "video1_title": "Test video 1",
+      "video2_title": "Test video 2",
+      "youtube_preview_alt": "YouTube video preview",
+      "no_videos": "No videos found."
+    }
+  }

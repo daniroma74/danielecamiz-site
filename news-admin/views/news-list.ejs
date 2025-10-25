@@ -1,0 +1,163 @@
+<!-- news-admin/views/news-list.ejs -->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestione News - Admin</title>
+  <link rel="stylesheet" href="/shared/css/admin-core.css">
+  <link rel="stylesheet" href="/static/css/news-admin.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+  
+  <div class="container">
+    <div class="page-header">
+      <h1>📰 Gestione News</h1>
+      <div class="actions">
+        <a href="/news/new" class="btn btn-primary">✍️ Nuovo Articolo</a>
+      </div>
+    </div>
+
+    <!-- Filtri -->
+    <div class="filters">
+      <div class="filter-group">
+        <label>Stato:</label>
+        <a href="?status=all" class="filter-btn <%= status === 'all' ? 'active' : '' %>">
+          Tutti (<%= total %>)
+        </a>
+        <a href="?status=published" class="filter-btn <%= status === 'published' ? 'active' : '' %>">
+          Pubblicati
+        </a>
+        <a href="?status=draft" class="filter-btn <%= status === 'draft' ? 'active' : '' %>">
+          Bozze
+        </a>
+        <a href="?status=scheduled" class="filter-btn <%= status === 'scheduled' ? 'active' : '' %>">
+          Programmati
+        </a>
+      </div>
+    </div>
+
+    <!-- Lista news -->
+    <div class="news-list">
+      <% if (posts && posts.length > 0) { %>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Titolo</th>
+              <th>Categoria</th>
+              <th>Stato</th>
+              <th>Data Pubblicazione</th>
+              <th>Aggiornato</th>
+              <th>Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% posts.forEach(post => { %>
+              <tr>
+                <td>
+                  <div class="post-title">
+                    <% if (post.cover_image) { %>
+                      <img src="<%= post.cover_image %>" alt="" class="post-thumb">
+                    <% } %>
+                    <div>
+                      <strong><%= post.title_it %></strong>
+                      <% if (post.title_en) { %>
+                        <br><small class="text-muted"><%= post.title_en %></small>
+                      <% } %>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge badge-category"><%= post.category || 'news' %></span>
+                </td>
+                <td>
+                  <span class="badge badge-<%= post.status %>">
+                    <% if (post.status === 'published') { %>✅ Pubblicato
+                    <% } else if (post.status === 'scheduled') { %>📅 Programmato
+                    <% } else { %>📝 Bozza<% } %>
+                  </span>
+                </td>
+                <td>
+                  <% if (post.publish_date) { %>
+                    <%= new Date(post.publish_date).toLocaleDateString('it-IT') %>
+                  <% } else { %>
+                    <span class="text-muted">—</span>
+                  <% } %>
+                </td>
+                <td>
+                  <small><%= new Date(post.updated_at).toLocaleDateString('it-IT') %></small>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <a href="/news/<%= post.id %>/edit" class="btn btn-sm btn-secondary" title="Modifica">
+                      ✏️ Modifica
+                    </a>
+                    <% if (post.status === 'published') { %>
+                      <a href="<%= config.frontendUrl %>/news/<%= post.slug %>" 
+                         target="_blank" 
+                         class="btn btn-sm btn-info" 
+                         title="Visualizza su staging">
+                        👁️ Staging
+                      </a>
+                    <% } %>
+                    <button onclick="deletePost(<%= post.id %>)" 
+                            class="btn btn-sm btn-danger" 
+                            title="Elimina">
+                      🗑️
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+
+        <!-- Paginazione -->
+        <% if (totalPages > 1) { %>
+          <div class="pagination">
+            <% if (page > 1) { %>
+              <a href="?status=<%= status %>&page=<%= page - 1 %>" class="btn btn-sm">← Precedente</a>
+            <% } %>
+            <span class="page-info">Pagina <%= page %> di <%= totalPages %></span>
+            <% if (page < totalPages) { %>
+              <a href="?status=<%= status %>&page=<%= page + 1 %>" class="btn btn-sm">Successiva →</a>
+            <% } %>
+          </div>
+        <% } %>
+
+      <% } else { %>
+        <div class="empty-state">
+          <p>📭 Nessun articolo trovato</p>
+          <a href="/news/new" class="btn btn-primary">Crea il primo articolo</a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    async function deletePost(id) {
+      if (!confirm('Sei sicuro di voler eliminare questo articolo?')) return;
+      
+      try {
+        const response = await fetch(`/news/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+          alert('✅ Articolo eliminato');
+          location.reload();
+        } else {
+          alert('❌ Errore durante l\'eliminazione');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
+      }
+    }
+  </script>
+</body>
+</html>

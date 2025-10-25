@@ -1,0 +1,11 @@
+/* Classi helper */
+.hidden { display: none !important; }
+.visible { display: block !important; }
+.text-center { text-align: center !important; }
+.flex { display: flex !important; }
+.inline-block { display: inline-block !important; }
+.cursor-pointer { cursor: pointer; }
+.no-select { user-select: none; }
+.overflow-hidden { overflow: hidden !important; }
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }

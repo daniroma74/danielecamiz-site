@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= data.pageTitle %></title>
+  <meta name="description" content="<%= data.description %>">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/img/icons/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/img/icons/favicon-16.png" sizes="16x16">
+  <link rel="apple-touch-icon" href="/img/icons/favicon-180.png">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= data.pageTitle %>">
+  <meta property="og:description" content="<%= data.description %>">
+  <meta property="og:image" content="<%= data.avatar %>">
+  <meta property="og:type" content="profile">
+  <meta property="og:url" content="https://contact.danielecamiz.com">
+  
+  <!-- Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="/css/main.css?v=<%= Date.now() %>">
+</head>
+<body>
+  <div class="linktree-container">
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+      <a href="/set-language/<%= data.langToggle.other %>" class="lang-switch">
+        <%= data.langToggle.label %>
+      </a>
+    </div>
+    
+    <!-- Header -->
+    <header class="linktree-header">
+      <div class="avatar-wrapper">
+        <img src="<%= data.avatar %>" alt="<%= data.name %>" class="avatar">
+      </div>
+      <h1 class="name"><%= data.name %></h1>
+      <% if (data.role) { %>
+        <p class="role"><%= data.role %></p>
+      <% } %>
+      <% if (data.bio) { %>
+        <p class="bio"><%= data.bio %></p>
+      <% } %>
+    </header>
+    
+    <!-- Highlights Section -->
+    <% if (data.highlights && data.highlights.length > 0) { %>
+      <section class="link-section highlights-section">
+        <h2 class="section-title"><%= data.highlightsTitle %></h2>
+        <div class="links-grid">
+          <% data.highlights.forEach(link => { %>
+            <a href="<%= link.url %>" 
+               class="link-card highlight-card" 
+               target="<%= link.target %>"
+               rel="noopener noreferrer">
+              <% if (link.icon) { %>
+                <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
+              <% } %>
+              <span class="link-text"><%= link.text %></span>
+            </a>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+    
+    <!-- Social Links -->
+    <% if (data.socialLinks && data.socialLinks.length > 0) { %>
+      <section class="link-section social-section">
+        <h2 class="section-title"><%= data.socialTitle %></h2>
+        <div class="links-list">
+          <% data.socialLinks.forEach(link => { %>
+            <a href="<%= link.url %>" 
+               class="link-button social-button" 
+               target="<%= link.target %>"
+               rel="noopener noreferrer">
+              <% if (link.icon) { %>
+                <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
+              <% } %>
+              <span class="link-text"><%= link.text %></span>
+            </a>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+    
+    <!-- Contact Links -->
+    <% if (data.contactLinks && data.contactLinks.length > 0) { %>
+      <section class="link-section contact-section">
+        <h2 class="section-title"><%= data.contactTitle %></h2>
+        <div class="links-list">
+          <% data.contactLinks.forEach(link => { %>
+            <a href="<%= link.url %>" 
+               class="link-button contact-button" 
+               target="<%= link.target %>"
+               rel="noopener noreferrer">
+              <% if (link.icon) { %>
+                <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
+              <% } %>
+              <span class="link-text"><%= link.text %></span>
+            </a>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+    
+    <!-- Extra Links -->
+    <% if (data.extraLinks && data.extraLinks.length > 0) { %>
+      <section class="link-section extra-section">
+        <h2 class="section-title"><%= data.extraTitle %></h2>
+        <div class="links-list">
+          <% data.extraLinks.forEach(link => { %>
+            <a href="<%= link.url %>" 
+               class="link-button extra-button" 
+               target="<%= link.target %>"
+               rel="noopener noreferrer">
+              <% if (link.icon) { %>
+                <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
+              <% } %>
+              <span class="link-text"><%= link.text %></span>
+            </a>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+    
+    <!-- Footer -->
+    <footer class="linktree-footer">
+      <p class="footer-text"><%= data.footerText %></p>
+    </footer>
+  </div>
+  
+  <!-- Optional JavaScript for animations -->
+  <script src="/js/main.js" defer></script>
+</body>
+</html>

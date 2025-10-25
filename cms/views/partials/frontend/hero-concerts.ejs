@@ -1,0 +1,29 @@
+<%-
+  /*
+    HERO CONCERTS – immagine verticale sticky a destra.
+    Controllo da JSON (stessa semantica della BIO):
+      page.hero_image            (string)
+      page.hero_min_height       (px)
+      page.hero_focus_y          (0..100, % verticale)
+      page.hero_zoom             (scala: 1=100%, >1 zoom-in, <1 zoom-out)
+  */
+-%>
+<%
+  const HC_SRC = (typeof content !== 'undefined' && content && content.page) ? content.page : {};
+  const hcImg   = HC_SRC.hero_image || '/img/daniele-camiz-indica.png';
+  const hcMinH  = Number(HC_SRC.hero_min_height);
+  const hcFocus = Number(HC_SRC.hero_focus_y);
+  const hcZoom  = Number(HC_SRC.hero_zoom);
+
+  const asideStyle = [
+    `--concert-hero-min-h:${Number.isFinite(hcMinH) ? hcMinH : 400}px`,
+    `--concert-hero-focus-y:${Number.isFinite(hcFocus) ? Math.max(0, Math.min(100, hcFocus)) : 50}%`,
+    `--concert-hero-zoom:${Number.isFinite(hcZoom) ? hcZoom : 1}`
+  ].join(';');
+%>
+
+<aside id="hero_concerts" class="right-hero hero-concerts" style="<%= asideStyle %>">
+  <div class="hero-media" aria-hidden="true">
+    <img class="hero-media-img" src="<%= hcImg %>" alt="" loading="eager" />
+  </div>
+</aside>

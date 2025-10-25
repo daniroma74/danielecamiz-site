@@ -1,0 +1,66 @@
+<!-- Success Modal -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-modal">
+    <div class="success-icon">✅</div>
+    <h2>Prenotazione Confermata!</h2>
+    <p>Ti abbiamo inviato un'email di conferma con il QR code.</p>
+    <button onclick="closeSuccess()" class="btn-modal">OK</button>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
+
+<style>
+.success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.success-overlay.show { display: flex; }
+
+.success-modal {
+  background: var(--bg-elev);
+  padding: 40px;
+  border-radius: var(--radius);
+  text-align: center;
+  max-width: 400px;
+  border: 1px solid var(--gold);
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255,255,255,0.3);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>

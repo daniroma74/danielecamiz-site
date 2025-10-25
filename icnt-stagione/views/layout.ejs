@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title><%= meta?.title || 'ICNT - I Concerti nel Tempio' %></title>
+  <meta name="description" content="<%= meta?.description || 'Stagione concerti ICNT Roma' %>">
+  <meta name="author" content="Daniele Camiz">
+  <meta name="keywords" content="concerti, musica classica, roma, chiesa valdese, icnt, daniele camiz">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= meta?.title || 'ICNT' %>">
+  <meta property="og:description" content="<%= meta?.description || '' %>">
+  <meta property="og:image" content="<%= meta?.image || '/public/img/og-image.jpg' %>">
+  <meta property="og:url" content="<%= meta?.url || '' %>">
+  <meta property="og:type" content="<%= meta?.type || 'website' %>">
+  <meta property="og:locale" content="<%= meta?.locale || 'it_IT' %>">
+  <meta property="og:site_name" content="ICNT - I Concerti nel Tempio">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= meta?.title || 'ICNT' %>">
+  <meta name="twitter:description" content="<%= meta?.description || '' %>">
+  <meta name="twitter:image" content="<%= meta?.image || '/public/img/og-image.jpg' %>">
+  
+  <!-- FIX #7: Google Analytics Tag -->
+  <% if (typeof GA_MEASUREMENT_ID !== 'undefined' && GA_MEASUREMENT_ID && cookieConsent === 'accepted') { %>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= GA_MEASUREMENT_ID %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= GA_MEASUREMENT_ID %>', {
+      anonymize_ip: true,
+      cookie_flags: 'SameSite=None;Secure'
+    });
+  </script>
+  <% } %>
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <% if (GA_MEASUREMENT_ID && cookieConsent === 'accepted') { %>
+  <link rel="preconnect" href="https://www.google-analytics.com">
+  <link rel="preconnect" href="https://www.googletagmanager.com">
+  <% } %>
+  
+  <!-- Modern Font Stack -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  
+  <!-- Critical CSS for immediate render -->
+  <style>
+    :root { 
+      --bg-primary: #050506; 
+      --bg-secondary: #0a0a0c;
+      --text-primary: #fafafa; 
+      --text-secondary: #a8a8b3;
+      --text-muted: #757580;
+      --accent-gold: #d4af37;
+      --accent-gold-light: #f4d03f;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --header-height: 72px;
+      --footer-height: 180px;
+      --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-display: 'Playfair Display', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      background: var(--bg-primary); 
+      color: var(--text-primary);
+      font-family: var(--font-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    main { 
+      flex: 1;
+      padding-bottom: calc(var(--footer-height) + 2rem);
+    }
+    
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%);
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 0.1s linear;
+      z-index: 101;
+    }
+  </style>
+  
+  <!-- Main Styles - FIX #9: Assicuriamoci che i CSS siano caricati con versioning -->
+  <link rel="stylesheet" href="/public/css/style.css?v=<%= Date.now() %>">
+  <link rel="stylesheet" href="/public/css/lightbox.css?v=<%= Date.now() %>">
+  <link rel="stylesheet" href="/public/css/share.css?v=<%= Date.now() %>">
+  <link rel="stylesheet" href="/public/css/cookie-banner.css?v=<%= Date.now() %>">
+  
+  <!-- FIX #3: PWA Icons and Manifest -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/img/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/public/img/icon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/img/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/public/img/safari-pinned-tab.svg" color="#d4af37">
+  
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#d4af37">
+  <meta name="msapplication-TileColor" content="#050506">
+  
+  <!-- PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ICNT">
+  <meta name="application-name" content="ICNT">
+  <meta name="format-detection" content="telephone=no">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="<%= meta?.url || BASE_URL %>">
+  
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "ICNT - I Concerti nel Tempio",
+    "url": "<%= BASE_URL || 'https://icnt.danielecamiz.com' %>",
+    "logo": "<%= BASE_URL || 'https://icnt.danielecamiz.com' %>/public/img/icnt_logo.png",
+    "sameAs": [
+      "https://facebook.com/icnt",
+      "https://instagram.com/icnt",
+      "https://youtube.com/icnt"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Via IV Novembre 107",
+      "addressLocality": "Roma",
+      "postalCode": "00187",
+      "addressCountry": "IT"
+    }
+  }
+  </script>
+</head>
+<body class="theme-dark">
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-progress" id="scroll_progress"></div>
+  
+  <!-- Skip to Content (Accessibility) -->
+  <a href="#main_content" class="skip-to-content">Vai al contenuto principale</a>
+  
+  <!-- Header -->
+  <%- include('partials/header', { ui }) %>
+  
+  <!-- Main Content -->
+  <main id="main_content" role="main">
+    <%- body %>
+  </main>
+  
+  <!-- FIX #10, #11: Footer Fisso con Copyright -->
+  <%- include('partials/footer-fixed', { ui }) %>
+  
+  <!-- FIX #12: Cookie Banner (GDPR Compliant) -->
+  <% if (typeof cookieConsent === 'undefined' || !cookieConsent) { %>
+  <div id="cookie_banner" class="cookie-banner" role="dialog" aria-label="Cookie consent">
+    <div class="cookie-banner-content">
+      <div class="cookie-banner-text">
+        <h3>🍪 Utilizzo dei Cookie</h3>
+        <p>
+          Utilizziamo cookie tecnici necessari per il funzionamento del sito e, 
+          previo tuo consenso, cookie analitici per migliorare la tua esperienza di navigazione.
+        </p>
+        <div class="cookie-banner-links">
+          <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+          <span>•</span>
+          <a href="/cookies" target="_blank" rel="noopener">Cookie Policy</a>
+        </div>
+      </div>
+      <div class="cookie-banner-actions">
+        <button id="cookie_reject" class="btn ghost small" type="button">
+          Solo Necessari
+        </button>
+        <button id="cookie_accept" class="btn primary small" type="button">
+          Accetta Tutti
+        </button>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  
+  <!-- Core JavaScript -->
+  <script>
+    // Global config
+    window.ICNT_CONFIG = {
+      baseUrl: '<%= BASE_URL || "" %>',
+      season: '<%= ui?.code || "2025-26" %>',
+      cookieConsent: '<%= cookieConsent || false %>',
+      gaEnabled: <%= (GA_MEASUREMENT_ID && cookieConsent === 'accepted') ? 'true' : 'false' %>
+    };
+  </script>
+  
+  <!-- Main Scripts -->
+  <script src="/public/js/app.js?v=<%= Date.now() %>" defer></script>
+  <script src="/public/js/share.js?v=<%= Date.now() %>" defer></script>
+  
+  <!-- Cookie Consent Handler -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cookie banner handling
+      const banner = document.getElementById('cookie_banner');
+      if (banner) {
+        // Accept all cookies
+        document.getElementById('cookie_accept')?.addEventListener('click', async () => {
+          try {
+            const response = await fetch('/api/cookie-consent', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ consent: 'accepted' })
+            });
+            
+            if (response.ok) {
+              banner.style.animation = 'slideUpBounce 0.3s reverse';
+              setTimeout(() => {
+                banner.style.display = 'none';
+                location.reload(); // Reload to enable analytics
+              }, 300);
+            }
+          } catch (error) {
+            console.error('Error saving cookie consent:', error);
+          }
+        });
+        
+        // Reject analytics cookies
+        document.getElementById('cookie_reject')?.addEventListener('click', async () => {
+          try {
+            const response = await fetch('/api/cookie-consent', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ consent: 'rejected' })
+            });
+            
+            if (response.ok) {
+              banner.style.animation = 'slideUpBounce 0.3s reverse';
+              setTimeout(() => {
+                banner.style.display = 'none';
+              }, 300);
+            }
+          } catch (error) {
+            console.error('Error saving cookie consent:', error);
+          }
+        });
+      }
+      
+      // Scroll Progress Bar
+      const updateScrollProgress = () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = height > 0 ? (winScroll / height) : 0;
+        const progressBar = document.getElementById('scroll_progress');
+        if (progressBar) {
+          progressBar.style.transform = `scaleX(${scrolled})`;
+        }
+      };
+      
+      window.addEventListener('scroll', updateScrollProgress, { passive: true });
+      updateScrollProgress(); // Initial call
+      
+      // Skip to content link
+      const skipLink = document.querySelector('.skip-to-content');
+      if (skipLink) {
+        skipLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          const main = document.getElementById('main_content');
+          if (main) {
+            main.tabIndex = -1;
+            main.focus();
+            main.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      }
+    });
+  </script>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('ServiceWorker registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('ServiceWorker registration failed:', error);
+          });
+      });
+    }
+  </script>
+  
+  <!-- Performance Monitoring -->
+  <script>
+    // Web Vitals monitoring
+    if ('PerformanceObserver' in window) {
+      try {
+        // Largest Contentful Paint
+        const lcpObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          console.log('LCP:', lastEntry.renderTime || lastEntry.loadTime);
+        });
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+        
+        // First Input Delay
+        const fidObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          entries.forEach(entry => {
+            console.log('FID:', entry.processingStart - entry.startTime);
+          });
+        });
+        fidObserver.observe({ type: 'first-input', buffered: true });
+        
+        // Cumulative Layout Shift
+        let clsValue = 0;
+        const clsObserver = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            if (!entry.hadRecentInput) {
+              clsValue += entry.value;
+              console.log('CLS:', clsValue);
+            }
+          }
+        });
+        clsObserver.observe({ type: 'layout-shift', buffered: true });
+      } catch (e) {
+        // Silent fail for older browsers
+      }
+    }
+  </script>
+  
+  <style>
+    /* Accessibility: Skip to content link */
+    .skip-to-content {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--accent-gold);
+      color: var(--bg-primary);
+      padding: 8px;
+      text-decoration: none;
+      z-index: 100;
+      border-radius: 0 0 8px 0;
+    }
+    
+    .skip-to-content:focus {
+      top: 0;
+    }
+    
+    /* Focus styles for accessibility */
+    *:focus-visible {
+      outline: 2px solid var(--accent-gold);
+      outline-offset: 2px;
+    }
+    
+    /* Print styles */
+    @media print {
+      .site-header,
+      .site-footer-fixed,
+      .cookie-banner,
+      .scroll-progress,
+      .skip-to-content {
+        display: none !important;
+      }
+      
+      main {
+        padding: 0 !important;
+      }
+      
+      body {
+        background: white;
+        color: black;
+      }
+    }
+  </style>
+</body>
+</html>

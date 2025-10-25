@@ -1,0 +1,131 @@
+{
+    "avatar": "/img/daniele-camiz-foto-profilo.png",
+    "title": "Daniele Camiz",
+    "role": "Direttore d’orchestra",
+    "highlightsTitle": "In evidenza",
+    "onlineTitle": "Daniele Camiz — Online",
+    "extraTitle": "Link Extra",
+    "highlights": [
+      {
+        "url": "https://armonia_coreana.eventbrite.com",
+        "icon": "/img/icons/spotify.svg",
+        "alt": "Spotify",
+        "text": "ARMONIA COREANA Cuore del mondo"
+      },
+      {
+        "url": "https://youtu.be/videoid1",
+        "icon": "/img/icons/youtube.svg",
+        "alt": "YouTube",
+        "text": "🎼 Mozart Symphonies Challenge n.1 – Video del debutto – K16 & K19",
+        "isYouTube": true
+      }
+    ],
+    "socialLinks": [
+      {
+        "url": "mailto:info@danielecamiz.com",
+        "iconGold": "/img/icons/mail-gold.svg",
+        "iconBlack": "/img/icons/mail-black.svg",
+        "altGold": "Email oro",
+        "altBlack": "Email nero",
+        "text": "info@danielecamiz.com"
+      },
+      {
+        "url": "https://www.youtube.com/@danielecamiz",
+        "iconGold": "/img/icons/youtube-gold.svg",
+        "iconBlack": "/img/icons/youtube-black.svg",
+        "altGold": "YouTube oro",
+        "altBlack": "YouTube nero",
+        "text": "@DanieleCamiz"
+      },
+      {
+        "url": "https://www.instagram.com/danielecamiz",
+        "iconGold": "/img/icons/instagram-gold.svg",
+        "iconBlack": "/img/icons/instagram-black.svg",
+        "altGold": "Instagram oro",
+        "altBlack": "Instagram nero",
+        "text": "@danielecamiz"
+      },
+      {
+        "url": "https://www.facebook.com/danielecamizConductor",
+        "iconGold": "/img/icons/facebook-gold.svg",
+        "iconBlack": "/img/icons/facebook-black.svg",
+        "altGold": "Facebook oro",
+        "altBlack": "Facebook nero",
+        "text": "@danielecamizConductor"
+      },
+      {
+        "url": "https://www.tiktok.com/@danielecamiz",
+        "iconGold": "/img/icons/tiktok-gold.svg",
+        "iconBlack": "/img/icons/tiktok-black.svg",
+        "altGold": "TikTok oro",
+        "altBlack": "TikTok nero",
+        "text": "@danielecamiz"
+      },
+      {
+        "url": "https://twitter.com/danielecamiz",
+        "iconGold": "/img/icons/twitterx-gold.svg",
+        "iconBlack": "/img/icons/twitterx-black.svg",
+        "altGold": "X oro",
+        "altBlack": "X nero",
+        "text": "@danielecamiz"
+      },
+      {
+        "url": "https://www.threads.net/@danielecamiz",
+        "iconGold": "/img/icons/threads-gold.svg",
+        "iconBlack": "/img/icons/threads-black.svg",
+        "altGold": "Threads oro",
+        "altBlack": "Threads nero",
+        "text": "@danielecamiz"
+      },
+      {
+        "url": "https://wa.me/3394884814",
+        "iconGold": "/img/icons/whatsapp-gold.svg",
+        "iconBlack": "/img/icons/whatsapp-black.svg",
+        "altGold": "WhatsApp oro",
+        "altBlack": "WhatsApp nero",
+        "text": "Ricevi aggiornamenti su WhatsApp"
+      },
+      {
+        "url": "https://danielecamiz.com",
+        "iconGold": "/img/icons/internet-gold.svg",
+        "iconBlack": "/img/icons/internet-black.svg",
+        "altGold": "Sito ufficiale oro",
+        "altBlack": "Sito ufficiale nero",
+        "text": "Sito ufficiale www.danielecamiz.com"
+      },
+      {
+        "url": "https://www.linkedin.com/in/danielecamiz",
+        "iconGold": "/img/icons/linkedin-gold.svg",
+        "iconBlack": "/img/icons/linkedin-black.svg",
+        "altGold": "LinkedIn oro",
+        "altBlack": "LinkedIn nero",
+        "text": "@danielecamiz"
+      }
+    ],
+    "extraLinks": [
+      {
+        "url": "/bio",
+        "iconGold": "/img/icons/bio-light-gold.svg",
+        "iconBlack": "/img/icons/bio-black.svg",
+        "altGold": "Bio oro chiaro",
+        "altBlack": "Bio nero",
+        "text": "Biografia completa"
+      },
+      {
+        "url": "/concerti",
+        "iconGold": "/img/icons/calendar-light-gold.svg",
+        "iconBlack": "/img/icons/calendar-black.svg",
+        "altGold": "Calendar oro chiaro",
+        "altBlack": "Calendar nero",
+        "text": "Prossimi concerti"
+      },
+      {
+        "url": "/press",
+        "iconGold": "/img/icons/press-light-gold.svg",
+        "iconBlack": "/img/icons/press-black.svg",
+        "altGold": "Press oro chiaro",
+        "altBlack": "Press nero",
+        "text": "Press"
+      }
+    ]
+  }

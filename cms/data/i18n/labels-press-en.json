@@ -1,0 +1,10 @@
+{
+    "press": {
+      "title": "Press Review",
+      "claim": "Some things that have been said about me",
+      "no_press": "No press available.",
+      "article_by": "Article by",
+      "read_article": "Read article",
+      "read_full_article": "Read full interview"
+    }
+  }

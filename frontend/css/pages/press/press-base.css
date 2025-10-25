@@ -1,0 +1,79 @@
+#press {
+    padding: var(--section-padding);
+    max-width: var(--max-width);
+    margin: auto;
+  }
+  
+  /* Intestazione */
+  #press h2 {
+    color: var(--accent-color);
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2rem;
+  }
+  
+  /* Citazioni press */
+  .press-quote {
+    background-color: #1a1a1a;
+    border: 1.5px solid var(--accent-color);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    color: var(--light-accent);
+    font-style: italic;
+    font-size: 1.07rem;
+    line-height: 1.7;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    font-family: 'Cormorant Garamond', serif;
+  }
+  
+  /* Citazione intervista (bordo tratteggiato) */
+  .press-quote.interview {
+    border: 1.5px dashed var(--accent-color);
+    padding-left: 3rem;
+    position: relative;
+  }
+  
+  /* Icona intervista opzionale */
+  .press-quote.interview .press-icon {
+    position: absolute;
+    top: 2rem;
+    left: 1rem;
+    font-size: 1.2rem;
+    color: var(--accent-color);
+  }
+  
+  /* Fonte e link */
+  .press-source {
+    margin-top: 1.2rem;
+    font-style: normal;
+    font-size: 0.97rem;
+    color: #ffffff;
+  }
+  
+  .press-source em {
+    font-style: normal;
+    font-weight: bold;
+    color: var(--light-accent);
+  }
+  
+  .press-source a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .press-source a:hover {
+    color: var(--light-accent);
+    text-decoration: underline;
+  }
+  
+  /* Lingue */
+  .lang-it, .lang-en {
+    display: none;
+  }
+  
+  .lang-it.visible, .lang-en.visible {
+    display: block;
+    text-align: center;
+  }

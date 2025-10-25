@@ -1,0 +1,34 @@
+/* Covers container */
+.gallery-covers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .cover-block {
+    cursor: pointer;
+    text-align: center;
+    max-width: 300px;
+  }
+  
+  .cover-block img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--accent-color);
+    transition: transform 0.3s ease;
+  }
+  
+  .cover-block img:hover {
+    transform: scale(1.03);
+  }
+  
+  .cover-title {
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: white;
+    font-size: 1.1rem;
+  }

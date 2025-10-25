@@ -1,0 +1,12 @@
+{
+    "repertoire": {
+      "title": "Repertoire",
+      "claim": "These are the pieces I have conducted at least once in concert",
+      "category_simphony": "Symphonies",
+      "category_ouverture": "Overtures and Overture-Fantasias",
+      "category_concert": "Concertos for Solo Instrument and Orchestra",
+      "category_vocal": "Vocal Music and Dramatic Scenes",
+      "category_suite": "Orchestral Music – Suites and Dances",
+      "no_repertoire": "No repertoire available."
+    }
+  }

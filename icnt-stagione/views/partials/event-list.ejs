@@ -1,0 +1,69 @@
+<div class="events">
+  <% if (events && events.length > 0) { %>
+    <ul class="event-ul" role="list">
+      <% events.forEach((event, index) => { %>
+        <li class="event-card" 
+            data-type="<%= event.mscNumber ? 'msc' : 'icnt' %>"
+            role="article"
+            aria-label="Evento <%= event.title %>"
+            style="animation-delay: <%= index * 0.05 %>s">
+          
+          <!-- Data -->
+          <div class="event-date">
+            <div class="d"><%= new Date(event.date).getDate() %></div>
+            <div class="m"><%= new Date(event.date).toLocaleString('it', { month: 'short' }).toUpperCase() %></div>
+            <div class="y"><%= new Date(event.date).getFullYear() %></div>
+          </div>
+          
+          <!-- Main Content -->
+          <div class="event-main">
+            <div class="event-title">
+              <h3><%= event.title %></h3>
+              <% if (event.mscNumber) { %>
+                <img class="msc-wordmark" 
+                     src="/public/img/logo_msc.png" 
+                     alt="MSC"
+                     loading="lazy">
+                <span class="msc-badge" 
+                      data-tooltip="Concerto MSC">
+                  MSC <%= event.mscNumber %>
+                </span>
+              <% } %>
+            </div>
+            
+            <% if (event.subtitle) { %>
+              <div class="event-subtitle"><%= event.subtitle %></div>
+            <% } %>
+          </div>
+          
+          <!-- Actions -->
+          <div class="event-actions">
+            <% if (event.detailUrl) { %>
+              <a href="<%= event.detailUrl %>" 
+                 class="btn small primary"
+                 target="_blank"
+                 rel="noopener"
+                 aria-label="Dettagli evento <%= event.title %>">
+                <span>Dettagli</span>
+              </a>
+            <% } %>
+            
+            <% if (event.slug) { %>
+              <a href="/ics/<%= event.slug %>.ics" 
+                 class="btn small ghost"
+                 download
+                 data-tooltip="Aggiungi al calendario"
+                 aria-label="Scarica ICS per <%= event.title %>">
+                📅
+              </a>
+            <% } %>
+          </div>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <div class="empty">
+      <p>Nessun evento programmato al momento.</p>
+    </div>
+  <% } %>
+</div>

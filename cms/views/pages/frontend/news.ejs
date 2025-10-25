@@ -1,0 +1,163 @@
+<% /* Helpers (server-side EJS) */ %>
+<%
+  function fmtDate(d){
+    try {
+      return new Date(d).toLocaleDateString((lang==='en'?'en-GB':'it-IT'), { year:'numeric', month:'long', day:'numeric' });
+    } catch(e){ return d || ''; }
+  }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch])); }
+
+  // Prefer labels passed to the view (same pattern used in other pages like bio)
+  const LN = (labels && (labels.news || (labels.pages && labels.pages.news) || labels['labels-news'])) || {};
+  const newsTitle = LN.title || 'News';
+  const newsClaim = (LN && typeof LN.claim === 'string' && LN.claim.trim() !== '')
+    ? LN.claim
+    : (typeof t === 'function'
+        ? (t('news:news.claim', { defaultValue: t('news.claim', { defaultValue: '' }) }) || '')
+        : '');
+  const newsEmpty = LN.empty || (lang === 'en' ? 'No news available.' : 'Nessuna news disponibile.');
+
+  const CATS = Array.isArray(categories) ? categories : [];
+  const ACTIVE = (typeof activeCat === 'string' && activeCat) ? activeCat : 'all';
+
+  const P = (typeof pagination==='object' && pagination) ? pagination : null;
+  function pageHref(n){
+    if (!P) return '#';
+    const qs = [];
+    if (ACTIVE && ACTIVE !== 'all') qs.push('cat=' + encodeURIComponent(ACTIVE));
+    if (n && n > 1) qs.push('pg=' + encodeURIComponent(n));
+    return '/news' + (qs.length ? ('?' + qs.join('&')) : '');
+  }
+%>
+
+<section id="news_section" class="news-page">
+  <!-- Hero con immagine + labels -->
+  <header class="news-hero news-hero--with-image">
+    <picture class="news-hero__media" aria-hidden="true">
+      <img src="/img/hero-news.png" alt="" loading="eager" decoding="async" />
+    </picture>
+    <div class="news-hero__text">
+      <h1 id="news_title" class="news-hero__title" data-i18n-key="news.title"><%= newsTitle %></h1>
+      <p class="news-hero__claim" id="news_claim" data-i18n-key="news.news.claim"><%= newsClaim %></p>
+    </div>
+  </header>
+
+  <!-- Tabs / filtri (client-side compat) -->
+  <nav class="news-tabs" id="news_tabs" aria-label="<%= lang==='en' ? 'Filters' : 'Filtri' %>">
+    <button class="news-tab <%= (ACTIVE==='all') ? 'is-active' : '' %>" data-filter-cat="all"><%= lang==='en' ? 'All' : 'Tutte' %></button>
+    <% CATS.forEach(function(c){ %>
+      <button class="news-tab <%= (ACTIVE===c.id) ? 'is-active' : '' %>" data-filter-cat="<%= c.id %>"><%= c.label %></button>
+    <% }) %>
+    <span id="news_count" class="news-count" aria-live="polite" style="margin-left:auto;">
+      (<%= P ? P.total : (Array.isArray(news) ? news.length : 0) %>)
+    </span>
+  </nav>
+
+  <% const hasNews = Array.isArray(news) && news.length > 0; %>
+  <% if (!hasNews) { %>
+    <p id="news_empty" class="news-empty" data-i18n-key="news.empty"><%= newsEmpty %></p>
+  <% } else { %>
+
+  <div class="news-layout">
+    <!-- Grid -->
+    <ul class="news-grid" id="news_list" role="list" aria-label="<%= lang==='en' ? 'News list' : 'Elenco notizie' %>">
+      <% news.forEach(post => { %>
+        <%- include('../../partials/frontend/news/card', { post, lang, href: post.href || ('/news/' + post.id) }) %>
+      <% }) %>
+    </ul>
+
+    <!-- Pagination (server-side) -->
+    <% if (P && P.pageCount > 1) { %>
+      <nav class="pager" aria-label="<%= lang==='en' ? 'Pagination' : 'Paginazione' %>">
+        <ul class="pager__list">
+          <li class="pager__item">
+            <% if (P.prevUrl) { %>
+              <a class="pager__link pager__link--prev" href="<%= P.prevUrl %>" rel="prev">&laquo; <%= (lang==='en'?'Prev':'Precedente') %></a>
+            <% } else { %>
+              <span class="pager__link pager__link--prev is-disabled" aria-disabled="true">&laquo; <%= (lang==='en'?'Prev':'Precedente') %></span>
+            <% } %>
+          </li>
+
+          <% const windowSize = 2; %>
+          <% const start = Math.max(1, P.page - windowSize); %>
+          <% const end = Math.min(P.pageCount, P.page + windowSize); %>
+
+          <% if (start > 1) { %>
+            <li class="pager__item"><a class="pager__link" href="<%= pageHref(1) %>">1</a></li>
+            <% if (start > 2) { %><li class="pager__item"><span class="pager__ellipsis">…</span></li><% } %>
+          <% } %>
+
+          <% for (let i = start; i <= end; i++) { %>
+            <li class="pager__item">
+              <% if (i === P.page) { %>
+                <span class="pager__link is-active" aria-current="page"><%= i %></span>
+              <% } else { %>
+                <a class="pager__link" href="<%= pageHref(i) %>"><%= i %></a>
+              <% } %>
+            </li>
+          <% } %>
+
+          <% if (end < P.pageCount) { %>
+            <% if (end < P.pageCount - 1) { %><li class="pager__item"><span class="pager__ellipsis">…</span></li><% } %>
+            <li class="pager__item"><a class="pager__link" href="<%= pageHref(P.pageCount) %>"><%= P.pageCount %></a></li>
+          <% } %>
+
+          <li class="pager__item">
+            <% if (P.nextUrl) { %>
+              <a class="pager__link pager__link--next" href="<%= P.nextUrl %>" rel="next"><%= (lang==='en'?'Next':'Successiva') %> &raquo;</a>
+            <% } else { %>
+              <span class="pager__link pager__link--next is-disabled" aria-disabled="true"><%= (lang==='en'?'Next':'Successiva') %> &raquo;</span>
+            <% } %>
+          </li>
+        </ul>
+      </nav>
+    <% } %>
+
+    <!-- Aside: newsletter CTA (semplice, può diventare form reale) -->
+    <aside class="news-aside">
+      <div class="newsletter-card">
+        <h3 class="newsletter-card__title"><%= lang==='en' ? 'Stay updated' : 'Resta aggiornato' %></h3>
+        <p class="newsletter-card__text"><%= lang==='en' ? 'Receive the next news and concerts directly in your inbox.' : 'Ricevi le prossime notizie e concerti direttamente nella tua casella di posta.' %></p>
+        <form id="newsletter_form" class="newsletter-card__form" action="#" method="post" data-lang="<%= lang %>" onsubmit="return false">
+          <input id="newsletter_email" name="email" class="input" type="email" placeholder="<%= lang==='en' ? 'email address' : 'indirizzo email' %>" aria-label="email" autocomplete="email" required />
+          <input type="hidden" name="lang" value="<%= lang %>">
+          <button class="btn" type="submit"><%= lang==='en' ? 'Subscribe' : 'Iscriviti' %></button>
+          <div id="newsletter_feedback" class="newsletter-card__feedback" aria-live="polite" role="status" style="grid-column: 1 / -1; font-size: .9rem; margin-top: .25rem;"></div>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+  <% } %>
+
+  <% /* ==================== JSON-LD: ItemList for News ==================== */ %>
+  <%
+    if (hasNews) {
+      const _url = (typeof canonical !== 'undefined' && canonical) ? canonical : '';
+      const _base = _url ? _url.split('/').slice(0,3).join('/') : '';
+      function abs(u){
+        if (!u) return '';
+        const s = String(u);
+        if (/^https?:\/\//i.test(s)) return s;
+        if (!_base) return s;
+        return s.startsWith('/') ? (_base + s) : (_base + '/' + s);
+      }
+      const maxItems = 20;
+      const items = (news || []).slice(0, maxItems).map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'BlogPosting',
+          url: abs(p.href || ('/news/' + (p.id || ''))),
+          name: p.title || 'Post'
+        }
+      }));
+      const jsonLdList = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: items
+      };
+  %>
+  <script type="application/ld+json"><%- JSON.stringify(jsonLdList) %></script>
+  <% } %>
+</section>

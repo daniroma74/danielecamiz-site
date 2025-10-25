@@ -1,0 +1,11 @@
+{
+  "sections_order": [
+    "Flauti","Oboi","Clarinetti","Fagotti",
+    "Corni","Trombe","Tromboni","Tuba","Arpa","Timpani e percussioni",
+    "Violino I","Violino II","Viole","Violoncelli","Contrabbassi"
+  ],
+  "concerts": [],
+  "roles": { "archi": {}, "fiati": {} },
+  "violins_map": [],
+  "closed": {}
+}

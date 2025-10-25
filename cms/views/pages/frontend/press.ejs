@@ -1,0 +1,31 @@
+<% if (pageCss) { %>
+  <link rel="stylesheet" href="/css/<%= pageCss %>">
+<% } %>
+
+<section id="press_section">
+  <h2 id="press_title" data-i18n-key="press.title"><%= labels?.press?.title || 'Press' %></h2>
+  <p class="claim-text" id="press_claim" data-i18n-key="press.claim"><%= labels?.press?.claim || '' %></p>
+
+  <% if (pressData && pressData.press && pressData.press.length) { %>
+    <% pressData.press.forEach(item => { %>
+      <div class="press-quote<%= item.interview ? ' interview' : '' %>">
+        <p><em><%= item.quote %></em></p>
+        <div class="press-source">
+          <% if (item.icon) { %><span class="press-icon"><%= item.icon %></span><% } %>
+          <%= item.source %><br />
+          <% if (item.author) { %>
+            <span data-i18n-key="press.article_by"><%= labels?.press?.article_by || 'Article by' %></span> <%= item.author %> –
+          <% } %>
+          <% if (item.link) { %>
+            <a href="<%= item.link %>" target="_blank" rel="noopener noreferrer" 
+               data-i18n-key="<%= item.interview ? 'press.read_full_article' : 'press.read_article' %>">
+              <%= item.interview ? (labels?.press?.read_full_article || 'Read full article') : (labels?.press?.read_article || 'Read article') %>
+            </a>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <p id="press_no_press" data-i18n-key="press.no_press"><%= labels?.press?.no_press || 'No press available.' %></p>
+  <% } %>
+</section>

@@ -1,0 +1,190 @@
+<% /* Helpers */ %>
+<%
+  function fmtDate(d){
+    try { return new Date(d).toLocaleDateString((lang==='en'?'en-GB':'it-IT'), { year:'numeric', month:'long', day:'numeric' }); }
+    catch(e){ return d || ''; }
+  }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch])); }
+%>
+
+<section id="news_post" class="news-post-page">
+  <% if (!post) { %>
+    <p class="news-empty"><%= lang==='en' ? 'Article not found.' : 'Articolo non trovato.' %></p>
+    <p><a href="/news" class="link-back"><%= lang==='en' ? 'Back to news' : 'Torna alle news' %></a></p>
+  <% } else { %>
+
+  <article class="post">
+    <header class="post-header">
+      <p class="post-kicker"><%= post.category || 'News' %></p>
+      <h1 id="news_post_title" class="post-title"><%= post.title %></h1>
+      <div class="post-meta">
+        <time datetime="<%= post.date %>"><%= fmtDate(post.date) %></time>
+        <% if (post.reading_time) { %>
+          · <span class="post-reading"><%= post.reading_time %> <%= lang==='en' ? 'min read' : 'min di lettura' %></span>
+        <% } %>
+      </div>
+      <% if (post.excerpt) { %>
+        <p class="post-excerpt"><%= post.excerpt %></p>
+      <% } %>
+      <% if (post.image || post.image_src || post.image_srcset) { 
+        // Prefer local responsive variants passed by the controller
+        const hasLocalSet = !!post.image_srcset;
+        const _img = String(post.image || post.image_src || '');
+        let finalSrc    = hasLocalSet ? (post.image_src || _img) : _img;
+        let finalSrcset = hasLocalSet ? post.image_srcset : '';
+        let finalSizes  = hasLocalSet ? (post.image_sizes || '(max-width: 600px) 100vw, (max-width: 1024px) 90vw, 1200px') : '';
+
+        // Cloudinary fallback if no local variants
+        if (!hasLocalSet) {
+          const isCl = /res\.cloudinary\.com\//.test(_img);
+          function cl(u, w){
+            try {
+              const i = u.indexOf('/upload/');
+              if (i === -1) return u; // not a standard Cloudinary URL -> fallback
+              const before = u.slice(0, i + 8); // include '/upload/'
+              const after  = u.slice(i + 8);
+              // inject basic auto-format/quality and width
+              return before + `f_auto,q_auto,w_${w}/` + after;
+            } catch(e){ return u; }
+          }
+          if (isCl) {
+            finalSrcset = [480, 768, 1024, 1200].map(w => `${cl(_img, w)} ${w}w`).join(', ');
+            finalSizes  = '(max-width: 600px) 100vw, (max-width: 1024px) 90vw, 1200px';
+          }
+        }
+      %>
+        <figure class="post-hero">
+          <% if (post.image_lqip) { %>
+            <img class="lqip" src="<%= post.image_lqip %>" alt="" aria-hidden="true" />
+          <% } %>
+          <img
+            src="<%= finalSrc %>"
+            <% if (finalSrcset) { %>srcset="<%= finalSrcset %>" sizes="<%= finalSizes %>"<% } %>
+            alt="<%= esc(post.image_alt || post.title) %>"
+            width="1200"
+            height="675"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </figure>
+      <% } %>
+    </header>
+
+    <% if (post.content) { %>
+      <div id="news_post_content" class="post-content"><%- post.content %></div>
+    <% } %>
+
+    <% if (Array.isArray(post.tags) && post.tags.length) { %>
+      <div class="post-tags">
+        <% post.tags.forEach(t => { %>
+          <span class="tag"><%= t %></span>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <div id="news_post_share_links" class="post-share">
+      <span class="share-label"><%= lang==='en' ? 'Share:' : 'Condividi:' %></span>
+      <a data-share="facebook" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(url) %>" target="_blank" rel="noopener noreferrer">Facebook</a>
+      ·
+      <a data-share="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=<%= encodeURIComponent(url) %>" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      ·
+      <a data-share="x" href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(url) %>&text=<%= encodeURIComponent(post.title) %>" target="_blank" rel="noopener noreferrer">X</a>
+    </div>
+
+    <p class="link-back-wrap"><a href="/news" class="link-back">← <%= lang==='en' ? 'Back to all news' : 'Torna a tutte le news' %></a></p>
+  </article>
+
+  <% /* ========================= JSON-LD ========================= */ %>
+  <%
+    // Build absolute URLs
+    const _url = String(url || '');
+    const _base = _url.split('/').slice(0, 3).join('/');
+    function abs(u){
+      if (!u) return '';
+      const s = String(u);
+      if (/^https?:\/\//i.test(s)) return s;
+      if (s.startsWith('/')) return _base + s;
+      return _base + '/' + s;
+    }
+
+    // Images (prefer seo.og_image, then image, then images[])
+    const images = [];
+    if (post.seo && post.seo.og_image) images.push(abs(post.seo.og_image));
+    if (post.image) images.push(abs(post.image));
+    if (Array.isArray(post.images)) {
+      post.images.forEach(u => { if (u) images.push(abs(u)); });
+    }
+    const imagesDedup = Array.from(new Set(images)).slice(0, 5);
+
+    // Description & body text (strip HTML)
+    const plain = String(post.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const description = (post.excerpt && String(post.excerpt).trim()) ? String(post.excerpt).trim() : (plain ? plain.slice(0, 200) : '');
+
+    // JSON-LD objects
+    const jsonLdArticle = {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      'mainEntityOfPage': { '@type': 'WebPage', '@id': _url },
+      'headline': post.title || '',
+      'image': imagesDedup.length ? imagesDedup : undefined,
+      'datePublished': post.date || undefined,
+      'dateModified': post.date || undefined,
+      'author': { '@type': 'Person', 'name': 'Daniele Camiz' },
+      'publisher': { '@type': 'Organization', 'name': 'Daniele Camiz', 'logo': { '@type': 'ImageObject', 'url': abs('/img/icons/favicon-180.png') } },
+      'inLanguage': (lang || 'it'),
+      'url': _url,
+      'articleSection': post.category || 'News',
+      'keywords': Array.isArray(post.tags) ? post.tags.join(', ') : undefined,
+      'isAccessibleForFree': true,
+      'description': description || undefined,
+      'articleBody': plain || undefined
+    };
+
+    const jsonLdBreadcrumb = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': (lang==='en'?'Home':'Home'), 'item': abs('/') },
+        { '@type': 'ListItem', 'position': 2, 'name': 'News', 'item': abs('/news') },
+        { '@type': 'ListItem', 'position': 3, 'name': post.title || 'Post', 'item': _url }
+      ]
+    };
+  %>
+  <script type="application/ld+json"><%- JSON.stringify(jsonLdArticle) %></script>
+  <script type="application/ld+json"><%- JSON.stringify(jsonLdBreadcrumb) %></script>
+
+  <!-- Analytics: track share clicks (GA4-compatible) -->
+  <script>
+    (function(){
+      var shareRoot = document.getElementById('news_post_share_links');
+      if (!shareRoot) return;
+      var meta = {
+        item_id: <%- JSON.stringify(post.id || '') %>,
+        page_location: <%- JSON.stringify(url || '') %>,
+        page_title: <%- JSON.stringify(post.title || '') %>,
+        language: <%- JSON.stringify(lang || 'it') %>,
+        content_type: 'news_post'
+      };
+      shareRoot.addEventListener('click', function(ev){
+        var a = ev.target && ev.target.closest ? ev.target.closest('a[data-share]') : null;
+        if (!a) return;
+        var method = a.getAttribute('data-share') || (a.textContent || '').trim().toLowerCase();
+        var payload = {
+          method: method,
+          content_type: meta.content_type,
+          item_id: meta.item_id,
+          page_location: meta.page_location,
+          page_title: meta.page_title,
+          language: meta.language
+        };
+        try {
+          if (window.gtag) { window.gtag('event', 'share', payload); }
+          else if (window.dataLayer && Array.isArray(window.dataLayer)) { window.dataLayer.push(Object.assign({ event: 'share' }, payload)); }
+        } catch (_) {}
+      }, true);
+    })();
+  </script>
+
+  <% } %>
+</section>

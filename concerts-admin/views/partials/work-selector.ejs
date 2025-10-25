@@ -1,0 +1,544 @@
+<!-- concerts-admin/views/partials/work-selector.ejs -->
+<!-- Componente riutilizzabile per aggiungere brani ai concerti -->
+
+<div class="work-selector-modal" id="workSelectorModal" style="display: none;">
+  <div class="modal-overlay"></div>
+  <div class="modal-content work-selector-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-music"></i> Aggiungi Brano al Programma</h2>
+      <button onclick="closeWorkSelector()" class="btn-close">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Tabs -->
+      <div class="selector-tabs">
+        <button 
+          class="tab-btn active" 
+          data-tab="existing"
+          onclick="switchSelectorTab('existing')"
+        >
+          <i class="fas fa-search"></i> Cerca in Repertorio
+        </button>
+        <button 
+          class="tab-btn" 
+          data-tab="new"
+          onclick="switchSelectorTab('new')"
+        >
+          <i class="fas fa-plus"></i> Crea Nuovo Brano
+        </button>
+      </div>
+      
+      <!-- TAB 1: Seleziona da repertorio esistente -->
+      <div id="tab-existing" class="tab-content active">
+        <div class="search-existing">
+          <input 
+            type="text" 
+            id="workSearchInput" 
+            class="form-control" 
+            placeholder="Cerca per compositore, titolo, catalogo..."
+            autocomplete="off"
+          >
+          
+          <div id="workSearchResults" class="search-results" style="display: none;">
+            <!-- Popolato dinamicamente da JS -->
+          </div>
+          
+          <div class="search-hint">
+            <i class="fas fa-info-circle"></i>
+            Inizia a digitare per cercare tra i brani esistenti
+          </div>
+        </div>
+      </div>
+      
+      <!-- TAB 2: Crea nuovo brano -->
+      <div id="tab-new" class="tab-content">
+        <form id="quickWorkForm">
+          <div class="form-section">
+            <h4>Informazioni Base</h4>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="quick_composer_id">Compositore *</label>
+                <select id="quick_composer_id" name="composer_id" required class="form-control">
+                  <option value="">Seleziona compositore...</option>
+                  <!-- Popolato dinamicamente o da variabile EJS -->
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="quick_category_id">Categoria</label>
+                <select id="quick_category_id" name="category_id" class="form-control">
+                  <option value="">Nessuna categoria</option>
+                  <!-- Popolato dinamicamente o da variabile EJS -->
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="quick_title">Titolo *</label>
+              <input 
+                type="text" 
+                id="quick_title" 
+                name="title" 
+                required 
+                class="form-control" 
+                placeholder="Es: Sinfonia n. 5"
+              >
+            </div>
+            
+            <div class="form-group">
+              <label for="quick_subtitle">Sottotitolo</label>
+              <input 
+                type="text" 
+                id="quick_subtitle" 
+                name="subtitle" 
+                class="form-control" 
+                placeholder="Es: 'Del destino'"
+              >
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h4>Dettagli</h4>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="quick_catalogue">Catalogo</label>
+                <input 
+                  type="text" 
+                  id="quick_catalogue" 
+                  name="catalogue" 
+                  class="form-control" 
+                  placeholder="Es: Op. 67"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="quick_work_key">Tonalità</label>
+                <input 
+                  type="text" 
+                  id="quick_work_key" 
+                  name="work_key" 
+                  class="form-control" 
+                  placeholder="Es: do minore"
+                >
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="quick_year">Anno</label>
+                <input 
+                  type="number" 
+                  id="quick_year" 
+                  name="year" 
+                  class="form-control" 
+                  placeholder="1808"
+                  min="1000"
+                  max="2100"
+                >
+              </div>
+              
+              <div class="form-group">
+                <label for="quick_duration_minutes">Durata (minuti)</label>
+                <input 
+                  type="number" 
+                  id="quick_duration_minutes" 
+                  name="duration_minutes" 
+                  class="form-control" 
+                  placeholder="30"
+                  min="1"
+                >
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-section">
+            <h4>Note</h4>
+            
+            <div class="form-group">
+              <label for="quick_notes_it">Note (Italiano)</label>
+              <textarea 
+                id="quick_notes_it" 
+                name="notes_it" 
+                class="form-control" 
+                rows="3"
+                placeholder="Informazioni sul brano..."
+              ></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="quick_notes_en">Note (English)</label>
+              <textarea 
+                id="quick_notes_en" 
+                name="notes_en" 
+                class="form-control" 
+                rows="3"
+                placeholder="Work information..."
+              ></textarea>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" onclick="closeWorkSelector()" class="btn btn-secondary">
+              Annulla
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Crea e Aggiungi
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stili inline per il componente -->
+<style>
+.work-selector-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.work-selector-modal .modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.work-selector-content {
+  position: relative;
+  background: #1a1a1a;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.selector-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #333;
+}
+
+.selector-tabs .tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.selector-tabs .tab-btn:hover {
+  color: #d6b25e;
+  background: rgba(214, 178, 94, 0.1);
+}
+
+.selector-tabs .tab-btn.active {
+  color: #d6b25e;
+  border-bottom-color: #d6b25e;
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.search-existing {
+  padding: 10px 0;
+}
+
+.search-results {
+  margin-top: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #0d0d0d;
+}
+
+.search-result-item {
+  padding: 15px;
+  border-bottom: 1px solid #222;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.search-result-item:hover {
+  background: rgba(214, 178, 94, 0.1);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.result-composer {
+  font-size: 12px;
+  color: #d6b25e;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.result-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f1f1;
+  margin-bottom: 3px;
+}
+
+.result-details {
+  font-size: 12px;
+  color: #888;
+}
+
+.search-hint {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.search-hint i {
+  margin-right: 8px;
+  color: #d6b25e;
+}
+
+.form-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.form-section h4 {
+  color: #d6b25e;
+  font-size: 16px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0d0d0d;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #f1f1f1;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #d6b25e;
+  box-shadow: 0 0 0 3px rgba(214, 178, 94, 0.1);
+}
+
+.form-control::placeholder {
+  color: #666;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<!-- Script inline per il componente -->
+<script>
+let workSelectorCallback = null;
+
+function openWorkSelector(callback) {
+  workSelectorCallback = callback;
+  document.getElementById('workSelectorModal').style.display = 'flex';
+  loadWorkSelectorData();
+}
+
+function closeWorkSelector() {
+  document.getElementById('workSelectorModal').style.display = 'none';
+  workSelectorCallback = null;
+}
+
+function switchSelectorTab(tabName) {
+  // Aggiorna tabs
+  document.querySelectorAll('.selector-tabs .tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tabName);
+  });
+  
+  // Aggiorna contenuto
+  document.querySelectorAll('.work-selector-modal .tab-content').forEach(content => {
+    content.classList.toggle('active', content.id === `tab-${tabName}`);
+  });
+}
+
+async function loadWorkSelectorData() {
+  try {
+    // Carica compositori
+    const composersRes = await fetch('/api/composers');
+    const composersData = await composersRes.json();
+    
+    if (composersData.success) {
+      const composerSelect = document.getElementById('quick_composer_id');
+      composerSelect.innerHTML = '<option value="">Seleziona compositore...</option>';
+      composersData.composers.forEach(c => {
+        composerSelect.innerHTML += `<option value="${c.id}">${c.full_name}</option>`;
+      });
+    }
+    
+    // Carica categorie
+    const categoriesRes = await fetch('/api/categories');
+    const categoriesData = await categoriesRes.json();
+    
+    if (categoriesData.success) {
+      const categorySelect = document.getElementById('quick_category_id');
+      categorySelect.innerHTML = '<option value="">Nessuna categoria</option>';
+      categoriesData.categories.forEach(c => {
+        categorySelect.innerHTML += `<option value="${c.id}">${c.label_it}</option>`;
+      });
+    }
+  } catch (error) {
+    console.error('Error loading selector data:', error);
+  }
+}
+
+// Ricerca brani esistenti
+let searchTimeout;
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('workSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      const query = e.target.value.trim();
+      
+      if (query.length < 2) {
+        document.getElementById('workSearchResults').style.display = 'none';
+        return;
+      }
+      
+      searchTimeout = setTimeout(() => searchWorks(query), 300);
+    });
+  }
+  
+  // Form nuovo brano
+  const quickForm = document.getElementById('quickWorkForm');
+  if (quickForm) {
+    quickForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await createAndAddWork();
+    });
+  }
+});
+
+async function searchWorks(query) {
+  try {
+    const response = await fetch(`/api/repertoire/search?q=${encodeURIComponent(query)}`);
+    const result = await response.json();
+    
+    const resultsDiv = document.getElementById('workSearchResults');
+    
+    if (result.success && result.works.length > 0) {
+      resultsDiv.innerHTML = result.works.map(work => `
+        <div class="search-result-item" onclick="selectWork(${work.id}, '${work.title.replace(/'/g, "\\'")}', '${work.composer_name.replace(/'/g, "\\'")}')">
+          <div class="result-composer">${work.composer_name}</div>
+          <div class="result-title">${work.title}</div>
+          <div class="result-details">
+            ${work.catalogue || ''} ${work.work_key || ''} ${work.category_name ? `• ${work.category_name}` : ''}
+          </div>
+        </div>
+      `).join('');
+      resultsDiv.style.display = 'block';
+    } else {
+      resultsDiv.innerHTML = '<div class="search-hint">Nessun brano trovato</div>';
+      resultsDiv.style.display = 'block';
+    }
+  } catch (error) {
+    console.error('Search error:', error);
+  }
+}
+
+function selectWork(workId, title, composer) {
+  if (workSelectorCallback) {
+    workSelectorCallback({ id: workId, title, composer });
+  }
+  closeWorkSelector();
+}
+
+async function createAndAddWork() {
+  const formData = new FormData(document.getElementById('quickWorkForm'));
+  const data = Object.fromEntries(formData);
+  
+  try {
+    const response = await fetch('/api/repertoire/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      if (workSelectorCallback) {
+        workSelectorCallback({ id: result.id, title: data.title, composer: 'Nuovo' });
+      }
+      closeWorkSelector();
+    } else {
+      alert('Errore: ' + result.message);
+    }
+  } catch (error) {
+    console.error('Create work error:', error);
+    alert('Errore durante la creazione del brano');
+  }
+}
+</script>

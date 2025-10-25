@@ -1,0 +1,285 @@
+<h1>Pannello Admin – Certificati</h1>
+<%- include('../../partials/admin/maintenance-page-control') %>
+<form id="form-certificato">
+
+  <label>Cerca partecipante</label>
+  <input type="search" id="ricercaPartecipante" name="ricerca_custom" placeholder="Partecipante" autocomplete="new-password" autocapitalize="words" spellcheck="false">
+  <div id="suggestions"></div>
+
+  <label>Nome</label>
+  <input type="search" id="nome" name="nomeUtente" required autocomplete="new-password">
+  
+  <label>Cognome</label>
+  <input type="search" id="cognome" name="cognomeUtente" required autocomplete="new-password">
+
+  <label>Sesso (M/F)</label>
+  <select id="sesso" required>
+    <option value="">Seleziona</option>
+    <option value="M">Maschio</option>
+    <option value="F">Femmina</option>
+  </select>
+
+  <div class="row">
+    <div class="col">
+      <label>Luogo di nascita</label>
+      <input type="search" id="luogoNascita" required autocomplete="new-password">
+    </div>
+    <div class="col">
+      <label>Provincia (sigla)</label>
+      <input type="search" id="provinciaNascita" required autocomplete="new-password">
+    </div>
+  </div>
+
+  <label>Data di nascita</label>
+  <input type="search" id="dataNascita" placeholder="gg/mm/aaaa" maxlength="10" required autocomplete="new-password">
+
+  <label>Codice Fiscale</label>
+  <input type="text" id="codiceFiscale" required style="text-transform:uppercase">
+
+  <label>Codice Fiscale generato automaticamente</label>
+  <input type="text" id="codiceFiscaleGenerato" disabled style="background:#eee; font-style:italic">
+  <button type="button" onclick="usaCodiceFiscale()">Usa questo codice fiscale</button>
+
+  <label>Strumento</label>
+  <input type="search" id="strumento" required autocomplete="new-password">
+
+  <label>Modalità</label>
+  <select id="modalita" required>
+    <option value="cumulativo">Cumulativo (anno intero)</option>
+    <option value="singolo">Singolo concerto</option>
+  </select>
+
+  <div id="selezione-concerti"></div>
+
+  <div class="anteprima" id="anteprima-dati"></div>
+
+  <button type="submit">Visualizza anteprima</button>
+
+  <div id="anteprima-certificato" style="margin-top: 1.5rem; display: none;">
+    <iframe id="pdf-frame" style="width: 100%; height: 500px; border: 1px solid #ccc;"></iframe>
+    <div id="pannello-pulsanti" style="margin-top: 1rem;">
+      <button id="scarica-certificato">📥 Salva certificato</button>
+      <button id="torna-indietro">↩️ Torna indietro</button>
+    </div>
+  </div>
+
+</form>
+
+<script>
+  function capitalizzaTutteLeParole(t) {
+    return t.replace(/\b\w+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  }
+
+  function trasformaInTempoReale() {
+    document.getElementById("nome").addEventListener("input", e => {
+      e.target.value = capitalizzaTutteLeParole(e.target.value);
+    });
+    document.getElementById("cognome").addEventListener("input", e => {
+      e.target.value = capitalizzaTutteLeParole(e.target.value);
+    });
+    document.getElementById("luogoNascita").addEventListener("input", e => {
+      e.target.value = capitalizzaTutteLeParole(e.target.value);
+    });
+    document.getElementById("provinciaNascita").addEventListener("input", e => {
+      e.target.value = e.target.value.toUpperCase();
+    });
+    document.getElementById("codiceFiscale").addEventListener("input", e => {
+      e.target.value = e.target.value.toUpperCase();
+    });
+  }
+  
+  function mascheraData() {
+    document.getElementById("dataNascita").addEventListener("input", e => {
+      let v = e.target.value.replace(/[^0-9]/g, "").slice(0, 8);
+      if (v.length >= 5) e.target.value = `${v.slice(0,2)}/${v.slice(2,4)}/${v.slice(4,8)}`;
+      else if (v.length >= 3) e.target.value = `${v.slice(0,2)}/${v.slice(2,4)}`;
+      else e.target.value = v;
+    });
+  }
+  
+  async function caricaConcerti() {
+    const container = document.getElementById("selezione-concerti");
+    const res = await fetch("/api/anni");
+    const anni = (await res.json()).reverse();
+    for (const anno of anni) {
+      const det = document.createElement("details");
+      det.innerHTML = `<summary>${anno}</summary>`;
+      const cRes = await fetch(`/api/concerti/${anno}`);
+      const concerti = await cRes.json();
+      concerti.forEach((c, i) => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <label>
+            <input type="checkbox" name="concerto" value='${JSON.stringify(c)}'>
+            ${c.data} – ${c.titolo}
+            <input type="number" class="ore-input" placeholder="ore" min="1" max="40" disabled>
+          </label>`;
+        const checkbox = div.querySelector("input[type='checkbox']");
+        const oreInput = div.querySelector(".ore-input");
+        checkbox.addEventListener("change", () => {
+          oreInput.disabled = !checkbox.checked;
+          aggiornaAnteprima();
+        });
+        oreInput.addEventListener("input", aggiornaAnteprima);
+        det.appendChild(div);
+      });
+      container.appendChild(det);
+    }
+  }
+</script>
+
+<script>
+  function aggiornaAnteprima() {
+    const checked = [...document.querySelectorAll("input[name='concerto']:checked")];
+    if (checked.length === 0) {
+      document.getElementById("anteprima-dati").textContent = "";
+      return;
+    }
+    const concerti = checked.map(c => {
+      const obj = JSON.parse(c.value);
+      obj.ore = parseFloat(c.parentElement.querySelector(".ore-input").value || "0");
+      return obj;
+    });
+    const oreTotali = concerti.reduce((s, c) => s + c.ore, 0);
+    const dateMin = new Date(concerti.map(c => c.data).sort()[0]);
+    const inizio = dateMin.getMonth() >= 8 ? dateMin.getFullYear() : dateMin.getFullYear() - 1;
+    const fine = inizio + 1;
+    document.getElementById("anteprima-dati").textContent = `Anno scolastico ${inizio}/${(''+fine).slice(-2)} – Ore totali: ${oreTotali}`;
+  }
+
+  async function caricaPartecipantiSalvati() {
+    try {
+      const res = await fetch("/api/partecipanti");
+      window.elencoPartecipanti = await res.json();
+    } catch (err) {
+      console.error("❌ Errore nel caricamento dei partecipanti:", err);
+    }
+  }
+
+  document.getElementById("ricercaPartecipante").addEventListener("input", e => {
+    const val = e.target.value.toLowerCase();
+    const suggestions = window.elencoPartecipanti.filter(p =>
+      `${p.nome} ${p.cognome}`.toLowerCase().startsWith(val)
+    );
+
+    const box = document.getElementById("suggestions");
+    box.innerHTML = "";
+    if (suggestions.length === 0 || val.length < 2) {
+      box.style.display = "none";
+      return;
+    }
+
+    suggestions.forEach(p => {
+      const div = document.createElement("div");
+      div.textContent = `${p.nome} ${p.cognome}`;
+      div.style.padding = "5px";
+      div.style.cursor = "pointer";
+      div.addEventListener("click", () => {
+        document.getElementById("ricercaPartecipante").value = `${p.nome} ${p.cognome}`;
+        box.style.display = "none";
+
+        document.getElementById("nome").value = p.nome;
+        document.getElementById("cognome").value = p.cognome;
+        document.getElementById("sesso").value = p.sesso;
+        document.getElementById("luogoNascita").value = p.luogoNascita;
+        document.getElementById("provinciaNascita").value = p.provinciaNascita;
+        document.getElementById("dataNascita").value = p.dataNascita;
+        document.getElementById("codiceFiscale").value = p.codiceFiscale;
+        document.getElementById("strumento").value = p.strumento;
+      });
+      box.appendChild(div);
+    });
+
+    const inputRect = e.target.getBoundingClientRect();
+    box.style.top = `${inputRect.bottom + window.scrollY}px`;
+    box.style.left = `${inputRect.left + window.scrollX}px`;
+    box.style.width = `${inputRect.width}px`;
+    box.style.display = "block";
+  });
+</script>
+
+<script>
+  document.getElementById("form-certificato").addEventListener("submit", async e => {
+    e.preventDefault();
+    const checked = [...document.querySelectorAll("input[name='concerto']:checked")];
+    if (checked.length === 0) return alert("Seleziona almeno un concerto");
+
+    const concerti = checked.map(c => {
+      const obj = JSON.parse(c.value);
+      obj.ore = parseFloat(c.parentElement.querySelector(".ore-input").value || "0");
+      return obj;
+    });
+
+    const partecipante = {
+      nome: document.getElementById("nome").value.trim(),
+      cognome: document.getElementById("cognome").value.trim(),
+      sesso: document.getElementById("sesso").value.trim().toUpperCase(),
+      luogoNascita: document.getElementById("luogoNascita").value.trim(),
+      provinciaNascita: document.getElementById("provinciaNascita").value.trim().toUpperCase(),
+      dataNascita: document.getElementById("dataNascita").value.trim(),
+      codiceFiscale: document.getElementById("codiceFiscale").value.trim().toUpperCase(),
+      strumento: document.getElementById("strumento").value.trim(),
+      ore: concerti.length === 1 ? concerti[0].ore : concerti.reduce((s, c) => s + c.ore, 0)
+    };
+
+    const modalita = document.getElementById("modalita").value;
+    const body = modalita === "singolo"
+      ? { partecipante, concerto: concerti[0] }
+      : { partecipante, concerti };
+
+    const res = await fetch(modalita === "singolo" ? "/api/genera-singolo" : "/api/genera", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    if (data.files && data.files[0]) {
+      const url = `/certificati/${data.files[0]}`;
+      document.getElementById("anteprima-certificato").style.display = "block";
+      document.getElementById("pdf-frame").src = url;
+
+      // 🔽 Salvataggio diretto
+      document.getElementById("scarica-certificato").onclick = () => {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = url.split("/").pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      // 🔁 Reset completo
+      document.getElementById("torna-indietro").onclick = () => {
+        document.getElementById("anteprima-certificato").style.display = "none";
+        document.getElementById("pdf-frame").src = "";
+        document.getElementById("form-certificato").reset();
+        document.getElementById("messaggio-email").textContent = "";
+        document.getElementById("anteprima-dati").textContent = "";
+        document.getElementById("selezione-concerti").innerHTML = "";
+        setTimeout(() => {
+          caricaConcerti();
+          caricaPartecipantiSalvati();
+        }, 250);
+      };
+    }
+  });
+</script>
+
+<script>
+  function usaCodiceFiscale() {
+    const generato = document.getElementById("codiceFiscaleGenerato").value;
+    if (generato) {
+      document.getElementById("codiceFiscale").value = generato;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    trasformaInTempoReale();
+    mascheraData();
+    caricaConcerti();
+    caricaPartecipantiSalvati();
+  });
+</script>
+
+<script src="/admin/assets/js/admin-certificati-cf-generator.js"></script>

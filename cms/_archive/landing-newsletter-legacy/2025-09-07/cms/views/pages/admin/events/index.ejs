@@ -1,0 +1,177 @@
+<% /* Admin > Eventi — Lista (robusta & compat con controller vecchio/nuovo) */ %>
+
+<%
+  /* ===== Normalizzazione dati ===== */
+  var __d = (typeof data === 'object' && data) || {};
+
+  // 1) Lettura diretto se già calcolati dal controller
+  var upcomingList = Array.isArray(__d.upcoming) ? __d.upcoming : (Array.isArray(upcoming) ? upcoming : []);
+  var pastByYearMap = (__d.pastByYear && typeof __d.pastByYear === 'object') ? __d.pastByYear :
+                      ((typeof pastByYear !== 'undefined' && pastByYear && typeof pastByYear === 'object') ? pastByYear : {});
+  var yearsList = Array.isArray(__d.years) ? __d.years : (Array.isArray(years) ? years : null);
+
+  // 2) Se mancano, prova a ricavare da una lista piatta (data.events / events / concerts / rows / list / items)
+  function pickFirstArray(obj, keys) {
+    for (var i=0;i<keys.length;i++){
+      var k = keys[i];
+      if (obj && Array.isArray(obj[k])) return obj[k];
+    }
+    return null;
+  }
+  var flat = pickFirstArray(__d, ['events','concerts','rows','list','items']);
+  if (!flat) flat = pickFirstArray(typeof locals !== 'undefined' ? locals : {}, ['events','concerts','rows','list','items']);
+  if (!flat && Array.isArray(events)) flat = events;
+  if (!flat && Array.isArray(concerts)) flat = concerts;
+
+  function isoDateOnly(s){
+    if (!s) return '';
+    // supporta sia 'date' (YYYY-MM-DD) sia 'starts_at' (ISO)
+    if (s.length >= 10) return s.slice(0,10);
+    try { return new Date(s).toISOString().slice(0,10); } catch(e){ return ''; }
+  }
+
+  if ((!upcomingList || upcomingList.length === 0) && (!yearsList || yearsList.length === 0) && flat && flat.length){
+    var today = new Date(); var todayIso = today.toISOString().slice(0,10);
+    var future = [];
+    var pastMap = {};
+    for (var j=0;j<flat.length;j++){
+      var ev = flat[j] || {};
+      var d = isoDateOnly(ev.date || ev.starts_at || ev.startsAt);
+      var year = (d && d.length>=4) ? d.slice(0,4) : 's.d.';
+      var isFuture = (d && d >= todayIso);
+      if (isFuture){
+        future.push(ev);
+      } else {
+        if (!pastMap[year]) pastMap[year] = [];
+        pastMap[year].push(ev);
+      }
+    }
+    // ordina futuri per data crescente
+    future.sort(function(a,b){
+      var da = isoDateOnly(a.date || a.starts_at || a.startsAt);
+      var db = isoDateOnly(b.date || b.starts_at || b.startsAt);
+      return String(da).localeCompare(String(db));
+    });
+    // ordina anni desc e righe per data desc
+    var yrs = Object.keys(pastMap).sort(function(a,b){ return String(b).localeCompare(String(a)); });
+    for (var yi=0; yi<yrs.length; yi++){
+      var y = yrs[yi];
+      pastMap[y].sort(function(a,b){
+        var da = isoDateOnly(a.date || a.starts_at || a.startsAt);
+        var db = isoDateOnly(b.date || b.starts_at || b.startsAt);
+        return String(db).localeCompare(String(da));
+      });
+    }
+    upcomingList = future;
+    pastByYearMap = pastMap;
+    yearsList = yrs;
+  }
+
+  if (!yearsList) yearsList = Object.keys(pastByYearMap || {}).sort(function(a,b){ return String(b).localeCompare(String(a)); });
+
+  if (!locals) locals = {};
+  if (!locals.section) section = 'events';
+%>
+
+<div class="actions" style="margin-bottom:.8rem; display:flex; gap:.8rem; align-items:center">
+  <a href="/admin/events/new" class="btn btn-primary">Nuovo evento</a>
+  <div style="margin-left:auto;display:flex;gap:.5rem;align-items:center">
+    <label for="events_filter" class="label" style="margin:0">Filtro veloce</label>
+    <input id="events_filter" class="input" placeholder="Titolo, luogo o data…" />
+  </div>
+</div>
+
+<!-- CONCERTI FUTURI -->
+<div class="dash-card">
+  <div class="dash-card__title">Concerti futuri</div>
+  <div class="dash-card__body">
+    <% if (upcomingList && upcomingList.length) { %>
+      <div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+        <% upcomingList.forEach(function(ev){ %>
+          <div class="dash-card event-card" style="margin:0">
+            <div class="dash-card__title" style="display:flex;justify-content:space-between;align-items:center;">
+              <span><%= ev.title %></span>
+              <span class="status <%= ev.status || 'draft' %>"><%= ev.status || 'draft' %></span>
+            </div>
+            <div class="dash-card__body">
+              <div class="help" style="margin-bottom:.4rem">
+                <span class="badge"><%= (ev.date||'').slice(0,10) %> <%= ev.time_start||'' %></span>
+                <% if (ev.city || ev.venue) { %>
+                  <span class="badge"><%= [ev.city, ev.venue].filter(Boolean).join(' — ') %></span>
+                <% } %>
+                <% if (ev.slug) { %><code style="margin-left:.3rem"><%= ev.slug %></code><% } %>
+              </div>
+
+              <div class="table-actions" style="flex-wrap:wrap;gap:.4rem">
+                <a class="btn btn-primary" href="/admin/events/<%= ev.id %>/edit">Modifica</a>
+                <a class="btn btn-secondary" href="/admin/events/<%= ev.id %>/edit#tab-program">Programma</a>
+                <a class="btn btn-secondary" href="/admin/events/<%= ev.id %>/edit#tab-assignments">Assegnazioni</a>
+                <a class="btn" href="/admin/events/<%= ev.id %>/edit#tab-poster">Poster</a>
+                <a class="btn" href="/admin/events/<%= ev.id %>/edit#tab-landing">Landing</a>
+                <a class="btn" href="/admin/events/<%= ev.id %>/edit#tab-bookings">Prenotazioni</a>
+                <form action="/admin/events/<%= ev.id %>/delete" method="post" data-confirm="Eliminare l’evento «<%= ev.title %>»?">
+                  <button class="btn" type="submit">Elimina</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="help">Nessun evento futuro.</div>
+    <% } %>
+  </div>
+</div>
+
+<!-- ARCHIVIO (PASSATI PER ANNO) -->
+<div class="dash-card" style="margin-top:1rem">
+  <div class="dash-card__title">Archivio</div>
+  <div class="dash-card__body">
+    <% if (yearsList && yearsList.length) { %>
+      <% yearsList.forEach(function(year){ var items = pastByYearMap[year] || []; %>
+        <details class="year-group" id="y-<%= year %>">
+          <summary style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+            <span class="year" style="font-weight:700"><%= year %></span>
+            <span class="muted">(<%= items.length %>)</span>
+          </summary>
+
+          <table class="table compact" style="margin-top:.6rem">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Titolo</th>
+                <th>Luogo</th>
+                <th>Stato</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% items.forEach(function(ev){ %>
+                <tr class="row-link" data-id="<%= ev.id %>">
+                  <td class="date"><%= (ev.date||'').slice(0,10) %></td>
+                  <td class="title"><strong><%= ev.title %></strong></td>
+                  <td class="location"><%= [ev.city, ev.venue].filter(Boolean).join(' — ') %></td>
+                  <td><span class="status <%= ev.status || 'draft' %>"><%= ev.status || 'draft' %></span></td>
+                  <td>
+                    <div class="table-actions">
+                      <a class="btn btn-secondary" href="/admin/events/<%= ev.id %>/edit">Modifica</a>
+                      <a class="btn" href="/admin/events/<%= ev.id %>/edit#tab-poster">Poster</a>
+                      <a class="btn" href="/admin/events/<%= ev.id %>/edit#tab-program">Programma</a>
+                      <form action="/admin/events/<%= ev.id %>/delete" method="post" data-confirm="Eliminare «<%= ev.title %>»?">
+                        <button class="btn" type="submit">Elimina</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </details>
+      <% }); %>
+    <% } else { %>
+      <div class="help">Nessun evento passato.</div>
+    <% } %>
+  </div>
+</div>
+
+<script src="/admin/js/events/events-list.js"></script>

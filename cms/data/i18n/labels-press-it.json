@@ -1,0 +1,10 @@
+{
+    "press": {
+      "title": "Rassegna stampa",
+      "claim": "Alcune cose che si sono dette su di me",
+      "no_press": "Nessuna segnalazione disponibile.",
+      "article_by": "Articolo di",
+      "read_article": "Leggi l’articolo",
+      "read_full_article": "Leggi l’intervista completa"
+    }
+  }

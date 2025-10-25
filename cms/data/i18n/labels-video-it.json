@@ -1,0 +1,10 @@
+{
+    "video": {
+      "title": "Galleria Video",
+      "claim": "Questi sono alcuni dei video che ho, così puoi dare un’occhiata",
+      "video1_title": "Prova video 1",
+      "video2_title": "Prova video 2",
+      "youtube_preview_alt": "Anteprima video YouTube",
+      "no_videos": "Nessun video trovato."
+    }
+  }

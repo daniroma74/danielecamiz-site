@@ -1,0 +1,57 @@
+.
+├── data
+│   └── season-2025-26.json
+├── db
+│   └── icnt_events_view.sql
+├── ecosystem.config.cjs
+├── .env
+├── icnt-stagione-tree-2025-09-20.txt
+├── manifest.json
+├── package.json
+├── package-lock.json
+├── public
+│   ├── css
+│   │   ├── cookie-banner.css
+│   │   ├── lightbox.css
+│   │   ├── share.css
+│   │   └── style.css
+│   ├── img
+│   │   ├── apple-touch-icon.png
+│   │   ├── icnt_logo.png
+│   │   ├── icon-192.png
+│   │   ├── icon-512.png
+│   │   ├── icon-96.png
+│   │   ├── logo_msc.png
+│   │   ├── poster
+│   │   │   ├── poster-1000x1425.webp
+│   │   │   ├── poster-1200x1710.webp
+│   │   │   └── poster-480x684.webp
+│   │   ├── qr-icnt-s-1024.png
+│   │   ├── qr-icnt-s-2048.png
+│   │   └── qr-icnt-s.svg
+│   ├── js
+│   │   ├── app.js
+│   │   ├── share.js
+│   │   └── sw.js
+│   └── sw.js
+├── scripts
+│   └── make-qr.js
+├── server.js
+├── struttura-cartelle-icnt-stagione.txt
+└── views
+    ├── 404.ejs
+    ├── cookies.ejs
+    ├── error.ejs
+    ├── layout.ejs
+    ├── partials
+    │   ├── event-list.ejs
+    │   ├── filters.ejs
+    │   ├── footer-fixed.ejs
+    │   ├── header.ejs
+    │   ├── head-meta.ejs
+    │   ├── hero.ejs
+    │   └── poster.ejs
+    ├── privacy.ejs
+    └── season.ejs
+
+11 directories, 44 files

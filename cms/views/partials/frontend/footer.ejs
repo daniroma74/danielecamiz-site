@@ -1,0 +1,50 @@
+<footer class="site-footer footbar" id="site_footer" role="contentinfo">
+  <div class="footbar-inner">
+    <%
+      // i18n helper: if t(key) is missing or returns the key, use language-aware fallback
+      function __isValid(v, k){ return v && v !== k; }
+      function __F(it, en){ return (typeof lang !== 'undefined' && lang === 'en') ? en : it; }
+      function T(key, itFallback, enFallback){
+        try {
+          var v = (typeof t === 'function') ? t(key) : '';
+          return __isValid(v, key) ? v : __F(itFallback, enFallback);
+        } catch(e){
+          return __F(itFallback, enFallback);
+        }
+      }
+    %>
+
+    <!-- LEFT: Copyright only (no links) -->
+    <section class="footer-left foot-left" aria-label="<%= T('footer.about_title','Informazioni','About') %>">
+      <span class="footer-copyright">
+       <%= T('footer.copyright', '© ' + new Date().getFullYear() + ' Daniele Camiz', '© ' + new Date().getFullYear() + ' Daniele Camiz') %>
+      </span>
+    </section>
+
+    <!-- MOBILE-ONLY TOGGLE (⋯) -->
+    <input id="foot_toggle" class="foot-toggle" type="checkbox" aria-hidden="true">
+    <label for="foot_toggle"
+           class="foot-trigger"
+           aria-label="<%= T('footer.more','Altro','More') %>"
+           aria-controls="footer_menu"
+           role="button">
+      <span class="foot-dot"></span>
+      <span class="foot-dot"></span>
+      <span class="foot-dot"></span>
+    </label>
+
+    <!-- RIGHT: Legal / Utilities (inline on desktop; hidden on small screens via CSS) -->
+    <nav class="footer-links" aria-label="Footer">
+      <ul class="footer-list" id="footer_menu" role="menubar">
+        <li role="none"><a class="footer-link" role="menuitem" href="/privacy"><%= T('footer.privacy_policy','Privacy','Privacy Policy') %></a></li>
+        <li role="none"><a class="footer-link" role="menuitem" href="/terms"><%= T('footer.terms_conditions','Termini e condizioni','Terms & Conditions') %></a></li>
+        <li role="none">
+          <button class="footer-link btn-link" id="manage_cookies_link" type="button" role="menuitem">
+            <%= T('cookies.manage','Gestisci cookie','Manage cookies') %>
+          </button>
+        </li>
+        <li role="none"><a class="footer-link" role="menuitem" href="/admin"><%= T('footer.admin','Admin','Admin') %></a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>

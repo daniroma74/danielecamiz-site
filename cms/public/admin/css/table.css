@@ -1,0 +1,40 @@
+
+
+/* table.css — Admin tables
+   Sections
+   1) Base table
+   2) Cells & alignment
+   3) Hover & zebra
+   4) Compact variant
+   5) Helpers
+*/
+
+/* 1) Base table ---------------------------------------------------------- */
+.table{width:100%;border-collapse:separate;border-spacing:0;background:#101010;border:1px solid #222}
+.table thead th{position:sticky;top:0;z-index:1;background:#151515;color:#e6e6e6;font-weight:600;text-align:left;padding:.65rem .8rem;border-bottom:1px solid #222}
+.table thead th:first-child{border-top-left-radius:12px}
+.table thead th:last-child{border-top-right-radius:12px}
+.table tbody td{padding:.6rem .8rem;border-top:1px solid #1f1f1f;color:#ddd}
+.table tfoot td{padding:.6rem .8rem;border-top:1px solid #222;color:#ccc}
+.table caption{caption-side:bottom;color:#aaa;padding:.5rem .25rem}
+
+/* 2) Cells & alignment --------------------------------------------------- */
+.table td,.table th{vertical-align:top}
+.table td.title{font-weight:600;color:#fff}
+.table td.date{white-space:nowrap}
+.table td.date .muted{display:block;font-size:.8125rem}
+.table td.location{color:#e0e0e0}
+.table .numeric{text-align:right}
+.table .actions{display:flex;gap:.35rem;flex-wrap:wrap}
+
+/* 3) Hover & zebra ------------------------------------------------------- */
+.table tbody tr:hover{background:#0f0f0f}
+.table tbody tr:nth-child(2n){background:#0c0c0c}
+
+/* 4) Compact variant ----------------------------------------------------- */
+.table-compact thead th{padding:.45rem .6rem;font-size:.9375rem}
+.table-compact tbody td{padding:.45rem .6rem;font-size:.95rem}
+
+/* 5) Helpers ------------------------------------------------------------- */
+.table .status{text-transform:capitalize;font-size:.9rem;color:#e6e6e6}
+.table .badge{margin-left:.25rem}

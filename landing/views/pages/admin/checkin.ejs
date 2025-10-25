@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/public/css/admin-dashboard.css">
+  <style>
+    .checkin-container {
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+    
+    #video {
+      width: 100%;
+      max-width: 640px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: block;
+      margin: 0 auto;
+    }
+    
+    .scan-overlay {
+      position: relative;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    
+    .scan-line {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+      animation: scan 2s infinite;
+    }
+    
+    @keyframes scan {
+      0%, 100% { top: 20%; }
+      50% { top: 80%; }
+    }
+    
+    #result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      display: none;
+    }
+    
+    #result.success {
+      background: #d4edda;
+      border: 2px solid #28a745;
+      display: block;
+    }
+    
+    #result.error {
+      background: #f8d7da;
+      border: 2px solid #dc3545;
+      display: block;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+</head>
+<body class="admin-panel">
+  
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <i class="fas fa-qrcode"></i>
+      <span>Check-in QR</span>
+    </div>
+    <div class="nav-actions">
+      <a href="/bookings/<%= event.slug %>" class="btn btn-secondary">
+        <i class="fas fa-list"></i> Prenotazioni
+      </a>
+      <a href="/dashboard" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <div class="checkin-container">
+    
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h2><%= event.title %></h2>
+        <p class="text-muted">
+          <%= new Date(event.date).toLocaleDateString('it-IT') %> - <%= event.starts_at || '20:00' %>
+        </p>
+      </div>
+      <div class="admin-card-body text-center">
+        <button id="startBtn" class="btn btn-primary btn-lg">
+          <i class="fas fa-camera"></i> Avvia Scanner
+        </button>
+        <button id="stopBtn" class="btn btn-danger btn-lg" style="display:none;">
+          <i class="fas fa-stop"></i> Ferma Scanner
+        </button>
+      </div>
+    </div>
+
+    <div class="scan-overlay" style="display:none;" id="scanArea">
+      <video id="video" playsinline></video>
+      <div class="scan-line"></div>
+    </div>
+
+    <div id="result"></div>
+
+  </div>
+
+  <script>
+    const EVENT_SLUG = '<%= event.slug %>';
+  </script>
+  <script src="/public/js/checkin.js"></script>
+
+</body>
+</html>

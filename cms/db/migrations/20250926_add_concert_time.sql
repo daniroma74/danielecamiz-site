@@ -1,0 +1,2 @@
+ALTER TABLE concerts
+ADD COLUMN starts_at TEXT DEFAULT '20:00';

@@ -1,0 +1,1939 @@
+{
+  "meta": {
+    "version": 1,
+    "generated_at": "2025-08-13T17:43:08.327249Z",
+    "notes": "Espansione di voci aggregate in voci singole; elementi espansi: 2"
+  },
+  "by_category": {
+    "Sinfonie": [
+      {
+        "id": "felix-mendelssohn-bartholdy-sinfonia-n-3-op-56-scozzese",
+        "composer_full": "Felix Mendelssohn Bartholdy",
+        "composer_sort": "Bartholdy, Felix Mendelssohn",
+        "work_title": "Sinfonia n.3 op.56 “Scozzese”",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "felix-mendelssohn-bartholdy-sinfonia-n-4-op-90-italiana",
+        "composer_full": "Felix Mendelssohn Bartholdy",
+        "composer_sort": "Bartholdy, Felix Mendelssohn",
+        "work_title": "Sinfonia n.4 op.90 “Italiana”",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "felix-mendelssohn-bartholdy-sinfonia-n-5-op-107-la-riforma",
+        "composer_full": "Felix Mendelssohn Bartholdy",
+        "composer_sort": "Bartholdy, Felix Mendelssohn",
+        "work_title": "Sinfonia n.5 op.107 “La Riforma”",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "ludwig-van-beethoven-sinfonia-n-2-op-36",
+        "composer_full": "Ludwig van Beethoven",
+        "composer_sort": "Beethoven, Ludwig van",
+        "work_title": "Sinfonia n.2 op.36",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "ludwig-van-beethoven-sinfonia-n-5-op-67",
+        "composer_full": "Ludwig van Beethoven",
+        "composer_sort": "Beethoven, Ludwig van",
+        "work_title": "Sinfonia n.5 op.67",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "antonin-dvorak-sinfonia-n-9-op-95-dal-nuovo-mondo",
+        "composer_full": "Antonín Dvořák",
+        "composer_sort": "Dvořák, Antonín",
+        "work_title": "Sinfonia n.9 op.95 “Dal Nuovo Mondo”",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-sinfonia-k-16",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "Sinfonia K. 16",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "franz-schubert-sinfonia-incompiuta-d759",
+        "composer_full": "Franz Schubert",
+        "composer_sort": "Schubert, Franz",
+        "work_title": "Sinfonia “Incompiuta” D759",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "robert-schumann-sinfonia-n-4-op-120",
+        "composer_full": "Robert Schumann",
+        "composer_sort": "Schumann, Robert",
+        "work_title": "Sinfonia n.4 op.120",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      }
+    ],
+    "Ouverture": [
+      {
+        "id": "felix-mendelssohn-bartholdy-das-marchen-von-der-schonen-melusine-op-32",
+        "composer_full": "Felix Mendelssohn Bartholdy",
+        "composer_sort": "Bartholdy, Felix Mendelssohn",
+        "work_title": "Das Märchen von der schönen Melusine op.32",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "felix-mendelssohn-bartholdy-le-ebridi-fingal-s-cave-op-26",
+        "composer_full": "Felix Mendelssohn Bartholdy",
+        "composer_sort": "Bartholdy, Felix Mendelssohn",
+        "work_title": "Le Ebridi \"Fingal’s Cave\" op.26",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "felix-mendelssohn-bartholdy-ouverture-per-il-sogno-di-una-notte-di-mezza-estate",
+        "composer_full": "Felix Mendelssohn Bartholdy",
+        "composer_sort": "Bartholdy, Felix Mendelssohn",
+        "work_title": "Ouverture per Il sogno di una notte di mezza estate",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "ludwig-van-beethoven-egmont-ouverture-op-84",
+        "composer_full": "Ludwig van Beethoven",
+        "composer_sort": "Beethoven, Ludwig van",
+        "work_title": "Egmont Ouverture op.84",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "ludwig-van-beethoven-ouverture-per-la-consacrazione-della-casa-op-122",
+        "composer_full": "Ludwig van Beethoven",
+        "composer_sort": "Beethoven, Ludwig van",
+        "work_title": "Ouverture \"Per la consacrazione della casa\" op.122",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "ludwig-van-beethoven-ouverture-da-coriolano-op-62",
+        "composer_full": "Ludwig van Beethoven",
+        "composer_sort": "Beethoven, Ludwig van",
+        "work_title": "Ouverture da Coriolano op.62",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-ouverture-da-die-entfuhrung-aus-dem-serail-k384",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "Ouverture da Die Entführung aus dem Serail K384",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-ouverture-da-die-zauberflote-k620",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "Ouverture da Die Zauberflöte K620",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-ouverture-da-don-giovanni-k527",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "Ouverture da Don Giovanni K527",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-ouverture-da-la-clemenza-di-tito-k621",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "Ouverture da La clemenza di Tito K621",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-ouverture-da-le-nozze-di-figaro-k492",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "Ouverture da Le nozze di Figaro K492",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-ouverture-da-l-impresario-teatrale-k486",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "Ouverture da L’impresario teatrale K486",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "gioachino-rossini-sinfonia-da-la-gazza-ladra",
+        "composer_full": "Gioachino Rossini",
+        "composer_sort": "Rossini, Gioachino",
+        "work_title": "Sinfonia da La gazza ladra",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "gioachino-rossini-sinfonia-da-l-italiana-in-algeri",
+        "composer_full": "Gioachino Rossini",
+        "composer_sort": "Rossini, Gioachino",
+        "work_title": "Sinfonia da L’italiana in Algeri",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "franz-schubert-ouverture-in-re-maggiore-im-italiano-stile-d590",
+        "composer_full": "Franz Schubert",
+        "composer_sort": "Schubert, Franz",
+        "work_title": "Ouverture in re maggiore \"Im italiano stile\" D590",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "franz-schubert-ouverture-in-stile-italiano",
+        "composer_full": "Franz Schubert",
+        "composer_sort": "Schubert, Franz",
+        "work_title": "Ouverture in stile italiano",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "p-i-tchaikovsky-romeo-e-giulietta-ouverture-fantasia",
+        "composer_full": "P.I. Tchaikovsky",
+        "composer_sort": "Tchaikovsky, P.I.",
+        "work_title": "Romeo e Giulietta, Ouverture-fantasia",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      }
+    ],
+    "Concerti": [
+      {
+        "id": "felix-mendelssohn-bartholdy-concerto-n-1-op-25-completo",
+        "composer_full": "Felix Mendelssohn Bartholdy",
+        "composer_sort": "Bartholdy, Felix Mendelssohn",
+        "work_title": "Concerto n.1 op.25 completo",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "ludwig-van-beethoven-concerti-n-1-n-2-n-3-n-5-completi",
+        "composer_full": "Ludwig van Beethoven",
+        "composer_sort": "Beethoven, Ludwig van",
+        "work_title": "Concerti n.1, n.2, n.3, n.5 completi",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "frederic-chopin-concerto-n-1-op-11",
+        "composer_full": "Frédéric Chopin",
+        "composer_sort": "Chopin, Frédéric",
+        "work_title": "Concerto n. 1, Op. 11",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "edvard-grieg-concerto-op-16-completo",
+        "composer_full": "Edvard Grieg",
+        "composer_sort": "Grieg, Edvard",
+        "work_title": "Concerto op.16 completo",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-concerti-k299-k414-k466-k488-completi",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "Concerti K299, K414, K466, K488 completi",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giovanni-paisiello-concerto-in-fa-maggiore-completo",
+        "composer_full": "Giovanni Paisiello",
+        "composer_sort": "Paisiello, Giovanni",
+        "work_title": "Concerto in Fa maggiore completo",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "jean-sibelius-concerto-per-violino-op-47-completo",
+        "composer_full": "Jean Sibelius",
+        "composer_sort": "Sibelius, Jean",
+        "work_title": "Concerto per violino op.47 completo",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      }
+    ],
+    "Vocale": [
+      {
+        "id": "g-donizetti-chiedi-all-aura-lusinghiera-da-l-elisir-d-amore",
+        "composer_full": "G. Donizetti",
+        "composer_sort": "Donizetti, G.",
+        "work_title": "\"Chiedi all’aura lusinghiera\" da L’elisir d’amore",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "fanny-mendelssohn-hensel-hero-und-leander",
+        "composer_full": "Fanny Mendelssohn Hensel",
+        "composer_sort": "Hensel, Fanny Mendelssohn",
+        "work_title": "Hero und Leander",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-come-scoglio-da-cosi-fan-tutte",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "\"Come scoglio\" da Così fan tutte",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "wolfgang-amadeus-mozart-in-quegli-anni-in-cui-val-poco-da-le-nozze-di-figaro",
+        "composer_full": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "work_title": "\"In quegli anni in cui val poco\" da Le nozze di Figaro",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giacomo-puccini-sogno-di-doretta-da-la-rondine",
+        "composer_full": "Giacomo Puccini",
+        "composer_sort": "Puccini, Giacomo",
+        "work_title": "\"Sogno di Doretta\" da La rondine",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giacomo-puccini-un-bel-di-vedremo-da-madama-butterfly",
+        "composer_full": "Giacomo Puccini",
+        "composer_sort": "Puccini, Giacomo",
+        "work_title": "\"Un bel dì vedremo\" da Madama Butterfly",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giacomo-puccini-vissi-d-arte-da-tosca",
+        "composer_full": "Giacomo Puccini",
+        "composer_sort": "Puccini, Giacomo",
+        "work_title": "\"Vissi d'arte\" da Tosca",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "gioachino-rossini-ecco-ridente-in-cielo-da-il-barbiere-di-siviglia",
+        "composer_full": "Gioachino Rossini",
+        "composer_sort": "Rossini, Gioachino",
+        "work_title": "\"Ecco ridente in cielo\" da Il barbiere di Siviglia",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "gioachino-rossini-miei-rampolli-femminini-da-la-cenerentola",
+        "composer_full": "Gioachino Rossini",
+        "composer_sort": "Rossini, Gioachino",
+        "work_title": "\"Miei rampolli femminini\" da La Cenerentola",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "gioachino-rossini-una-voce-poco-fa-da-il-barbiere-di-siviglia",
+        "composer_full": "Gioachino Rossini",
+        "composer_sort": "Rossini, Gioachino",
+        "work_title": "\"Una voce poco fa\" da Il barbiere di Siviglia",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giuseppe-verdi-de-miei-bollenti-spiriti-da-la-traviata",
+        "composer_full": "Giuseppe Verdi",
+        "composer_sort": "Verdi, Giuseppe",
+        "work_title": "\"De' miei bollenti spiriti\" da La traviata",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giuseppe-verdi-nel-di-della-vittoria-da-macbeth",
+        "composer_full": "Giuseppe Verdi",
+        "composer_sort": "Verdi, Giuseppe",
+        "work_title": "\"Nel dì della vittoria\" da Macbeth",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giuseppe-verdi-pace-pace-mio-dio-da-la-forza-del-destino",
+        "composer_full": "Giuseppe Verdi",
+        "composer_sort": "Verdi, Giuseppe",
+        "work_title": "\"Pace, pace, mio Dio\" da La forza del destino",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giuseppe-verdi-parigi-o-cara-da-la-traviata",
+        "composer_full": "Giuseppe Verdi",
+        "composer_sort": "Verdi, Giuseppe",
+        "work_title": "\"Parigi, o cara\" da La traviata",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giuseppe-verdi-ritorna-vincitor-da-aida",
+        "composer_full": "Giuseppe Verdi",
+        "composer_sort": "Verdi, Giuseppe",
+        "work_title": "\"Ritorna vincitor\" da Aida",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "giuseppe-verdi-aria-di-manrico-da-il-trovatore",
+        "composer_full": "Giuseppe Verdi",
+        "composer_sort": "Verdi, Giuseppe",
+        "work_title": "Aria di Manrico da Il trovatore",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      }
+    ],
+    "Suite": [
+      {
+        "id": "samuel-barber-adagio-per-archi",
+        "composer_full": "Samuel Barber",
+        "composer_sort": "Barber, Samuel",
+        "work_title": "Adagio per archi",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "e-elgar-serenata-per-archi",
+        "composer_full": "E. Elgar",
+        "composer_sort": "Elgar, E.",
+        "work_title": "Serenata per archi",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "edvard-grieg-danze-norvegesi-op-35",
+        "composer_full": "Edvard Grieg",
+        "composer_sort": "Grieg, Edvard",
+        "work_title": "Danze norvegesi op.35",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "edvard-grieg-holberg-suite",
+        "composer_full": "Edvard Grieg",
+        "composer_sort": "Grieg, Edvard",
+        "work_title": "Holberg Suite",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "edvard-grieg-peer-gynt-suite-n-1-op-46",
+        "composer_full": "Edvard Grieg",
+        "composer_sort": "Grieg, Edvard",
+        "work_title": "Peer Gynt Suite n.1 op.46",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "johann-strauss-ii-an-der-schonen-blauen-donau-op-314",
+        "composer_full": "Johann Strauss II",
+        "composer_sort": "II, Johann Strauss",
+        "work_title": "An der schönen blauen Donau op.314",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "johann-strauss-ii-wein-weib-und-gesang-op-333",
+        "composer_full": "Johann Strauss II",
+        "composer_sort": "II, Johann Strauss",
+        "work_title": "Wein, Weib und Gesang op.333",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "johann-strauss-ii-agyptischer-marsch-op-335",
+        "composer_full": "Johann Strauss II",
+        "composer_sort": "II, Johann Strauss",
+        "work_title": "Ägyptischer Marsch op.335",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "p-mascagni-intermezzo-da-cavalleria-rusticana",
+        "composer_full": "P. Mascagni",
+        "composer_sort": "Mascagni, P.",
+        "work_title": "Intermezzo da Cavalleria rusticana",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "o-respighi-antiche-danze-e-arie-per-liuto-suite-n-3",
+        "composer_full": "O. Respighi",
+        "composer_sort": "Respighi, O.",
+        "work_title": "Antiche danze e arie per liuto, Suite n.3",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "camille-saint-saens-fossiles-da-le-carnaval-des-animaux",
+        "composer_full": "Camille Saint-Saëns",
+        "composer_sort": "Saint-Saëns, Camille",
+        "work_title": "Fossiles da Le carnaval des animaux",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "b-smetana-vltava-da-ma-vlast",
+        "composer_full": "B. Smetana",
+        "composer_sort": "Smetana, B.",
+        "work_title": "Vltava da Má Vlast",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      },
+      {
+        "id": "p-warlock-capriol-suite",
+        "composer_full": "P. Warlock",
+        "composer_sort": "Warlock, P.",
+        "work_title": "Capriol Suite",
+        "catalogue": null,
+        "key": null,
+        "year": null,
+        "upcoming": false,
+        "notes": null,
+        "media": {
+          "video": null,
+          "audio": null
+        }
+      }
+    ]
+  },
+  "by_composer": {
+    "Samuel Barber": {
+      "composer_sort": "Barber, Samuel",
+      "items": [
+        {
+          "id": "samuel-barber-adagio-per-archi",
+          "category": "Suite",
+          "work_title": "Adagio per archi",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Felix Mendelssohn Bartholdy": {
+      "composer_sort": "Bartholdy, Felix Mendelssohn",
+      "items": [
+        {
+          "id": "felix-mendelssohn-bartholdy-concerto-n-1-op-25-completo",
+          "category": "Concerti",
+          "work_title": "Concerto n.1 op.25 completo",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "felix-mendelssohn-bartholdy-das-marchen-von-der-schonen-melusine-op-32",
+          "category": "Ouverture",
+          "work_title": "Das Märchen von der schönen Melusine op.32",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "felix-mendelssohn-bartholdy-le-ebridi-fingal-s-cave-op-26",
+          "category": "Ouverture",
+          "work_title": "Le Ebridi \"Fingal’s Cave\" op.26",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "felix-mendelssohn-bartholdy-ouverture-per-il-sogno-di-una-notte-di-mezza-estate",
+          "category": "Ouverture",
+          "work_title": "Ouverture per Il sogno di una notte di mezza estate",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "felix-mendelssohn-bartholdy-sinfonia-n-3-op-56-scozzese",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia n.3 op.56 “Scozzese”",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "felix-mendelssohn-bartholdy-sinfonia-n-4-op-90-italiana",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia n.4 op.90 “Italiana”",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "felix-mendelssohn-bartholdy-sinfonia-n-5-op-107-la-riforma",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia n.5 op.107 “La Riforma”",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Ludwig van Beethoven": {
+      "composer_sort": "Beethoven, Ludwig van",
+      "items": [
+        {
+          "id": "ludwig-van-beethoven-concerti-n-1-n-2-n-3-n-5-completi",
+          "category": "Concerti",
+          "work_title": "Concerti n.1, n.2, n.3, n.5 completi",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "ludwig-van-beethoven-egmont-ouverture-op-84",
+          "category": "Ouverture",
+          "work_title": "Egmont Ouverture op.84",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "ludwig-van-beethoven-ouverture-per-la-consacrazione-della-casa-op-122",
+          "category": "Ouverture",
+          "work_title": "Ouverture \"Per la consacrazione della casa\" op.122",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "ludwig-van-beethoven-ouverture-da-coriolano-op-62",
+          "category": "Ouverture",
+          "work_title": "Ouverture da Coriolano op.62",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "ludwig-van-beethoven-sinfonia-n-2-op-36",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia n.2 op.36",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "ludwig-van-beethoven-sinfonia-n-5-op-67",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia n.5 op.67",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Frédéric Chopin": {
+      "composer_sort": "Chopin, Frédéric",
+      "items": [
+        {
+          "id": "frederic-chopin-concerto-n-1-op-11",
+          "category": "Concerti",
+          "work_title": "Concerto n. 1, Op. 11",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "G. Donizetti": {
+      "composer_sort": "Donizetti, G.",
+      "items": [
+        {
+          "id": "g-donizetti-chiedi-all-aura-lusinghiera-da-l-elisir-d-amore",
+          "category": "Vocale",
+          "work_title": "\"Chiedi all’aura lusinghiera\" da L’elisir d’amore",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Antonín Dvořák": {
+      "composer_sort": "Dvořák, Antonín",
+      "items": [
+        {
+          "id": "antonin-dvorak-sinfonia-n-9-op-95-dal-nuovo-mondo",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia n.9 op.95 “Dal Nuovo Mondo”",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "E. Elgar": {
+      "composer_sort": "Elgar, E.",
+      "items": [
+        {
+          "id": "e-elgar-serenata-per-archi",
+          "category": "Suite",
+          "work_title": "Serenata per archi",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Edvard Grieg": {
+      "composer_sort": "Grieg, Edvard",
+      "items": [
+        {
+          "id": "edvard-grieg-concerto-op-16-completo",
+          "category": "Concerti",
+          "work_title": "Concerto op.16 completo",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "edvard-grieg-danze-norvegesi-op-35",
+          "category": "Suite",
+          "work_title": "Danze norvegesi op.35",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "edvard-grieg-holberg-suite",
+          "category": "Suite",
+          "work_title": "Holberg Suite",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "edvard-grieg-peer-gynt-suite-n-1-op-46",
+          "category": "Suite",
+          "work_title": "Peer Gynt Suite n.1 op.46",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Fanny Mendelssohn Hensel": {
+      "composer_sort": "Hensel, Fanny Mendelssohn",
+      "items": [
+        {
+          "id": "fanny-mendelssohn-hensel-hero-und-leander",
+          "category": "Vocale",
+          "work_title": "Hero und Leander",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Johann Strauss II": {
+      "composer_sort": "II, Johann Strauss",
+      "items": [
+        {
+          "id": "johann-strauss-ii-an-der-schonen-blauen-donau-op-314",
+          "category": "Suite",
+          "work_title": "An der schönen blauen Donau op.314",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "johann-strauss-ii-wein-weib-und-gesang-op-333",
+          "category": "Suite",
+          "work_title": "Wein, Weib und Gesang op.333",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "johann-strauss-ii-agyptischer-marsch-op-335",
+          "category": "Suite",
+          "work_title": "Ägyptischer Marsch op.335",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "P. Mascagni": {
+      "composer_sort": "Mascagni, P.",
+      "items": [
+        {
+          "id": "p-mascagni-intermezzo-da-cavalleria-rusticana",
+          "category": "Suite",
+          "work_title": "Intermezzo da Cavalleria rusticana",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Wolfgang Amadeus Mozart": {
+      "composer_sort": "Mozart, Wolfgang Amadeus",
+      "items": [
+        {
+          "id": "wolfgang-amadeus-mozart-concerti-k299-k414-k466-k488-completi",
+          "category": "Concerti",
+          "work_title": "Concerti K299, K414, K466, K488 completi",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-ouverture-da-die-entfuhrung-aus-dem-serail-k384",
+          "category": "Ouverture",
+          "work_title": "Ouverture da Die Entführung aus dem Serail K384",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-ouverture-da-die-zauberflote-k620",
+          "category": "Ouverture",
+          "work_title": "Ouverture da Die Zauberflöte K620",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-ouverture-da-don-giovanni-k527",
+          "category": "Ouverture",
+          "work_title": "Ouverture da Don Giovanni K527",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-ouverture-da-la-clemenza-di-tito-k621",
+          "category": "Ouverture",
+          "work_title": "Ouverture da La clemenza di Tito K621",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-ouverture-da-le-nozze-di-figaro-k492",
+          "category": "Ouverture",
+          "work_title": "Ouverture da Le nozze di Figaro K492",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-ouverture-da-l-impresario-teatrale-k486",
+          "category": "Ouverture",
+          "work_title": "Ouverture da L’impresario teatrale K486",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-sinfonia-k-16",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia K. 16",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-come-scoglio-da-cosi-fan-tutte",
+          "category": "Vocale",
+          "work_title": "\"Come scoglio\" da Così fan tutte",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "wolfgang-amadeus-mozart-in-quegli-anni-in-cui-val-poco-da-le-nozze-di-figaro",
+          "category": "Vocale",
+          "work_title": "\"In quegli anni in cui val poco\" da Le nozze di Figaro",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Giovanni Paisiello": {
+      "composer_sort": "Paisiello, Giovanni",
+      "items": [
+        {
+          "id": "giovanni-paisiello-concerto-in-fa-maggiore-completo",
+          "category": "Concerti",
+          "work_title": "Concerto in Fa maggiore completo",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Giacomo Puccini": {
+      "composer_sort": "Puccini, Giacomo",
+      "items": [
+        {
+          "id": "giacomo-puccini-sogno-di-doretta-da-la-rondine",
+          "category": "Vocale",
+          "work_title": "\"Sogno di Doretta\" da La rondine",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "giacomo-puccini-un-bel-di-vedremo-da-madama-butterfly",
+          "category": "Vocale",
+          "work_title": "\"Un bel dì vedremo\" da Madama Butterfly",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "giacomo-puccini-vissi-d-arte-da-tosca",
+          "category": "Vocale",
+          "work_title": "\"Vissi d'arte\" da Tosca",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "O. Respighi": {
+      "composer_sort": "Respighi, O.",
+      "items": [
+        {
+          "id": "o-respighi-antiche-danze-e-arie-per-liuto-suite-n-3",
+          "category": "Suite",
+          "work_title": "Antiche danze e arie per liuto, Suite n.3",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Gioachino Rossini": {
+      "composer_sort": "Rossini, Gioachino",
+      "items": [
+        {
+          "id": "gioachino-rossini-sinfonia-da-la-gazza-ladra",
+          "category": "Ouverture",
+          "work_title": "Sinfonia da La gazza ladra",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "gioachino-rossini-sinfonia-da-l-italiana-in-algeri",
+          "category": "Ouverture",
+          "work_title": "Sinfonia da L’italiana in Algeri",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "gioachino-rossini-ecco-ridente-in-cielo-da-il-barbiere-di-siviglia",
+          "category": "Vocale",
+          "work_title": "\"Ecco ridente in cielo\" da Il barbiere di Siviglia",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "gioachino-rossini-miei-rampolli-femminini-da-la-cenerentola",
+          "category": "Vocale",
+          "work_title": "\"Miei rampolli femminini\" da La Cenerentola",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "gioachino-rossini-una-voce-poco-fa-da-il-barbiere-di-siviglia",
+          "category": "Vocale",
+          "work_title": "\"Una voce poco fa\" da Il barbiere di Siviglia",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Camille Saint-Saëns": {
+      "composer_sort": "Saint-Saëns, Camille",
+      "items": [
+        {
+          "id": "camille-saint-saens-fossiles-da-le-carnaval-des-animaux",
+          "category": "Suite",
+          "work_title": "Fossiles da Le carnaval des animaux",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Franz Schubert": {
+      "composer_sort": "Schubert, Franz",
+      "items": [
+        {
+          "id": "franz-schubert-ouverture-in-re-maggiore-im-italiano-stile-d590",
+          "category": "Ouverture",
+          "work_title": "Ouverture in re maggiore \"Im italiano stile\" D590",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "franz-schubert-ouverture-in-stile-italiano",
+          "category": "Ouverture",
+          "work_title": "Ouverture in stile italiano",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "franz-schubert-sinfonia-incompiuta-d759",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia “Incompiuta” D759",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Robert Schumann": {
+      "composer_sort": "Schumann, Robert",
+      "items": [
+        {
+          "id": "robert-schumann-sinfonia-n-4-op-120",
+          "category": "Sinfonie",
+          "work_title": "Sinfonia n.4 op.120",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Jean Sibelius": {
+      "composer_sort": "Sibelius, Jean",
+      "items": [
+        {
+          "id": "jean-sibelius-concerto-per-violino-op-47-completo",
+          "category": "Concerti",
+          "work_title": "Concerto per violino op.47 completo",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "B. Smetana": {
+      "composer_sort": "Smetana, B.",
+      "items": [
+        {
+          "id": "b-smetana-vltava-da-ma-vlast",
+          "category": "Suite",
+          "work_title": "Vltava da Má Vlast",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "P.I. Tchaikovsky": {
+      "composer_sort": "Tchaikovsky, P.I.",
+      "items": [
+        {
+          "id": "p-i-tchaikovsky-romeo-e-giulietta-ouverture-fantasia",
+          "category": "Ouverture",
+          "work_title": "Romeo e Giulietta, Ouverture-fantasia",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "Giuseppe Verdi": {
+      "composer_sort": "Verdi, Giuseppe",
+      "items": [
+        {
+          "id": "giuseppe-verdi-de-miei-bollenti-spiriti-da-la-traviata",
+          "category": "Vocale",
+          "work_title": "\"De' miei bollenti spiriti\" da La traviata",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "giuseppe-verdi-nel-di-della-vittoria-da-macbeth",
+          "category": "Vocale",
+          "work_title": "\"Nel dì della vittoria\" da Macbeth",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "giuseppe-verdi-pace-pace-mio-dio-da-la-forza-del-destino",
+          "category": "Vocale",
+          "work_title": "\"Pace, pace, mio Dio\" da La forza del destino",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "giuseppe-verdi-parigi-o-cara-da-la-traviata",
+          "category": "Vocale",
+          "work_title": "\"Parigi, o cara\" da La traviata",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "giuseppe-verdi-ritorna-vincitor-da-aida",
+          "category": "Vocale",
+          "work_title": "\"Ritorna vincitor\" da Aida",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        },
+        {
+          "id": "giuseppe-verdi-aria-di-manrico-da-il-trovatore",
+          "category": "Vocale",
+          "work_title": "Aria di Manrico da Il trovatore",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    },
+    "P. Warlock": {
+      "composer_sort": "Warlock, P.",
+      "items": [
+        {
+          "id": "p-warlock-capriol-suite",
+          "category": "Suite",
+          "work_title": "Capriol Suite",
+          "catalogue": null,
+          "key": null,
+          "year": null,
+          "upcoming": false,
+          "notes": null,
+          "media": {
+            "video": null,
+            "audio": null
+          }
+        }
+      ]
+    }
+  }
+}

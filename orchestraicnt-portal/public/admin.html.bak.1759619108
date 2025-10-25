@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ICNT · Admin</title>
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+  .tabs{display:flex;gap:8px;margin:8px 0 14px}
+  .tabs .btn{padding:8px 12px}
+  .table-sm td,.table-sm th{padding:4px 6px}
+  .muted{color:var(--muted)}
+  </style>
+  <script defer src="./admin.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <div class="brand"><div class="logo-dot"></div><div class="site-title">Admin · ICNT</div></div>
+    </div>
+  </header>
+  <main class="wrap" style="padding:18px 0">
+    <div class="card">
+      <div class="head"><div class="title">Autorizzazione</div></div>
+      <div class="small muted">Inserisci il codice admin per caricare i dati e salvare modifiche.</div>
+      <input id="admin-code" placeholder="Codice admin (es. icnt-admin-2025)" class="admin-input" />
+      <div class="btn-row">
+        <button id="load" class="btn">Carica</button>
+      </div>
+      <span id="status" class="small muted"></span>
+    </div>
+
+    <div class="tabs">
+      <button data-tab="overview" class="btn">Concerti</button>
+      <button data-tab="members" class="btn">Iscritti</button>
+      <button data-tab="roles" class="btn">Ruoli</button>
+    </div>
+
+    <section id="pane-overview" class="card"></section>
+    <section id="pane-members" class="card hidden"></section>
+    <section id="pane-roles" class="card hidden"></section>
+  </main>
+</body>
+</html>

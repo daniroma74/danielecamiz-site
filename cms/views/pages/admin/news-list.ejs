@@ -1,0 +1,102 @@
+<div class="actions" style="margin-bottom:.8rem">
+  <a href="/admin/news/new" class="btn btn-primary">Nuovo articolo</a>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card__title">Filtri</div>
+  <div class="dash-card__body">
+    <form id="news_filters" class="form-grid">
+      <div class="form-row">
+        <label class="label" for="f_lang">Lingua</label>
+        <select id="f_lang" name="lang" class="select">
+          <option value="">Tutte</option>
+          <option value="it" <%= data.filters.lang==='it'?'selected':'' %>>Italiano</option>
+          <option value="en" <%= data.filters.lang==='en'?'selected':'' %>>English</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="label" for="f_status">Stato</label>
+        <select id="f_status" name="status" class="select">
+          <option value="">Tutti</option>
+          <option value="draft" <%= data.filters.status==='draft'?'selected':'' %>>Bozza</option>
+          <option value="scheduled" <%= data.filters.status==='scheduled'?'selected':'' %>>Programmato</option>
+          <option value="published" <%= data.filters.status==='published'?'selected':'' %>>Pubblicato</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="label" for="f_q">Ricerca</label>
+        <input id="f_q" name="q" class="input" value="<%= data.filters.q || '' %>" placeholder="Titolo o testo..." />
+      </div>
+      <div class="form-row" style="align-self:end">
+        <button class="btn btn-primary" type="submit">Applica</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<table class="table" style="margin-top:1rem">
+  <thead>
+    <tr>
+      <th>Cover</th>
+      <th>Titolo</th>
+      <th>Lingua</th>
+      <th>Stato</th>
+      <th>Slug</th>
+      <th>Modificato</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if(!data.items.length){ %>
+      <tr><td colspan="7">Nessun articolo.</td></tr>
+    <% } %>
+    <% data.items.forEach(p => { %>
+      <tr class="row-link" data-id="<%= p.id %>">
+        <td class="cover-cell">
+          <% const cover = p.cover_url || (p.seo && p.seo.og_image) || ''; %>
+          <% if (cover) { %>
+            <img src="<%= cover %>" alt="" style="width:88px;height:46px;object-fit:cover;border-radius:6px;border:1px solid #222;display:block"/>
+          <% } else { %>
+            –
+          <% } %>
+        </td>
+        <td><strong><%= p.title %></strong><div class="help"><%= p.excerpt || '' %></div></td>
+        <td><span class="badge"><%= p.lang %></span></td>
+        <td><span class="status <%= p.status %>"><%= p.status %></span></td>
+        <td><code><%= p.slug %></code></td>
+        <td><%= (p.updated_at||'').replace('T',' ').slice(0,16) %></td>
+        <td>
+          <div class="table-actions">
+            <a class="btn btn-secondary" href="/admin/news/<%= p.id %>/edit">Modifica</a>
+            <% if(p.status !== 'published'){ %>
+              <button class="btn btn-primary" data-act="publish" data-id="<%= p.id %>">Pubblica</button>
+            <% } else { %>
+              <button class="btn" data-act="depublish" data-id="<%= p.id %>">Depubblica</button>
+            <% } %>
+            <button class="btn" data-act="duplicate" data-id="<%= p.id %>">Duplica</button>
+            <button class="btn" data-act="delete" data-id="<%= p.id %>">Elimina</button>
+            <a class="btn" href="/admin/news/preview/<%= p.id %>" target="_blank">Anteprima</a>
+          </div>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%
+// paginazione semplice
+const totalPages = Math.max(1, Math.ceil((data.total || 0) / (data.limit || 20)));
+const currentPage = data.page || 1;
+function qStr(p){ const params = new URLSearchParams({ ...data.filters, page: String(p), limit: String(data.limit) }); return params.toString(); }
+%>
+<% if (totalPages > 1) { %>
+  <div class="actions" style="margin-top:1rem;justify-content:flex-end">
+    <% if (currentPage > 1) { %>
+      <a class="btn" href="/admin/news?<%= qStr(currentPage - 1) %>">« Precedente</a>
+    <% } %>
+    <span class="badge">Pagina <%= currentPage %> / <%= totalPages %></span>
+    <% if (currentPage < totalPages) { %>
+      <a class="btn" href="/admin/news?<%= qStr(currentPage + 1) %>">Successiva »</a>
+    <% } %>
+  </div>
+<% } %>

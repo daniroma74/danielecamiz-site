@@ -1,0 +1,91 @@
+{
+  "bio": {
+    "styles": [
+      "/css/pages/bio/bio-modal.css",
+      "/css/pages/bio/bio-responsive.css",
+      "/css/pages/bio/bio.css"
+    ],
+    "scripts": [
+      "/js/modules/bio/bio-entry.js"
+    ]
+  },
+  "concerts": {
+    "styles": [
+      "/css/pages/concerts/concerts-layout.css",
+      "/css/pages/concerts/concerts-responsive.css",
+      "/css/pages/concerts/concerts-timeline.css"
+    ],
+    "scripts": [
+      "/js/modules/concerts/concerts.js"
+    ]
+  },
+  "gallery": {
+    "styles": [
+      "/css/pages/gallery/gallery-claim.css",
+      "/css/pages/gallery/gallery-covers.css",
+      "/css/pages/gallery/gallery-grid.css",
+      "/css/pages/gallery/gallery-lightbox.css",
+      "/css/pages/gallery/gallery-responsive.css",
+      "/css/pages/gallery/gallery-tabs.css"
+    ],
+    "scripts": [
+      "/js/modules/gallery/gallery-entry.js"
+    ]
+  },
+  "home": {
+    "styles": [
+      "/css/pages/home/home-bandcamp.css",
+      "/css/pages/home/home-concerts.css",
+      "/css/pages/home/home-contact.css",
+      "/css/pages/home/home-hero.css",
+      "/css/pages/home/home-news.css",
+      "/css/pages/home/home-projects.css",
+      "/css/pages/home/home-reset.css",
+      "/css/pages/home/home-responsive.css",
+      "/css/pages/home/home-video.css"
+    ],
+    "scripts": [
+      "/js/modules/home/home-entry.js"
+    ]
+  },
+  "linktree": {
+    "styles": [
+      "/css/pages/linktree/linktree-responsive.css",
+      "/css/pages/linktree/linktree.css"
+    ],
+    "scripts": []
+  },
+  "news": {
+    "styles": [
+      "/css/pages/news/news-base.css"
+    ],
+    "scripts": [
+      "/js/modules/news/news.js"
+    ]
+  },
+  "press": {
+    "styles": [
+      "/css/pages/press/press-base.css",
+      "/css/pages/press/press-responsive.css"
+    ],
+    "scripts": []
+  },
+  "repertoire": {
+    "styles": [
+      "/css/pages/repertoire/repertoire-base.css",
+      "/css/pages/repertoire/repertoire-responsive.css"
+    ],
+    "scripts": [
+      "/js/modules/repertoire/repertoire.js"
+    ]
+  },
+  "video": {
+    "styles": [
+      "/css/pages/video/video-base.css",
+      "/css/pages/video/video-responsive.css"
+    ],
+    "scripts": [
+      "/js/modules/video/video.js"
+    ]
+  }
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campagne Newsletter</title>
+    <link rel="stylesheet" href="/shared/css/admin-base.css">
+    <link rel="stylesheet" href="/css/newsletter-light.css">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>📮 Campagne Newsletter</h1>
+            <div class="header-actions">
+                <a href="/admin/campaign/new" class="btn btn-primary">
+                    ✨ Nuova Campagna
+                </a>
+                <a href="/admin/dashboard" class="btn btn-outline">
+                    ← Dashboard
+                </a>
+            </div>
+        </div>
+
+        <% if (campaigns && campaigns.length > 0) { %>
+            <div style="display: grid; gap: 20px;">
+                <% campaigns.forEach(campaign => { %>
+                <div class="card">
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start;">
+                        <div>
+                            <h3 style="margin: 0 0 8px 0; font-size: 20px;">
+                                <%= campaign.name %>
+                                <span class="badge badge-<%= campaign.status === 'sent' ? 'success' : 'warning' %>" style="margin-left: 12px;">
+                                    <%= campaign.status === 'sent' ? 'Inviata' : 'Bozza' %>
+                                </span>
+                            </h3>
+                            <div style="color: var(--text-light); font-size: 14px; margin-bottom: 12px;">
+                                <strong>Oggetto:</strong> <%= campaign.subject %><br>
+                                <strong>Data:</strong> <%= new Date(campaign.created_at).toLocaleDateString('it-IT') %>
+                                <% if (campaign.sent_at) { %>
+                                    | <strong>Inviata:</strong> <%= new Date(campaign.sent_at).toLocaleDateString('it-IT') %>
+                                <% } %>
+                            </div>
+                            
+                            <% if (campaign.status === 'sent') { %>
+                            <div style="display: flex; gap: 32px; padding: 16px; background: var(--bg); border-radius: 8px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--primary);"><%= campaign.sent_count || 0 %></div>
+                                    <div style="font-size: 12px; color: var(--text-light);">Inviate</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--success);"><%= campaign.open_count || 0 %></div>
+                                    <div style="font-size: 12px; color: var(--text-light);">Aperte</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--info);">
+                                        <%= campaign.sent_count > 0 ? Math.round((campaign.open_count || 0) / campaign.sent_count * 100) : 0 %>%
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--text-light);">Tasso Apertura</div>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; min-width: 200px;">
+                            <% if (campaign.status === 'draft') { %>
+                                <a href="/admin/campaign/<%= campaign.id %>/edit" class="btn btn-primary" style="text-align: center;">
+                                    ✏️ Modifica
+                                </a>
+                            <% } else { %>
+                                <a href="/admin/campaign/<%= campaign.id %>/edit" class="btn btn-outline" style="text-align: center;">
+                                    👁️ Visualizza
+                                </a>
+                                
+                                <button class="btn btn-secondary" onclick="resendToUnopened(<%= campaign.id %>)" style="text-align: center; font-size: 13px;">
+                                    🔄 Reinvia a chi non ha aperto
+                                </button>
+                            <% } %>
+                            
+                            <button class="btn btn-danger" onclick="deleteCampaign(<%= campaign.id %>)" style="text-align: center;">
+                                🗑️ Elimina
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="card" style="text-align: center; padding: 80px 20px;">
+                <div style="font-size: 64px; margin-bottom: 20px;">📭</div>
+                <h2>Nessuna campagna ancora</h2>
+                <p style="color: var(--text-light); margin: 20px 0;">
+                    Crea la tua prima campagna newsletter
+                </p>
+                <a href="/admin/campaign/new" class="btn btn-primary" style="margin-top: 20px;">
+                    ✨ Crea Prima Campagna
+                </a>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+    async function deleteCampaign(id) {
+      if (!confirm('⚠️ Eliminare questa campagna?\n\nQuesta azione non può essere annullata.')) return;
+      
+      try {
+        const res = await fetch(`/admin/campaign/${id}/delete`, { method: 'POST' });
+        const result = await res.json();
+        
+        if (result.success) {
+          alert('✅ Campagna eliminata');
+          location.reload();
+        } else {
+          alert('❌ Errore: ' + result.error);
+        }
+      } catch (error) {
+        alert('❌ Errore di connessione: ' + error.message);
+      }
+    }
+
+    async function resendToUnopened(id) {
+      if (!confirm('🔄 Reinviare la campagna a chi NON ha ancora aperto?\n\nQuesta azione invierà la newsletter solo agli iscritti che non hanno aperto la mail precedente.')) return;
+      
+      const btn = event.target;
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '⏳ Invio in corso...';
+      
+      try {
+        const res = await fetch(`/admin/campaign/${id}/resend-unopened`, { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+          alert(`✅ Campagna reinviata con successo!\n\n${result.sent} destinatari hanno ricevuto il promemoria.`);
+          location.reload();
+        } else {
+          alert('❌ ' + result.error);
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        }
+      } catch (error) {
+        alert('❌ Errore di connessione: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "icnt-stagione",
+  "version": "2.0.0",
+  "description": "Mini-sito Stagione ICNT 2025-26 - Versione Moderna",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "PORT=${PORT:-3026} node --watch server.js",
+    "start": "PORT=${PORT:-3026} node server.js",
+    "pm2:start": "pm2 start ecosystem.config.cjs",
+    "pm2:stop": "pm2 stop icnt-stagione",
+    "pm2:restart": "pm2 restart icnt-stagione",
+    "pm2:logs": "pm2 logs icnt-stagione"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.6.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.7",
+    "dayjs": "^1.11.13",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-ejs-layouts": "^2.5.1",
+    "helmet": "^7.1.0",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,54 @@
+<div id="cookie_banner" class="cookie-banner" role="dialog" aria-modal="true" aria-labelledby="cookie_banner_title" <%= cookieConsent ? 'hidden' : '' %>>
+  <div class="cookie-banner__panel">
+    <h2 id="cookie_banner_title" class="cookie-banner__title">
+      <%= (t && t('cookies.title')!== 'cookies.title') ? t('cookies.title') : (lang==='en'?'This site uses cookies':'Questo sito usa cookie') %>
+    </h2>
+    <p class="cookie-banner__desc">
+      <%= (t && t('cookies.desc')!== 'cookies.desc')
+        ? t('cookies.desc')
+        : (lang==='en'
+          ? 'We use technical cookies and, with consent, measurement/marketing cookies.'
+          : 'Usiamo cookie tecnici e, previo consenso, cookie di misurazione/marketing.') %>
+    </p>
+
+    <form class="cookie-prefs" id="cookie_prefs_form">
+      <label class="cookie-pref">
+        <input type="checkbox" name="measurement" checked>
+        <span><%= (lang==='en'?'Measurement (anonymous analytics)':'Misurazione (analytics anonimi)') %></span>
+      </label>
+      <label class="cookie-pref">
+        <input type="checkbox" name="marketing">
+        <span><%= (lang==='en'?'Marketing (embeds, players, etc.)':'Marketing (embed, player, ecc.)') %></span>
+      </label>
+    </form>
+
+    <div class="cookie-banner__actions">
+      <button type="button" class="btn" data-consent="accept">
+        <%= (t && t('cookies.accept')!== 'cookies.accept') ? t('cookies.accept') : (lang==='en'?'Accept all':'Accetta tutti') %>
+      </button>
+      <button type="button" class="btn btn-link" data-consent="reject">
+        <%= (t && t('cookies.reject')!== 'cookies.reject') ? t('cookies.reject') : (lang==='en'?'Reject':'Rifiuta') %>
+      </button>
+      <button type="button" class="btn btn-link" data-consent="prefs">
+        <%= (t && t('cookies.prefs')!== 'cookies.prefs') ? t('cookies.prefs') : (lang==='en'?'Preferences':'Preferenze') %>
+      </button>
+    </div>
+  </div>
+
+  <style>
+    /* nascondi SEMPRE il banner quando ha l’attributo hidden */
+    .cookie-banner[hidden]{display:none !important;}
+
+    .cookie-banner{position:fixed;inset:auto 0 0 0;z-index:1200;display:flex;justify-content:center;align-items:flex-end;padding:0 1rem 1rem;background:transparent}
+    .cookie-banner__panel{max-width:960px;width:100%;background:#161313;border:2px solid #cba135;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.45);padding:1rem}
+    .cookie-banner__title{margin:0 0 .25rem;color:#fffbe9}
+    .cookie-banner__desc{margin:.25rem 0 .75rem;color:#e7dbb6}
+    .cookie-prefs{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .cookie-pref{display:flex;align-items:center;gap:.5rem;color:#f0e6c1}
+    .cookie-banner__actions{display:flex;gap:.5rem;flex-wrap:wrap}
+    .btn{background:#cba135;border:0;color:#111;padding:.5rem .8rem;border-radius:10px;cursor:pointer}
+    .btn-link{background:transparent;color:#ffd977;border:1px solid #cba135}
+    .footer-link.btn-link{background:transparent;border:0;color:#ffd977;cursor:pointer}
+    @media (max-width:640px){.cookie-banner__panel{padding:.8rem}}
+  </style>
+</div>

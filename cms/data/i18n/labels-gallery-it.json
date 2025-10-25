@@ -1,0 +1,10 @@
+{
+  "gallery": {
+    "title": "Galleria fotografica",
+    "claim": "Un po’ di foto da concerti, prove e scatti ufficiali.<br>Se vuoi dare un’occhiata, sono tutte qui",
+    "btn_return": "Torna alla galleria",
+    "category_concert": "Concerto",
+    "category_official": "Foto ufficiali",
+    "category_rehearsal": "In prova"
+  }
+}

@@ -1,0 +1,58 @@
+<%-
+  /*
+    HERO BIO – compatto, controllato dal JSON (unica sorgente).
+    Chiavi:
+      page.title, page.claim, page.hero_image
+      page.hero_min_height (px)
+      page.hero_focus_y   (0..100, % verticale dell’immagine)
+      page.hero_zoom      (scala: 1 = 100%, >1 zoom-in, <1 zoom-out)
+      page.hero_text_offset (px, opzionale)
+      page.hero_blur (px, opzionale)
+      page.hero_brightness (0..1, opzionale)
+  */
+-%>
+<%
+  const S = (typeof content!=='undefined' && content) ? content
+          : (typeof bio!=='undefined' && bio) ? bio
+          : (typeof bioData!=='undefined' && bioData) ? bioData
+          : {};
+  const L = (labels && labels.bio) ? labels.bio : {};
+  const _t = (k, def='') => { try { const v=(typeof t==='function'?t(k):''); return (v&&v!==k)?v:def; } catch { return def; } };
+
+  const heroTitle = S?.page?.title || L.title || _t('bio.title', (lang==='en'?'About me':'Chi sono'));
+  const heroClaim = S?.page?.claim || L.claim || _t('bio.claim', (lang==='en'?'Here you’ll find my story, my path so far.':'Qui trovi la mia storia, il mio percorso e quello che ho fatto finora.'));
+  const heroImg   = S?.page?.hero_image || '/img/daniele-camiz-ritratto.jpg';
+
+  const minH   = Number(S?.page?.hero_min_height) || 325;     // px
+  let   focusY = Number(S?.page?.hero_focus_y);                // 0..100 (%)
+  focusY = Number.isFinite(focusY) ? Math.max(0, Math.min(100, focusY)) : 50;
+  const zoom   = Number(S?.page?.hero_zoom);
+  const zoomVal = Number.isFinite(zoom) ? zoom : 1;
+
+  const textOffset = Number.isFinite(Number(S?.page?.hero_text_offset)) ? Number(S.page.hero_text_offset) : null;
+
+  const blur   = Number.isFinite(Number(S?.page?.hero_blur)) ? Number(S.page.hero_blur) : 6;        // px (opz.)
+  const bright = Number.isFinite(Number(S?.page?.hero_brightness)) ? Number(S.page.hero_brightness) : 0.9; // 0..1 (opz.)
+
+  const styleVars = [
+    `--hero-bio-min-h:${minH}px`,
+    `--hero-bio-focus-y:${focusY}%`,
+    `--hero-bio-zoom:${zoomVal}`,
+    `--hero-bio-blur:${blur}px`,
+    `--hero-bio-brightness:${bright}`
+  ];
+  if (textOffset !== null) styleVars.push(`--hero-bio-text-offset:${textOffset}px`);
+%>
+
+<section id="hero_bio" class="hero-bio hero-compact" style="<%= styleVars.join(';') %>">
+  <div class="hero-media" aria-hidden="true">
+    <img src="<%= heroImg %>" alt="" class="hero-media-img" loading="eager" />
+  </div>
+  <div class="hero-overlay">
+    <div class="hero-container">
+      <h1 id="bio_page_title" class="hero-title"><%= heroTitle %></h1>
+      <p id="bio_page_claim" class="hero-claim"><%= heroClaim %></p>
+      <a href="#bio_panels" class="btn btn-primary btn-anchor" aria-label="<%= (lang==='en'?'Scroll to bio sections':'Vai ai contenuti') %>">↓</a>
+    </div>
+  </div>
+</section>

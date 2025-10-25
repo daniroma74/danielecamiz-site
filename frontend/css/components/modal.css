@@ -1,0 +1,204 @@
+/* ===== MODALE GENERICA ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+  .modal-overlay.show { display: flex; }
+  
+  .modal-box {
+    background: #1a1a1a;
+    color: var(--text-color);
+    width: 100%;
+    max-width: 800px;
+    border: 2px solid var(--accent-color);
+    border-radius: 8px;
+    padding: 2rem;
+    position: relative;
+    font-family: 'Cormorant Garamond', serif;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  }
+  
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 2rem;
+    color: var(--accent-color);
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 2;
+  }
+  .modal-close:hover {
+    transform: scale(1.2);
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+    color: var(--light-accent);
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .modal-content {
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: var(--text-color);
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.3rem;
+    margin-top: 2rem;
+  }
+  .modal-buttons button,
+  .modal-buttons .btn {
+    background: var(--accent-color);
+    color: #0f0f0f;
+    border: none;
+    padding: 0.7rem 1.6rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 1rem;
+  }
+  .modal-buttons button:hover,
+  .modal-buttons .btn:hover {
+    background: var(--light-accent);
+    color: #0f0f0f;
+  }
+  
+  /* === Scrollbar modale === */
+  .modal-box::-webkit-scrollbar,
+  .modal-content::-webkit-scrollbar {
+    width: 8px;
+    background: #2b2b2b;
+  }
+  .modal-box::-webkit-scrollbar-thumb,
+  .modal-content::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+  }
+  
+  /* === Fullscreen mode (opzionale) === */
+  .modal-box.fullscreen {
+    width: 97vw;
+    max-width: 1000px;
+    height: 95vh;
+    max-height: none;
+  }
+  .modal-box.fullscreen .modal-content {
+    max-height: calc(95vh - 120px);
+    overflow-y: auto;
+  }
+  
+  /* === Responsive === */
+  @media (max-width: 768px) {
+    .modal-box {
+      padding: 1.2rem;
+      max-width: 98vw;
+    }
+    .modal-title { font-size: 1.2rem; }
+    .modal-content { font-size: 0.98rem; }
+    .modal-close { font-size: 1.5rem; }
+  }
+/* ===== Concert Lightbox (scoped) ===== */
+#concert_lightbox .modal-box {
+  max-width: 980px;            /* più spazio per poster+testo */
+}
+
+#concert_lightbox .modal-content {
+  display: grid;
+  grid-template-columns: 340px 1fr; /* poster | dettagli */
+  gap: 1.5rem;
+  align-items: start;
+}
+
+#concert_lightbox .concert-lightbox-img,
+#concert_lightbox .concert-lightbox-info {
+  margin: 0;
+  padding: 0;
+}
+
+#concert_lightbox #concert_poster,
+#concert_lightbox .concert-lightbox-img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+}
+
+#concert_lightbox .concert-title,
+#concert_lightbox .lightbox-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  color: var(--light-accent);
+  margin: 0 0 .5rem 0;
+}
+
+#concert_lightbox .concert-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1rem;
+  opacity: .9;
+  margin-bottom: 1rem;
+}
+
+#concert_lightbox .concert-program { 
+  white-space: pre-wrap; 
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px;
+  padding: .75rem .9rem;
+  margin: .75rem 0 1rem 0;
+}
+
+#concert_lightbox .concert-facts {
+  list-style: none;
+  padding: 0;
+  margin: .5rem 0 0 0;
+}
+#concert_lightbox .concert-facts li { 
+  margin: .35rem 0; 
+  line-height: 1.5; 
+}
+#concert_lightbox .concert-facts li strong { 
+  color: var(--light-accent); 
+}
+
+#concert_lightbox .modal-buttons { 
+  justify-content: flex-start; 
+}
+
+/* Responsive: poster sopra, testo sotto */
+@media (max-width: 900px) {
+  #concert_lightbox .modal-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Year Archive Modal (below concert lightbox) ===== */
+#year_modal.modal-overlay {
+  z-index: 9990; /* sotto alla lightbox dei singoli concerti */
+}
+#year_modal .modal-box {
+  max-width: 1000px;
+}
+#year_modal .modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+}

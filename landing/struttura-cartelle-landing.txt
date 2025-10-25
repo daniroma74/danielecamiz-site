@@ -1,0 +1,79 @@
+.
+├── config
+│   ├── constants.js
+│   └── database.js
+├── controllers
+│   ├── adminController.js
+│   ├── archiveController.js
+│   ├── bookingController.js
+│   ├── checkinController.js
+│   └── eventController.js
+├── cron-reminder-24h.js
+├── ecosystem.config.cjs
+├── .env
+├── middleware
+│   ├── errorHandler.js
+│   ├── routing.js
+│   └── subdomain.js
+├── models
+│   ├── Booking.js
+│   └── Event.js
+├── package.json
+├── package-lock.json
+├── public
+│   ├── css
+│   │   ├── admin-components.css
+│   │   ├── admin.css
+│   │   ├── admin-layouts.css
+│   │   ├── components.css
+│   │   ├── landing-components.css
+│   │   └── landing.css
+│   └── js
+│       ├── admin-editor.js
+│       ├── admin-utils.js
+│       ├── booking.js
+│       ├── checkin.js
+│       ├── landing.js
+│       └── utils.js
+├── routes
+│   ├── admin.js
+│   ├── api.js
+│   └── public.js
+├── server.js
+├── services
+│   ├── bookingMailer.js
+│   └── mailService.js
+├── struttura-cartelle-landing.txt
+└── views
+    ├── layouts
+    │   └── base.ejs
+    ├── pages
+    │   ├── admin
+    │   │   ├── archive.ejs
+    │   │   ├── archive.ejs.backup-original
+    │   │   ├── bookings.ejs
+    │   │   ├── bookings.ejs.backup-original
+    │   │   ├── checkin.ejs
+    │   │   ├── checkin.ejs.backup-original
+    │   │   ├── dashboard.ejs
+    │   │   ├── dashboard.ejs.backup-original
+    │   │   ├── editor.ejs
+    │   │   ├── editor.ejs.backup
+    │   │   ├── editor.ejs.backup-original
+    │   │   ├── new-event.ejs
+    │   │   └── new-event.ejs.backup-original
+    │   ├── archived-landing.ejs
+    │   ├── booking-cancelled.ejs
+    │   ├── error.ejs
+    │   └── landing.ejs
+    └── partials
+        ├── admin
+        │   ├── event-fields.ejs
+        │   ├── gallery-manager.ejs
+        │   └── image-upload.ejs
+        ├── booking-form.ejs
+        ├── gallery.ejs
+        ├── header.ejs
+        └── modals.ejs
+
+16 directories, 61 files

@@ -1,0 +1,68 @@
+[
+  {
+    "nome": "Viola Luna",
+    "cognome": "Rodriguez Russo",
+    "sesso": "F",
+    "luogoNascita": "Roma",
+    "provinciaNascita": "RM",
+    "dataNascita": "01/03/2008",
+    "codiceFiscale": "RDRVLN08C41H501R",
+    "strumento": "violoncello",
+    "ore": 12
+  },
+  {
+    "nome": "Leonardo",
+    "cognome": "Camiz",
+    "sesso": "M",
+    "luogoNascita": "Roma",
+    "provinciaNascita": "RM",
+    "dataNascita": "04/04/2006",
+    "codiceFiscale": "CMZLRD06D04H501B",
+    "strumento": "violino",
+    "ore": 131
+  },
+  {
+    "nome": "Alessandro",
+    "cognome": "Paolini",
+    "sesso": "M",
+    "luogoNascita": "Roma",
+    "provinciaNascita": "RM",
+    "dataNascita": "22/05/2006",
+    "codiceFiscale": "PLNLSN06E22H501J",
+    "strumento": "clarinetto",
+    "ore": 30
+  },
+  {
+    "nome": "Asia",
+    "cognome": "Paradiso",
+    "sesso": "F",
+    "luogoNascita": "Roma",
+    "provinciaNascita": "RM",
+    "dataNascita": "13/09/2006",
+    "codiceFiscale": "PRDSAI06P53H501S",
+    "strumento": "flauto",
+    "ore": 51
+  },
+  {
+    "nome": "Manuel",
+    "cognome": "Chiricozzi",
+    "sesso": "M",
+    "luogoNascita": "Viterbo",
+    "provinciaNascita": "VT",
+    "dataNascita": "13/12/2006",
+    "codiceFiscale": "CHRMNL06T13M082O",
+    "strumento": "tuba",
+    "ore": 12
+  },
+  {
+    "nome": "Nicolò",
+    "cognome": "Sirianni",
+    "sesso": "M",
+    "luogoNascita": "Roma",
+    "provinciaNascita": "RM",
+    "dataNascita": "10/05/2005",
+    "codiceFiscale": "SRNNCL05E10H501L",
+    "strumento": "tromba",
+    "ore": 18
+  }
+]

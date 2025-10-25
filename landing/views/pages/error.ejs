@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Errore <%= typeof status !== 'undefined' ? status : 500 %></title>
+  <link rel="stylesheet" href="/public/css/components.css">
+  <style>
+    body {
+      margin: 0;
+      background: #0b0b0b;
+      color: #f1f1f1;
+      font-family: "Montserrat", system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .error-container {
+      text-align: center;
+      padding: 40px;
+    }
+    .error-code {
+      font-size: 6rem;
+      font-weight: bold;
+      color: #d6b25e;
+      margin: 0;
+    }
+    .error-message {
+      font-size: 1.5rem;
+      margin: 20px 0;
+      color: #b8b8b8;
+    }
+    .error-actions {
+      margin-top: 30px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #d6b25e;
+      color: #0b0b0b;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+   <h1 class="error-code">500</h1>
+<p class="error-message"><%= typeof message !== 'undefined' ? message : 'Si è verificato un errore' %></p>
+    <div class="error-actions">
+      <a href="/" class="btn">Torna alla Dashboard</a>
+      <a href="javascript:history.back()" class="btn">Indietro</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+.claim-text {
+    max-width: 700px;
+    margin: 1rem auto 2rem auto;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--gold-color);
+    text-align: center;
+    user-select: none;
+  }

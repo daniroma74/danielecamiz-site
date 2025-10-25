@@ -1,0 +1,84 @@
+{
+  "navbar": {
+    "nav_home": "Daniele Camiz",
+    "nav_bio": "About Me",
+    "nav_concerts": "Concerts",
+    "nav_gallery": "Gallery",
+    "nav_press": "Press",
+    "nav_video": "Video",
+    "nav_repertoire": "Repertoire",
+    "nav_contact": "Contact",
+    "nav_news": "News",
+    "language_it": "IT",
+    "language_en": "EN",
+    "switch_language": "Switch Language",
+    "menu": "Menu",
+    "open": "Open",
+    "close": "Close"
+  },
+  "footer": {
+    "copyright": "@ Daniele Camiz 2025 - All rights reserved.",
+    "admin": "Admin Area",
+    "privacy_policy": "Privacy Policy",
+    "terms_conditions": "Terms and Conditions",
+    "cookie_notice": "This site uses cookies to improve your experience.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "footer_rights": "All rights reserved."
+  },
+  "buttons": {
+    "read_more": "Read more",
+    "read_less": "Read less",
+    "show_more": "Show more",
+    "show_less": "Show less",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "back_to_top": "Back to top",
+    "send_message": "Send message",
+    "sending": "Sending...",
+    "sent": "Message sent!",
+    "error": "An error occurred. Please try again.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "add": "Add",
+    "update": "Update",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "logout": "Logout",
+    "login": "Login",
+    "forgot_password": "Forgot password?",
+    "captcha": "Captcha verification",
+    "search": "Search",
+    "accept": "Accept",
+    "decline": "Decline",
+    "listen": "Listen",
+    "watch": "Watch",
+    "download": "Download",
+    "btn_hide_details": "Hide details",
+    "btn_show_more": "Show more"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "success": "Operation completed successfully.",
+    "required_field": "Required field"
+  },
+  "form": {
+    "name": "Name",
+    "surname": "Surname",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "password": "Password"
+  },
+    "cookies": {
+      "title": "This site uses cookies",
+      "desc": "We use technical cookies and, with consent, measurement/marketing cookies.",
+      "accept": "Accept all",
+      "reject": "Reject",
+      "prefs": "Preferences",
+      "manage": "Manage cookies"
+    },
+    "terms": { "title": "Terms & Conditions" }
+  }
+  

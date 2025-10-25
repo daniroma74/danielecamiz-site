@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="<%= lang || 'it' %>">
+  <head>
+    <%-
+      // Head comune (meta, favicon, preload, css base)
+      // I metadati provengono da res.locals (title, description, keywords, canonical, ogImage)
+      include('../partials/frontend/head')
+    %>
+
+    <% /* --- Open Graph & Twitter meta (unified, 2025-ready) --- */
+      const isArticle = (typeof post !== 'undefined' && post);
+      const ogType    = isArticle ? 'article' : 'website';
+      const ogLocale  = (lang === 'en') ? 'en_GB' : 'it_IT';
+      const ogTitle   = title || '';
+      const ogDesc    = description || '';
+      const ogUrl     = canonical || '';
+      const ogImg     = ogImage || '/img/icons/favicon-180.png';
+      const postDate  = (isArticle && post.date) ? post.date : null;
+      const postTags  = (isArticle && Array.isArray(post.tags)) ? post.tags : []; %>
+
+    <meta property="og:type" content="<%= ogType %>">
+    <meta property="og:locale" content="<%= ogLocale %>">
+    <meta property="og:title" content="<%= ogTitle %>">
+    <meta property="og:description" content="<%= ogDesc %>">
+    <meta property="og:url" content="<%= ogUrl %>">
+    <meta property="og:image" content="<%= ogImg %>">
+    <% if (isArticle) { %>
+      <% if (postDate) { %><meta property="article:published_time" content="<%= postDate %>"><% } %>
+      <% postTags.forEach(function(tag){ %>
+        <meta property="article:tag" content="<%= tag %>">
+      <% }) %>
+    <% } %>
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= ogTitle %>">
+    <meta name="twitter:description" content="<%= ogDesc %>">
+    <meta name="twitter:image" content="<%= ogImg %>">
+
+    <% /* Hreflang alternates for news-post (only if post + alternates present) */ %>
+    <% if (isArticle && Array.isArray(alternates) && alternates.length) { %>
+      <% alternates.forEach(function(a){ if (a && a.lang && a.url) { %>
+        <link rel="alternate" hreflang="<%= a.lang %>" href="<%= a.url %>">
+      <% } }) %>
+    <% } %>
+
+    <% /* Prev/Next for paginated lists (e.g., /news?pg=2) */ %>
+    <% if (typeof pageMeta !== 'undefined' && pageMeta && (pageMeta.relPrev || pageMeta.relNext)) { %>
+      <% if (pageMeta.relPrev) { %>
+        <link rel="prev" href="<%= pageMeta.relPrev %>">
+      <% } %>
+      <% if (pageMeta.relNext) { %>
+        <link rel="next" href="<%= pageMeta.relNext %>">
+      <% } %>
+    <% } %>
+
+    <!-- CSS GLOBALI (brand, layout, componenti) con ordine garantito: components -> altri -> responsive (per ultimo) -->
+    <%
+      const inArr   = Array.isArray(cssGlobal) ? cssGlobal.filter(Boolean) : [];
+      const isStr   = v => typeof v === 'string';
+      const isComp  = h => isStr(h) && h.includes('/frontend/css/components/');
+      const isResp  = h => isStr(h) && h.includes('/frontend/css/utils/responsive.css');
+
+      const comps   = inArr.filter(isComp);
+      const others  = inArr.filter(h => !isComp(h) && !isResp(h));
+      // stampiamo responsive sempre per ultimo (se assente lo iniettiamo)
+      const RESP    = '/frontend/css/utils/responsive.css';
+    %>
+    <% comps.forEach(href => { %>
+      <link rel="stylesheet" href="<%= href %>">
+    <% }) %>
+    <% others.forEach(href => { %>
+      <link rel="stylesheet" href="<%= href %>">
+    <% }) %>
+    <link rel="stylesheet" href="<%= RESP %>"><!-- responsive.css sempre ultimo -->
+
+    <!-- CSS PER-PAGINA (pageStyles preferito; compat: cssFiles) -->
+    <%
+      const __cssA = Array.isArray(pageStyles) ? pageStyles : [];
+      const __cssB = Array.isArray(cssFiles)   ? cssFiles   : [];
+      const __css  = Array.from(new Set([...__cssA, ...__cssB].filter(Boolean)));
+      __css.forEach(function(href){
+        const h = (typeof href === 'string' && href[0] !== '/') ? ('/css/' + href) : href;
+    %>
+      <link rel="stylesheet" href="<%= h %>">
+    <% }); %>
+    <!-- RSS feed (News) -->
+    <link rel="alternate" type="application/rss+xml" title="News RSS" href="/news/feed.xml">
+  </head>
+
+  <body class="<%= bodyClass || '' %>">
+    <%-
+      // Navbar frontend
+      include('../partials/frontend/navbar', { lang, labels })
+    %>
+
+    <main id="main_content" tabindex="-1">
+      <%- body %>
+    </main>
+
+    <%-
+      // Footer frontend
+      include('../partials/frontend/footer', { lang, labels })
+    %>
+
+    <%-
+      // Cookie banner (mostrato se non c'è consenso)
+      include('../partials/frontend/cookie-banner', { lang, labels })
+    %>
+
+    <!-- JS GLOBALI -->
+    <script src="/js/navbar.js" defer></script>
+    <script src="/js/cookie-consent.js" defer></script>
+
+    <!-- JS PER-PAGINA (opzionali, dal controller) -->
+    <% (pageScripts || []).forEach(src => {
+         let s = (typeof src === 'string') ? src : '';
+         if (s && s.charAt(0) !== '/') { s = '/js/' + s; }
+    %>
+      <script src="<%= s %>" defer></script>
+    <% }) %>
+  </body>
+</html>

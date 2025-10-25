@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/concert-editor.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  
+  <nav class="admin-nav">
+    <div class="nav-container">
+      <a href="/admin" class="nav-brand">
+        <i class="fas fa-music"></i> Concerts Admin
+      </a>
+      <div class="nav-links">
+        <a href="/admin/dashboard"><i class="fas fa-calendar"></i> Concerti</a>
+        <a href="/admin/repertoire"><i class="fas fa-book"></i> Repertorio</a>
+        <a href="/admin/search"><i class="fas fa-search"></i> Ricerca</a>
+        <a href="<%= stagingUrl %>/repertoire" target="_blank">
+          <i class="fas fa-external-link-alt"></i> Frontend
+        </a>
+        <a href="/auth/logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Esci</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-main">
+    <div class="page-header">
+      <h1>
+        <i class="fas fa-<%= isNew ? 'plus' : 'edit' %>"></i>
+        <%= isNew ? 'Nuovo Concerto' : 'Modifica Concerto' %>
+      </h1>
+      <a href="/admin" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Torna alla lista
+      </a>
+    </div>
+
+    <form id="concertForm" class="concert-form">
+      <input type="hidden" name="id" value="<%= concert ? concert.id : '' %>">
+
+      <div class="form-grid">
+        
+        <div class="form-column">
+          <div class="form-section">
+            <h2><i class="fas fa-info-circle"></i> Informazioni Principali</h2>
+            
+            <div class="form-group">
+              <label for="title">Titolo Concerto *</label>
+              <input type="text" id="title" name="title" required
+                     value="<%= concert ? concert.title : '' %>"
+                     placeholder="Es: Concerto di Capodanno 2025">
+            </div>
+
+            <div class="form-group">
+              <label for="subtitle">Sottotitolo</label>
+              <input type="text" id="subtitle" name="subtitle"
+                     value="<%= concert && concert.subtitle ? concert.subtitle : '' %>"
+                     placeholder="Es: Gala di Apertura">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="date">Data *</label>
+                <input type="date" id="date" name="date" required
+                       value="<%= concert ? concert.date : '' %>">
+              </div>
+              <div class="form-group">
+                <label for="time">Orario</label>
+                <input type="time" id="time" name="time"
+                       value="<%= concert && concert.time ? concert.time : '' %>">
+              </div>
+              <div class="concert-type-indicator future" id="concertTypeIndicator">
+                <span id="concertTypeText">Concerto Futuro (con Landing)</span>
+              </div>
+            </div>
+
+            <div class="form-group" id="slugGroup">
+              <label for="slug">Slug Landing Page *</label>
+              <div class="slug-input-group">
+                <span class="slug-prefix">https://</span>
+                <input type="text" id="slug" name="slug" 
+                       value="<%= concert && concert.slug ? concert.slug : '' %>"
+                       pattern="[a-z0-9-]+" placeholder="concerto-capodanno-2025">
+                <span class="slug-suffix">.danielecamiz.com</span>
+              </div>
+              <small class="form-help">Solo lettere minuscole, numeri e trattini</small>
+            </div>
+
+            <div class="form-group">
+              <label for="location">Luogo *</label>
+              <input type="text" id="location" name="location" required
+                     value="<%= concert ? concert.location : '' %>"
+                     placeholder="Es: Chiesa di Sant'Andrea, Roma">
+            </div>
+
+            <!-- Deve esserci questa sezione nel template -->
+<div class="form-group">
+  <label for="description_short">Descrizione Breve</label>
+  <textarea id="description_short" 
+            name="description_short" 
+            class="form-control"><%= concert?.description_short || '' %></textarea>
+</div>
+          </div>
+
+          <div class="form-section">
+            <h2><i class="fas fa-users"></i> Direttore, Orchestra e Solisti</h2>
+            
+            <div class="form-group">
+              <label for="conductor_name">Direttore</label>
+              <input type="text" id="conductor_name" name="conductor_name"
+                     placeholder="Nome del direttore"
+                     value="<%= performers.conductor || '' %>">
+            </div>
+
+            <div class="form-group">
+              <label for="orchestra_name">Orchestra</label>
+              <input type="text" id="orchestra_name" name="orchestra_name"
+                     placeholder="Nome dell'orchestra"
+                     value="<%= performers.orchestra || '' %>">
+            </div>
+
+            <div class="form-group">
+              <label>Solisti</label>
+              <div id="soloists_container"></div>
+              <button type="button" class="btn btn-sm btn-secondary" id="addSoloistBtn">
+                <i class="fas fa-plus"></i> Aggiungi Solista
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-column">
+          <div class="form-section">
+            <h2><i class="fas fa-image"></i> Poster</h2>
+            
+            <div class="poster-preview" id="posterPreview">
+              <% if (concert && concert.poster_cloudinary_id) { %>
+                <img src="https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_400,h_533,q_auto/<%= concert.poster_cloudinary_id %>" alt="Poster">
+              <% } else if (concert && concert.poster_local_filename) { %>
+                <img src="/posters/<%= concert.poster_local_filename %>" alt="Poster">
+              <% } else { %>
+                <div class="poster-placeholder">
+                  <i class="fas fa-image"></i>
+                  <p>Nessun poster caricato</p>
+                </div>
+              <% } %>
+            </div>
+
+            <input type="hidden" id="poster_cloudinary_id" name="poster_cloudinary_id" 
+                   value="<%= concert && concert.poster_cloudinary_id ? concert.poster_cloudinary_id : '' %>">
+            <input type="hidden" id="poster_local_filename" name="poster_local_filename"
+                   value="<%= concert && concert.poster_local_filename ? concert.poster_local_filename : '' %>">
+
+            <div class="poster-actions">
+              <button type="button" class="btn btn-secondary" id="uploadPosterBtn">
+                <i class="fas fa-upload"></i> Carica Poster
+              </button>
+              <button type="button" class="btn btn-danger" id="removePosterBtn" 
+                      style="display:<%= concert && concert.poster_cloudinary_id ? 'inline-block' : 'none' %>;">
+                <i class="fas fa-trash"></i> Rimuovi
+              </button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2><i class="fas fa-music"></i> Programma del Concerto</h2>
+            
+            <div class="works-selector">
+              <input type="text" id="worksSearch" class="search-input" 
+                     placeholder="Cerca brano...">
+              
+              <div class="works-list" id="worksList">
+                <% works.forEach(work => { 
+                  const isSelected = concert && concert.selected_works && concert.selected_works.includes(work.id);
+                %>
+                  <label class="work-item">
+                    <input type="checkbox" name="selected_works" 
+                           value="<%= work.id %>"
+                           <%= isSelected ? 'checked' : '' %>>
+                    <div class="work-info">
+                      <strong><%= work.title %></strong>
+                      <small><%= work.composer_name || 'Compositore sconosciuto' %></small>
+                    </div>
+                  </label>
+                <% }) %>
+              </div>
+            </div>
+
+            <div class="quick-add-work">
+              <button type="button" class="btn btn-sm btn-success" id="quickAddWorkBtn">
+                <i class="fas fa-plus-circle"></i> Aggiungi Brano/Movimento
+              </button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2><i class="fas fa-sticky-note"></i> Note di Programma</h2>
+            
+            <div class="form-group">
+              <label for="program_notes">Note Generali</label>
+              <textarea id="program_notes" name="program_notes" rows="6"><%= concert && concert.program_notes ? concert.program_notes : '' %></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="program_details">Dettagli Programma</label>
+              <textarea id="program_details" name="program_details" rows="6"><%= concert && concert.program_details ? concert.program_details : '' %></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Salva Concerto
+        </button>
+        <a href="/admin" class="btn btn-secondary">
+          <i class="fas fa-times"></i> Annulla
+        </a>
+        <% if (!isNew && concert && concert.slug) { %>
+          <a href="<%= eventsAdminUrl %>/edit/<%= concert.slug %>" 
+             target="_blank" class="btn btn-success">
+            <i class="fas fa-external-link-alt"></i> Gestisci Landing Page
+          </a>
+        <% } %>
+      </div>
+    </form>
+  </main>
+
+  <!-- Modal Aggiungi Brano/Movimento -->
+  <div id="quickAddWorkModal" class="modal">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2>Aggiungi Brano o Movimento</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="quickAddWorkForm">
+        <div class="modal-body">
+          
+          <div class="form-group">
+            <label>Tipo *</label>
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="work_type" value="complete" checked> 
+                Brano Completo
+              </label>
+              <label>
+                <input type="radio" name="work_type" value="movement"> 
+                Singolo Movimento
+              </label>
+            </div>
+          </div>
+
+          <div id="completeWorkFields">
+            <div class="form-group">
+              <label for="quick_composer">Compositore *</label>
+              <input type="text" id="quick_composer" 
+                     placeholder="Inizia a digitare il nome..."
+                     autocomplete="off">
+              <div id="composerSuggestions" class="autocomplete-results"></div>
+              <input type="hidden" id="selected_composer_id">
+            </div>
+            
+            <div class="form-group">
+              <label for="quick_title">Titolo *</label>
+              <input type="text" id="quick_title" placeholder="Titolo del brano">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="quick_catalogue">Catalogo</label>
+                <input type="text" id="quick_catalogue" placeholder="K. 550, Op. 73...">
+              </div>
+              <div class="form-group">
+                <label for="quick_key">Tonalità</label>
+                <input type="text" id="quick_key" placeholder="sol minore">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="quick_category">Categoria *</label>
+              <select id="quick_category">
+                <option value="1">Sinfonie</option>
+                <option value="2">Concerti</option>
+                <option value="3">Ouverture</option>
+                <option value="4">Suite</option>
+                <option value="5">Musica Vocale</option>
+                <option value="6">Altri Generi</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="movementFields" style="display:none;">
+            <div class="form-group">
+              <label for="movement_work_search">Cerca Brano Esistente</label>
+              <input type="text" id="movement_work_search" 
+                     placeholder="Cerca per compositore o titolo...">
+              <div id="movementWorksResults" class="search-results"></div>
+            </div>
+
+            <div id="movementDetailsFields" style="display:none;">
+              <input type="hidden" id="selected_work_id">
+              
+              <div class="form-group">
+                <label for="movement_number">Numero Movimento *</label>
+                <input type="number" id="movement_number" min="1" placeholder="1">
+              </div>
+
+              <div class="form-group">
+                <label for="movement_title">Titolo Movimento</label>
+                <input type="text" id="movement_title" placeholder="Allegro">
+              </div>
+
+              <div class="form-group">
+                <label for="movement_tempo">Tempo</label>
+                <input type="text" id="movement_tempo" placeholder="Allegro con brio">
+              </div>
+
+              <div class="form-group">
+                <label for="movement_duration">Durata (minuti)</label>
+                <input type="number" id="movement_duration" min="1" placeholder="5">
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Aggiungi
+          </button>
+          <button type="button" class="btn btn-secondary modal-close">
+            <i class="fas fa-times"></i> Annulla
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
+  
+  <!-- TinyMCE CONDIVISO - IMPORTANTE: deve caricare PRIMA di concert-editor.js -->
+  <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/shared/config/editor-config.js"></script>
+  
+  <script>
+    window.EVENTS_ADMIN_URL = '<%= eventsAdminUrl %>';
+    window.CONCERT_ID = '<%= concert ? concert.id : '' %>';
+    window.PERFORMERS_DATA = <%- JSON.stringify(performers) %>;
+    
+    // Debug TinyMCE
+    console.log('TinyMCE available:', typeof tinymce !== 'undefined');
+    console.log('SharedEditor available:', typeof window.SharedEditor !== 'undefined');
+  </script>
+  <script src="/js/concert-editor.js"></script>
+
+</body>
+</html>

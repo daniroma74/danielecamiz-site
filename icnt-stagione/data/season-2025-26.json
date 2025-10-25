@@ -1,0 +1,32 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "slug": "2025-09-27-concerto-d-autunno-roma",
+      "title": "Concerto d’Autunno — Bossi Op.100, Tchaikovsky n.6",
+      "subtitle": null,
+      "date": "2025-09-27",
+      "time": "19:00",
+      "endTime": "21:00",
+      "type": "icnt",
+      "mscNumber": null,
+      "detailUrl": "https://concerto-autunno2025.danielecamiz.com",
+      "season": "2025-26",
+      "published": 1
+    },
+    {
+      "id": 2,
+      "slug": "2025-11-16-mozart-symphonies-challenge-n-19",
+      "title": "Mozart Symphonies Challenge n.19",
+      "subtitle": null,
+      "date": "2025-11-16",
+      "time": "19:00",
+      "endTime": "20:30",
+      "type": "msc",
+      "mscNumber": 19,
+      "detailUrl": "https://2025-11-16-mozart-symphonies-challenge-19.danielecamiz.com",
+      "season": "2025-26",
+      "published": 1
+    }
+  ]
+}

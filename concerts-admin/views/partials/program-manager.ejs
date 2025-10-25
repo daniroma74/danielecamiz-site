@@ -1,0 +1,92 @@
+<!-- Program Manager con Solisti -->
+<div class="form-section">
+  <h3>Programma Musicale</h3>
+  
+  <div id="programList" class="program-list">
+    <% if (program && program.length > 0) { %>
+      <% program.forEach((item, index) => { %>
+        <div class="program-item" data-program-id="<%= item.program_id %>">
+          <div class="program-handle">
+            <i class="fas fa-grip-vertical"></i>
+          </div>
+          
+          <div class="program-content">
+            <div class="program-info">
+              <strong><%= item.composer %></strong><br>
+              <%= item.title %>
+              <% if (item.subtitle) { %> - <em><%= item.subtitle %></em><% } %>
+              <% if (item.movement_title) { %>
+                <br><small><%= item.movement_number %>. <%= item.movement_title %></small>
+              <% } %>
+            </div>
+            
+            <!-- ✅ SELECT SOLISTA -->
+            <div class="form-group" style="margin-top: 1rem;">
+              <label>Solista per questo brano</label>
+              <select name="program_soloist_<%= item.program_id %>" class="form-control">
+                <option value="">-- Nessun solista --</option>
+                <% if (soloists && soloists.length > 0) { %>
+                  <% soloists.forEach(soloist => { %>
+                    <option value="<%= soloist.id %>" 
+                            <%= item.soloist_id === soloist.id ? 'selected' : '' %>>
+                      <%= soloist.name %>
+                      <% if (soloist.instrument) { %> (<%= soloist.instrument %>)<% } %>
+                    </option>
+                  <% }) %>
+                <% } else { %>
+                  <option value="" disabled>Nessun solista disponibile</option>
+                <% } %>
+              </select>
+              <small class="help-text">Seleziona il solista che esegue questo brano</small>
+            </div>
+          </div>
+          
+          <div class="program-actions">
+            <button type="button" class="btn btn-sm btn-danger" 
+                    onclick="removeProgramItem(<%= item.program_id %>)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="text-muted">Nessun brano in programma</p>
+    <% } %>
+  </div>
+  
+  <button type="button" class="btn btn-secondary" onclick="showAddWorkModal()">
+    <i class="fas fa-plus"></i> Aggiungi Brano
+  </button>
+</div>
+
+<style>
+.program-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  align-items: flex-start;
+}
+
+.program-handle {
+  cursor: move;
+  color: #999;
+  padding: 0.5rem;
+}
+
+.program-content {
+  flex: 1;
+}
+
+.program-info {
+  margin-bottom: 0.5rem;
+}
+
+.program-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+</style>

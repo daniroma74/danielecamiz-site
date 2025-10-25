@@ -1,0 +1,220 @@
+{
+  "templates": [
+    {
+      "id": "welcome",
+      "name": "Benvenuto",
+      "category": "onboarding",
+      "subject": "Benvenuto in ICNT - I Concerti nel Tempio",
+      "blocks": [
+        {
+          "type": "image",
+          "src": "https://danielecamiz.com/img/logo-icnt.png",
+          "alt": "ICNT Logo"
+        },
+        {
+          "type": "heading",
+          "text": "Benvenuto nella famiglia ICNT!"
+        },
+        {
+          "type": "text",
+          "content": "Caro {{name}},\n\nSiamo felici di averti con noi! Da oggi riceverai in anteprima tutte le informazioni sui nostri concerti, eventi speciali e contenuti esclusivi."
+        },
+        {
+          "type": "button",
+          "label": "Scopri i prossimi concerti",
+          "url": "https://danielecamiz.com/concerts"
+        }
+      ]
+    },
+    {
+      "id": "season",
+      "name": "Presentazione Stagione",
+      "category": "announcement",
+      "subject": "La nuova stagione ICNT 2025/2026 è qui!",
+      "blocks": [
+        {
+          "type": "hero",
+          "image": "{{season_image}}",
+          "title": "Stagione 2025/2026"
+        },
+        {
+          "type": "text",
+          "content": "Una stagione straordinaria ti aspetta con {{total_concerts}} concerti, dal repertorio barocco alle prime esecuzioni mondiali."
+        },
+        {
+          "type": "events_list",
+          "events": "{{season_events}}"
+        },
+        {
+          "type": "cta",
+          "primary_text": "Abbonamenti disponibili",
+          "primary_url": "{{subscription_url}}",
+          "secondary_text": "Calendario completo",
+          "secondary_url": "{{calendar_url}}"
+        }
+      ]
+    },
+    {
+      "id": "concert",
+      "name": "Singolo Concerto",
+      "category": "event",
+      "subject": "{{concert_title}} - {{date}}",
+      "blocks": [
+        {
+          "type": "event_card",
+          "image": "{{poster_url}}",
+          "title": "{{concert_title}}",
+          "date": "{{date}}",
+          "time": "{{time}}",
+          "location": "{{location}}"
+        },
+        {
+          "type": "program",
+          "title": "Programma",
+          "items": "{{program_items}}"
+        },
+        {
+          "type": "performers",
+          "conductor": "{{conductor}}",
+          "orchestra": "{{orchestra}}",
+          "soloists": "{{soloists}}"
+        },
+        {
+          "type": "button",
+          "label": "Prenota il tuo posto",
+          "url": "{{booking_url}}"
+        }
+      ]
+    },
+    {
+      "id": "mozart_challenge",
+      "name": "Mozart Symphonies Challenge",
+      "category": "series",
+      "subject": "Mozart Challenge: Sinfonia n. {{symphony_number}}",
+      "blocks": [
+        {
+          "type": "series_header",
+          "logo": "https://danielecamiz.com/img/mozart-challenge-logo.png",
+          "title": "Mozart Symphonies Challenge"
+        },
+        {
+          "type": "progress_bar",
+          "current": "{{current_symphony}}",
+          "total": "41",
+          "percentage": "{{progress_percentage}}"
+        },
+        {
+          "type": "symphony_details",
+          "number": "{{symphony_number}}",
+          "key": "{{symphony_key}}",
+          "kochel": "{{kochel_number}}",
+          "year": "{{composition_year}}"
+        },
+        {
+          "type": "text",
+          "content": "{{symphony_description}}"
+        },
+        {
+          "type": "dual_cta",
+          "left_text": "Ascolta su Spotify",
+          "left_url": "{{spotify_url}}",
+          "right_text": "Prenota per il concerto",
+          "right_url": "{{concert_url}}"
+        }
+      ]
+    },
+    {
+      "id": "unsubscribe",
+      "name": "Conferma Disiscrizione",
+      "category": "transactional",
+      "subject": "Ci dispiace vederti andare via",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "La tua disiscrizione è stata confermata"
+        },
+        {
+          "type": "text",
+          "content": "Non riceverai più le nostre newsletter. Se è stato un errore o se cambi idea, puoi sempre reiscriverti dal nostro sito."
+        },
+        {
+          "type": "feedback",
+          "question": "Puoi dirci perché ti sei disiscritto?",
+          "options": [
+            "Troppe email",
+            "Contenuti non interessanti",
+            "Non partecipo più ai concerti",
+            "Altro"
+          ]
+        },
+        {
+          "type": "button",
+          "label": "Reiscriviti",
+          "url": "https://danielecamiz.com/newsletter"
+        }
+      ]
+    },
+    {
+      "id": "birthday",
+      "name": "Auguri Compleanno",
+      "category": "personal",
+      "subject": "Auguri speciali da ICNT!",
+      "blocks": [
+        {
+          "type": "celebration",
+          "emoji": "🎂",
+          "message": "Buon compleanno {{name}}!"
+        },
+        {
+          "type": "gift",
+          "title": "Un regalo per te",
+          "description": "Ingresso omaggio per un accompagnatore al prossimo concerto",
+          "code": "{{gift_code}}"
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "name": "Riepilogo Mensile",
+      "category": "digest",
+      "subject": "Il tuo mese con ICNT - {{month}} {{year}}",
+      "blocks": [
+        {
+          "type": "stats",
+          "concerts_attended": "{{concerts_count}}",
+          "total_attendees": "{{total_attendees}}",
+          "highlight": "{{best_concert}}"
+        },
+        {
+          "type": "gallery",
+          "title": "I momenti più belli",
+          "images": "{{month_gallery}}"
+        },
+        {
+          "type": "upcoming",
+          "title": "Non perdere a {{next_month}}",
+          "events": "{{upcoming_events}}"
+        }
+      ]
+    },
+    {
+      "id": "survey",
+      "name": "Sondaggio Feedback",
+      "category": "engagement",
+      "subject": "La tua opinione conta!",
+      "blocks": [
+        {
+          "type": "heading",
+          "text": "Aiutaci a migliorare"
+        },
+        {
+          "type": "survey_link",
+          "time_estimate": "2 minuti",
+          "incentive": "Ricevi uno sconto del 20% sul prossimo abbonamento",
+          "button_text": "Partecipa al sondaggio",
+          "url": "{{survey_url}}"
+        }
+      ]
+    }
+  ]
+}

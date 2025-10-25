@@ -1,0 +1,35 @@
+<section id="video_section">
+
+  <h2 id="video_title" data-i18n-key="video.title"><%= videoLabels.title || "Video" %></h2>
+  <p id="video_claim" class="claim-text" data-i18n-key="video.claim"><%= videoLabels.claim || "" %></p>
+
+  <div class="video-grid">
+    <div class="video-item" data-video="0nxE-M1Oii0" tabindex="0" role="button" aria-label="<%= t('video.open_video', { number: 1 }) %>">
+      <div class="video-thumb">
+        <img src="https://img.youtube.com/vi/0nxE-M1Oii0/hqdefault.jpg" alt="<%= t('video.youtube_preview_alt') %>" />
+      </div>
+      <div class="video-title" id="video_1_title"><%= videoLabels.video1_title || "Prova video 1" %></div>
+    </div>
+
+    <div class="video-item" data-video="mkimMMDGNY0" tabindex="0" role="button" aria-label="<%= t('video.open_video', { number: 2 }) %>">
+      <div class="video-thumb">
+        <img src="https://img.youtube.com/vi/mkimMMDGNY0/hqdefault.jpg" alt="<%= t('video.youtube_preview_alt') %>" />
+      </div>
+      <div class="video-title" id="video_2_title"><%= videoLabels.video2_title || "Prova video 2" %></div>
+    </div>
+  </div>
+
+</section>
+
+<div id="video_lightbox" style="display:none;">
+  <div class="lightbox-overlay" onclick="closeVideoLightbox()" tabindex="-1"></div>
+  <div class="lightbox-video-content" role="dialog" aria-modal="true" aria-labelledby="video_title" tabindex="0">
+    <button class="lightbox-close" aria-label="<%= t('video.close') %>" onclick="closeVideoLightbox()">×</button>
+    <iframe id="video_frame" src="" allowfullscreen title="YouTube video player"></iframe>
+  </div>
+</div>
+
+<script>
+  window.videoLabels = <%- JSON.stringify(videoLabels) %>;
+  window.lang = '<%= lang %>';
+</script>

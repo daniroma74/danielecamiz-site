@@ -1,0 +1,259 @@
+.
+├── comingsoon.html
+├── css
+│   ├── base
+│   │   └── base.css
+│   ├── components
+│   │   ├── buttons
+│   │   │   ├── buttons-base.css
+│   │   │   ├── buttons-ids.css
+│   │   │   └── buttons-specific.css
+│   │   ├── footer.css
+│   │   ├── hamburger.css
+│   │   ├── layout.css
+│   │   ├── modal.css
+│   │   ├── navbar.css
+│   │   └── video-thumbnails.css
+│   ├── .DS_Store
+│   ├── event.css
+│   ├── pages
+│   │   ├── bio
+│   │   │   ├── bio.css
+│   │   │   ├── bio-modal.css
+│   │   │   └── bio-responsive.css
+│   │   ├── concerts
+│   │   │   ├── concerts-layout.css
+│   │   │   ├── concerts-responsive.css
+│   │   │   └── concerts-timeline.css
+│   │   ├── gallery
+│   │   │   ├── gallery-claim.css
+│   │   │   ├── gallery-covers.css
+│   │   │   ├── gallery-grid.css
+│   │   │   ├── gallery-lightbox.css
+│   │   │   ├── gallery-responsive.css
+│   │   │   └── gallery-tabs.css
+│   │   ├── home
+│   │   │   ├── home-bandcamp.css
+│   │   │   ├── home-concerts.css
+│   │   │   ├── home-contact.css
+│   │   │   ├── home-hero.css
+│   │   │   ├── home-news.css
+│   │   │   ├── home-projects.css
+│   │   │   ├── home-reset.css
+│   │   │   ├── home-responsive.css
+│   │   │   └── home-video.css
+│   │   ├── linktree
+│   │   │   ├── linktree.css
+│   │   │   └── linktree-responsive.css
+│   │   ├── news
+│   │   │   └── news-base.css
+│   │   ├── press
+│   │   │   ├── press-base.css
+│   │   │   └── press-responsive.css
+│   │   ├── repertoire
+│   │   │   ├── repertoire-base.css
+│   │   │   └── repertoire-responsive.css
+│   │   └── video
+│   │       ├── video-base.css
+│   │       └── video-responsive.css
+│   └── utils
+│       ├── helpers.css
+│       └── responsive.css
+├── .DS_Store
+├── img
+│   ├── daniele-camiz-foto-profilo.png
+│   ├── daniele-camiz-indica.png
+│   ├── daniele-camiz-ritratto.jpg
+│   ├── .DS_Store
+│   ├── gallery
+│   │   ├── 1746911671819-1746797354000-daniele_camiz_bacchetta_viso_intero.jpg
+│   │   ├── concert
+│   │   │   ├── 1747005590817-daniele-camiz-concerto-enarmonia2017.jpg
+│   │   │   ├── 1747005612422-daniele-camiz-in-concerto7.jpg
+│   │   │   ├── 1747006965964-daniele-camiz-dirige-l-orchestra-icnt.jpg
+│   │   │   └── 1747009056313-daniele-camiz-in-concerto6.jpg
+│   │   ├── covers
+│   │   │   ├── 1746915341419-cover-concerto-1746912917760.jpg
+│   │   │   ├── concerto.jpg
+│   │   │   ├── cover-concerto-1746912917760.jpg
+│   │   │   ├── cover-concerto-1746919102738.jpg
+│   │   │   ├── cover-concerto-1746919210713.jpg
+│   │   │   ├── cover-concerto-1746919364987.jpg
+│   │   │   ├── cover-concerto-1746919502622.JPG
+│   │   │   ├── cover-prove-1746919479135.jpg
+│   │   │   ├── cover-ufficiali-1746918927994.jpg
+│   │   │   └── prove.jpg
+│   │   ├── .DS_Store
+│   │   ├── in-concerto
+│   │   │   ├── .DS_Store
+│   │   │   └── I-C
+│   │   │       ├── daniele_camiz_concerto_corea1.jpg
+│   │   │       ├── daniele_camiz_concerto_corea2.jpg
+│   │   │       ├── daniele_camiz_concerto_cumbremundial2018.JPG
+│   │   │       ├── daniele_camiz_concerto_enarmonia2017.jpg
+│   │   │       ├── daniele_camiz_concerto_rubal.JPG
+│   │   │       ├── daniele_camiz_in_concerto10.jpg
+│   │   │       ├── daniele_camiz_in_concerto11.jpg
+│   │   │       ├── daniele_camiz_in_concerto12.jpg
+│   │   │       ├── daniele_camiz_in_concerto13.jpg
+│   │   │       ├── daniele_camiz_in_concerto14.jpg
+│   │   │       ├── daniele_camiz_in_concerto15.jpg
+│   │   │       ├── daniele_camiz_in_concerto16.jpg
+│   │   │       ├── daniele_camiz_in_concerto17.jpg
+│   │   │       ├── daniele_camiz_in_concerto18.jpg
+│   │   │       ├── daniele_camiz_in_concerto19.jpg
+│   │   │       ├── daniele_camiz_in_concerto1.JPG
+│   │   │       ├── daniele_camiz_in_concerto20.jpg
+│   │   │       ├── daniele_camiz_in_concerto21.jpg
+│   │   │       ├── daniele_camiz_in_concerto22.jpg
+│   │   │       ├── daniele_camiz_in_concerto23.jpg
+│   │   │       ├── daniele_camiz_in_concerto24.jpg
+│   │   │       ├── daniele_camiz_in_concerto25.jpg
+│   │   │       ├── daniele_camiz_in_concerto26.jpg
+│   │   │       ├── daniele_camiz_in_concerto27.jpg
+│   │   │       ├── daniele_camiz_in_concerto28.jpg
+│   │   │       ├── daniele_camiz_in_concerto29.jpg
+│   │   │       ├── daniele_camiz_in_concerto2.jpg
+│   │   │       ├── daniele_camiz_in_concerto30.jpg
+│   │   │       ├── daniele_camiz_in_concerto31.jpg
+│   │   │       ├── daniele_camiz_in_concerto3.jpg
+│   │   │       ├── daniele_camiz_in_concerto4.jpg
+│   │   │       ├── daniele_camiz_in_concerto5.jpg
+│   │   │       ├── daniele_camiz_in_concerto6.jpg
+│   │   │       ├── daniele_camiz_in_concerto7.jpg
+│   │   │       ├── daniele_camiz_in_concerto8.jpg
+│   │   │       ├── daniele_camiz_in_concerto9.jpg
+│   │   │       ├── daniele_camiz_in_concerto-intera31.jpg
+│   │   │       └── daniele_camiz_mozart_symphonies_challenge_3.jpg
+│   │   ├── in-prova
+│   │   │   ├── .DS_Store
+│   │   │   └── I-P
+│   │   │       ├── daniele_camiz_in_prova1.JPG
+│   │   │       ├── daniele_camiz_in_prova2_intero.JPG
+│   │   │       ├── daniele_camiz_in_prova2.jpg
+│   │   │       ├── daniele_camiz_in_prova3.JPG
+│   │   │       ├── daniele_camiz_in_prova4.JPG
+│   │   │       ├── daniele_camiz_prova_cantante_corea1.jpg
+│   │   │       ├── daniele_camiz_prova_cantante_corea2.jpg
+│   │   │       ├── daniele_camiz_prova_corea7.jpg
+│   │   │       ├── daniele_camiz_prova_corea8.jpg
+│   │   │       ├── daniele_camiz_prova_cumbremundial2018.JPG
+│   │   │       ├── daniele_camiz_prova_generale_corea1.jpg
+│   │   │       ├── daniele_camiz_prova_generale_corea2.jpg
+│   │   │       ├── daniele_camiz_prova_generale_corea3.jpg
+│   │   │       ├── daniele_camiz_prova_generale_corea4.jpg
+│   │   │       ├── daniele_camiz_prova_generale_corea5.jpg
+│   │   │       ├── daniele_camiz_prova_generale_corea6.jpg
+│   │   │       ├── daniele_camiz_prova_violino_corea1.jpg
+│   │   │       └── daniele_camiz_prova_violino_corea2.jpg
+│   │   ├── official
+│   │   │   ├── 1746913952916-daniele_camiz_bacchetta_mento_nero.jpg
+│   │   │   └── 1746913963894-daniele_camiz_braccia_incrociate_nero.jpg
+│   │   └── rehearsal
+│   │       ├── 1746915813182-daniele_camiz_prova_cantante_corea2.jpg
+│   │       ├── 1747005207643-daniele-camiz-in-prova3.jpg
+│   │       └── 1747006768458-daniele-camiz-durante-una-prova-in-corea.jpg
+│   ├── hero-news.png
+│   ├── hero.png
+│   ├── hero-repertorio.png
+│   ├── icons
+│   │   ├── bandcamp-black.svg
+│   │   ├── bandcamp-gold.svg
+│   │   ├── bio-black.svg
+│   │   ├── bio-light-gold.svg
+│   │   ├── calendar-black.svg
+│   │   ├── calendar-gold.svg
+│   │   ├── calendar-light-gold.svg
+│   │   ├── .DS_Store
+│   │   ├── facebook-black.svg
+│   │   ├── facebook-gold.svg
+│   │   ├── favicon-16.png
+│   │   ├── favicon-180.png
+│   │   ├── favicon-192.png
+│   │   ├── favicon-32.png
+│   │   ├── favicon-48.ico
+│   │   ├── favicon-48.png
+│   │   ├── favicon-512.png
+│   │   ├── instagram-black.svg
+│   │   ├── instagram-gold.svg
+│   │   ├── internet-black.svg
+│   │   ├── internet-gold.svg
+│   │   ├── linkedin-black.svg
+│   │   ├── linkedin-gold.svg
+│   │   ├── mail-black.svg
+│   │   ├── mail-gold.svg
+│   │   ├── newsletter-black.svg
+│   │   ├── newsletter-gold.svg
+│   │   ├── pinterest-black.svg
+│   │   ├── pinterest-gold.svg
+│   │   ├── press-black.svg
+│   │   ├── press-light-gold.svg
+│   │   ├── QR-daniele-camiz.png
+│   │   ├── threads-black.svg
+│   │   ├── threads-gold.svg
+│   │   ├── tiktok-black.svg
+│   │   ├── tiktok-gold.svg
+│   │   ├── twitterx-black.svg
+│   │   ├── twitterx-gold.svg
+│   │   ├── whatsapp-black.svg
+│   │   ├── whatsapp-gold.svg
+│   │   ├── youtube-black.svg
+│   │   ├── youtube-gold.svg
+│   │   └── youtube.png
+│   └── projects
+│       ├── ICNT_facebook_photo_profile.png
+│       ├── ICNTO_facebook_photo_profile.png
+│       └── MSC_facebook_photo_profile.png
+├── index.html
+├── js
+│   ├── concerts-lightbox.js
+│   ├── concerts-year-toggle.js
+│   ├── cookie-consent.js
+│   ├── .DS_Store
+│   ├── fixed-footer.js
+│   ├── gallery-lightbox.js
+│   ├── modules
+│   │   ├── bio
+│   │   │   ├── bio-entry.js
+│   │   │   ├── bio-modal.js
+│   │   │   └── bio-utils.js
+│   │   ├── concerts
+│   │   │   └── concerts.js
+│   │   ├── contact
+│   │   │   ├── contact-init.js
+│   │   │   ├── contact.js
+│   │   │   ├── contact-render.js
+│   │   │   └── contact-utils.js
+│   │   ├── gallery
+│   │   │   └── gallery-entry.js
+│   │   ├── home
+│   │   │   ├── home-concerts.js
+│   │   │   ├── home-contact.js
+│   │   │   ├── home-entry.js
+│   │   │   ├── home-hero.js
+│   │   │   ├── home-news.js
+│   │   │   ├── home-projects.js
+│   │   │   └── home-video.js
+│   │   ├── news
+│   │   │   └── news.js
+│   │   ├── repertoire
+│   │   │   ├── repertoire-init.js
+│   │   │   ├── repertoire.js
+│   │   │   └── repertoire-render.js
+│   │   ├── utils
+│   │   └── video
+│   │       ├── video-init.js
+│   │       ├── video.js
+│   │       ├── video-lang.js
+│   │       ├── video-render.js
+│   │       └── video-utils.js
+│   ├── navbar.js
+│   └── vendor
+│       └── html2canvas.min.js
+├── manifest.json
+├── package.json
+├── package-lock.json
+├── README_hero_dev.md
+└── struttura-cartelle-frontend.txt
+
+40 directories, 217 files

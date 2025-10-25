@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/admin-dashboard.css">
+</head>
+<body>
+  
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <i class="fas fa-archive"></i>
+      <span>Archivio Eventi</span>
+    </div>
+    <div class="nav-actions">
+      <a href="/dashboard" class="btn-icon" title="Dashboard">
+        <i class="fas fa-home"></i>
+      </a>
+      <a href="https://archive.danielecamiz.com" class="btn-icon" title="Concerts Admin">
+        <i class="fas fa-music"></i>
+      </a>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1>Archivio Eventi Passati</h1>
+        <p class="subtitle">Concerti conclusi con landing page conservate</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-pill">
+          <i class="fas fa-history"></i>
+          <span><%= concerts.length %> Eventi Archiviati</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="filters-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchEvents" placeholder="Cerca nell'archivio...">
+      </div>
+    </div>
+
+    <div class="events-grid" id="eventsGrid">
+      <% if (concerts.length === 0) { %>
+        <div class="empty-state">
+          <i class="fas fa-archive"></i>
+          <h3>Archivio vuoto</h3>
+          <p>Nessun evento passato trovato</p>
+        </div>
+      <% } else { %>
+        <% concerts.forEach(concert => { 
+          const eventDate = new Date(concert.date);
+        %>
+          <div class="event-card archived-card" data-event-id="<%= concert.id %>">
+            
+            <div class="event-card-header">
+              <% if (concert.poster_cloudinary_id) { %>
+                <div class="event-poster" style="background-image: url('https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_400,h_250,q_auto,e_grayscale/<%= concert.poster_cloudinary_id %>')"></div>
+              <% } else { %>
+                <div class="event-poster event-poster-placeholder">
+                  <i class="fas fa-image"></i>
+                </div>
+              <% } %>
+              <span class="archived-badge">
+                <i class="fas fa-archive"></i> Archiviato
+              </span>
+            </div>
+
+            <div class="event-card-body">
+              <div class="event-meta">
+                <span class="event-date">
+                  <i class="fas fa-calendar"></i>
+                  <%= eventDate.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                </span>
+                <span class="event-time">
+                  <i class="fas fa-clock"></i>
+                  <%= concert.starts_at || '20:00' %>
+                </span>
+              </div>
+
+              <h3 class="event-title"><%= concert.title %></h3>
+              
+              <% if (concert.subtitle) { %>
+                <p class="event-subtitle"><%= concert.subtitle %></p>
+              <% } %>
+
+              <div class="event-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <%= concert.location %>
+              </div>
+
+              <div class="event-stats">
+                <div class="stat-item">
+                  <i class="fas fa-users"></i>
+                  <span><%= concert.booking_count || 0 %> presenze</span>
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-chair"></i>
+                  <span><%= concert.total_seats || 0 %> posti</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="event-card-footer">
+              <a href="/archive/<%= concert.slug %>" class="btn btn-primary btn-sm">
+                <i class="fas fa-eye"></i> Vedi Landing
+              </a>
+              <a href="/bookings/<%= concert.slug %>" class="btn btn-secondary btn-sm">
+                <i class="fas fa-list"></i> Prenotazioni
+              </a>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+
+  </div>
+
+  <script src="/public/js/admin-dashboard.js"></script>
+</body>
+</html>

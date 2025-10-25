@@ -1,0 +1,43 @@
+ /* BIO */
+
+ @media (max-width: 768px) {
+    .bio-wrapper {
+      flex-direction: column;
+      height: auto;
+    }
+    .bio-photo-wrapper {
+      position: relative !important;
+      top: auto !important;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto 2rem auto;
+      height: auto;
+      align-items: center;
+      justify-content: center;
+    }
+    .bio-photo {
+      height: auto;
+    }
+    .bio-content-wrapper {
+      max-width: 100%;
+      padding-left: 0;
+      max-height: none;
+    }
+    .bio-claim {
+      position: relative;
+      top: auto;
+      margin-bottom: 2rem;
+    }
+    .bio-sections-wrapper {
+      max-height: none;
+    }
+    .modal-box {
+      padding: 2rem 2.5rem 2.5rem 2.5rem;
+    }
+    .modal-text {
+      font-size: 1rem;
+    }
+    .section-title {
+      font-size: 2.3rem;
+    }
+  }

@@ -1,0 +1,127 @@
+<% /*
+  BIO – struttura mockup:
+  1) Hero (partial hero-bio)
+  2) Tre card: Biografia / Curriculum / La mia storia
+  3) CTA Press Kit (una sola volta)
+  4) Modali CSS (:target) con chiusura via backdrop e ESC (JS in bio-entry)
+*/ %>
+
+<%
+  const C = (typeof content!=='undefined' && content) ? content
+          : (typeof bio!=='undefined' && bio) ? bio
+          : (typeof bioData!=='undefined' && bioData) ? bioData
+          : {};
+
+  const L = (labels && labels.bio) ? labels.bio : {};
+  const _t = (k, def='') => { try { const v=(typeof t==='function'?t(k):''); return (v&&v!==k)?v:def; } catch { return def; } };
+
+  // Biografia
+  const bioTitle   = C?.biography?.title || L.biography_title || _t('bio.biography.title', (lang==='en'?'Official biography':'Biografia ufficiale'));
+  const bioIntro   = C?.biography?.intro || '';
+  const bioMoreArr = Array.isArray(C?.biography?.more) ? C.biography.more : [];
+
+  // Curriculum
+  const cvTitle = C?.curriculum?.title || L.curriculum_title || _t('bio.curriculum.title', 'Curriculum');
+  const cvShort = C?.curriculum?.shortText || '';
+  const cvLong  = C?.curriculum?.longText  || '';
+
+  // Storia
+  const storyTitle = C?.story?.title   || L.story_title || _t('bio.story.title', (lang==='en'?'My story':'La mia storia'));
+  const storyIntro = C?.story?.intro   || '';
+  const storyHtml  = C?.story?.content || '';
+
+  // CTA
+  const pressCtaLabel = L.press_kit_cta || _t('bio.press_kit_cta', (lang==='en'?'Download Press Kit':'Scarica Press Kit'));
+%>
+
+<!-- HERO COMPATTO -->
+<%- include('../../partials/frontend/hero-bio') %>
+
+<!-- TRE CARD -->
+<section id="bio_panels" class="bio-panels container">
+  <div class="panels-grid">
+    <!-- Card Biografia -->
+    <article id="panel_biography" class="panel-card">
+      <header class="panel-header"><h2 class="panel-title"><%= bioTitle %></h2></header>
+      <div class="panel-body">
+        <% if (bioIntro) { %><p class="panel-intro"><%= bioIntro %></p>
+        <% } else { %><p class="panel-intro placeholder"><%= (lang==='en'?'No biography available.':'Biografia non disponibile.') %></p><% } %>
+      </div>
+      <footer class="panel-footer">
+        <% if (bioIntro || bioMoreArr.length) { %>
+          <a href="#bio_modal" class="btn btn-secondary" aria-controls="bio_modal"><%= (lang==='en'?'Expand':'Espandi') %></a>
+        <% } %>
+      </footer>
+    </article>
+
+    <!-- Card Curriculum -->
+    <article id="panel_curriculum" class="panel-card">
+      <header class="panel-header"><h2 class="panel-title"><%= cvTitle %></h2></header>
+      <div class="panel-body">
+        <% if (cvShort) { %><div class="panel-intro"><%- cvShort %></div>
+        <% } else { %><p class="panel-intro placeholder"><%= (lang==='en'?'No curriculum available.':'Curriculum non disponibile.') %></p><% } %>
+      </div>
+      <footer class="panel-footer">
+        <% if (cvLong) { %>
+          <a href="#curriculum_modal" class="btn btn-secondary" aria-controls="curriculum_modal"><%= (lang==='en'?'Expand':'Espandi') %></a>
+        <% } %>
+      </footer>
+    </article>
+
+    <!-- Card La mia storia -->
+    <article id="panel_story" class="panel-card">
+      <header class="panel-header"><h2 class="panel-title"><%= storyTitle %></h2></header>
+      <div class="panel-body">
+        <% if (storyIntro) { %><p class="panel-intro"><%= storyIntro %></p>
+        <% } else { %><p class="panel-intro placeholder"><%= (lang==='en'?'No story available.':'Storia non disponibile.') %></p><% } %>
+      </div>
+      <footer class="panel-footer">
+        <% if (storyHtml) { %>
+          <a href="#story_modal" class="btn btn-secondary" aria-controls="story_modal"><%= (lang==='en'?'Read':'Leggi') %></a>
+        <% } %>
+      </footer>
+    </article>
+  </div>
+</section>
+
+<!-- CTA PRESS KIT (singola) -->
+<section id="bio_cta" class="bio-cta container">
+  <a class="btn btn-primary" href="/press" rel="noopener"><%= pressCtaLabel %></a>
+</section>
+
+<!-- MODALI CSS (:target) -->
+<div id="bio_modal" class="modal modal-target" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="bio_modal_title">
+  <a href="#" class="modal__backdrop" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>"></a>
+  <div class="modal__dialog">
+    <a href="#" class="modal__close" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
+    <div class="modal__content">
+      <h3 class="modal-title" id="bio_modal_title"><%= bioTitle %></h3>
+      <% if (bioIntro) { %><p><%= bioIntro %></p><% } %>
+      <% if (bioMoreArr.length) { bioMoreArr.forEach((p,i)=>{ %><p id="bio_more_<%= i %>"><%= p %></p><% }) } %>
+    </div>
+  </div>
+</div>
+
+<div id="curriculum_modal" class="modal modal-target" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="curriculum_modal_title">
+  <a href="#" class="modal__backdrop" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>"></a>
+  <div class="modal__dialog">
+    <a href="#" class="modal__close" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
+    <div class="modal__content">
+      <h3 class="modal-title" id="curriculum_modal_title"><%= cvTitle %></h3>
+      <% if (cvLong) { %><div class="rich-text" id="curriculum_long"><%- cvLong %></div>
+      <% } else { %><p class="placeholder"><%= (lang==='en'?'No curriculum available.':'Curriculum non disponibile.') %></p><% } %>
+    </div>
+  </div>
+</div>
+
+<div id="story_modal" class="modal modal-target modal-full" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="story_modal_title">
+  <a href="#" class="modal__backdrop" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>"></a>
+  <div class="modal__dialog">
+    <a href="#" class="modal__close" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
+    <div class="modal__content">
+      <h3 class="modal-title" id="story_modal_title"><%= storyTitle %></h3>
+      <% if (storyHtml) { %><div class="rich-text" id="story_content"><%- storyHtml %></div>
+      <% } else { %><p class="placeholder"><%= (lang==='en'?'No story available.':'Storia non disponibile.') %></p><% } %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+{
+  "categories": [
+    {
+      "key": "symphonies",
+      "works": [
+        "L. van Beethoven – Sinfonia n.2 op.36",
+        "L. van Beethoven – Sinfonia n.5 op.67",
+        "F. Mendelssohn Bartholdy – Sinfonia n.3 op.56 “Scozzese”",
+        "F. Mendelssohn Bartholdy – Sinfonia n.4 op.90 “Italiana”",
+        "F. Mendelssohn Bartholdy – Sinfonia n.5 op.107 “La Riforma”",
+        "A. Dvořák – Sinfonia n.9 op.95 “Dal Nuovo Mondo”",
+        "F. Schubert – Sinfonia “Incompiuta” D759",
+        "R. Schumann – Sinfonia n.4 op.120",
+        "W.A. Mozart – Sinfonie K16, K19, K19a, K22, K42a, K43, K45, K45a, K45b, K48, K73, K74, K75, K81, K84, K95, K96, K97, K110, K112, K114, K120, K124, K128, K129, K130, K132, K133, K134, K141a, K162, K181, K182, K183, K184, K199, K200, K201, K202, K297 \"Parigi\", K318, K319, K338, K551"
+      ]
+    },
+    {
+      "key": "ouverture",
+      "works": [
+        "L. van Beethoven – Egmont Ouverture op.84",
+        "L. van Beethoven – Ouverture da Coriolano op.62",
+        "L. van Beethoven – Ouverture \"Per la consacrazione della casa\" op.122",
+        "G. Rossini – Sinfonia da La gazza ladra",
+        "G. Rossini – Sinfonia da L’italiana in Algeri",
+        "W.A. Mozart – Ouverture da Don Giovanni K527",
+        "W.A. Mozart – Ouverture da Die Entführung aus dem Serail K384",
+        "W.A. Mozart – Ouverture da Die Zauberflöte K620",
+        "W.A. Mozart – Ouverture da L’impresario teatrale K486",
+        "W.A. Mozart – Ouverture da Le nozze di Figaro K492",
+        "W.A. Mozart – Ouverture da La clemenza di Tito K621",
+        "F. Mendelssohn Bartholdy – Ouverture per Il sogno di una notte di mezza estate",
+        "F. Mendelssohn Bartholdy – Le Ebridi \"Fingal’s Cave\" op.26",
+        "F. Mendelssohn Bartholdy – Das Märchen von der schönen Melusine op.32",
+        "F. Schubert – Ouverture in stile italiano",
+        "F. Schubert – Ouverture in re maggiore \"Im italiano stile\" D590",
+        "P.I. Tchaikovsky – Romeo e Giulietta, Ouverture-fantasia"
+      ]
+    },
+    {
+      "key": "concerti",
+      "works": [
+        "L. van Beethoven – Concerti n.1, n.2, n.3, n.5 completi",
+        "F. Mendelssohn Bartholdy – Concerto n.1 op.25 completo",
+        "E. Grieg – Concerto op.16 completo",
+        "F. Chopin – Concerti n.1 op.11 e n.2 op.21 completi",
+        "W.A. Mozart – Concerti K299, K414, K466, K488 completi",
+        "G. Paisiello – Concerto in Fa maggiore completo",
+        "J. Sibelius – Concerto per violino op.47 completo"
+      ]
+    },
+    {
+      "key": "vocal",
+      "works": [
+        "G. Verdi – Aria di Manrico da Il trovatore",
+        "G. Verdi – \"Pace, pace, mio Dio\" da La forza del destino",
+        "G. Verdi – \"Nel dì della vittoria\" da Macbeth",
+        "G. Verdi – \"Parigi, o cara\" da La traviata",
+        "G. Verdi – \"Ritorna vincitor\" da Aida",
+        "G. Verdi – \"De' miei bollenti spiriti\" da La traviata",
+        "G. Puccini – \"Un bel dì vedremo\" da Madama Butterfly",
+        "G. Puccini – \"Sogno di Doretta\" da La rondine",
+        "G. Puccini – \"Vissi d'arte\" da Tosca",
+        "W.A. Mozart – \"Come scoglio\" da Così fan tutte",
+        "W.A. Mozart – \"In quegli anni in cui val poco\" da Le nozze di Figaro",
+        "G. Donizetti – \"Chiedi all’aura lusinghiera\" da L’elisir d’amore",
+        "G. Rossini – \"Una voce poco fa\" da Il barbiere di Siviglia",
+        "G. Rossini – \"Ecco ridente in cielo\" da Il barbiere di Siviglia",
+        "G. Rossini – \"Miei rampolli femminini\" da La Cenerentola",
+        "F. Mendelssohn (Fanny) – Hero und Leander"
+      ]
+    },
+    {
+      "key": "suite",
+      "works": [
+        "E. Grieg – Peer Gynt Suite n.1 op.46",
+        "E. Grieg – Holberg Suite",
+        "E. Grieg – Danze norvegesi op.35",
+        "C. Saint-Saëns – Fossiles da Le carnaval des animaux",
+        "J. Strauss Jr. – Ägyptischer Marsch op.335",
+        "J. Strauss Jr. – Wein, Weib und Gesang op.333",
+        "J. Strauss Jr. – An der schönen blauen Donau op.314",
+        "P. Mascagni – Intermezzo da Cavalleria rusticana",
+        "O. Respighi – Antiche danze e arie per liuto, Suite n.3",
+        "P. Warlock – Capriol Suite",
+        "B. Smetana – Vltava da Má Vlast",
+        "E. Elgar – Serenata per archi",
+        "S. Barber – Adagio per archi"
+      ]
+    }
+  ]
+}

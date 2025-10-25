@@ -1,0 +1,94 @@
+/* Home Responsive */
+
+/* Concerts */
+@media (max-width: 700px) {
+  .concerts_more_btn {
+    padding: 0.48em 1.6em;
+    font-size: 1em;
+  }
+  #concerts_home {
+    flex-direction: column;
+    gap: 4vw;
+    max-width: 99vw;
+  }
+  #concerts_home .concert_block {
+    max-width: 420px;
+    margin: 0 auto 2vw auto;
+  }
+}
+
+/* Hero adjustments — harmonized with home-hero.css */
+@media (max-width: 700px) {
+  /* Keep the box centered; fine-tune via translate only (no top override) */
+  #hero_box {
+    transform: translate(-50%, -48%);
+    max-width: 92vw;
+  }
+  /* Hybrid scaling: bound by the smaller between vw and dvh */
+  #hero_section {
+    --hero-name-size: clamp(2rem, min(6.2vw, 7.5dvh), 3.8rem);
+    --hero-role-size: clamp(0.95rem, min(2.9vw, 3.3dvh), 1.4rem);
+    --hero-claim-size: clamp(0.95rem, min(2.7vw, 3.1dvh), 1.3rem);
+  }
+}
+
+@media (max-width: 420px) {
+  /* Maintain centered positioning; slight offset only */
+  #hero_box { transform: translate(-50%, -46%); }
+}
+
+/* Landscape-wide harmonization: keep text proportional when height is small */
+@media (orientation: landscape){
+  #hero_section {
+    --hero-name-size: clamp(2rem, min(4.8vw, 6.8dvh), 3.6rem);
+    --hero-role-size: clamp(0.95rem, min(2.2vw, 2.8dvh), 1.35rem);
+    --hero-claim-size: clamp(0.95rem, min(2.1vw, 2.6dvh), 1.25rem);
+  }
+  /* keep the torso framing: slightly lower and a bit narrower */
+  #hero_box { transform: translate(-50%, -44%); width: min(80vw, 600px); }
+}
+
+/* Extra low-height landscape (phones rotated full-screen) */
+@media (orientation: landscape) and (max-height: 480px){
+  #hero_section {
+    --hero-name-size: clamp(1.8rem, min(4.2vw, 6dvh), 3.2rem);
+    --hero-role-size: clamp(0.9rem,  min(2.0vw, 2.6dvh), 1.25rem);
+    --hero-claim-size: clamp(0.9rem,  min(1.9vw, 2.4dvh), 1.2rem);
+  }
+}
+
+/* Videos list grid adjustments */
+@media (max-width: 600px) {
+  #youtube_videos .video-title {
+    max-width: 90vw;
+    font-size: 0.97rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .video_list {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .video_thumb {
+    border-radius: 6px;
+  }
+  .lightbox_video_content {
+    max-width: 99vw;
+  }
+}
+
+/* News section responsive */
+@media (max-width: 768px) {
+  .news_list {
+    max-width: 99vw;
+  }
+}
+
+/* Contact mini adjustments */
+@media (max-width: 600px) {
+  .contatti_mini {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

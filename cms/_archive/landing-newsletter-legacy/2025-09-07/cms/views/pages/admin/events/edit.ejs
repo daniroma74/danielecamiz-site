@@ -1,0 +1,363 @@
+<% /* Admin > Eventi — Editor scheletro minimo */ %>
+
+<div class="actions" style="margin-bottom:.8rem">
+  <a href="/admin/events" class="btn">← Torna alla lista</a>
+  <div style="margin-left:auto"></div>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card__title"><%= data.event.title %></div>
+  <div class="dash-card__body">
+    <div class="help">
+      <span class="badge"><%= (data.event.date||'').slice(0,10) %> <%= data.event.time_start||'' %></span>
+      <span class="badge"><%= [data.event.city, data.event.venue].filter(Boolean).join(' — ') %></span>
+      <% if (data.event.slug) { %><code><%= data.event.slug %></code><% } %>
+    </div>
+
+    <nav class="tabs" style="margin-top:.8rem">
+      <a href="#tab-details" class="tab-link">Dettagli</a>
+      <a href="#tab-program" class="tab-link">Programma</a>
+      <a href="#tab-assignments" class="tab-link">Assegnazioni</a>
+      <a href="#tab-poster" class="tab-link">Poster</a>
+      <a href="#tab-landing" class="tab-link">Landing</a>
+      <a href="#tab-bookings" class="tab-link">Prenotazioni</a>
+    </nav>
+
+    <section id="tab-details" class="tab-panel" style="margin-top:1rem">
+      <div class="help">Qui i dettagli base dell’evento (titolo, data, città, venue…).</div>
+      <!-- TODO: form dettagli -->
+    </section>
+
+    <section id="tab-program" class="tab-panel" style="display:none;margin-top:1rem">
+      <div class="help">Programma — gestito da /admin/js/events/event-program.js</div>
+    </section>
+
+    <section id="tab-assignments" class="tab-panel" style="display:none;margin-top:1rem">
+      <div class="help">Assegnazioni — gestito da /admin/js/events/event-assignments.js</div>
+    </section>
+
+    <section id="tab-poster" class="tab-panel" style="display:none;margin-top:1rem">
+      <div class="help">Poster — gestito da /admin/js/events/event-poster.js</div>
+    </section>
+
+    <section id="tab-landing" class="tab-panel" style="display:none;margin-top:1rem">
+      <div class="help">Landing — gestito da /admin/js/events/event-landing.js</div>
+    </section>
+
+    <section id="tab-bookings" class="tab-panel" style="display:none;margin-top:1rem">
+      <div class="help">Prenotazioni — elenco ed export CSV.</div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  const links = Array.from(document.querySelectorAll('.tab-link'));
+  const panels = Array.from(document.querySelectorAll('.tab-panel'));
+  function show(hash){
+    const id = hash?.replace('#','') || 'tab-details';
+    panels.forEach(p => p.style.display = (p.id === id) ? '' : 'none');
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+id));
+    if (location.hash !== '#'+id) history.replaceState(null,'','#'+id);
+  }
+  window.addEventListener('hashchange', () => show(location.hash));
+  document.addEventListener('DOMContentLoaded', () => show(location.hash));
+})();
+</script>
+
+<!-- Hook ai JS specifici (già presenti nel repo) -->
+<script src="/admin/js/events/event-program.js"></script>
+<script src="/admin/js/events/event-assignments.js"></script>
+<script src="/admin/js/events/event-poster.js"></script>
+<script src="/admin/js/events/event-landing.js"></script>'-' %></li>
+      <li><strong>Data:</strong> <%= event.date || '-' %></li>
+      <li><strong>Luogo:</strong> <%= event.location || event.city || event.venue || '-' %></li>
+    </ul>
+  </section>
+
+  <noscript>
+    <div class="alert alert-warning">Questa pagina richiede JavaScript per gestire Dettagli, Lineup, Presenze, Programma, Assegnazioni, Poster e Landing.</div>
+  </noscript>
+
+  <nav class="tabs" role="tablist" aria-label="Modifica evento">
+    <button id="tab_details_btn" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab_details">Dettagli</button>
+    <button id="tab_lineup_btn" class="tab-btn is-active" role="tab" aria-selected="true" aria-controls="tab_lineup">Lineup</button>
+    <button id="tab_attendance_btn" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab_attendance">Presenze ICNT</button>
+    <button id="tab_program_btn" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab_program">Programma</button>
+    <button id="tab_assignments_btn" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab_assignments">Assegnazioni</button>
+    <button id="tab_poster_btn" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab_poster">Poster</button>
+    <button id="tab_landing_btn" class="tab-btn" role="tab" aria-selected="false" aria-controls="tab_landing">Landing</button>
+  </nav>
+
+  <!-- DETTAGLI -->
+  <section id="tab_details" class="tab-panel" role="tabpanel" aria-labelledby="tab_details_btn" hidden>
+    <form id="event_details_form" class="form" action="/admin/events/<%= event.id %>" method="post" novalidate>
+      <section class="form-section">
+        <h2 class="section-title">Dettagli</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="title">Titolo *</label>
+            <input id="title" name="title" class="input" type="text" required autocomplete="off" value="<%= event.title || '' %>">
+          </div>
+          <div class="form-field">
+            <label for="subtitle">Sottotitolo</label>
+            <input id="subtitle" name="subtitle" class="input" type="text" autocomplete="off" value="<%= event.subtitle || '' %>">
+          </div>
+          <div class="form-field">
+            <label for="slug">Slug (opzionale)</label>
+            <input id="slug" name="slug" class="input" type="text" autocomplete="off" placeholder="es. concerto-autunno-2025" value="<%= event.slug || '' %>">
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="section-title">Data e orari</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="date">Data</label>
+            <input id="date" name="date" class="input" type="date" value="<%= event.date || '' %>">
+          </div>
+          <div class="form-field">
+            <label for="time_start">Ora inizio</label>
+            <input id="time_start" name="time_start" class="input" type="time" step="60" value="<%= event.time_start || '' %>">
+          </div>
+          <div class="form-field">
+            <label for="time_end">Ora fine</label>
+            <input id="time_end" name="time_end" class="input" type="time" step="60" value="<%= event.time_end || '' %>">
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="section-title">Luogo</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="city">Città</label>
+            <input id="city" name="city" class="input" type="text" autocomplete="off" value="<%= event.city || '' %>">
+          </div>
+          <div class="form-field">
+            <label for="venue">Venue</label>
+            <input id="venue" name="venue" class="input" type="text" autocomplete="off" value="<%= event.venue || '' %>">
+          </div>
+          <div class="form-field">
+            <label for="location">Indirizzo/Località</label>
+            <input id="location" name="location" class="input" type="text" autocomplete="off" value="<%= event.location || '' %>">
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="section-title">Stato e note</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="status">Stato</label>
+            <select id="status" name="status" class="input">
+              <option value="" <%= !event.status ? 'selected' : '' %>></option>
+              <option value="draft" <%= event.status === 'draft' ? 'selected' : '' %>>Bozza</option>
+              <option value="published" <%= event.status === 'published' ? 'selected' : '' %>>Pubblicato</option>
+              <option value="archived" <%= event.status === 'archived' ? 'selected' : '' %>>Archiviato</option>
+              <option value="cancelled" <%= event.status === 'cancelled' ? 'selected' : '' %>>Annullato</option>
+            </select>
+          </div>
+          <div class="form-field form-field--full">
+            <label for="event_program_notes">Note programma</label>
+            <textarea id="event_program_notes" name="program_notes" class="input" rows="4" placeholder="(facoltative)"><%= event.program_notes || '' %></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-actions">
+        <a href="/admin/events" class="btn btn-secondary">Annulla</a>
+        <button type="submit" class="btn btn-primary">Salva dettagli</button>
+      </section>
+    </form>
+  </section>
+
+  <!-- LINEUP -->
+  <section id="tab_lineup" class="tab-panel is-active" role="tabpanel" aria-labelledby="tab_lineup_btn">
+    <div class="panel-actions">
+      <div class="group">
+        <label for="ensemble_select">Aggiungi Ensemble</label>
+        <select id="ensemble_select" class="input" autocomplete="off"></select>
+        <button id="btn_add_ensemble" class="btn">Aggiungi</button>
+      </div>
+      <div class="group">
+        <label for="artist_search">Aggiungi Artista</label>
+        <input id="artist_search" class="input" type="text" placeholder="Cerca artista..." autocomplete="off" />
+        <button id="btn_search_artist" class="btn">Cerca</button>
+        <div id="artist_search_results" class="dropdown"></div>
+      </div>
+      <div class="group right">
+        <button id="btn_lineup_reload" class="btn btn-secondary">Ricarica</button>
+        <button id="btn_lineup_save_sort" class="btn btn-secondary">Salva ordine</button>
+        <button id="btn_lineup_save" class="btn btn-primary">Salva modifiche</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:64px">Ordine</th>
+            <th style="width:120px">Tipo</th>
+            <th>Nome</th>
+            <th style="width:35%">Ruolo</th>
+            <th style="width:120px">Azioni</th>
+          </tr>
+        </thead>
+        <tbody id="lineup_tbody">
+          <!-- popolato via JS -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PRESENZE -->
+  <section id="tab_attendance" class="tab-panel" role="tabpanel" aria-labelledby="tab_attendance_btn" hidden>
+    <div class="panel-actions">
+      <div class="group">
+        <label>
+          <input id="attendance_include_inactive" type="checkbox" />
+          Mostra membri inattivi
+        </label>
+      </div>
+      <div class="group right">
+        <button id="btn_attendance_reload" class="btn btn-secondary">Ricarica</button>
+        <button id="btn_attendance_save" class="btn btn-primary">Salva presenze</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th style="width:20%">Ruolo</th>
+            <th style="width:120px">Presente</th>
+            <th style="width:120px">Ore</th>
+            <th style="width:35%">Note</th>
+          </tr>
+        </thead>
+        <tbody id="attendance_tbody">
+          <!-- popolato via JS -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- PROGRAMMA -->
+  <section id="tab_program" class="tab-panel" role="tabpanel" aria-labelledby="tab_program_btn" hidden>
+    <div class="panel-actions">
+      <div class="group">
+        <label for="program_title">Titolo</label>
+        <input id="program_title" class="input" type="text" placeholder="Es. Sinfonia n.40 in sol minore" autocomplete="off" />
+      </div>
+      <div class="group">
+        <label for="program_catalogue">Catalogo/Opus</label>
+        <input id="program_catalogue" class="input" type="text" placeholder="Es. K.550 / Op. ..." autocomplete="off" />
+      </div>
+      <div class="group">
+        <label for="program_arranger">Arrangiatore</label>
+        <input id="program_arranger" class="input" type="text" placeholder="(facoltativo)" autocomplete="off" />
+      </div>
+      <div class="group" style="flex:1">
+        <label for="program_notes">Note</label>
+        <textarea id="program_notes" class="input" rows="2" placeholder="(facoltative)"></textarea>
+      </div>
+      <div class="group right">
+        <button id="btn_program_reload" class="btn btn-secondary">Ricarica</button>
+        <button id="btn_program_add" class="btn">Aggiungi</button>
+        <button id="btn_program_save_order" class="btn btn-secondary">Salva ordine</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:56px">Ordine</th>
+            <th>Titolo</th>
+            <th style="width:20%">Catalogo</th>
+            <th style="width:18%">Arrangiatore</th>
+            <th style="width:25%">Note</th>
+            <th style="width:110px">Azioni</th>
+          </tr>
+        </thead>
+        <tbody id="program_tbody">
+          <!-- popolato via JS -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ASSEGNAZIONI -->
+  <section id="tab_assignments" class="tab-panel" role="tabpanel" aria-labelledby="tab_assignments_btn" hidden>
+    <div class="panel-actions">
+      <div class="group">
+        <label for="instrument_search">Strumento</label>
+        <input id="instrument_search" class="input" type="text" placeholder="Cerca strumento..." autocomplete="off" />
+        <div id="instrument_search_results" class="dropdown"></div>
+      </div>
+      <div class="group">
+        <label for="assignment_instrument_label">Etichetta</label>
+        <input id="assignment_instrument_label" class="input" type="text" placeholder="Es. Violino I, Oboe, ecc." autocomplete="off" />
+      </div>
+      <div class="group">
+        <label for="assignment_chair">Posto/Chair</label>
+        <input id="assignment_chair" class="input" type="text" placeholder="Es. 1, 2, A, B..." autocomplete="off" />
+      </div>
+      <div class="group">
+        <label for="assignment_desk">Leggio/Desk</label>
+        <input id="assignment_desk" class="input" type="text" placeholder="(facoltativo)" autocomplete="off" />
+      </div>
+      <div class="group">
+        <label for="assignment_artist_search">Artista</label>
+        <input id="assignment_artist_search" class="input" type="text" placeholder="Cerca artista..." autocomplete="off" />
+        <div id="assignment_artist_results" class="dropdown"></div>
+      </div>
+      <div class="group">
+        <label class="checkbox">
+          <input id="assignment_is_principal" type="checkbox" />
+          Spalla / Principal
+        </label>
+      </div>
+      <div class="group" style="flex:1">
+        <label for="assignment_notes">Note</label>
+        <input id="assignment_notes" class="input" type="text" placeholder="(facoltative)" autocomplete="off" />
+      </div>
+      <div class="group right">
+        <button id="btn_assignments_reload" class="btn btn-secondary">Ricarica</button>
+        <button id="btn_assignments_add" class="btn btn-primary">Aggiungi</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Sezione / Strumento</th>
+            <th style="width:10%">Posto</th>
+            <th style="width:10%">Leggio</th>
+            <th style="width:12%">Principal</th>
+            <th style="width:28%">Artista</th>
+            <th style="width:22%">Note</th>
+            <th style="width:110px">Azioni</th>
+          </tr>
+        </thead>
+        <tbody id="assignments_tbody">
+          <!-- popolato via JS -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- POSTER -->
+  <section id="tab_poster" class="tab-panel" role="tabpanel" aria-labelledby="tab_poster_btn" hidden>
+    <div class="panel-actions">
+      <div class="group" style="flex:1">
+        <label for="poster_cloudinary_id">Cloudinary ID</label>
+        <input id="poster_cloudinary_id" class="input" type="text" placeholder="es. icnt/posters/2025/slug-file" autocomplete="off" value="<%= event.poster_cloudinary_id || '' %>" />
+      </div>
+      <div class="group" style="flex:1">
+        <label for="poster_local_filename">File locale</label>
+        <input id="poster_local_filename" class="input" type="text" placeholder="es. 2025-10-12-concerto.jpg" autocomplete="off" value="<%= 

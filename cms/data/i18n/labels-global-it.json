@@ -1,0 +1,84 @@
+{
+  "navbar": {
+    "nav_home": "Daniele Camiz",
+    "nav_bio": "Chi sono",
+    "nav_concerts": "Concerti",
+    "nav_gallery": "Galleria",
+    "nav_press": "Press",
+    "nav_video": "Video",
+    "nav_repertoire": "Repertorio",
+    "nav_contact": "Contatti",
+    "nav_news": "News",
+    "language_it": "IT",
+    "language_en": "EN",
+    "switch_language": "Cambia lingua",
+    "menu": "Menu",
+    "open": "Apri",
+    "close": "Chiudi"
+  },
+  "footer": {
+    "copyright": "@ Daniele Camiz 2025 - Tutti i diritti riservati.",
+    "admin": "Area Admin",
+    "privacy_policy": "Privacy Policy",
+    "terms_conditions": "Termini e condizioni",
+    "cookie_notice": "Questo sito utilizza cookie per migliorare la tua esperienza.",
+    "accept": "Accetta",
+    "decline": "Rifiuta",
+    "footer_rights": "Tutti i diritti riservati."
+  },
+  "buttons": {
+    "read_more": "Leggi di più",
+    "read_less": "Leggi di meno",
+    "show_more": "Mostra di più",
+    "show_less": "Mostra di meno",
+    "expand": "Espandi",
+    "collapse": "Riduci",
+    "back_to_top": "Torna su",
+    "send_message": "Invia messaggio",
+    "sending": "Invio...",
+    "sent": "Messaggio inviato!",
+    "error": "Si è verificato un errore. Riprova.",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "add": "Aggiungi",
+    "update": "Aggiorna",
+    "confirm": "Conferma",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "logout": "Esci",
+    "login": "Accedi",
+    "forgot_password": "Password dimenticata?",
+    "captcha": "Verifica Captcha",
+    "search": "Cerca",
+    "accept": "Accetta",
+    "decline": "Rifiuta",
+    "listen": "Ascolta",
+    "watch": "Guarda",
+    "download": "Scarica",
+    "btn_hide_details": "Nascondi dettagli",
+    "btn_show_more": "Mostra di più"
+  },
+  "messages": {
+    "loading": "Caricamento...",
+    "success": "Operazione completata con successo.",
+    "required_field": "Campo obbligatorio"
+  },
+  "form": {
+    "name": "Nome",
+    "surname": "Cognome",
+    "email": "Email",
+    "subject": "Oggetto",
+    "message": "Messaggio",
+    "password": "Password"
+  },
+    "cookies": {
+      "title": "Questo sito usa cookie",
+      "desc": "Usiamo cookie tecnici e, previo consenso, cookie di misurazione/marketing.",
+      "accept": "Accetta tutti",
+      "reject": "Rifiuta",
+      "prefs": "Preferenze",
+      "manage": "Gestisci cookie"
+    },
+    "terms": { "title": "Termini e condizioni" }
+  }
+  

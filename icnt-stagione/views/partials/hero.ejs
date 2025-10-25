@@ -1,0 +1,16 @@
+<div class="container hero-card">
+  <h1 id="hero_title">Prossimo concerto</h1>
+  <% if (nextEvent) { %>
+    <p class="hero-sub"><%= nextEvent.date %> — <em><%= nextEvent.title %></em></p>
+    <div class="hero-actions">
+      <a class="btn primary" href="/ics/<%= nextEvent.slug %>.ics">Aggiungi al calendario</a>
+      <a class="btn" target="_blank" rel="noopener"
+         href="https://www.google.com/maps/search/?api=1&query=Chiesa+Valdese+di+Piazza+Cavour%2C+Roma">Come arrivare</a>
+      <% if (nextEvent.detailUrl) { %>
+        <a class="btn ghost" target="_blank" rel="noopener" href="<%= nextEvent.detailUrl %>">Dettagli</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <p class="hero-sub">—</p>
+  <% } %>
+</div>

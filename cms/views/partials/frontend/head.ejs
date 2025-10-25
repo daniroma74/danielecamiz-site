@@ -1,0 +1,24 @@
+<!-- cms/views/frontend/partials/head.ejs -->
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title><%= title %></title>
+<meta name="description" content="<%= description %>" />
+<meta name="keywords" content="<%= keywords %>" />
+
+<link rel="canonical" href="<%= canonical %>" />
+<link rel="icon" href="/img/icons/favicon-32.png" sizes="32x32" />
+<link rel="icon" href="/img/icons/favicon-192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="/img/icons/favicon-180.png" />
+
+<meta property="og:title" content="<%= title %>" />
+<meta property="og:description" content="<%= description %>" />
+<meta property="og:image" content="<%= ogImage %>" />
+<meta property="og:url" content="<%= canonical %>" />
+<meta property="og:type" content="website" />
+
+<!-- NOTA IMPORTANTE:
+     Nessun <link rel="stylesheet"> hardcoded qui.
+     I CSS globali (base/ + components/) e i CSS di pagina vengono
+     già iniettati dal layout.ejs usando cssGlobal + cssFiles. -->

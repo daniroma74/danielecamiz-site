@@ -1,0 +1,21 @@
+{
+  "home": {
+    "project_title": "I miei progetti",
+    "news_title": "News / Blog",
+    "video_title": "Ultimi video",
+    "bandcamp": {
+      "title": "Ultime pubblicazioni",
+      "cta": "Ascolta su Bandcamp"
+    },
+    "concert_title": "Prossimi concerti",
+    "concert_more": "Tutti i concerti",
+    "contact_title": "Contatti",
+    "contact_mail": "info@danielecamiz.com",
+    "contact_more": "Altri contatti →",
+    "hero": {
+      "name": "Daniele Camiz",
+      "role": "Direttore d'orchestra",
+      "claim": "Music is magic"
+    }
+  }
+}

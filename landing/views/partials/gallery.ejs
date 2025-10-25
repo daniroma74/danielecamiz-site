@@ -1,0 +1,24 @@
+<% if (images && images.length > 0) { %>
+  <div class="gallery-section">
+    <h2>Galleria</h2>
+    <div class="gallery">
+      <% images.forEach((image, index) => { %>
+        <img src="<%= image %>" alt="Gallery <%= index + 1 %>" onclick="openLightbox('<%= image %>')">
+      <% }) %>
+    </div>
+  </div>
+<% } %>
+
+<script>
+function openLightbox(src) {
+  const lightbox = document.createElement('div');
+  lightbox.className = 'lightbox';
+  lightbox.innerHTML = `
+    <div class="lightbox-content">
+      <span class="lightbox-close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+      <img src="${src}" alt="">
+    </div>
+  `;
+  document.body.appendChild(lightbox);
+}
+</script>

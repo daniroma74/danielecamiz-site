@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Errore del server</title>
+    <link rel="stylesheet" href="/shared/css/admin-base.css">
+    <style>
+        body {
+            background: #1a1a2e;
+            color: #eaeaea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            color: #fc424a;
+            margin-bottom: 1rem;
+        }
+        
+        .error-message {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #a0a0a0;
+        }
+        
+        .error-detail {
+            background: #16213e;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 2rem 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: #fc424a;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: #e94560;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #d63850;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <div class="error-message">Errore del server</div>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error-detail">
+            <%= error %>
+        </div>
+        <% } %>
+        
+        <div class="error-actions">
+            <a href="/admin" class="btn">Torna alla Dashboard</a>
+            <a href="javascript:location.reload()" class="btn">Riprova</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<div class="form-group">
+  <label>Galleria immagini</label>
+  <div class="image-uploader" onclick="document.getElementById('upload_gallery').click()">
+    <span>Carica più immagini per la galleria</span>
+    <input type="file" id="upload_gallery" accept="image/*" multiple style="display:none" onchange="uploadGallery(this)">
+  </div>
+  <input type="hidden" id="gallery_images" value="<%= event.gallery_images || '[]' %>">
+  <div id="preview_gallery" class="image-preview"></div>
+</div>

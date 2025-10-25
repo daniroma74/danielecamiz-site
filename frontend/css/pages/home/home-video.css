@@ -1,0 +1,24 @@
+/* ==========================================================================
+   Home – Latest videos (variante A: thumbnail + titolo sotto)
+   Usa il componente components/video-thumbnails.css
+   ========================================================================== */
+
+   #latest_videos {
+    text-align: center;
+    padding: var(--section-padding);
+    max-width: var(--max-width);
+    margin: auto;
+  }
+  
+  /* Titolo sezione: ereditato da .section-title globale */
+  
+  #youtube_videos {
+    margin-top: 1.5rem;
+  }
+  
+  /* CTA "Tutti i video" */
+  .section-cta {
+    text-align: center;
+    margin-top: 1.1rem;
+  }
+  

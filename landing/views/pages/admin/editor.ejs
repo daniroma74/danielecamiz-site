@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor - <%= event.title || 'Nuovo Evento' %></title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/admin-editor.css">
+  
+  <!-- Cloudinary Upload Widget -->
+  <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
+  
+  <!-- TinyMCE Shared -->
+  <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/shared/config/editor-config.js"></script>
+</head>
+<body>
+  
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <i class="fas fa-edit"></i>
+      <span>Editor Landing: <%= event.title %></span>
+    </div>
+    <div class="nav-actions">
+      <a href="/" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Dashboard
+      </a>
+      <a href="/bookings/<%= event.slug %>" class="btn btn-secondary">
+        <i class="fas fa-list"></i> Prenotazioni
+      </a>
+      <a href="https://<%= event.slug %>.danielecamiz.com" target="_blank" class="btn btn-primary">
+        <i class="fas fa-external-link-alt"></i> Vedi Landing
+      </a>
+      <button type="button" class="btn btn-primary" id="saveBtn">
+        <i class="fas fa-save"></i> Salva
+      </button>
+    </div>
+  </nav>
+  
+  <!-- Editor Container -->
+  <div class="editor-container">
+    
+    <!-- Sidebar Tabs -->
+    <aside class="editor-sidebar">
+      <div class="tabs">
+        <button class="tab active" data-tab="info">
+          <i class="fas fa-info-circle"></i>
+          <span>Info</span>
+        </button>
+        <button class="tab" data-tab="design">
+          <i class="fas fa-palette"></i>
+          <span>Design</span>
+        </button>
+        <button class="tab" data-tab="contenuti">
+          <i class="fas fa-file-alt"></i>
+          <span>Contenuti</span>
+        </button>
+        <button class="tab" data-tab="performers">
+          <i class="fas fa-users"></i>
+          <span>Artisti</span>
+        </button>
+        <button class="tab" data-tab="gallery">
+          <i class="fas fa-images"></i>
+          <span>Galleria</span>
+        </button>
+        <button class="tab" data-tab="booking">
+          <i class="fas fa-ticket-alt"></i>
+          <span>Prenotazioni</span>
+        </button>
+        <button class="tab" data-tab="anteprima">
+          <i class="fas fa-eye"></i>
+          <span>Anteprima</span>
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="editor-main">
+      <form id="editorForm">
+        
+        <!-- Hidden inputs -->
+        <input type="hidden" id="gallery_images" name="gallery_images" value='<%= event.gallery_images || "[]" %>'>
+        <input type="hidden" id="performers_photos" name="performers_photos" value='<%= event.performers_photos || "{}" %>'>
+        <input type="hidden" id="faqs" name="faqs" value='<%= event.faqs || "[]" %>'>
+        
+        <!-- TAB INFO -->
+        <div class="tab-content active" data-content="info">
+          <div class="content-header">
+            <h2>Informazioni Evento</h2>
+            <p class="subtitle">Dati base gestiti da Concerts Admin</p>
+          </div>
+          
+          <div class="info-card">
+            <div class="info-row">
+              <div class="info-label">Titolo:</div>
+              <div class="info-value"><%= event.title %></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Data:</div>
+              <div class="info-value">
+                <i class="fas fa-calendar"></i>
+                <%= new Date(event.date).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Luogo:</div>
+              <div class="info-value">
+                <i class="fas fa-map-marker-alt"></i>
+                <%= event.location %>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Slug:</div>
+              <div class="info-value">
+                <code><%= event.slug %></code>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">URL Landing:</div>
+              <div class="info-value">
+                <a href="https://<%= event.slug %>.danielecamiz.com" target="_blank" class="external-link">
+                  https://<%= event.slug %>.danielecamiz.com
+                  <i class="fas fa-external-link-alt"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <div>
+              <strong>Per modificare titolo, data, programma o artisti</strong>, 
+              vai su <a href="https://archive.danielecamiz.com/admin/concert/<%= event.id %>/edit" target="_blank">Concerts Admin</a>
+            </div>
+          </div>
+          
+          <% if (event.bookingStats) { %>
+          <div class="booking-stats">
+            <div class="stat-box">
+              <div class="stat-value"><%= event.bookingStats.count || 0 %></div>
+              <div class="stat-label">Prenotazioni</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value"><%= event.bookingStats.seats || 0 %></div>
+              <div class="stat-label">Posti Totali</div>
+            </div>
+          </div>
+          <% } %>
+        </div>
+        
+        <!-- TAB DESIGN -->
+        <div class="tab-content" data-content="design">
+          <div class="content-header">
+            <h2>Design & Layout</h2>
+            <p class="subtitle">Personalizza l'aspetto della landing</p>
+          </div>
+          
+          <!-- Hero Section -->
+          <div class="form-section">
+            <h3>Hero Section</h3>
+            
+            <!-- Toggle Mostra Titolo -->
+            <div class="form-group">
+              <label class="toggle-switch">
+                <input type="checkbox" 
+                       name="show_hero_title" 
+                       id="show_hero_title"
+                       <%= event.show_hero_title !== 0 ? 'checked' : '' %>>
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Mostra titolo e info sopra il poster</span>
+              </label>
+              <small class="help-text">Se disattivato, il poster sarà mostrato a pieno schermo senza testo sovrapposto</small>
+            </div>
+            
+            <!-- Hero Image Override -->
+            <div class="form-group">
+              <label>Hero Image</label>
+              <div class="image-upload-area" id="heroImageArea">
+                <% if (event.hero_image_override) { %>
+                  <img src="<%= event.hero_image_override %>" alt="Hero" class="preview-image">
+                  <div class="image-overlay">
+                    <button type="button" class="btn btn-secondary btn-sm" id="changeHeroBtn">
+                      <i class="fas fa-sync"></i> Cambia
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" id="removeHeroBtn">
+                      <i class="fas fa-trash"></i> Rimuovi
+                    </button>
+                  </div>
+                <% } else { %>
+                  <div class="upload-placeholder">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Clicca per caricare hero image</p>
+                    <small>Lascia vuoto per usare poster orizzontale da Concerts Admin</small>
+                    <% if (event.poster_horizontal_cloudinary) { %>
+                      <small style="color: var(--success); margin-top: 10px;">
+                        <i class="fas fa-check-circle"></i> Poster orizzontale disponibile
+                      </small>
+                    <% } %>
+                  </div>
+                <% } %>
+              </div>
+              <input type="hidden" id="hero_image_override" name="hero_image_override" value="<%= event.hero_image_override || '' %>">
+            </div>
+            
+            <!-- Social Image -->
+            <div class="form-group">
+              <label>Immagine Social (Open Graph)</label>
+              <div class="image-upload-area" id="socialImageArea" style="height: 250px;">
+                <% if (event.social_image_override) { %>
+                  <img src="<%= event.social_image_override %>" alt="Social" class="preview-image" style="max-height:200px;">
+                  <div class="image-overlay">
+                    <button type="button" class="btn btn-secondary btn-sm" id="changeSocialBtn">
+                      <i class="fas fa-sync"></i> Cambia
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" id="removeSocialBtn">
+                      <i class="fas fa-trash"></i> Rimuovi
+                    </button>
+                  </div>
+                <% } else { %>
+                  <div class="upload-placeholder">
+                    <i class="fas fa-share-alt"></i>
+                    <p>Clicca per caricare immagine social</p>
+                    <small>Consigliato: 1200x630px - Usa hero o poster se vuoto</small>
+                  </div>
+                <% } %>
+              </div>
+              <input type="hidden" id="social_image_override" name="social_image_override" value="<%= event.social_image_override || '' %>">
+            </div>
+            
+            <!-- Toggles -->
+            <div class="form-group">
+              <label class="toggle-switch">
+                <input type="checkbox" name="show_counter" id="show_counter" <%= event.show_counter ? 'checked' : '' %>>
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Mostra countdown evento</span>
+              </label>
+            </div>
+            
+            <div class="form-group">
+              <label class="toggle-switch">
+                <input type="checkbox" name="show_share_buttons" id="show_share_buttons" <%= event.show_share_buttons ? 'checked' : '' %>>
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Mostra pulsanti condivisione</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- TAB CONTENUTI -->
+        <div class="tab-content" data-content="contenuti">
+          <div class="content-header">
+            <h2>Contenuti Testuali</h2>
+            <p class="subtitle">Descrizioni e note di programma</p>
+          </div>
+          
+          <div class="form-section">
+            <!-- Titolo Override -->
+            <div class="form-group">
+              <label for="event_title_override">Titolo Personalizzato (opzionale)</label>
+              <input type="text" 
+                     id="event_title_override" 
+                     name="event_title_override" 
+                     value="<%= event.event_title_override || '' %>"
+                     placeholder="Lascia vuoto per usare il titolo da Concerts Admin">
+            </div>
+            
+            <!-- Meta Description -->
+            <div class="form-group">
+              <label for="meta_description">Meta Description (SEO)</label>
+              <textarea id="meta_description" 
+                        name="meta_description" 
+                        rows="3" 
+                        maxlength="160"><%= event.meta_description || '' %></textarea>
+              <div class="char-count">
+                <span id="metaCharCount">0</span> / 160
+              </div>
+            </div>
+            
+            <!-- Event Description -->
+            <div class="form-group">
+              <label for="event_description">Note di Sala</label>
+              <textarea id="event_description" 
+                        name="event_description" 
+                        rows="10"><%= event.event_description || '' %></textarea>
+              <small class="help-text">Editor rich text - puoi formattare il testo</small>
+            </div>
+            
+            <!-- Tags -->
+            <div class="form-group">
+              <label for="event_tags">Tag Evento (separati da virgola)</label>
+              <input type="text" 
+                     id="event_tags" 
+                     name="event_tags" 
+                     value="<%= event.event_tags || '' %>"
+                     placeholder="Es: Beethoven, Sinfonie, Classica">
+            </div>
+            
+            <!-- FAQ -->
+            <div class="form-group">
+              <label>Domande Frequenti (FAQ)</label>
+              <div id="faqList"></div>
+              <button type="button" class="btn btn-secondary" id="addFaqBtn">
+                <i class="fas fa-plus"></i> Aggiungi FAQ
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- TAB PERFORMERS -->
+        <div class="tab-content" data-content="performers">
+          <div class="content-header">
+            <h2>Foto Artisti</h2>
+            <p class="subtitle">Carica foto per direttore, orchestra e solisti</p>
+          </div>
+          
+          <div class="form-section">
+            <div id="performersPhotosManager"></div>
+          </div>
+        </div>
+        
+        <!-- TAB GALLERY -->
+        <div class="tab-content" data-content="gallery">
+          <div class="content-header">
+            <h2>Galleria Foto</h2>
+            <p class="subtitle">Gestisci le foto dell'evento</p>
+          </div>
+          
+          <div class="form-section">
+            <button type="button" class="btn btn-primary" id="addGalleryBtn">
+              <i class="fas fa-plus"></i> Aggiungi Foto
+            </button>
+            
+            <div class="gallery-grid" id="galleryGrid"></div>
+          </div>
+        </div>
+        
+        <!-- TAB BOOKING -->
+        <div class="tab-content" data-content="booking">
+          <div class="content-header">
+            <h2>Impostazioni Prenotazioni</h2>
+            <p class="subtitle">Configura il form di prenotazione</p>
+          </div>
+          
+          <div class="form-section">
+            <div class="form-group">
+              <label class="toggle-switch">
+                <input type="checkbox" name="booking_enabled" id="booking_enabled" <%= event.booking_enabled !== 0 ? 'checked' : '' %>>
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Prenotazioni Attive</span>
+              </label>
+            </div>
+            
+            <div class="form-group">
+              <label for="venue_capacity">Capienza Venue</label>
+              <input type="number" 
+                     id="venue_capacity" 
+                     name="venue_capacity" 
+                     min="0"
+                     value="<%= event.venue_capacity || '' %>"
+                     placeholder="Es: 300">
+            </div>
+            
+            <div class="form-group">
+              <label for="booking_disclaimer">Avviso Prenotazioni</label>
+              <textarea id="booking_disclaimer" 
+                        name="booking_disclaimer" 
+                        rows="3"><%= event.booking_disclaimer || '' %></textarea>
+            </div>
+          </div>
+        </div>
+        
+        <!-- TAB ANTEPRIMA -->
+        <div class="tab-content" data-content="anteprima">
+          <div class="content-header">
+            <h2>Anteprima Landing</h2>
+            <p class="subtitle">Visualizza come apparirà la landing page</p>
+          </div>
+          
+          <div class="preview-toolbar">
+            <div class="device-selector">
+              <button type="button" class="device-btn active" data-device="desktop">
+                <i class="fas fa-desktop"></i> Desktop
+              </button>
+              <button type="button" class="device-btn" data-device="tablet">
+                <i class="fas fa-tablet-alt"></i> Tablet
+              </button>
+              <button type="button" class="device-btn" data-device="mobile">
+                <i class="fas fa-mobile-alt"></i> Mobile
+              </button>
+            </div>
+            
+            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('previewFrame').src = document.getElementById('previewFrame').src">
+              <i class="fas fa-sync"></i> Ricarica
+            </button>
+          </div>
+          
+          <div class="preview-container">
+            <iframe id="previewFrame" 
+                    class="preview-iframe desktop" 
+                    src="https://<%= event.slug %>.danielecamiz.com"></iframe>
+          </div>
+        </div>
+        
+      </form>
+    </main>
+  </div>
+  
+  <script>
+    window.EVENT_DATA = {
+      slug: '<%= event.slug %>',
+      performers: <%- JSON.stringify(event.performers) %>
+    };
+  </script>
+  <script src="/public/js/admin-editor.js"></script>
+</body>
+</html>

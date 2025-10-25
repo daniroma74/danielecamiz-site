@@ -1,0 +1,77 @@
+<nav class="navbar navbar--fixed" id="site_navbar" role="navigation" aria-label="<%= t('navbar.menu') %>">
+  <div class="nav-left">
+    <a href="/"
+       class="logo"
+       id="navbar_nav_home"
+       role="menuitem"
+       tabindex="0">
+      <%= t('navbar.nav_home') %>
+    </a>
+  </div>
+
+  <!-- Mobile toggle (CSS-only, no JS required). Hidden off-screen by CSS in navbar.css -->
+  <input id="nav_toggle"
+         class="nav-toggle"
+         type="checkbox"
+         aria-hidden="true">
+
+  <div class="nav-center">
+    <ul id="main_menu" class="menu" role="menubar">
+      <% const items = [
+           { path: '/bio',        key: 'navbar.nav_bio' },
+           { path: '/concerts',   key: 'navbar.nav_concerts' },
+           { path: '/gallery',    key: 'navbar.nav_gallery' },
+           { path: '/press',      key: 'navbar.nav_press' },
+           { path: '/video',      key: 'navbar.nav_video' },
+           { path: '/repertoire', key: 'navbar.nav_repertoire' },
+           { path: '/contact',    key: 'navbar.nav_contact' },
+           { path: '/news',       key: 'navbar.nav_news' }
+         ];
+      %>
+      <% items.forEach(item => { %>
+        <li role="none">
+          <a href="<%= item.path %>"
+             role="menuitem"
+             tabindex="-1"
+             class="nav-link">
+            <%= t(item.key) %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+
+  <div class="nav-right">
+    <div id="language_switcher" class="lang-switch" role="radiogroup" aria-label="<%= t('navbar.switch_language') %>">
+      <!-- IT -->
+      <button id="btn_it"
+              type="button"
+              data-lang="it"
+              role="radio"
+              aria-checked="<%= lang === 'it' %>"
+              tabindex="<%= lang === 'it' ? 0 : -1 %>">
+        <%= t('navbar.language_it') %>
+      </button>
+
+      <!-- EN -->
+      <button id="btn_en"
+              type="button"
+              data-lang="en"
+              role="radio"
+              aria-checked="<%= lang === 'en' %>"
+              tabindex="<%= lang === 'en' ? 0 : -1 %>">
+        <%= t('navbar.language_en') %>
+      </button>
+    </div>
+
+    <!-- Hamburger is a label tied to #nav_toggle for CSS-only toggle on mobile -->
+    <label id="hamburger"
+           for="nav_toggle"
+           class="hamburger"
+           aria-label="<%= t('navbar.menu') %>"
+           aria-controls="main_menu"
+           role="button">
+      <span></span><span></span><span></span>
+    </label>
+  </div>
+</nav>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  
+  <nav class="admin-nav">
+    <div class="nav-container">
+      <a href="/admin" class="nav-brand">
+        <i class="fas fa-music"></i> Concerts Admin
+      </a>
+      <div class="nav-links">
+        <a href="/admin/dashboard">
+          <i class="fas fa-calendar"></i> Concerti
+        </a>
+        <a href="/admin/repertoire">
+          <i class="fas fa-book"></i> Repertorio
+        </a>
+        <a href="/admin/search" class="active">
+          <i class="fas fa-search"></i> Ricerca
+        </a>
+        <a href="<%= stagingUrl || 'https://staging.danielecamiz.com' %>" target="_blank" class="nav-link-external">
+          <i class="fas fa-external-link-alt"></i> Frontend
+        </a>
+        <a href="/auth/logout" class="btn-logout">
+          <i class="fas fa-sign-out-alt"></i> Esci
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-main">
+    <div class="page-header">
+      <div class="page-title-section">
+        <h1><i class="fas fa-search"></i> Ricerca Avanzata</h1>
+        <p class="page-subtitle">Cerca in concerti, repertorio, compositori e artisti</p>
+      </div>
+    </div>
+
+    <div class="search-container">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="globalSearch" 
+          class="search-input-large" 
+          placeholder="Cerca per titolo, compositore, luogo, artista..."
+          autocomplete="off"
+        >
+        <button id="searchBtn" class="btn btn-primary btn-large">
+          <i class="fas fa-search"></i> Cerca
+        </button>
+      </div>
+
+      <div id="searchResults" class="search-results-container" style="display: none;">
+        <!-- Risultati popolati dinamicamente -->
+      </div>
+
+      <div class="search-hint">
+        <i class="fas fa-info-circle"></i>
+        Digita almeno 2 caratteri per iniziare la ricerca
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/search.js"></script>
+  
+  <style>
+    .search-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .search-input-large {
+      flex: 1;
+      padding: 15px 20px;
+      background: #0d0d0d;
+      border: 2px solid #333;
+      border-radius: 12px;
+      color: #f1f1f1;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .search-input-large:focus {
+      outline: none;
+      border-color: #d6b25e;
+      box-shadow: 0 0 0 4px rgba(214, 178, 94, 0.1);
+    }
+
+    .btn-large {
+      padding: 15px 30px;
+      font-size: 16px;
+    }
+
+    .search-results-container {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 20px;
+      min-height: 200px;
+    }
+
+    .search-hint {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .search-hint i {
+      margin-right: 8px;
+      color: #d6b25e;
+      font-size: 18px;
+    }
+
+    .result-section {
+      margin-bottom: 30px;
+    }
+
+    .result-section h3 {
+      color: #d6b25e;
+      font-size: 18px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #333;
+    }
+
+    .result-item {
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .result-item:hover {
+      background: rgba(214, 178, 94, 0.1);
+      transform: translateX(5px);
+    }
+
+    .result-title {
+      font-weight: 600;
+      color: #f1f1f1;
+      margin-bottom: 5px;
+    }
+
+    .result-meta {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .no-results i {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #444;
+    }
+  </style>
+</body>
+</html>

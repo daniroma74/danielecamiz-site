@@ -1,0 +1,68 @@
+<section id="privacy_section" class="legal-section page-privacy">
+  <h1 class="legal-title" id="privacy_title">
+    <%= content?.title
+      || labels?.title
+      || ((typeof t === 'function' && t('privacy.title') !== 'privacy.title') ? t('privacy.title') : (lang === 'en' ? 'Privacy Policy' : 'Privacy Policy')) %>
+  </h1>
+
+  <% if (content?.updatedAt) { %>
+    <p class="legal-updated" id="privacy_updated">
+      <%= (lang === 'en' ? 'Last update: ' : 'Ultimo aggiornamento: ') + content.updatedAt %>
+    </p>
+  <% } %>
+
+  <% if (content?.body) { %>
+    <!-- Se esiste un corpo HTML unico, lo renderizziamo direttamente -->
+    <div class="legal-body" id="privacy_body">
+      <%- content.body %>
+    </div>
+  <% } else { %>
+    <!-- Struttura a sezioni con fallback su labels -->
+    <% if (content?.intro || labels?.intro) { %>
+      <p class="legal-intro" id="privacy_intro">
+        <%= content?.intro || labels?.intro %>
+      </p>
+    <% } %>
+
+    <% const dataCollectedTitle = content?.data_collected_title || labels?.data_collected_title; %>
+    <% const dataCollectedList  = content?.data_collected_list  || labels?.data_collected_list; %>
+    <% if (dataCollectedTitle || (Array.isArray(dataCollectedList) && dataCollectedList.length)) { %>
+      <h2 class="legal-subtitle" id="privacy_data_collected_title"><%= dataCollectedTitle %></h2>
+      <% if (Array.isArray(dataCollectedList) && dataCollectedList.length) { %>
+        <ul class="legal-list" id="privacy_data_collected_list">
+          <% dataCollectedList.forEach(item => { %><li><%= item %></li><% }) %>
+        </ul>
+      <% } %>
+    <% } %>
+
+    <% if (content?.purpose_title || labels?.purpose_title) { %>
+      <h2 class="legal-subtitle" id="privacy_purpose_title"><%= content?.purpose_title || labels?.purpose_title %></h2>
+      <p class="legal-text" id="privacy_purpose_text"><%= content?.purpose_text || labels?.purpose_text || '' %></p>
+    <% } %>
+
+    <% if (content?.cookie_title || labels?.cookie_title) { %>
+      <h2 class="legal-subtitle" id="privacy_cookie_title"><%= content?.cookie_title || labels?.cookie_title %></h2>
+      <p class="legal-text" id="privacy_cookie_text"><%= content?.cookie_text || labels?.cookie_text || '' %></p>
+    <% } %>
+
+    <% if (content?.rights_title || labels?.rights_title) { %>
+      <h2 class="legal-subtitle" id="privacy_rights_title"><%= content?.rights_title || labels?.rights_title %></h2>
+      <p class="legal-text" id="privacy_rights_text"><%= content?.rights_text || labels?.rights_text || '' %></p>
+    <% } %>
+
+    <% if (content?.controller_title || labels?.controller_title) { %>
+      <h2 class="legal-subtitle" id="privacy_controller_title"><%= content?.controller_title || labels?.controller_title %></h2>
+      <p class="legal-text" id="privacy_controller_text"><%= content?.controller_text || labels?.controller_text || '' %></p>
+    <% } %>
+  <% } %>
+</section>
+
+<style>
+  /* Stili minimi coerenti con layout sticky e tipografia base */
+  .legal-section { max-width: 900px; margin: 0 auto; padding: 16px; }
+  .legal-title { margin: 8px 0 12px; }
+  .legal-updated { color: #777; margin-bottom: 12px; }
+  .legal-subtitle { margin: 16px 0 8px; }
+  .legal-text, .legal-intro { margin-bottom: 12px; }
+  .legal-list { margin: 0 0 12px 20px; }
+</style>

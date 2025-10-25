@@ -1,0 +1,44 @@
+{
+  "hero": {
+    "name": "Daniele Camiz",
+    "role": "Direttore d’orchestra",
+    "claim": "Music is magic"
+  },
+  "projects": [
+    {
+      "id": "stagione",
+      "img": "/img/projects/ICNT_facebook_photo_profile.png",
+      "imgAlt": "ICNT I concerti nel tempio logo",
+      "title": "ICNT – I Concerti nel Tempio",
+      "desc": "La stagione concertistica ufficiale, a Roma.",
+      "btnText": "Visita la pagina Facebook",
+      "btnUrl": "https://www.facebook.com/iconcertineltempio/"
+    },
+    {
+      "id": "msc",
+      "img": "/img/projects/MSC_facebook_photo_profile.png",
+      "imgAlt": "MSC logo",
+      "title": "Mozart Symphonies Challenge",
+      "desc": "L’integrale delle sinfonie di Mozart, 2019–2026.",
+      "links": [
+        {
+          "text": "Playlist YouTube",
+          "url": "https://youtube.com/playlist?list=PL9ZlyjQawCLHEihz26TP7lhdDbNw-dSW7&si=pXWWcgAuDq7tZI1b"
+        },
+        {
+          "text": "Pagina Facebook",
+          "url": "https://www.facebook.com/mozartsymphonieschallenge/"
+        }
+      ]
+    },
+    {
+      "id": "orchestra",
+      "img": "/img/projects/ICNTO_facebook_photo_profile.png",
+      "imgAlt": "ICNT Orchestra logo",
+      "title": "ICNT Orchestra",
+      "desc": "L’orchestra residente de I Concerti Nel Tempio.",
+      "btnText": "Visita la pagina Facebook",
+      "btnUrl": "https://www.facebook.com/icntorchestra/"
+    }
+  ]
+}

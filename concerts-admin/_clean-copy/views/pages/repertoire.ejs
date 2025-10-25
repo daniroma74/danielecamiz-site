@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/repertoire.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  
+  <nav class="admin-nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <i class="fas fa-music"></i> Concerts Admin
+      </a>
+      <div class="nav-links">
+        <a href="/admin/dashboard"><i class="fas fa-calendar"></i> Concerti</a>
+        <a href="/admin/search"><i class="fas fa-search"></i> Ricerca</a>
+        <a href="/auth/logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Esci</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-main">
+    <div class="page-header">
+      <h1><i class="fas fa-book"></i> Gestione Repertorio</h1>
+      <button class="btn btn-primary" id="addWorkBtn">
+        <i class="fas fa-plus"></i> Nuovo Brano
+      </button>
+    </div>
+
+    <!-- Statistiche -->
+    <div class="stats-cards">
+      <div class="stat-card">
+        <i class="fas fa-music"></i>
+        <div>
+          <h3><%= stats.total_works %></h3>
+          <p>Brani Totali</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-user-tie"></i>
+        <div>
+          <h3><%= stats.total_composers.count %></h3>
+          <p>Compositori</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-list"></i>
+        <div>
+          <h3><%= stats.total_categories.count %></h3>
+          <p>Categorie</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ricerca Rapida -->
+    <div class="search-bar">
+      <div class="search-input-group">
+        <i class="fas fa-search"></i>
+        <input type="text" 
+               id="quickSearch" 
+               placeholder="Cerca brano, compositore, catalogo..."
+               value="<%= filters.search || '' %>">
+        <button class="btn-clear" id="clearSearch" style="display: <%= filters.search ? 'block' : 'none' %>">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs Categorie -->
+    <div class="category-tabs">
+      <button class="tab-btn <%= !filters.category ? 'active' : '' %>" 
+              data-category="">
+        <i class="fas fa-th"></i> Tutti
+      </button>
+      <% categories.forEach(cat => { %>
+        <button class="tab-btn <%= filters.category == cat.id ? 'active' : '' %>" 
+                data-category="<%= cat.id %>">
+          <%= cat.label_it %>
+        </button>
+      <% }) %>
+    </div>
+
+    <!-- Lista Brani (Cards compatte) -->
+    <div id="worksList" class="works-grid">
+      <% if (works && works.length > 0) { %>
+        <% works.forEach(work => { %>
+          <div class="work-card" 
+               data-work-id="<%= work.id %>"
+               data-search="<%= (work.title + ' ' + work.composer_name + ' ' + (work.catalogue || '')).toLowerCase() %>">
+            <div class="work-header">
+              <h3 class="work-title"><%= work.title %></h3>
+              <span class="work-composer"><%= work.composer_short || work.composer_name %></span>
+            </div>
+            
+            <div class="work-meta">
+              <% if (work.catalogue) { %>
+                <span class="meta-badge catalogue">
+                  <i class="fas fa-bookmark"></i> <%= work.catalogue %>
+                </span>
+              <% } %>
+              <% if (work.work_key) { %>
+                <span class="meta-badge key">
+                  <i class="fas fa-key"></i> <%= work.work_key %>
+                </span>
+              <% } %>
+              <% if (work.category_label) { %>
+                <span class="meta-badge category">
+                  <%= work.category_label %>
+                </span>
+              <% } %>
+            </div>
+
+            <% if (work.past_count > 0 || work.future_count > 0) { %>
+              <div class="work-stats">
+                <% if (work.past_count > 0) { %>
+                  <span class="stat-badge past">
+                    <i class="fas fa-check-circle"></i> 
+                    Eseguito <%= work.past_count %> <%= work.past_count === 1 ? 'volta' : 'volte' %>
+                  </span>
+                <% } %>
+                <% if (work.future_count > 0) { %>
+                  <span class="stat-badge future">
+                    <i class="fas fa-calendar-alt"></i> 
+                    In programma (<%= work.future_count %>)
+                  </span>
+                <% } %>
+              </div>
+            <% } %>
+
+            <div class="work-actions">
+              <button class="btn-icon" 
+                      onclick="viewWorkDetails(<%= work.id %>)"
+                      title="Dettagli">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn-icon" 
+                      onclick="editWork(<%= work.id %>)"
+                      title="Modifica">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn-icon btn-danger" 
+                      onclick="deleteWork(<%= work.id %>, '<%= work.title.replace(/'/g, "\\'") %>')"
+                      title="Elimina">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="empty-state">
+          <i class="fas fa-music"></i>
+          <p>Nessun brano trovato</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Risultati vuoti dopo ricerca -->
+    <div id="noResults" class="empty-state" style="display: none;">
+      <i class="fas fa-search"></i>
+      <p>Nessun risultato per questa ricerca</p>
+      <button class="btn btn-secondary" onclick="clearSearch()">
+        <i class="fas fa-times"></i> Cancella ricerca
+      </button>
+    </div>
+  </main>
+
+  <!-- Modal Dettagli Brano -->
+  <div id="workDetailsModal" class="modal">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="detailsTitle">Dettagli Brano</h2>
+        <button class="modal-close" onclick="closeModal('workDetailsModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="detailsBody">
+        <!-- Popolato dinamicamente -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="editFromDetails()">
+          <i class="fas fa-edit"></i> Modifica
+        </button>
+        <button class="btn btn-secondary" onclick="closeModal('workDetailsModal')">
+          Chiudi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Form Brano -->
+  <div id="workFormModal" class="modal">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2 id="formTitle">Nuovo Brano</h2>
+        <button class="modal-close" onclick="closeModal('workFormModal')">&times;</button>
+      </div>
+      <form id="workForm">
+        <input type="hidden" id="workId" name="id">
+        <div class="modal-body">
+          
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="composer_id">Compositore *</label>
+              <select id="composer_id" name="composer_id" required>
+                <option value="">Seleziona compositore</option>
+                <% composers.forEach(composer => { %>
+                  <option value="<%= composer.id %>">
+                    <%= composer.full_name %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+            
+            <div class="form-group flex-1">
+              <label for="category_id">Categoria *</label>
+              <select id="category_id" name="category_id" required>
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat.id %>"><%= cat.label_it %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="work_title">Titolo *</label>
+            <input type="text" id="work_title" name="title" required
+                   placeholder="Es: Sinfonia n. 40 in sol minore">
+          </div>
+
+          <div class="form-group">
+            <label for="work_subtitle">Sottotitolo</label>
+            <input type="text" id="work_subtitle" name="subtitle"
+                   placeholder="Sottotitolo o nome alternativo">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="work_catalogue">Catalogo</label>
+              <input type="text" id="work_catalogue" name="catalogue"
+                     placeholder="K. 550, Op. 73, BWV 1007...">
+            </div>
+            
+            <div class="form-group">
+              <label for="work_key">Tonalità</label>
+              <input type="text" id="work_key" name="work_key"
+                     placeholder="sol minore, Do maggiore...">
+            </div>
+            
+            <div class="form-group">
+              <label for="work_year">Anno</label>
+              <input type="number" id="work_year" name="year" min="1000" max="2100"
+                     placeholder="1788">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="media_video">Link Video</label>
+              <input type="url" id="media_video" name="media_video"
+                     placeholder="https://youtube.com/...">
+            </div>
+            
+            <div class="form-group">
+              <label for="media_audio">Link Audio</label>
+              <input type="url" id="media_audio" name="media_audio"
+                     placeholder="https://soundcloud.com/...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="notes_it">Note (IT)</label>
+            <textarea id="notes_it" name="notes_it" rows="3"
+                      placeholder="Note e informazioni in italiano..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="notes_en">Note (EN)</label>
+            <textarea id="notes_en" name="notes_en" rows="3"
+                      placeholder="Notes and information in English..."></textarea>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Salva
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('workFormModal')">
+            Annulla
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/repertoire-admin.js"></script>
+  <script>
+    let currentWorkId = null;
+    
+    // Inizializza RepertoireManager se esiste
+    if (typeof RepertoireManager !== 'undefined') {
+      window.repertoireManager = new RepertoireManager();
+    }
+
+    // Event Listener per pulsante Nuovo Brano
+    document.getElementById('addWorkBtn')?.addEventListener('click', () => {
+      showAddWorkModal();
+    });
+
+    // Quick Search
+    const quickSearch = document.getElementById('quickSearch');
+    const clearBtn = document.getElementById('clearSearch');
+    const workCards = document.querySelectorAll('.work-card');
+    const noResults = document.getElementById('noResults');
+
+    quickSearch?.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      clearBtn.style.display = query ? 'block' : 'none';
+      
+      let visibleCount = 0;
+      workCards.forEach(card => {
+        const searchText = card.dataset.search;
+        const matches = searchText.includes(query);
+        card.style.display = matches ? 'block' : 'none';
+        if (matches) visibleCount++;
+      });
+      
+      noResults.style.display = (visibleCount === 0 && query) ? 'block' : 'none';
+    });
+
+    clearBtn?.addEventListener('click', clearSearch);
+
+    function clearSearch() {
+      quickSearch.value = '';
+      clearBtn.style.display = 'none';
+      workCards.forEach(card => card.style.display = 'block');
+      noResults.style.display = 'none';
+    }
+
+    // Category Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const category = btn.dataset.category;
+        const url = new URL(window.location);
+        if (category) {
+          url.searchParams.set('category', category);
+        } else {
+          url.searchParams.delete('category');
+        }
+        window.location.href = url.toString();
+      });
+    });
+
+    function showAddWorkModal() {
+      document.getElementById('formTitle').textContent = 'Nuovo Brano';
+      document.getElementById('workForm').reset();
+      document.getElementById('workId').value = '';
+      document.getElementById('workFormModal').classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    async function viewWorkDetails(workId) {
+      currentWorkId = workId;
+      try {
+        const response = await fetch(`/api/repertoire/${workId}`);
+        const data = await response.json();
+        
+        if (!data.success) {
+          alert('Errore caricamento dettagli');
+          return;
+        }
+        
+        const work = data.work;
+        document.getElementById('detailsTitle').textContent = work.title;
+        document.getElementById('detailsBody').innerHTML = `
+          <div class="details-grid">
+            <div class="detail-item">
+              <strong>Compositore:</strong>
+              <span>${work.composer_name}</span>
+            </div>
+            ${work.catalogue ? `
+              <div class="detail-item">
+                <strong>Catalogo:</strong>
+                <span>${work.catalogue}</span>
+              </div>
+            ` : ''}
+            ${work.work_key ? `
+              <div class="detail-item">
+                <strong>Tonalità:</strong>
+                <span>${work.work_key}</span>
+              </div>
+            ` : ''}
+            ${work.year ? `
+              <div class="detail-item">
+                <strong>Anno:</strong>
+                <span>${work.year}</span>
+              </div>
+            ` : ''}
+            <div class="detail-item">
+              <strong>Categoria:</strong>
+              <span>${work.category_label}</span>
+            </div>
+            ${work.movements && work.movements.length > 0 ? `
+              <div class="detail-item full-width">
+                <strong>Movimenti:</strong>
+                <ul class="movements-list">
+                  ${work.movements.map(m => `
+                    <li>${m.movement_number}. ${m.title || 'Senza titolo'} ${m.tempo ? `(${m.tempo})` : ''}</li>
+                  `).join('')}
+                </ul>
+              </div>
+            ` : ''}
+            ${work.notes_it ? `
+              <div class="detail-item full-width">
+                <strong>Note (IT):</strong>
+                <p>${work.notes_it}</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+        document.getElementById('workDetailsModal').classList.add('active');
+      } catch (error) {
+        console.error('Errore:', error);
+        alert('Errore caricamento dettagli');
+      }
+    }
+
+    function editFromDetails() {
+      closeModal('workDetailsModal');
+      if (currentWorkId) {
+        editWork(currentWorkId);
+      }
+    }
+
+    async function editWork(workId) {
+      try {
+        const response = await fetch(`/api/repertoire/${workId}`);
+        const data = await response.json();
+        
+        if (!data.success) {
+          alert('Errore caricamento brano');
+          return;
+        }
+        
+        const work = data.work;
+        document.getElementById('formTitle').textContent = 'Modifica Brano';
+        document.getElementById('workId').value = work.id;
+        document.getElementById('composer_id').value = work.composer_id;
+        document.getElementById('category_id').value = work.category_id;
+        document.getElementById('work_title').value = work.title || '';
+        document.getElementById('work_subtitle').value = work.subtitle || '';
+        document.getElementById('work_catalogue').value = work.catalogue || '';
+        document.getElementById('work_key').value = work.work_key || '';
+        document.getElementById('work_year').value = work.year || '';
+        document.getElementById('media_video').value = work.media_video || '';
+        document.getElementById('media_audio').value = work.media_audio || '';
+        document.getElementById('notes_it').value = work.notes_it || '';
+        document.getElementById('notes_en').value = work.notes_en || '';
+        
+        document.getElementById('workFormModal').classList.add('active');
+      } catch (error) {
+        console.error('Errore:', error);
+        alert('Errore caricamento brano');
+      }
+    }
+
+    async function deleteWork(workId, workTitle) {
+      if (!confirm(`Eliminare "${workTitle}"?`)) return;
+      
+      try {
+        const response = await fetch(`/api/repertoire/works/${workId}`, {
+          method: 'DELETE'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('Brano eliminato');
+          window.location.reload();
+        } else {
+          alert(data.message || 'Errore eliminazione');
+        }
+      } catch (error) {
+        console.error('Errore:', error);
+        alert('Errore eliminazione');
+      }
+    }
+
+    // Form Submit
+    document.getElementById('workForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      
+      const workId = data.id;
+      delete data.id;
+      
+      try {
+        const url = workId ? `/api/repertoire/works/${workId}` : '/api/repertoire/works';
+        const method = workId ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert(workId ? 'Brano aggiornato' : 'Brano creato');
+          window.location.reload();
+        } else {
+          alert(result.error || 'Errore salvataggio');
+        }
+      } catch (error) {
+        console.error('Errore:', error);
+        alert('Errore salvataggio');
+      }
+    });
+  </script>
+
+</body>
+</html>

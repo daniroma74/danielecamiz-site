@@ -1,0 +1,72 @@
+<section id="terms_section" class="legal-section">
+  <h1 class="legal-title" id="terms_title">
+    <%= content?.title
+      || ((typeof t === 'function' && t('terms.title') !== 'terms.title') ? t('terms.title')
+      : (lang === 'en' ? 'Terms and Conditions' : 'Termini e condizioni')) %>
+  </h1>
+
+  <% if (content?.updatedAt) { %>
+    <p class="legal-updated" id="terms_updated">
+      <%= (lang === 'en' ? 'Last update: ' : 'Ultimo aggiornamento: ') + content.updatedAt %>
+    </p>
+  <% } %>
+
+  <!-- Corpo principale (varianti supportate) -->
+  <% if (content?.bodyHtml) { %>
+    <div class="legal-body" id="terms_body_html"><%- content.bodyHtml %></div>
+  <% } else if (content?.body) { %>
+    <div class="legal-body" id="terms_body"><%- content.body %></div>
+  <% } else if (Array.isArray(content?.paragraphs)) { %>
+    <div class="legal-body" id="terms_body_paragraphs">
+      <% content.paragraphs.forEach((p, i) => { %>
+        <p id="terms_p_<%= i %>"><%= p %></p>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <!-- Sezioni -->
+  <% if (Array.isArray(content?.sections)) { %>
+    <div class="legal-sections" id="terms_sections">
+      <% content.sections.forEach((sec, idx) => { %>
+        <section class="legal-subsection" id="terms_section_<%= idx %>">
+          <% if (sec.title) { %>
+            <h2 class="legal-subtitle" id="terms_section_title_<%= idx %>"><%= sec.title %></h2>
+          <% } %>
+
+          <% if (sec.bodyHtml) { %>
+            <div class="legal-text" id="terms_section_body_html_<%= idx %>"><%- sec.bodyHtml %></div>
+          <% } else if (sec.body) { %>
+            <div class="legal-text" id="terms_section_body_<%= idx %>"><%- sec.body %></div>
+          <% } else if (Array.isArray(sec.paragraphs)) { %>
+            <div class="legal-text" id="terms_section_pars_<%= idx %>">
+              <% sec.paragraphs.forEach((p, j) => { %>
+                <p id="terms_section_p_<%= idx %>_<%= j %>"><%= p %></p>
+              <% }) %>
+            </div>
+          <% } %>
+
+          <% if (Array.isArray(sec.items)) { %>
+            <ul class="legal-list" id="terms_section_list_<%= idx %>">
+              <% sec.items.forEach((it, k) => { %>
+                <li id="terms_section_li_<%= idx %>_<%= k %>"><%= it %></li>
+              <% }) %>
+            </ul>
+          <% } %>
+        </section>
+      <% }) %>
+    </div>
+  <% } else if (!content?.body && !content?.bodyHtml && !Array.isArray(content?.paragraphs)) { %>
+    <p class="legal-empty" id="terms_empty">
+      <%= lang==='en' ? 'No content available.' : 'Nessun contenuto disponibile.' %>
+    </p>
+  <% } %>
+</section>
+
+<style>
+  .legal-section { max-width: 900px; margin: 0 auto; padding: 16px; }
+  .legal-title { margin: 8px 0 12px; }
+  .legal-updated { color: #777; margin-bottom: 12px; }
+  .legal-subtitle { margin: 16px 0 8px; }
+  .legal-text, .legal-body { margin-bottom: 12px; }
+  .legal-list { margin: 8px 0 12px 20px; }
+</style>

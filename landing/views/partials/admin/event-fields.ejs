@@ -1,0 +1,59 @@
+<div class="form-group">
+  <label>Titolo Evento</label>
+  <input type="text" id="title" value="<%= event.title %>" required>
+</div>
+
+<div class="form-group">
+  <label>Sottotitolo</label>
+  <input type="text" id="subtitle" value="<%= event.subtitle || '' %>">
+</div>
+
+<div class="form-group">
+  <label>Data</label>
+  <input type="date" id="date" value="<%= event.date %>">
+</div>
+
+<div class="form-group">
+  <label>Luogo</label>
+  <input type="text" id="location" value="<%= event.location %>">
+</div>
+
+<div class="form-group">
+  <label>Descrizione breve</label>
+  <textarea id="description_short" rows="3"><%= event.description_short || '' %></textarea>
+</div>
+
+<div class="form-group">
+  <label>Descrizione completa (HTML)</label>
+  <textarea id="description_html" rows="6"><%= event.description_html || '' %></textarea>
+</div>
+
+<div class="form-group">
+  <label>Note programma</label>
+  <textarea id="program_notes" rows="4"><%= event.program_notes || '' %></textarea>
+</div>
+
+<div class="form-group">
+  <label>Dettagli programma</label>
+  <textarea id="program_details" rows="4"><%= event.program_details || '' %></textarea>
+</div>
+
+<div class="form-group">
+  <label>Interpreti</label>
+  <textarea id="performers" rows="3"><%= event.performers || '' %></textarea>
+</div>
+
+<div class="form-group">
+  <label>Tags (separati da virgola)</label>
+  <input type="text" id="tags" value="<%= event.tags || '' %>">
+</div>
+
+<div class="form-group">
+  <label>Capacità massima</label>
+  <input type="number" id="max_capacity" value="<%= event.max_capacity || 200 %>">
+</div>
+
+<div class="form-group">
+  <label>Disclaimer prenotazione</label>
+  <textarea id="booking_disclaimer" rows="2"><%= event.booking_disclaimer || 'Ingresso gratuito in ordine di arrivo.' %></textarea>
+</div>

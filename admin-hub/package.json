@@ -1,0 +1,58 @@
+{
+  "name": "admin-hub",
+  "version": "1.0.0",
+  "description": "Central Admin HUB for danielecamiz.com",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup": "node scripts/setup.js",
+    "create-admin": "node scripts/createAdmin.js",
+    "generate-secrets": "node scripts/generateSecret.js",
+    "test": "jest",
+    "migrate": "node database/migrate.js"
+  },
+  "keywords": [
+    "admin",
+    "hub",
+    "dashboard",
+    "management"
+  ],
+  "author": "Daniele Camiz",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "sqlite3": "^5.1.6",
+    "better-sqlite3": "^9.2.2",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "speakeasy": "^2.0.0",
+    "qrcode": "^1.5.3",
+    "ejs": "^3.1.9",
+    "cookie-parser": "^1.4.6",
+    "morgan": "^1.10.0",
+    "compression": "^1.7.4",
+    "validator": "^13.11.0",
+    "uuid": "^9.0.1",
+    "winston": "^3.11.0",
+    "connect-sqlite3": "^0.9.15",
+    "csurf": "^1.11.0",
+    "express-validator": "^7.0.1",
+    "node-cron": "^3.0.3",
+    "axios": "^1.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

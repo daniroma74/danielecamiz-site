@@ -1,0 +1,63 @@
+/* ==========================================================================
+   Home – Mini Contacts
+   Convenzioni: ID snake_case, classi kebab-case
+   Sezione: #contact_home
+   ========================================================================== */
+
+/* In rari casi (lightbox chiusa male) lo scroll può restare bloccato:
+   qui lo riabilitiamo in modo non invasivo per la sola Home. */
+   html, body { overflow-y: auto !important; }
+
+   /* Se il footer è fixed/sticky, teniamo margine/padding di sicurezza anche su <main>.
+      (Questo file è caricato SOLO in Home, quindi non impatta le altre pagine.) */
+   #main_content { padding-bottom: calc(var(--footer-safe, 120px) + 16px); }
+   
+   /* Sezione contatti */
+   #contact_home {
+     max-width: var(--max-width);
+     margin: 0 auto;
+     padding: var(--section-padding);
+   }
+   
+   /* titolo sezione usa già .section-title dal tuo base.css */
+   
+   /* riga contatti compatta e centrata */
+   #contact_home .contact-mini {
+     margin-top: 0.75rem;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 0.75rem;
+     flex-wrap: wrap;
+     font-family: var(--font-ui, Montserrat, Arial, sans-serif);
+     font-size: 1.05rem;
+   }
+   
+   /* email evidenziata */
+   #contact_home .contact-mail {
+     font-weight: 700;
+     color: #fffbe9;
+     text-decoration: none;
+     border-bottom: 1px dotted transparent;
+   }
+   #contact_home .contact-mail:hover { border-bottom-color: currentColor; }
+   
+   /* separatore semplice */
+   #contact_home .separator { opacity: .6; user-select: none; }
+   
+   /* link “tutti i contatti” come link-bottone sottile (stili bottoni già globali) */
+   #contact_home .contact-all {
+     text-decoration: none;
+     border-bottom: 1px dotted transparent;
+   }
+   #contact_home .contact-all:hover { border-bottom-color: currentColor; }
+   
+   /* Spaziatore anti-footer (semplice e robusto) */
+   .footer-spacer { height: var(--footer-safe, 120px); }
+   
+   /* Responsive */
+   @media (max-width: 640px) {
+     #contact_home { padding: 2rem 1rem; }
+     #contact_home .contact-mini { font-size: 1rem; gap: 0.6rem; }
+   }
+   

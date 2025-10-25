@@ -1,0 +1,31 @@
+/* ==========================================================================
+   Home – Bandcamp embed section
+   ========================================================================== */
+
+   #bandcamp_section {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--section-padding);
+  }
+  
+  #bandcamp_section .bandcamp-embed__inner {
+    display: flex;
+    justify-content: center;
+  }
+  
+  #bandcamp_section iframe {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* placeholder quando marketing non consentito */
+  #bandcamp_section .consent-placeholder {
+    text-align: center;
+    margin: 1rem 0 0;
+    color: #e7dbb6;
+  }
+  
+  @media (max-width: 640px) {
+    #bandcamp_section { padding: 2rem 1rem; }
+  }
+  

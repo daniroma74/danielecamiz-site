@@ -1,0 +1,44 @@
+{
+  "hero": {
+    "name": "Daniele Camiz",
+    "role": "Conductor",
+    "claim": "Music is magic"
+  },
+  "projects": [
+    {
+      "id": "stagione",
+      "img": "/img/projects/ICNT_facebook_photo_profile.png",
+      "imgAlt": "ICNT I Concerti nel Tempio logo",
+      "title": "ICNT – I Concerti nel Tempio",
+      "desc": "The official concert season in Rome.",
+      "btnText": "Visit the Facebook page",
+      "btnUrl": "https://www.facebook.com/iconcertineltempio/"
+    },
+    {
+      "id": "msc",
+      "img": "/img/projects/MSC_facebook_photo_profile.png",
+      "imgAlt": "MSC logo",
+      "title": "Mozart Symphonies Challenge",
+      "desc": "The complete Mozart symphonies, 2019–2026.",
+      "links": [
+        {
+          "text": "YouTube Playlist",
+          "url": "https://youtube.com/playlist?list=PL9ZlyjQawCLHEihz26TP7lhdDbNw-dSW7&si=pXWWcgAuDq7tZI1b"
+        },
+        {
+          "text": "Facebook Page",
+          "url": "https://www.facebook.com/mozartsymphonieschallenge/"
+        }
+      ]
+    },
+    {
+      "id": "orchestra",
+      "img": "/img/projects/ICNTO_facebook_photo_profile.png",
+      "imgAlt": "ICNT Orchestra logo",
+      "title": "ICNT Orchestra",
+      "desc": "Resident orchestra of I Concerti Nel Tempio.",
+      "btnText": "Visit the Facebook page",
+      "btnUrl": "https://www.facebook.com/icntorchestra/"
+    }
+  ]
+}

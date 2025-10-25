@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gestisci Iscrizione Newsletter ICNT</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",sans-serif;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px
+    }
+    .container{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.2);max-width:520px;width:100%;overflow:hidden}
+    .header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:40px;text-align:center;color:#fff}
+    .header h1{font-size:28px;margin-bottom:10px}
+    .header p{opacity:.9;font-size:16px}
+    .content{padding:40px}
+    .status-box{background:#f8f9fa;border-radius:10px;padding:20px;margin-bottom:30px;text-align:center;display:none}
+    .status-box.active{display:block;background:#e8f5e9;border:2px solid #4caf50}
+    .status-box.inactive{display:block;background:#fff3e0;border:2px solid #ff9800}
+    .form-group{margin-bottom:25px}
+    label{display:block;color:#333;font-weight:600;margin-bottom:10px}
+    input[type="email"]{width:100%;padding:15px;border:2px solid #e0e0e0;border-radius:10px;font-size:16px;transition:.3s}
+    input[type="email"]:focus{outline:0;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+    .actions{display:grid;gap:15px}
+    .btn{padding:15px 30px;border:0;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:.2s;text-align:center;text-decoration:none}
+    .btn-primary{background:#667eea;color:#fff}.btn-primary:hover{background:#5569d8;transform:translateY(-2px);box-shadow:0 5px 15px rgba(102,126,234,.4)}
+    .btn-success{background:#4caf50;color:#fff}.btn-success:hover{background:#45a049}
+    .btn-danger{background:#f44336;color:#fff}.btn-danger:hover{background:#da190b}
+    .btn-outline{background:#fff;color:#667eea;border:2px solid #667eea}.btn-outline:hover{background:#667eea;color:#fff}
+    .message{padding:15px;border-radius:10px;margin-top:20px;display:none}
+    .message.success{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #4caf50}
+    .message.error{display:block;background:#ffebee;color:#c62828;border:1px solid #f44336}
+    .message.info{display:block;background:#e3f2fd;color:#1565c0;border:1px solid #2196f3}
+    .footer{background:#f8f9fa;padding:20px;text-align:center;color:#666;font-size:14px}
+    .footer a{color:#667eea;text-decoration:none}.footer a:hover{text-decoration:underline}
+    .loading{display:none;text-align:center;padding:20px}.loading.active{display:block}
+    .spinner{border:3px solid #f3f3f3;border-top:3px solid #667eea;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:0 auto}
+    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📧 Newsletter ICNT</h1>
+      <p>I Concerti nel Tempio</p>
+    </div>
+
+    <div class="content">
+      <div id="status-box" class="status-box"></div>
+
+      <div class="form-group">
+        <label for="email">Il tuo indirizzo email:</label>
+        <input type="email" id="email" placeholder="tua@email.com"
+               value="<%= typeof email !== 'undefined' && email ? email : '' %>">
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="checkStatus()">🔍 Verifica Iscrizione</button>
+        <button id="subscribe-btn" class="btn btn-success" onclick="subscribe()" style="display:none;">✅ Iscriviti alla Newsletter</button>
+        <button id="unsubscribe-btn" class="btn btn-danger" onclick="unsubscribe()" style="display:none;">❌ Cancella Iscrizione</button>
+        <!-- cambiato: non punta più a danielecamiz.com -->
+        <button type="button" class="btn btn-outline" onclick="goBackOrHome()">↩︎ Chiudi / torna indietro</button>
+      </div>
+
+      <div id="message" class="message"></div>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p style="margin-top:10px;">Elaborazione...</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>© 2025 ICNT - I Concerti nel Tempio · <a href="mailto:info@danielecamiz.com">info@danielecamiz.com</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Prefill da querystring se presente
+    window.addEventListener('load', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const p = urlParams.get('email');
+      if (p && !document.getElementById('email').value) {
+        document.getElementById('email').value = p;
+      }
+      if (document.getElementById('email').value) checkStatus();
+    });
+
+    function showMessage(text, type) {
+      const el = document.getElementById('message');
+      el.className = 'message ' + (type || '');
+      el.innerHTML = text || '';
+    }
+    function showLoading(show) {
+      document.getElementById('loading').className = show ? 'loading active' : 'loading';
+    }
+    function setStatus(isSubscribed) {
+      const box = document.getElementById('status-box');
+      if (isSubscribed) {
+        box.className = 'status-box active';
+        box.innerHTML = `
+          <div style="font-size:48px;margin-bottom:10px;">✅</div>
+          <h3 style="color:#2e7d32;margin-bottom:10px;">Sei iscritto!</h3>
+          <p>Ricevi regolarmente la nostra newsletter.</p>`;
+        document.getElementById('subscribe-btn').style.display = 'none';
+        document.getElementById('unsubscribe-btn').style.display = 'block';
+      } else {
+        box.className = 'status-box inactive';
+        box.innerHTML = `
+          <div style="font-size:48px;margin-bottom:10px;">📭</div>
+          <h3 style="color:#f57c00;margin-bottom:10px;">Non sei iscritto</h3>
+          <p>Iscriviti per ricevere aggiornamenti sui concerti.</p>`;
+        document.getElementById('subscribe-btn').style.display = 'block';
+        document.getElementById('unsubscribe-btn').style.display = 'none';
+      }
+    }
+
+    async function checkStatus() {
+      const email = document.getElementById('email').value.trim();
+      if (!email || !email.includes('@')) return showMessage('⚠️ Inserisci un indirizzo email valido', 'error');
+
+      showLoading(true); showMessage('', '');
+      try {
+        const res = await fetch('/api/check-subscription', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if (res.ok && typeof data.subscribed === 'boolean') {
+          setStatus(data.subscribed);
+        } else {
+          showMessage('⚠️ Verifica non disponibile al momento.', 'error');
+        }
+      } catch (e) {
+        showMessage('❌ Errore durante la verifica. Riprova.', 'error');
+      } finally { showLoading(false); }
+    }
+
+    async function subscribe() {
+      const email = document.getElementById('email').value.trim();
+      if (!email || !email.includes('@')) return showMessage('⚠️ Inserisci un indirizzo email valido', 'error');
+
+      showLoading(true);
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showMessage('🎉 ' + (data.message || 'Iscrizione effettuata.'), 'success');
+          setTimeout(checkStatus, 1200);
+        } else {
+          showMessage('⚠️ ' + (data.error || 'Impossibile completare l’iscrizione.'), 'error');
+        }
+      } catch (e) {
+        showMessage('❌ Errore durante l’iscrizione. Riprova.', 'error');
+      } finally { showLoading(false); }
+    }
+
+    async function unsubscribe() {
+      const email = document.getElementById('email').value.trim();
+      if (!email || !email.includes('@')) return showMessage('⚠️ Inserisci un indirizzo email valido', 'error');
+      if (!confirm('Confermi la cancellazione dalla newsletter?')) return;
+
+      // 1) tenta endpoint server che ritorna un link firmato (se/quando lo aggiungi)
+      try {
+        const tryLink = await fetch('/api/unsubscribe-link?email=' + encodeURIComponent(email));
+        if (tryLink.ok) {
+          const payload = await tryLink.json();
+          if (payload && payload.url) {
+            window.location.href = payload.url; // es. /u/<token>
+            return;
+          }
+        }
+      } catch (_) {}
+
+      // 2) fallback compatibile: /api/unsubscribe/:token (token = base64(email))
+      const token = btoa(email);
+      window.location.href = '/api/unsubscribe/' + token;
+    }
+
+    function goBackOrHome() {
+      // prova a chiudere (spesso i browser lo bloccano, ma non succede nulla di male)
+      try { window.close(); } catch(e) {}
+      // se c'è referrer http/https, torna lì
+      if (document.referrer && /^https?:/i.test(document.referrer)) {
+        location.href = document.referrer;
+        return;
+      }
+      // se c'è cronologia, torna indietro
+      if (history.length > 1) { history.back(); return; }
+      // altrimenti, vai alla home del dominio (pagina di cortesia)
+      location.href = 'https://icnt.danielecamiz.com/stagione/2025-26';
+
+      // quando il sito principale sarà attivo, puoi cambiare con:
+      // location.href = 'https://danielecamiz.com';
+    }
+  </script>
+</body>
+</html>

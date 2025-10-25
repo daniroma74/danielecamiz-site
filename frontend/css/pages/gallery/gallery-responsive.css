@@ -1,0 +1,41 @@
+/* ====== MEDIA QUERY GALLERY ====== */
+@media (max-width: 768px) {
+    .claim-text {
+      font-size: 1rem;
+      margin: 1rem 1rem 1.5rem 1rem;
+    }
+  
+    .gallery-tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+  
+    .gallery-tabs button {
+      flex: 0 0 auto;
+      width: 120px;
+      height: 80px;
+    }
+  
+    .gallery-grid {
+      gap: 0.6rem;
+      padding: 0 0.4rem;
+    }
+  
+    .gallery-grid img {
+      max-width: 140px;
+      border-radius: 6px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .gallery-tabs button {
+      width: 100px;
+      height: 70px;
+      font-size: 0.8rem;
+    }
+  
+    .gallery-grid img {
+      max-width: 110px;
+    }
+  }

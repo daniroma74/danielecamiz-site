@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  
+  <!-- CSS TEMA CHIARO -->
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Cloudinary Widget -->
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+</head>
+<body>
+  
+  <!-- NAVBAR -->
+<nav class="admin-nav">
+  <div class="nav-container">
+    <a href="/admin" class="nav-brand">
+      <i class="fas fa-music"></i> Concerts Admin
+    </a>
+    <div class="nav-links">
+      <a href="/admin/dashboard" class="<%= currentPage === 'dashboard' ? 'active' : '' %>">
+        <i class="fas fa-calendar"></i> Concerti
+      </a>
+      <a href="/admin/repertoire" class="<%= currentPage === 'repertoire' ? 'active' : '' %>">
+        <i class="fas fa-book"></i> Repertorio
+      </a>
+      <a href="<%= stagingUrl || 'https://www.danielecamiz.com' %>/concerts" target="_blank" class="nav-link-external">
+        <i class="fas fa-external-link-alt"></i> Frontend
+      </a>
+      <a href="/auth/logout" class="btn-logout">
+        <i class="fas fa-sign-out-alt"></i> Esci
+      </a>
+    </div>
+  </div>
+</nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="admin-main">
+    
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="page-title-section">
+        <h1><i class="fas fa-calendar-alt"></i> Gestione Concerti</h1>
+        <p class="page-subtitle">Archivio completo dei concerti</p>
+      </div>
+      <div class="header-actions">
+        <a href="/admin/concert/new" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Nuovo Concerto
+        </a>
+      </div>
+    </div>
+
+    <!-- FILTERS BAR -->
+    <div class="filters-bar">
+      <div class="filter-buttons">
+        <a href="/admin/dashboard?filter=all" class="filter-btn <%= filter === 'all' ? 'active' : '' %>">
+          <i class="fas fa-list"></i> Tutti (<%= concerts.length %>)
+        </a>
+        <a href="/admin/dashboard?filter=future" class="filter-btn <%= filter === 'future' ? 'active' : '' %>">
+          <i class="fas fa-calendar-plus"></i> Futuri
+        </a>
+        <a href="/admin/dashboard?filter=past" class="filter-btn <%= filter === 'past' ? 'active' : '' %>">
+          <i class="fas fa-calendar-check"></i> Passati
+        </a>
+      </div>
+      
+      <form method="GET" action="/admin" class="search-form">
+        <input type="hidden" name="filter" value="<%= filter %>">
+        <input 
+          type="search" 
+          name="search" 
+          placeholder="Cerca per titolo o luogo..." 
+          value="<%= search %>"
+          class="search-input"
+        >
+        <button type="submit" class="btn-search">
+          <i class="fas fa-search"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- CONCERTI GRID -->
+    <% if (concerts && concerts.length > 0) { %>
+      <% 
+        const now = new Date();
+        let displayConcerts = concerts;
+        
+        if (filter === 'future') {
+          displayConcerts = concerts.filter(c => new Date(c.date) >= now);
+        } else if (filter === 'past') {
+          displayConcerts = concerts.filter(c => new Date(c.date) < now);
+        }
+        
+        const futureConcerts = displayConcerts.filter(c => new Date(c.date) >= now).sort((a, b) => new Date(a.date) - new Date(b.date));
+        const pastConcerts = displayConcerts.filter(c => new Date(c.date) < now).sort((a, b) => new Date(b.date) - new Date(a.date));
+      %>
+      
+      <!-- CONCERTI FUTURI -->
+      <% if (filter === 'all' || filter === 'future') { %>
+        <% if (futureConcerts.length > 0) { %>
+          <div class="section-header">
+            <h2><i class="fas fa-calendar-plus"></i> Prossimi Concerti</h2>
+            <span class="badge-count"><%= futureConcerts.length %></span>
+          </div>
+          
+          <div class="concerts-grid">
+            <% futureConcerts.forEach(concert => { %>
+              <% 
+                const dateObj = new Date(concert.date);
+                const formattedDate = dateObj.toLocaleDateString('it-IT', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric'
+                });
+              %>
+              <div class="concert-card future" data-concert-id="<%= concert.id %>">
+                
+                <!-- POSTER -->
+                <div class="concert-poster-wrapper">
+                  <% 
+                    let posterUrl = 'https://via.placeholder.com/400x533/f5f7fa/d4af37?text=Poster';
+                    if (concert.poster_vertical_cloudinary) {
+                      posterUrl = `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_400,h_533,g_center/${concert.poster_vertical_cloudinary}`;
+                    }
+                  %>
+                  <img 
+                    src="<%= posterUrl %>" 
+                    alt="Poster <%= concert.title %>"
+                    class="concert-poster"
+                    loading="lazy"
+                    onerror="this.src='https://via.placeholder.com/400x533/f5f7fa/d4af37?text=Poster'"
+                  >
+                  <div class="poster-overlay">
+                    <button 
+                      onclick="openPosterUpload(<%= concert.id %>)" 
+                      class="btn btn-upload"
+                      title="Carica/Cambia Poster"
+                    >
+                      <i class="fas fa-cloud-upload-alt"></i>
+                      <%= concert.poster_vertical_cloudinary ? 'Cambia' : 'Carica' %>
+                    </button>
+                  </div>
+                  <div class="concert-status-badge badge-future">
+                    <i class="fas fa-calendar-plus"></i> Futuro
+                  </div>
+                </div>
+                
+                <!-- CONTENT -->
+                <div class="concert-card-content">
+                  <div class="concert-date">
+                    <i class="fas fa-calendar"></i>
+                    <%= formattedDate %>
+                  </div>
+                  
+                  <h3 class="concert-title"><%= concert.title %></h3>
+                  
+                  <% if (concert.subtitle) { %>
+                    <p class="concert-subtitle"><%= concert.subtitle %></p>
+                  <% } %>
+                  
+                  <div class="concert-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <%= concert.location %>
+                  </div>
+                  
+                  <div class="concert-meta">
+                    <% if (concert.program_count > 0) { %>
+                      <span class="meta-item">
+                        <i class="fas fa-music"></i>
+                        <%= concert.program_count %> bran<%= concert.program_count === 1 ? 'o' : 'i' %>
+                      </span>
+                    <% } %>
+                    
+                    <% if (concert.soloists_count > 0) { %>
+                      <span class="meta-item">
+                        <i class="fas fa-user-music"></i>
+                        <%= concert.soloists_count %> solist<%= concert.soloists_count === 1 ? 'a' : 'i' %>
+                      </span>
+                    <% } %>
+                    
+                    <% if (concert.starts_at) { %>
+                      <span class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <%= concert.starts_at %>
+                      </span>
+                    <% } %>
+                  </div>
+                  
+                  <div class="concert-actions">
+                    <a href="/admin/concert/<%= concert.id %>/edit" class="btn btn-sm btn-primary">
+                      <i class="fas fa-edit"></i> Modifica
+                    </a>
+                    
+                    <% if (concert.slug) { %>
+                      <a href="<%= eventsAdminUrl %>/edit/<%= concert.slug %>" target="_blank" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-pencil-alt"></i> LP
+                      </a>
+                      <a href="https://<%= concert.slug %>.danielecamiz.com" target="_blank" class="btn btn-sm btn-info">
+                        <i class="fas fa-eye"></i> Vedi
+                      </a>
+                    <% } %>
+                    
+                    <button 
+                      onclick="deleteConcert(<%= concert.id %>, '<%= concert.title.replace(/'/g, "\\'") %>')" 
+                      class="btn btn-sm btn-danger"
+                      title="Elimina concerto"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% } else if (filter === 'future') { %>
+          <div class="empty-state">
+            <i class="fas fa-calendar-times fa-3x"></i>
+            <h3>Nessun concerto futuro</h3>
+            <p>Crea il primo concerto della stagione!</p>
+            <a href="/admin/concert/new" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Nuovo Concerto
+            </a>
+          </div>
+        <% } %>
+      <% } %>
+      
+      <!-- CONCERTI PASSATI -->
+      <% if (filter === 'all' || filter === 'past') { %>
+        <% if (pastConcerts.length > 0) { %>
+          <% if (filter === 'all') { %>
+            <div class="section-header archive-header">
+              <h2>
+                <i class="fas fa-archive"></i> Archivio Concerti Passati
+              </h2>
+              <button id="toggleArchive" class="btn btn-sm btn-secondary">
+                <i class="fas fa-chevron-down"></i> Mostra (<%= pastConcerts.length %>)
+              </button>
+            </div>
+            
+            <div id="archiveConcerts" style="display: none;">
+          <% } else { %>
+            <div class="section-header">
+              <h2><i class="fas fa-archive"></i> Concerti Passati</h2>
+              <span class="badge-count"><%= pastConcerts.length %></span>
+            </div>
+            <div>
+          <% } %>
+          
+          <div class="concerts-grid">
+            <% pastConcerts.forEach(concert => { %>
+              <% 
+                const dateObj = new Date(concert.date);
+                const formattedDate = dateObj.toLocaleDateString('it-IT', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric'
+                });
+              %>
+              <div class="concert-card past" data-concert-id="<%= concert.id %>">
+                <div class="concert-poster-wrapper">
+                  <% 
+                    let posterUrl = 'https://via.placeholder.com/400x533/f5f7fa/3498db?text=Poster';
+                    if (concert.poster_vertical_cloudinary) {
+                      posterUrl = `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_400,h_533,g_center/${concert.poster_vertical_cloudinary}`;
+                    }
+                  %>
+                  <img 
+                    src="<%= posterUrl %>" 
+                    alt="Poster <%= concert.title %>"
+                    class="concert-poster"
+                    loading="lazy"
+                  >
+                  <div class="concert-status-badge badge-past">
+                    <i class="fas fa-calendar-check"></i> Passato
+                  </div>
+                </div>
+                
+                <div class="concert-card-content">
+                  <div class="concert-date">
+                    <i class="fas fa-calendar"></i>
+                    <%= formattedDate %>
+                  </div>
+                  
+                  <h3 class="concert-title"><%= concert.title %></h3>
+                  
+                  <% if (concert.subtitle) { %>
+                    <p class="concert-subtitle"><%= concert.subtitle %></p>
+                  <% } %>
+                  
+                  <div class="concert-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <%= concert.location %>
+                  </div>
+                  
+                  <div class="concert-meta">
+                    <% if (concert.program_count > 0) { %>
+                      <span class="meta-item">
+                        <i class="fas fa-music"></i>
+                        <%= concert.program_count %> bran<%= concert.program_count === 1 ? 'o' : 'i' %>
+                      </span>
+                    <% } %>
+                    
+                    <% if (concert.soloists_count > 0) { %>
+                      <span class="meta-item">
+                        <i class="fas fa-user-music"></i>
+                        <%= concert.soloists_count %> solist<%= concert.soloists_count === 1 ? 'a' : 'i' %>
+                      </span>
+                    <% } %>
+                  </div>
+                  
+                  <div class="concert-actions">
+                    <a href="/admin/concert/<%= concert.id %>/edit" class="btn btn-sm btn-primary">
+                      <i class="fas fa-edit"></i> Modifica
+                    </a>
+                    
+                    <button 
+                      onclick="deleteConcert(<%= concert.id %>, '<%= concert.title.replace(/'/g, "\\'") %>')" 
+                      class="btn btn-sm btn-danger"
+                      title="Elimina concerto"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+          
+          </div>
+          
+          <% if (filter === 'all') { %>
+            <script>
+              document.getElementById('toggleArchive').addEventListener('click', function() {
+                const archive = document.getElementById('archiveConcerts');
+                const icon = this.querySelector('i');
+                const isHidden = archive.style.display === 'none';
+                
+                archive.style.display = isHidden ? 'block' : 'none';
+                icon.className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                this.innerHTML = `<i class="${icon.className}"></i> ${isHidden ? 'Nascondi' : 'Mostra'} (<%= pastConcerts.length %>)`;
+              });
+            </script>
+          <% } %>
+        <% } else if (filter === 'past') { %>
+          <div class="empty-state">
+            <i class="fas fa-calendar-check fa-3x"></i>
+            <h3>Nessun concerto passato</h3>
+            <p>I concerti passati appariranno qui dopo la loro data</p>
+          </div>
+        <% } %>
+      <% } %>
+    <% } else { %>
+      <div class="empty-state">
+        <i class="fas fa-calendar-times fa-3x"></i>
+        <h3>Nessun concerto trovato</h3>
+        <p>
+          <% if (search) { %>
+            La ricerca "<%= search %>" non ha prodotto risultati
+          <% } else { %>
+            Non ci sono concerti
+          <% } %>
+        </p>
+        <a href="/admin/concert/new" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Crea il primo concerto
+        </a>
+      </div>
+    <% } %>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Cloudinary config globale
+    window.CLOUDINARY_CONFIG = {
+      cloudName: 'dnwhnz2xy',
+      uploadPreset: 'poster_vertical_unsigned',
+      folder: 'danielecamiz/posters/vertical'
+    };
+    
+    // Upload poster
+    function openPosterUpload(concertId) {
+      const widget = cloudinary.createUploadWidget({
+        cloudName: window.CLOUDINARY_CONFIG.cloudName,
+        uploadPreset: window.CLOUDINARY_CONFIG.uploadPreset,
+        folder: window.CLOUDINARY_CONFIG.folder,
+        sources: ['local', 'url'],
+        multiple: false,
+        resourceType: 'image',
+        clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+        maxFileSize: 10000000
+      }, async (error, result) => {
+        if (!error && result && result.event === "success") {
+          const publicId = result.info.public_id;
+          
+          try {
+            const response = await fetch(`/api/concerts/${concertId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ poster_vertical_cloudinary: publicId })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showNotification('Poster aggiornato con successo!', 'success');
+              setTimeout(() => window.location.reload(), 1000);
+            } else {
+              showNotification('Errore: ' + data.message, 'error');
+            }
+          } catch (err) {
+            showNotification('Errore durante l\'aggiornamento', 'error');
+          }
+        }
+      });
+      
+      widget.open();
+    }
+    
+    // Delete concert
+    async function deleteConcert(id, title) {
+      if (!confirm(`Sei sicuro di voler eliminare "${title}"?\n\nQuesta azione è irreversibile.`)) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/concerts/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showNotification('Concerto eliminato', 'success');
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          showNotification('Errore: ' + data.message, 'error');
+        }
+      } catch (error) {
+        showNotification('Errore durante l\'eliminazione', 'error');
+      }
+    }
+    
+    // Notification
+    function showNotification(message, type = 'info') {
+      const existing = document.querySelector('.notification');
+      if (existing) existing.remove();
+      
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.classList.add('show'), 10);
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

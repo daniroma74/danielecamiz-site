@@ -1,0 +1,104 @@
+#hero_section{
+  position:relative;
+  width:100%;
+  /* riempi tra navbar fissa e footer fisso, anche su mobile con safe areas */
+  min-height:calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)));
+  overflow:hidden;
+  background:#000;
+  margin:0;
+  /* scala tipografica proporzionata alla larghezza (no salti) */
+  --hero-name-size: clamp(2.2rem, 6vw, 4.2rem);
+  --hero-role-size: clamp(1.0rem, 2.6vw, 1.5rem);
+  --hero-claim-size: clamp(1.0rem, 2.4vw, 1.35rem);
+}
+
+#hero_img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;         /* nessuna deformazione */
+  object-position:50% 20%;  /* base */
+  transform:none;
+  transform-origin:center center;
+  z-index:1;
+  user-select:none;
+  pointer-events:none;
+}
+
+#hero_box{
+  position:absolute;
+  left:50%;
+  top:60%;
+  transform:translate(-50%, -50%); /* centrato */
+  max-width:620px;
+  width:min(90vw, 620px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.8em;
+  z-index:2;
+  color:#fff;
+  text-align:center;
+  pointer-events:auto;
+}
+
+#hero_name{
+  font-family:'Cormorant Garamond', serif;
+  font-size:var(--hero-name-size);
+  letter-spacing:.10em;
+  font-weight:700;
+  margin:0;
+  text-shadow:0 4px 36px #000a, 0 2px 2px #0008;
+}
+
+#hero_role{
+  font-family:'Montserrat', sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.19em;
+  margin:.1em 0 0 0;
+  font-size:var(--hero-role-size);
+  font-weight:400;
+  line-height:1.15;
+  opacity:.98;
+  text-shadow:0 2px 14px #000c;
+}
+
+#hero_claim{
+  font-family:'Cormorant Garamond', serif;
+  font-style:italic;
+  font-weight:600;
+  color:var(--accent-color);
+  font-size:var(--hero-claim-size);
+  margin-top:1.2em;
+  letter-spacing:.11em;
+  opacity:.90;
+  text-shadow:0 2px 14px #000c;
+}
+
+/* Verticale (telefoni in piedi): leggera riduzione dell'altezza utile */
+@media (max-aspect-ratio: 3/4){
+  #hero_section{ min-height: calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)) - 6vh); }
+  #hero_img{ object-position: 50% 18%; }
+}
+
+@media (max-aspect-ratio: 2/3){
+  #hero_section{ min-height: calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)) - 10vh); }
+  #hero_img{ object-position: 50% 20%; }
+}
+
+/* Wide desktop: centratura naturale */
+@media (min-aspect-ratio:16/9){
+  #hero_img{ object-position:50% 50%; }
+}
+
+/* Landscape: abbassa leggermente il blocco testi e stringi un po' la larghezza */
+@media (orientation: landscape){
+  #hero_box{ transform: translate(-50%, -40%); width: min(82vw, 600px); }
+}
+
+/* Landscape a bassa altezza (smartphone ruotati): framing perfetto 50% 25% e blocco un filo più basso */
+@media (orientation: landscape) and (max-height: 480px){
+  #hero_img{ object-position: 50% 25%; }
+  #hero_box{ transform: translate(-50%, -10%); }
+}

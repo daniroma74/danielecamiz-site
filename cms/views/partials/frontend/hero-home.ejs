@@ -1,0 +1,20 @@
+<section id="hero_section">
+  <img src="/img/hero.png" alt="<%= (hero && hero.imgAlt) || 'Foto di Daniele Camiz' %>" id="hero_img" />
+  <div id="hero_box">
+    <% 
+      // Helper i18n: usa t(k) se definito e diverso dalla chiave, altrimenti default
+      const _t = (k, def='') => {
+        const v = (typeof t === 'function' ? t(k) : '');
+        return (v && v !== k) ? v : def;
+      };
+      const heroName  = (hero && hero.name)  || _t('home.hero.name',  'Daniele Camiz');
+      const heroRole  = (hero && hero.role)  || _t('home.hero.role',  (lang === 'en' ? 'Conductor' : 'Direttore d’orchestra'));
+      const heroClaim = (hero && hero.claim) || _t('home.hero.claim', (lang === 'en' ? 'Music is magic' : 'La musica è magia'));
+    %>
+
+    <!-- Mantengo i data-i18n-key per compat, ma ora il contenuto è SSR -->
+    <h1 id="hero_name" data-i18n-key="home.hero.name"><%= heroName %></h1>
+    <p id="hero_role" data-i18n-key="home.hero.role"><%= heroRole %></p>
+    <p id="hero_claim" data-i18n-key="home.hero.claim"><%= heroClaim %></p>
+  </div>
+</section>

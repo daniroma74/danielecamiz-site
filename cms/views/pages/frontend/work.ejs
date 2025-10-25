@@ -1,0 +1,394 @@
+<%- include('partials/header') %>
+
+<style>
+.work-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 100px 0 80px;
+  color: white;
+}
+
+.work-header {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.work-title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.work-composer {
+  font-size: 1.5rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.work-badges {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.work-badge {
+  padding: 0.5rem 1.2rem;
+  background: rgba(255,255,255,0.2);
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+}
+
+.work-details {
+  padding: 60px 0;
+  background: white;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.main-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.info-card {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 15px;
+  border-left: 4px solid #d4af37;
+}
+
+.info-card h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.performances-timeline {
+  padding: 60px 0;
+  background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+}
+
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #d4af37;
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 2rem;
+  width: calc(50% - 30px);
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.timeline-item:nth-child(odd) {
+  margin-left: auto;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background: #d4af37;
+  border-radius: 50%;
+  border: 4px solid white;
+  transform: translateY(-50%);
+}
+
+.timeline-item:nth-child(odd)::before {
+  left: -40px;
+}
+
+.timeline-item:nth-child(even)::before {
+  right: -40px;
+}
+
+.performance-date {
+  font-weight: 600;
+  color: #d4af37;
+  margin-bottom: 0.5rem;
+}
+
+.performance-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.media-section {
+  padding: 60px 0;
+  background: #1a1a2e;
+  color: white;
+  text-align: center;
+}
+
+.media-buttons {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.media-btn {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #d4af37, #f4e4c1);
+  color: #1a1a2e;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.media-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+@media (max-width: 768px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .timeline::before {
+    left: 30px;
+  }
+  
+  .timeline-item {
+    width: calc(100% - 60px);
+    margin-left: 60px !important;
+  }
+  
+  .timeline-item::before {
+    left: -40px !important;
+  }
+}
+</style>
+
+<div class="work-page">
+  <!-- Hero Section -->
+  <section class="work-hero">
+    <div class="container">
+      <div class="work-header">
+        <h1 class="work-title"><%= work.title %></h1>
+        <% if (work.subtitle) { %>
+        <p class="work-subtitle"><%= work.subtitle %></p>
+        <% } %>
+        <p class="work-composer">
+          <a href="/repertorio/compositore/<%= work.composer_slug %>" style="color: white; text-decoration: none;">
+            <%= work.composer_name %>
+          </a>
+        </p>
+        <div class="work-badges">
+          <% if (work.catalogue) { %>
+          <span class="work-badge">
+            <i class="fas fa-tag"></i> <%= work.catalogue %>
+          </span>
+          <% } %>
+          <% if (work.year) { %>
+          <span class="work-badge">
+            <i class="fas fa-calendar"></i> <%= work.year %>
+          </span>
+          <% } %>
+          <span class="work-badge">
+            <i class="fas fa-folder"></i> <%= work.category_name %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work Details -->
+  <section class="work-details">
+    <div class="container">
+      <div class="details-grid">
+        <div class="main-content">
+          <% if (work.notes_it) { %>
+          <h2>Note sull'opera</h2>
+          <div class="work-description">
+            <%- work.notes_it %>
+          </div>
+          <% } %>
+          
+          <% if (!work.notes_it) { %>
+          <h2>Informazioni</h2>
+          <p>Dettagli su quest'opera saranno disponibili prossimamente.</p>
+          <% } %>
+        </div>
+        
+        <div class="sidebar">
+          <div class="info-card">
+            <h3>Dettagli</h3>
+            <div class="info-item">
+              <span>Compositore:</span>
+              <strong><%= work.composer_name %></strong>
+            </div>
+            <div class="info-item">
+              <span>Categoria:</span>
+              <strong><%= work.category_name %></strong>
+            </div>
+            <% if (work.duration) { %>
+            <div class="info-item">
+              <span>Durata:</span>
+              <strong><%= work.duration %></strong>
+            </div>
+            <% } %>
+            <% if (work.work_key) { %>
+            <div class="info-item">
+              <span>Tonalità:</span>
+              <strong><%= work.work_key %></strong>
+            </div>
+            <% } %>
+          </div>
+          
+          <div class="info-card">
+            <h3>Statistiche</h3>
+            <div class="info-item">
+              <span>Esecuzioni totali:</span>
+              <strong><%= performances.length %></strong>
+            </div>
+            <% if (performances.length > 0) { %>
+            <div class="info-item">
+              <span>Prima esecuzione:</span>
+              <strong>
+                <%= new Date(performances[performances.length - 1].date).getFullYear() %>
+              </strong>
+            </div>
+            <div class="info-item">
+              <span>Ultima esecuzione:</span>
+              <strong>
+                <%= new Date(performances[0].date).getFullYear() %>
+              </strong>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Media Section -->
+  <% if (hasVideo || hasAudio) { %>
+  <section class="media-section">
+    <div class="container">
+      <h2>Media Disponibili</h2>
+      <div class="media-buttons">
+        <% if (hasVideo) { %>
+        <a href="<%= work.media_video %>" target="_blank" class="media-btn">
+          <i class="fas fa-video"></i>
+          Guarda Video
+        </a>
+        <% } %>
+        <% if (hasAudio) { %>
+        <a href="<%= work.media_audio %>" target="_blank" class="media-btn">
+          <i class="fas fa-music"></i>
+          Ascolta Audio
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- Performances Timeline -->
+  <% if (performances && performances.length > 0) { %>
+  <section class="performances-timeline">
+    <div class="container">
+      <h2 class="section-title text-center">Storia delle Esecuzioni</h2>
+      <div class="timeline">
+        <% performances.forEach((perf, index) => { %>
+        <div class="timeline-item">
+          <div class="performance-date">
+            <%= new Date(perf.date).toLocaleDateString('it-IT', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            }) %>
+          </div>
+          <div class="performance-title"><%= perf.title %></div>
+          <div class="performance-location text-muted"><%= perf.location %></div>
+          <% if (perf.first_time) { %>
+          <span class="badge bg-success mt-2">Prima esecuzione assoluta</span>
+          <% } %>
+          <% if (perf.notes) { %>
+          <p class="performance-notes mt-2"><%= perf.notes %></p>
+          <% } %>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+</div>
+
+<script>
+// Animazioni scroll
+document.addEventListener('DOMContentLoaded', function() {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
+  
+  document.querySelectorAll('.timeline-item').forEach(item => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateY(20px)';
+    item.style.transition = 'all 0.6s ease';
+    observer.observe(item);
+  });
+});
+</script>
+
+<%- include('partials/footer') %>

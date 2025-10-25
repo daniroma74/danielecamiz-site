@@ -1,0 +1,20 @@
+.gallery-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0 1rem;
+  }
+  
+  .gallery-grid img {
+    max-width: 240px;
+    height: auto;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border: 2px solid var(--accent-color);
+  }
+  
+  .gallery-grid img:hover {
+    transform: scale(1.02);
+  }

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= campaign ? 'Modifica' : 'Nuova' %> Campagna</title>
+
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/css/newsletter-light.css">
+
+  <!-- TinyMCE + Cloudinary -->
+  <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
+
+  <style>
+    .editor-container { max-width: 1600px; margin: 0 auto; padding: 24px; }
+    .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .editor-wrapper { background: white; border: 1px solid var(--border); border-radius: 8px; min-height: 400px; }
+    
+    .preview-controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
+    .preview-btn { padding: 8px 16px; background: white; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .preview-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    
+    .email-preview { background: white; border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; margin: 0 auto; transition: max-width 0.3s; }
+    .email-preview.desktop { max-width: 600px; }
+    .email-preview.mobile { max-width: 375px; }
+    
+    .preview-hero { width: 100%; height: auto; display: block; }
+    .preview-header { background: linear-gradient(135deg, #667eea, #764ba2); padding: 30px; text-align: center; color: white; }
+    .preview-content { padding: 30px; min-height: 300px; color: #333; line-height: 1.6; }
+    .preview-footer { background: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #666; }
+    
+    .actions-bar { position: sticky; bottom: 0; background: white; border-top: 2px solid var(--border); padding: 20px; display: flex; gap: 12px; z-index: 100; box-shadow: 0 -4px 12px rgba(0,0,0,0.05); }
+    
+    .image-insert-btn { background: var(--bg); border: 1px solid var(--border); padding: 10px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; width: 100%; text-align: center; font-size: 14px; font-weight: 500; }
+    .image-insert-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    
+    @media (max-width: 1200px) {
+      .editor-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="editor-container">
+    <div class="page-header">
+      <h1><%= campaign ? '✏️ Modifica Campagna' : '✨ Nuova Campagna' %></h1>
+      <a href="/admin/campaigns" class="btn btn-outline">← Indietro</a>
+    </div>
+
+    <form id="campaign-form">
+      <input type="hidden" id="campaign-id" value="<%= campaign ? campaign.id : '' %>">
+
+      <!-- Info Base -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">📝 Informazioni Base</h3>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome Campagna *</label>
+            <input type="text" id="campaign-name" class="form-control" value="<%= campaign ? campaign.name : '' %>" placeholder="Es: Newsletter Gennaio 2025" required>
+          </div>
+          <div class="form-group">
+            <label>Oggetto Email *</label>
+            <input type="text" id="campaign-subject" class="form-control" value="<%= campaign ? campaign.subject : '' %>" placeholder="Es: 🎵 I prossimi concerti ICNT" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Preheader (testo anteprima)</label>
+          <input type="text" id="campaign-preheader" class="form-control" value="<%= campaign ? campaign.preheader : '' %>" placeholder="Es: Non perdere i nostri concerti del mese" maxlength="100">
+          <small style="color: var(--text-light);">Massimo 100 caratteri - appare nell'anteprima email prima di aprirla</small>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <!-- EDITOR -->
+        <div>
+
+          <!-- Header & Content -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">✍️ Contenuto Email</h3>
+            </div>
+            
+
+            <div class="form-group">
+              <label>Corpo del messaggio</label>
+              <div class="editor-wrapper">
+                <textarea id="content-editor"><%- (campaign && campaign.content) ? campaign.content : '' %></textarea>
+              </div>
+              <small style="color: var(--text-light); margin-top: 8px; display: block;">
+                💡 Usa l'editor per formattare il testo e inserire immagini
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label>Footer (opzionale)</label>
+              <textarea id="footer-text" class="form-control" rows="2" placeholder="Es: Per info: info@icnt.it | Tel: 06.1234567" onkeyup="updatePreview()"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview Column -->
+        <div class="preview-column">
+            <div class="preview-header">
+                <h3>📱 Anteprima Email</h3>
+                <div class="preview-controls">
+                    <button type="button" class="preview-btn active" onclick="setPreviewMode('desktop', this)">💻 Desktop</button>
+                    <button type="button" class="preview-btn" onclick="setPreviewMode('mobile', this)">📱 Mobile</button>
+                </div>
+            </div>
+            
+            <div id="email-preview" class="email-preview desktop" style="background: #0b0b0b; padding: 40px 20px; min-height: 600px;">
+                <div class="email-container" style="max-width: 600px; margin: 0 auto; background: #121212; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    
+                    <!-- Header -->
+                    <div class="email-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+                        <h1 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 32px; font-weight: 400; letter-spacing: 1px;">
+                            ICNT - I Concerti nel Tempio
+                        </h1>
+                        <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">
+                            Musica Classica a Milano
+                        </p>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div id="preview-content" style="padding: 40px 30px; color: #f1f1f1; font-size: 16px; line-height: 1.6; background: #121212;">
+                        <p style="color:#999;text-align:center;">Il contenuto apparirà qui mentre lo scrivi...</p>
+                    </div>
+                    
+                    <!-- Signature -->
+                    <div class="email-signature" style="padding: 30px; background: #1a1a1a; border-top: 2px solid #2a2a2a;">
+                        <h4 style="margin: 0 0 10px 0; color: #d6b25e; font-size: 18px; font-weight: 600;">
+                            ICNT - I Concerti nel Tempio
+                        </h4>
+                        <p style="margin: 5px 0; color: #b8b8b8; font-size: 14px; line-height: 1.5;">
+                            Associazione Culturale<br>
+                            Via dei Cristofori 34, 00168 Roma (RM)<br>
+                            📧 icnt@danielecamiz.com | 🌐 icnt.danielecamiz.com
+                        </p>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div id="preview-footer" style="padding: 30px 20px; text-align: center; color: #888; font-size: 12px; background: #121212; border-top: 1px solid #2a2a2a;">
+                        <p style="margin: 0 0 15px 0; font-size: 13px; color: #aaa;">
+                            <strong>Stai ricevendo questa email perché sei iscritto alla newsletter di ICNT</strong>
+                        </p>
+                        <div style="display: inline-block; margin: 15px 0; padding: 12px 28px; background: #667eea; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                            Gestisci le tue preferenze
+                        </div>
+                        <p style="margin: 20px 0 0 0; font-size: 12px; color: #777;">
+                            Non vuoi più ricevere queste email?<br>
+                            <span style="color: #d6b25e;">Cancella iscrizione</span>
+                        </p>
+                        <div style="margin: 30px auto; width: 60%; height: 1px; background: #2a2a2a;"></div>
+                        <p style="margin: 0 0 8px 0; font-size: 12px; color: #888;">
+                            © 2025 ICNT - I Concerti nel Tempio
+                        </p>
+                        <p style="margin: 0 0 12px 0; font-size: 11px; color: #666;">
+                            <strong>C.F.</strong> 97982090587 | <strong>P.IVA</strong> 15010831004
+                        </p>
+                        <p style="margin: 0; font-size: 11px; color: #666;">
+                            Via dei Cristofori 34, 00168 Roma (RM)
+                        </p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="actions-bar">
+        <button type="submit" class="btn btn-primary">💾 Salva Campagna</button>
+        <button type="button" class="btn btn-success" onclick="testEmail()">🧪 Invia Test</button>
+        <button type="button" class="btn btn-warning" onclick="sendToAll()" <%= (!campaign || campaign.status === 'sent') ? 'disabled' : '' %>>🚀 Invia a Tutti</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Scripts - ORDINE CRITICO! -->
+  <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
+  
+  <!-- TEST CloudinaryManager -->
+  <script>
+    console.log('🔍 CloudinaryManager disponibile?', typeof CloudinaryManager !== 'undefined');
+    if (typeof CloudinaryManager !== 'undefined') {
+      console.log('✅ CloudinaryManager caricato:', Object.keys(CloudinaryManager));
+    } else {
+      console.error('❌ CloudinaryManager NON caricato!');
+    }
+  </script>
+  
+  <script src="/js/campaign-editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<%-
+  /*
+    Concerts page – SSR (hero a destra, contenuti a sinistra)
+    Ingressi:
+      - lang, t
+      - labels (opzionale)
+      - title (string), claimHTML (HTML string)
+      - page: { hero_image, hero_min_height, hero_focus_y, hero_zoom }
+      - upcomingConcerts: []
+      - concertsByYear: [{year, concerts:[]}]
+      - yearsList: [ "2024", "2023", ... ]
+      - pageScripts, cssFiles (inclusi da layout)
+  */
+-%>
+<%
+  const L = labels && labels.concerts ? labels.concerts : {};
+  const _t = (k, def='') => { try { const v=(typeof t==='function'?t(k):''); return (v && v!==k) ? v : def; } catch { return def; } };
+
+  // Titolo/claim: stile universale (base.css)
+  const titleTxt = typeof title === 'string' && title ? title : (L.title || _t('concerts.title', (lang==='en'?'Concerts':'Concerti')));
+  const claim    = typeof claimHTML === 'string' ? claimHTML : (L.claim2 || _t('concerts.claim2', (lang==='en'?'Upcoming + archive':'Prossimi + archivio')));
+
+  // Hero: controlli SOLO dal JSON pagina
+  const minH    = Number(page?.hero_min_height) || 520;
+  let   focusY  = Number(page?.hero_focus_y);
+  focusY = Number.isFinite(focusY) ? Math.max(0, Math.min(100, focusY)) : 50;
+  const zoomVal = Number.isFinite(Number(page?.hero_zoom)) ? Number(page.hero_zoom) : 1;
+  const heroImg = page?.hero_image || '/img/daniele-camiz-indica.png';
+  const heroStyle = `--concert-hero-min-h:${minH}px;--concert-hero-focus-y:${focusY}%;--concert-hero-zoom:${zoomVal};`;
+
+  const txtUpcoming   = L.upcoming    || _t('concerts.upcoming', (lang==='en'?'Upcoming performances':'Prossimi concerti'));
+  const txtPast       = L.past        || _t('concerts.past',     (lang==='en'?'Past concerts':'Concerti passati'));
+  const txtDetails    = L.view_details|| _t('concerts.view_details', (lang==='en'?'View details':'Vedi dettagli'));
+  const txtNoUpcoming = L.no_upcoming || _t('concerts.no_upcoming', (lang==='en'?'No scheduled concerts.':'Nessun concerto in programma.'));
+  const txtMore       = L.show_more   || _t('buttons.show_more',  (lang==='en'?'Show more':'Mostra di più'));
+  const txtLess       = L.show_less   || _t('buttons.show_less',  (lang==='en'?'Show less':'Mostra di meno'));
+
+  function parseISO(d){ try{ if(!d) return null; const p=d.trim(); return new Date(p.length===10 ? (p+'T00:00:00') : p); }catch{ return null; } }
+%>
+
+<section id="concerts_section" class="concerts-layout">
+  <header class="page-header">
+    <h1 id="concerts_title" class="page-title"><%= titleTxt %></h1>
+    <p id="concerts_claim" class="page-claim"><%- claim %></p>
+  </header>
+
+  <div class="layout-grid">
+    <!-- Colonna sinistra -->
+    <div class="left-col">
+      <!-- FUTURI -->
+      <section id="upcoming_section" aria-labelledby="upcoming_title">
+        <h2 id="upcoming_title" class="section-title"><%= txtUpcoming %></h2>
+
+        <% if (Array.isArray(upcomingConcerts) && upcomingConcerts.length) { %>
+          <div class="upcoming-table" role="list">
+            <% upcomingConcerts.forEach(c => {
+                 const poster = c.poster || c.locandina || '';
+                 const payload = JSON.stringify({
+                   title: c.title, program: c.program, date: c.date, location: c.location,
+                   orchestra: c.orchestra, conductor: c.conductor, soloists: c.soloists,
+                   notes: c.notes, poster: poster, youtube: c.youtube
+                 });
+                 const dateObj = parseISO(c.date);
+                 const month  = dateObj ? dateObj.toLocaleString(lang==='en'?'en-GB':'it-IT', { month:'long' }) : '';
+                 const day    = dateObj ? String(dateObj.getDate()).padStart(2,'0') : '';
+            %>
+              <article class="up-row" role="listitem">
+                <div class="up-date">
+                  <div class="up-month"><%= month %></div>
+                  <div class="up-day"><%= day %></div>
+                </div>
+                <div class="up-main">
+                  <h3 class="up-title"><%= c.title || (lang==='en'?'Concert':'Concerto') %></h3>
+                  <% if (c.location) { %><div class="up-place"><%= c.location %></div><% } %>
+                  <% if (c.orchestra) { %><div class="up-line"><%= c.orchestra %></div><% } %>
+                </div>
+                <div class="up-cta">
+                  <button class="btn btn-secondary" type="button"
+                          onclick='openConcertLightbox(<%- payload %>)'><%= txtDetails %></button>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="empty-state"><%= txtNoUpcoming %></p>
+        <% } %>
+      </section>
+
+      <!-- ARCHIVIO: tutti CHIUSI di default -->
+      <section id="past_section" aria-labelledby="past_title">
+        <h2 id="past_title" class="section-title"><%= txtPast %></h2>
+
+        <% const pastYears = (Array.isArray(concertsByYear) ? concertsByYear : []).filter(g => (g.concerts||[]).length); %>
+        <div class="year-pills" role="tablist" aria-label="Archive by year">
+          <% pastYears.forEach((g) => { %>
+            <button class="year-pill"
+                    role="tab"
+                    aria-selected="false"
+                    data-year="<%= g.year %>"><%= g.year %></button>
+          <% }) %>
+        </div>
+
+        <div id="year_contents">
+          <% pastYears.forEach((g) => { %>
+            <div class="year-content" id="year_<%= g.year %>" role="tabpanel"
+                 aria-labelledby="pill_<%= g.year %>" hidden>
+              <ul class="concerts-year-list">
+                <% g.concerts.forEach((c) => {
+                     const poster = c.poster || c.locandina || '';
+                     const payload = JSON.stringify({
+                       title:c.title, program:c.program, date:c.date,
+                       location:c.location, orchestra:c.orchestra, conductor:c.conductor,
+                       soloists:c.soloists, notes:c.notes, poster:poster, youtube:c.youtube
+                     });
+                %>
+                  <li class="concert-item" role="listitem">
+                    <div class="concert-block">
+                      <% if (poster) { %>
+                        <a class="concert-thumb-link"
+                           href="<%= poster %>"
+                           onclick='event.preventDefault(); openConcertLightbox(<%- payload %>);'
+                           aria-label="<%= (lang==='en'?'Open poster':'Apri locandina') %>">
+                          <img class="concert-poster" src="<%= poster %>" alt="<%= c.title || 'Poster' %>" loading="lazy" />
+                        </a>
+                      <% } %>
+
+                      <div class="concert-info">
+                        <h4 class="concert-title"><%= c.title || (lang==='en'?'Concert':'Concerto') %></h4>
+                        <% if (c.date)     { %><p class="concert-date"><%= c.date %></p><% } %>
+                        <% if (c.location) { %><p class="concert-place"><%= c.location %></p><% } %>
+
+                        <% if (c.program || c.orchestra || c.conductor || c.soloists || c.notes) { %>
+                          <details class="concert-details">
+                            <summary class="details-summary" data-more="<%= txtMore %>" data-less="<%= txtLess %>"><%= txtMore %></summary>
+                            <div class="concert-extra">
+                              <% if (c.program) { %><div class="concert-program"><pre><%= c.program %></pre></div><% } %>
+                              <ul class="concert-facts">
+                                <% if (c.orchestra) { %><li><strong><%= _t('concerts.orchestra','Orchestra') %>:</strong> <%= c.orchestra %></li><% } %>
+                                <% if (c.conductor) { %><li><strong><%= _t('concerts.conductor','Direttore') %>:</strong> <%= c.conductor %></li><% } %>
+                                <% if (c.soloists)  { %><li><strong><%= _t('concerts.soloist','Solista') %>:</strong> <%= c.soloists %></li><% } %>
+                                <% if (c.notes)     { %><li><strong>Note:</strong> <%= c.notes %></li><% } %>
+                              </ul>
+                            </div>
+                          </details>
+                        <% } %>
+
+                        <% if (c.youtube) { %>
+                          <div class="concert-actions">
+                            <a class="btn" href="<%= c.youtube %>" target="_blank" rel="noopener">YouTube</a>
+                          </div>
+                        <% } %>
+                      </div>
+                    </div>
+                  </li>
+                <% }) %>
+              </ul>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+    </div>
+
+    <!-- Colonna destra: HERO sticky -->
+    <aside class="right-hero hero-concerts" style="<%= heroStyle %>">
+      <div class="hero-media" aria-hidden="true">
+        <img class="hero-media-img" src="<%= heroImg %>" alt="" loading="eager" />
+      </div>
+    </aside>
+  </div>
+
+  <!-- Lightbox (NASCOSTA di default) -->
+  <div id="concert_lightbox" role="dialog" aria-modal="true" tabindex="-1" hidden>
+    <div class="concert-lightbox-content">
+      <button class="concert-lightbox-close" aria-label="Close" onclick="closeConcertLightbox()">×</button>
+      <div class="concert-lightbox-body">
+        <div class="concert-lightbox-img"><img id="concert_poster" alt="Concert poster" /></div>
+        <div id="concert_details" class="concert-lightbox-info" tabindex="0"></div>
+      </div>
+    </div>
+  </div>
+</section>

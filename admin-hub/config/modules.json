@@ -1,0 +1,194 @@
+{
+  "modules": [
+    {
+      "id": "events-admin",
+      "name": "Landing Pages",
+      "description": "Creazione e gestione landing pages per eventi",
+      "icon": "📅",
+      "url": "https://events-admin.danielecamiz.com",
+      "subdomain": "events-admin",
+      "color": "#4A90E2",
+      "status": "active",
+      "order": 1,
+      "permissions": ["admin", "editor"],
+      "features": [
+        "Creazione landing pages responsive",
+        "Editor visuale drag & drop",
+        "Gestione eventi e date",
+        "Form registrazione partecipanti",
+        "Statistiche e analytics",
+        "Template predefiniti"
+      ],
+      "api": {
+        "endpoint": "/api/events",
+        "version": "v1"
+      }
+    },
+    {
+      "id": "newsletter-admin",
+      "name": "Newsletter Service",
+      "description": "Sistema completo per newsletter e comunicazioni",
+      "icon": "📧",
+      "url": "https://newsletter-admin.danielecamiz.com",
+      "subdomain": "newsletter-admin",
+      "color": "#27AE60",
+      "status": "active",
+      "order": 2,
+      "permissions": ["admin", "editor"],
+      "features": [
+        "Composizione e invio newsletter",
+        "Gestione liste iscritti",
+        "Segmentazione contatti",
+        "Template email responsive",
+        "Statistiche aperture e click",
+        "Automazioni e campagne",
+        "Import/export contatti"
+      ],
+      "api": {
+        "endpoint": "/api/newsletter",
+        "version": "v1"
+      }
+    },
+    {
+      "id": "concerts-admin",
+      "name": "Concerti & Archivio",
+      "description": "Gestione completa concerti e archivio storico",
+      "icon": "🎵",
+      "url": "https://concerts-admin.danielecamiz.com",
+      "subdomain": "concerts-admin",
+      "color": "#E74C3C",
+      "status": "active",
+      "order": 3,
+      "permissions": ["admin"],
+      "features": [
+        "Calendario concerti",
+        "Archivio storico performance",
+        "Gestione repertorio",
+        "Upload poster e locandine",
+        "Schede tecniche",
+        "Integrazione Cloudinary"
+      ],
+      "api": {
+        "endpoint": "/api/concerts",
+        "version": "v1"
+      }
+    },
+    {
+      "id": "gallery-admin",
+      "name": "Galleria Media",
+      "description": "Gestione foto, video e contenuti multimediali",
+      "icon": "🖼️",
+      "url": "https://gallery-admin.danielecamiz.com",
+      "subdomain": "gallery-admin",
+      "color": "#9B59B6",
+      "status": "planned",
+      "order": 4,
+      "permissions": ["admin", "media"],
+      "features": [
+        "Upload multiplo foto/video",
+        "Organizzazione in album",
+        "Editor immagini integrato",
+        "Tagging e categorizzazione",
+        "Integrazione Cloudinary",
+        "Gallerie pubbliche/private"
+      ],
+      "api": {
+        "endpoint": "/api/gallery",
+        "version": "v1"
+      }
+    },
+    {
+      "id": "content-admin",
+      "name": "Gestione Contenuti",
+      "description": "CMS per contenuti sito e traduzioni",
+      "icon": "✏️",
+      "url": "https://content-admin.danielecamiz.com",
+      "subdomain": "content-admin",
+      "color": "#F39C12",
+      "status": "planned",
+      "order": 5,
+      "permissions": ["admin", "editor", "translator"],
+      "features": [
+        "Editor pagine WYSIWYG",
+        "Gestione blog/news",
+        "Sistema traduzioni i18n",
+        "Versioning contenuti",
+        "SEO optimization",
+        "Preview live"
+      ],
+      "api": {
+        "endpoint": "/api/content",
+        "version": "v1"
+      }
+    },
+    {
+      "id": "analytics-admin",
+      "name": "Analytics & Report",
+      "description": "Dashboard analytics e reportistica",
+      "icon": "📊",
+      "url": "https://analytics-admin.danielecamiz.com",
+      "subdomain": "analytics-admin",
+      "color": "#3498DB",
+      "status": "planned",
+      "order": 6,
+      "permissions": ["admin", "analyst"],
+      "features": [
+        "Dashboard interattive",
+        "Report personalizzati",
+        "Metriche real-time",
+        "Export dati",
+        "Integrazione Google Analytics",
+        "Heatmaps e user flow"
+      ],
+      "api": {
+        "endpoint": "/api/analytics",
+        "version": "v1"
+      }
+    }
+  ],
+  "settings": {
+    "defaultModule": "events-admin",
+    "sessionTimeout": 3600000,
+    "tokenExpiry": 3600,
+    "maxConcurrentSessions": 3,
+    "enabledFeatures": {
+      "darkMode": true,
+      "notifications": true,
+      "activityLog": true,
+      "autoLogout": true,
+      "rememberMe": true
+    }
+  },
+  "roles": {
+    "admin": {
+      "name": "Amministratore",
+      "level": 100,
+      "permissions": ["*"]
+    },
+    "editor": {
+      "name": "Editor",
+      "level": 50,
+      "permissions": ["read", "write", "publish"]
+    },
+    "media": {
+      "name": "Media Manager",
+      "level": 40,
+      "permissions": ["read", "upload", "edit_media"]
+    },
+    "translator": {
+      "name": "Traduttore",
+      "level": 30,
+      "permissions": ["read", "translate"]
+    },
+    "analyst": {
+      "name": "Analista",
+      "level": 20,
+      "permissions": ["read", "view_analytics"]
+    },
+    "viewer": {
+      "name": "Visualizzatore",
+      "level": 10,
+      "permissions": ["read"]
+    }
+  }
+}

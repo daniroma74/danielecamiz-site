@@ -1,0 +1,72 @@
+[4.0K]  .
+├── [   0]  contact-site-tree-2025-09-20.txt
+├── [4.0K]  content
+│   ├── [3.0K]  contact-en.json
+│   └── [3.1K]  contact-it.json
+├── [4.0K]  controllers
+│   └── [2.1K]  contactController.js
+├── [4.0K]  data
+│   └── [4.0K]  i18n
+│       ├── [4.3K]  contact-en.json
+│       └── [4.3K]  contact-it.json
+├── [ 492]  ecosystem.config.cjs
+├── [4.0K]  logs
+├── [ 532]  package.json
+├── [ 34K]  package-lock.json
+├── [4.0K]  public
+│   ├── [4.0K]  css
+│   │   └── [ 10K]  main.css
+│   ├── [4.0K]  img
+│   │   ├── [429K]  daniele-camiz-foto-profilo.png
+│   │   └── [4.0K]  icons
+│   │       ├── [ 775]  bandcamp-black.svg
+│   │       ├── [1.0K]  bandcamp-gold.svg
+│   │       ├── [5.4K]  bio-black.svg
+│   │       ├── [5.1K]  bio-light-gold.svg
+│   │       ├── [ 906]  calendar-black.svg
+│   │       ├── [1.1K]  calendar-gold.svg
+│   │       ├── [1.1K]  calendar-light-gold.svg
+│   │       ├── [ 630]  facebook-black.svg
+│   │       ├── [ 630]  facebook-gold.svg
+│   │       ├── [ 653]  favicon-16.png
+│   │       ├── [ 31K]  favicon-180.png
+│   │       ├── [ 34K]  favicon-192.png
+│   │       ├── [1.6K]  favicon-32.png
+│   │       ├── [ 15K]  favicon-48.ico
+│   │       ├── [2.9K]  favicon-48.png
+│   │       ├── [259K]  favicon-512.png
+│   │       ├── [ 843]  instagram-black.svg
+│   │       ├── [ 843]  instagram-gold.svg
+│   │       ├── [1.1K]  internet-black.svg
+│   │       ├── [1.1K]  internet-gold.svg
+│   │       ├── [1.2K]  linkedin-black.svg
+│   │       ├── [1.2K]  linkedin-gold.svg
+│   │       ├── [ 43K]  mail-black.svg
+│   │       ├── [ 43K]  mail-gold.svg
+│   │       ├── [1.8K]  newsletter-black.svg
+│   │       ├── [2.6K]  newsletter-gold.svg
+│   │       ├── [1.7K]  pinterest-black.svg
+│   │       ├── [1.8K]  pinterest-gold.svg
+│   │       ├── [2.1K]  press-black.svg
+│   │       ├── [2.1K]  press-light-gold.svg
+│   │       ├── [ 12K]  QR-daniele-camiz.png
+│   │       ├── [1.8K]  threads-black.svg
+│   │       ├── [1.8K]  threads-gold.svg
+│   │       ├── [ 532]  tiktok-black.svg
+│   │       ├── [ 535]  tiktok-gold.svg
+│   │       ├── [ 609]  twitterx-black.svg
+│   │       ├── [ 609]  twitterx-gold.svg
+│   │       ├── [1.8K]  whatsapp-black.svg
+│   │       ├── [1.9K]  whatsapp-gold.svg
+│   │       ├── [1.3K]  youtube-black.svg
+│   │       ├── [1.4K]  youtube-gold.svg
+│   │       └── [ 60K]  youtube.png
+│   └── [4.0K]  js
+│       └── [   0]  main.js
+├── [4.9K]  README.md
+├── [6.3K]  server.js
+└── [4.0K]  views
+    ├── [9.4K]  contact.ejs
+    └── [4.8K]  contact-external.ejs
+
+12 directories, 58 files

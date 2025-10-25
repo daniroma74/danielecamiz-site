@@ -1,0 +1,23 @@
+{
+  "name": "contact-site",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Linktree-style contact page for danielecamiz.com",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js",
+    "prod": "NODE_ENV=production node server.js"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Daniele Camiz",
+  "license": "MIT"
+}

@@ -1,0 +1,719 @@
+[
+  {
+    
+
+    "year": 2016,
+    "concerts": [
+      {
+        "date": "2016-09-17",
+        "title": "Inaugurazione Della Quarta Stagione ICNT",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Luisa Palma, soprano\nMorgana Pala, contralto\nFabrizio Giovannetti, tenore\nAndrea Romeo, basso\nEnsemble vocale “Il Diletto” diretto da Sergio Siminovich",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "F.Mendelssohn Bartholdy, Sinfonia n.7 per archi\nW.A.Mozart, Credo Messe K257",
+        "notes": ""
+      },
+      {
+        "date": "2016-03-28",
+        "title": "Nostalgia - Sguardi Moderni Verso L’antico",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "O.Respighi, Antiche danze e arie per liuto, Suite n.3\nB.Britten, Simple symphony op.4\nE.Elgar, Serenade for strings, op.20\nP.Warlock, Capriol Suite",
+        "notes": "",
+        "poster": "img/locandine/2016-03-28-chiesa-valdese-di-piazza-cavour-roma-nostalgia-sguardi-moderni-verso-l-antico.jpg"
+      }
+    ]
+  },
+  {
+    "year": 2017,
+    "concerts": [
+      {
+        "date": "2017-12-02",
+        "title": "Concerto A Sostegno Dei Misioneros Del Kamino",
+        "location": "St.Andrew’s Church of Scotland, Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "G.F.Händel, Suite n.3 da Water Music\nE.Grieg, La morte di Aase e Danza di Anitre dalla Peer Gynt Suite n.1 op.46\nG.Rossini, Sinfonia da L’italiana in Algeri",
+        "notes": ""
+      },
+      {
+        "date": "2017-10-28",
+        "title": "Concerto Per I 500 Anni Della Riforma Protestante",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "F.Mendelssohn Bartholdy, Sinfonia n.5 op.107 “La Riforma”",
+        "notes": ""
+      },
+      {
+        "date": "2017-09-09",
+        "title": "Inaugurazione Della Quinta Stagione ICNT",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Carlotta Masci, pianoforte",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Concerto K466\nF.Mendelssohn Bartholdy, Sinfonia n.5 op.107 “La Riforma”",
+        "notes": ""
+      },
+      {
+        "date": "2017-04-17",
+        "title": "Concerto Straordinario Di Pasquetta",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Simone Pierini, pianoforte",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "G.Rossini, Sinfonia da L’italiana in Algeri\nF.Schubert, Ouverture in stile Italiano\nW.A.Mozart, Ouverture da Die Entführung aus dem Serail K384\nF.Chopin, Concerto n.2 op.21",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "year": 2018,
+    "concerts": [
+      {
+        "date": "2018-11-05",
+        "title": "Concerto Di Premiazione Del XXVIII Concorso Pianistico Internazionale “Roma”",
+        "location": "Teatro Quirino – Roma",
+        "soloists": "Yang Yuanfan, pianoforte",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "L.v.Beethoven, Concerto n.3 op.37",
+        "notes": ""
+      },
+      {
+        "date": "2018-09-22",
+        "title": "BEETHOVEN Perché….",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Antilena Nicolizas, pianoforte",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "L.v.Beethoven, Concerto n.2 op.19\nL.v.Beethoven, Ouverture da Coriolano op.62\nL.v.Beethoven, Allegretto dalla Sinfonia n.7 op.92\nL.v.Beethoven, Ouverture “Per la consacrazione della casa” op.122",
+        "notes": ""
+      },
+      {
+        "date": "2018-06-18",
+        "title": "Intercambio Internacional De Directores De Orquesta – Gala",
+        "location": "Teatro Roma – Avellaneda (Argentina)",
+        "soloists": "Nicolas Argento, tenore",
+        "orchestra": "Orquesta Filarmónica Municipal de Avellaneda",
+        "conductor": "Mirta Soto e Daniele Camiz",
+        "program": "G.Rossini, Sinfonia da L’italiana in Algeri\nA.Dvořak, Allegro con fuoco dalla Sinfonia n.9 op.95\nF.Sartori, “Con te partirò”",
+        "notes": ""
+      },
+      {
+        "date": "2018-04-02",
+        "title": "Concerto Straordinario Di Pasquetta",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Eleonora Caraballo, flauto\nBrian Meloni, arpa\nMassimiliano Pinazzo, pianoforte",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Mirta Soto e Daniele Camiz",
+        "program": "G.Rossini, Sinfonia da L’italiana in Algeri\nW.A.Mozart, Andantino dal concerto K299\nA.Dvořak, Allegro con fuoco dalla Sinfonia n.9 op.95\nF.Chopin, Concerto n.1 op.11\nC.Gardel, Por una cabeza",
+        "notes": ""
+      },
+      {
+        "date": "2018-01-07",
+        "title": "Concerto D’inverno",
+        "location": "Teatro Comunale Ramarini – Monterotondo",
+        "soloists": "Paolo Andriotti, violoncello",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "G.Rossini, Sinfonia da L’italiana in Algeri\nP.I.Tchaikovskij, Variazioni su un tema Rococò op.33\nE.Grieg, Peer Gynt Suite n.1 op.46\nJ.Strauss, An die schönen blauen Donau op.314",
+        "notes": ""
+      },
+      {
+        "date": "2018-01-04",
+        "title": "Concerto D’inverno",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Paolo Andriotti, violoncello",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "P.I.Tchaikovskij, Variazioni su un tema Rococò op.33\nA.Dvořak, Scherzo capriccioso op.66\nE.Grieg, Peer Gynt Suite n.1 op.46\nJ.Strauss, An die schönen blauen Donau op.314",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "year": 2019,
+    "concerts": [
+      {
+        "date": "2019-12-08",
+        "title": "Mozart Symphonies Challenge N.6",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K84\nSinfonia K74\nSinfonia K75",
+        "notes": ""
+      },
+      {
+        "date": "2019-11-17",
+        "title": "Mozart Symphonies Challenge N.5",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K81\nSinfonia K97\nSinfonia K95",
+        "notes": ""
+      },
+      {
+        "date": "2019-10-13",
+        "title": "Mozart Symphonies Challenge N.4",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K45b\nSinfonia K48\nSinfonia K73",
+        "notes": ""
+      },
+      {
+        "date": "2019-09-14",
+        "title": "La Magia Dell’orchestra",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Michele Tozzetti, pianoforte",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "V.Bellini, Sinfonia da Norma\nB.Smetana, Vltava da Má Vlast\nL.v.Beethoven, Concerto n.5 “Imperatore” op.73",
+        "notes": ""
+      },
+      {
+        "date": "2019-05-19",
+        "title": "Mozart Symphonies Challenge N.3",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K43\nSinfonia K45\nSinfonia K45a",
+        "notes": ""
+      },
+      {
+        "date": "2019-04-22",
+        "title": "Haydn Vs Mozart",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Giuliano Pagnani di San Leone, pianoforte",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Ouverture da L’impresario teatrale K486\nW.A.Mozart, Concerto K488\nF.J.Haydn, Sinfonia n.101 “L’orologio”",
+        "notes": ""
+      },
+      {
+        "date": "2019-04-06",
+        "title": "Magisterium 2019",
+        "location": "Auditorium Santa Maria in Gradi, Viterbo",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "G.Paisiello, Concerto in fa\nF.Mendelssohn Bartholdy, Concerto n.1 op.25\nL.v.Beethoven, Allegro con brio dal Concerto n.1 op.15\nL.v.Beethoven, Allegro dal Concerto n.3 op.37",
+        "notes": ""
+      },
+      {
+        "date": "2019-03-30",
+        "title": "Magisterium 2019",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "G.Paisiello, Concerto in fa\nF.Mendelssohn Bartholdy, Concerto n.1 op.25\nL.v.Beethoven, Allegro con brio dal Concerto n.1 op.15\nL.v.Beethoven, Allegro dal Concerto n.3 op.37",
+        "notes": ""
+      },
+      {
+        "date": "2019-03-10",
+        "title": "Mozart Symphonies Challenge N.2",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K19a\nSinfonia K22\nSinfonia K42a",
+        "notes": ""
+      },
+      {
+        "date": "2019-02-10",
+        "title": "Mozart Symphonies Challenge N.1",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K16\nSinfonia K19",
+        "notes": ""
+      },
+      {
+        "date": "2019-01-06",
+        "title": "Concerto D’inverno 2019",
+        "location": "",
+        "soloists": "Hyun Hae Young, soprano\nAlberto Cappiello, corno",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Concerto k412\nW.A.Mozart, “E Susanna non vien….Dove sono i bei momenti” da Le nozze di Figaro K492\nW.A.Mozart, Sinfonia da Le nozze di Figaro K492\nG.Puccini, “Un bel dì vedremo” da Madama Butterfly\nP.Mascagni, Intermezzo da Cavalleria rusticana\nG.Verdi, “Pace, pace, mio Dio” da La forza del destino\nG.Verdi, Ouverture da La forza del destino",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "year": 2020,
+    "concerts": [
+      {
+        "date": "2020-10-04",
+        "title": "Magisterium 2020",
+        "location": "Museo delle arti e tradizioni popolari – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Allegro dal Concerto K488\nL.v.Beethoven, Allegro con brio dal Concerto n.1 op.15\nL.v.Beethoven, Allegro dal Concerto n.3 op.37",
+        "notes": ""
+      },
+      {
+        "date": "2020-02-16",
+        "title": "Mozart Symphonies Challenge N.8",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K112\nSinfonia K114\nSinfonia K124",
+        "notes": ""
+      },
+      {
+        "date": "2020-01-19",
+        "title": "Mozart Symphonies Challenge N.7",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K110\nSinfonia K120\nSinfonia K96",
+        "notes": ""
+      },
+      {
+        "date": "2020-01-05",
+        "title": "Concerto D’inverno 2020",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Giorgio Agnes, pianoforte\nHyun Hae Young, soprano\nYoung Kyung Hwang, mezzosoprano\nJung Woo Chae, tenore",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "E.Grieg, Concerto op.16\nW.A.Mozart, Ouverture da La clemenza di Tito\nV.Bellini, “Casta diva” da Norma\nG.Rossini, “Una voce poco fa”, da Il barbiere di Siviglia\nG.Verdi, “De’ miei bollenti spiriti” da La traviata\nL.Delibes, Duetto dei fiori da Lakmé\nG.Verdi, “Parigi, o cara” da La traviata\nG.Verdi, Brindisi da La traviata",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "year": 2021,
+    "concerts": [
+      {
+        "date": "2021-10-24",
+        "title": "Magisterium 2021 – Roma",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Allegro dal Concerto K414\nW.A.Mozart, Allegro dal Concerto K415\nF.Mendelssohn Bartholdy, Molto allegro con fuoco e Andante dal Concerto op.25\nL.v.Beethoven, Concerto n.3 op.37",
+        "notes": ""
+      },
+      {
+        "date": "2021-10-23",
+        "title": "Magisterium 2021 – Viterbo",
+        "location": "Auditorium Santa Maria in Gradi, Viterbo",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Allegro dal Concerto K414\nW.A.Mozart, Allegro dal Concerto K415\nF.Mendelssohn Bartholdy, Molto allegro con fuoco e Andante dal Concerto op.25\nL.v.Beethoven, Concerto n.3 op.37",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "year": 2022,
+    "concerts": [
+      {
+        "date": "2022-12-10",
+        "title": "Concerto con la Rimini Chamber Orchestra",
+        "location": "Chiesa Sacro Cuore di Miramare – Rimini",
+        "soloists": "Alberto Cappiello, corno",
+        "orchestra": "Rimini Chamber Orchestra RCO",
+        "conductor": "Daniele Camiz",
+        "program": "J.S.Bach, Aria sulla 4a corda\nS.Barber, Adagio per archi\nL.Cherubini, Sonata n.1 per corno e orchestra d’archi\nE.Elgar, Serenata per archi\nE.Grieg, Holberg Suite",
+        "notes": ""
+      },
+      {
+        "date": "2022-11-13",
+        "title": "Magisterium 2022 – Roma",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Allegro dal Concerto K414\nW.A.Mozart, Allegro dal Concerto K466\nL.v.Beethoven, Allegro con brio dal Concerto n.1 op.15\nF.Mendelssohn Bartholdy, Molto allegro con fuoco dal Concerto op.25\nF.Chopin, Allegro maestoso dal Concerto n.1 op.11",
+        "notes": ""
+      },
+      {
+        "date": "2022-11-12",
+        "title": "Magisterium 2022 – Viterbo",
+        "location": "Auditorium Santa Maria in Gradi, Viterbo",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Allegro dal Concerto K414\nW.A.Mozart, Allegro dal Concerto K466\nL.v.Beethoven, Allegro con brio dal Concerto n.1 op.15\nF.Mendelssohn Bartholdy, Molto allegro con fuoco dal Concerto op.25\nF.Chopin, Allegro maestoso dal Concerto n.1 op.11",
+        "notes": ""
+      },
+      {
+        "date": "2022-10-23",
+        "title": "Mozart Symphonies Challenge N.10",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K128\nSinfonia K129\nSinfonia K130",
+        "notes": "",
+        "poster": "img/locandine/2022-10-23-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-10.jpg"
+      },
+      {
+        "date": "2022-09-18",
+        "title": "Concerto D’Autunno 2022",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Ouverture da Die Zauberflöte K620\nL.v.Beethoven, Sinfonia n.2 op.36\nP.I.Tchaikovskij, Romeo e Giulietta",
+        "notes": ""
+      },
+      {
+        "date": "2022-04-18",
+        "title": "Concerto Di Pasquetta 2022",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Hyun Hae Young, soprano",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "G.Rossini, Sinfonia da La gazza ladra\nW.A.Mozart, “Come scoglio” da Così fan tutte\nF.Mendelssohn, Ouverture per Il sogno di una notte di mezza estate\nG.Puccini, Sogno di Doretta da La rondine\nG.Mahler, Adagietto dalla Sinfonia n.5\nG.Verdi, Ritorna vincitor da Aida\nE.Grieg/Sitt, 4 Danze norvegesi op.35",
+        "notes": ""
+      },
+      {
+        "date": "2022-02-27",
+        "title": "Concerto D’Inverno 2022",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Hyun Hae Young, soprano\nFrancesco Curci, tenore",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "A.Dvořak, Sinfonia n.9 op.95\nG.Verdi, “È strano…Sempre libera” da La traviata\nJ.Brahms, Danza ungherese n.1\nG.Puccini, “Vissi d’arte” da Tosca\nJ.Brahms, Danza ungherese n.3\nA.Dvořak, “Měsíčku na nebi hlobokém” da Rusalka\nJ.Brahms, Danza ungherese n.5",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "year": 2023,
+    "concerts": [
+      {
+        "date": "2023-12-03",
+        "title": "Mozart Symphonies Challenge N.12",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K181\nSinfonia K182",
+        "notes": "",
+        "youtube": "",
+        "poster": "img/locandine/2023-12-03-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-12.jpeg"
+      },
+      {
+        "date": "2023-10-22",
+        "title": "Magisterium 2023 – Roma",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Ouverture da Idomeneo K366\nW.A.Mozart, Allegro dal Concerto K414\nL.v.Beethoven, Allegro con brio dal Concerto n.2 op.19\nL.v.Beethoven, Concerto n.1 op.15",
+        "notes": "",
+        "youtube": "",
+        "poster": "img/locandine/2023-10-22-chiesa-valdese-di-piazza-cavour-roma-magisterium-2023-roma.jpeg"
+      },
+      {
+        "date": "2023-10-21",
+        "title": "Magisterium 2023 – Viterbo",
+        "location": "Auditorium Santa Maria in Gradi, Viterbo",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Ouverture da Idomeneo K366\nW.A.Mozart, Allegro dal Concerto K414\nL.v.Beethoven, Allegro con brio dal Concerto n.2 op.19\nL.v.Beethoven, Concerto n.1 op.15",
+        "notes": ""
+      },
+      {
+        "date": "2023-09-16",
+        "title": "Concerto D’Autunno 2023",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Alessandro Marano, pianoforte",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "F.Mendelssohn, Ouverture “Le Ebridi” op.26\nR.Schumann, Sinfonia n.4 op.120\nG.Gershwin, Rhapsody in blue",
+        "notes": "",
+        "poster": "img/locandine/2023-09-16-chiesa-valdese-di-piazza-cavour-roma-concerto-d-autunno-2023.jpg"
+      },
+      {
+        "date": "2023-05-14",
+        "title": "Mozart Symphonies Challenge N.11",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K134\nSinfonia K141a\nSinfonia K162",
+        "notes": "",
+        "poster": "img/locandine/2023-05-14-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-11.jpg",
+        "youtube": ""
+      },
+      {
+        "date": "2023-04-10",
+        "title": "Concerto Di Pasquetta 2023",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Zhixin Zhang, violino",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "W.A.Mozart, Ouverture da Don Giovanni K527\nJ.Brahms, Concerto per violino op.77\nN.A.Rimskij-Korsakov, Capriccio spagnolo",
+        "notes": "",
+        "youtube": "",
+        "poster": "img/locandine/2023-04-10-chiesa-valdese-di-piazza-cavour-roma-concerto-di-pasquetta-2023.jpg"
+      },
+      {
+        "date": "2023-02-26",
+        "title": "Mozart Symphonies Challenge N.10",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K132\nSinfonia K133",
+        "notes": "",
+        "poster": "img/locandine/2023-02-26-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-10.jpg",
+        "youtube": ""
+      },
+      {
+        "date": "2023-01-15",
+        "title": "Concerto D’inverno 2023 – St. Paul",
+        "location": "St. Paul within the Walls – Roma",
+        "soloists": "Hyun Hae Young, soprano\nFrancesco Curci, tenore",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "C.M.v.Weber, Ouverture da Der Freischütz\nW.A.Mozart, “In quegli anni in cui val poco” da Le nozze di Figaro\nE.Grieg, Mattino da Peer Gynt Suite op.46\nG.Donizetti, “Chiedi all’aura lusinghiera” da L’elisir d’amore\nE.Grieg, La morte di Aase da Peer Gynt Suite op.46\nG.Verdi, “Parigi o cara” da La traviata\nE.Grieg, Danza di Anitra da Peer Gynt Suite op.46\nG.Rossini, “Ecco ridente in cielo” da Il barbiere di Siviglia\nE.Grieg, Nell’antro del re della montagna da Peer Gynt Suite op.46\nG.Verdi, “Nel dì della vittoria” da Macbeth\nA.Dvorak, Tre Danze slave: op.46 n.1; op.72 n.2; op.46 n.8",
+        "notes": "",
+        "youtube": "",
+        "poster": "img/locandine/2023-01-15-st-paul-within-the-walls-roma-concerto-d-inverno-2023-st-paul.jpg"
+      },
+      {
+        "date": "2023-01-07",
+        "title": "Concerto D’inverno 2023 – Roma",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "soloists": "Hyun Hae Young, soprano\nFrancesco Curci, tenore",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "C.M.v.Weber, Ouverture da Der Freischütz\nW.A.Mozart, “In quegli anni in cui val poco” da Le nozze di Figaro\nE.Grieg, Mattino da Peer Gynt Suite op.46\nG.Donizetti, “Chiedi all’aura lusinghiera” da L’elisir d’amore\nE.Grieg, La morte di Aase da Peer Gynt Suite op.46\nG.Verdi, “Parigi o cara” da La traviata\nE.Grieg, Danza di Anitra da Peer Gynt Suite op.46\nG.Rossini, “Ecco ridente in cielo” da Il barbiere di Siviglia\nE.Grieg, Nell’antro del re della montagna da Peer Gynt Suite op.46\nG.Verdi, “Nel dì della vittoria” da Macbeth\nA.Dvorak, Tre Danze slave: op.46 n.1; op.72 n.2; op.46 n.8",
+        "notes": "",
+        "youtube": "",
+        "poster": "img/locandine/2023-01-07-chiesa-valdese-di-piazza-cavour-roma-concerto-d-inverno-2023-roma.jpeg"
+      }
+    ]
+  },
+  {
+    "year": 2024,
+    "concerts": [
+      {
+        "date": "2024-12-01",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Magisterium 2024",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "Allievi Pianisti Del Corso Di Perfezionamento Di Marcella Crudeli",
+        "program": "G.Paisiello, Allegro dal Concerto in fa\nL.v.Beethoven, Allegro con brio dal Concerto n.1 op.15\nL.v.Beethoven, Allegro con brio dal Concerto n.3 op.37\nF.Chopin, Maestoso dal Concerto op.21",
+        "poster": "img/locandine/2024-12-01-chiesa-valdese-di-piazza-cavour-roma-magisterium-2024.jpg"
+      },
+      {
+        "date": "2024-11-30",
+        "location": "Auditorium Santa Maria in Gradi, Viterbo",
+        "title": "Magisterium 2024",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "Allievi Pianisti Del Corso Di Perfezionamento Di Marcella Crudeli",
+        "program": "G.Paisiello, Allegro dal Concerto in fa\nL.v.Beethoven, Allegro con brio dal Concerto n.1 op.15\nL.v.Beethoven, Allegro con brio dal Concerto n.3 op.37\nF.Chopin, Maestoso dal Concerto op.21",
+        "poster": "img/locandine/2024-11-30-auditorium-santa-maria-in-gradi-viterbo-magisterium-2024.jpg"
+      },
+      {
+        "date": "2024-11-24",
+        "location": "Chiesa di Santa Maria in Via – Roma",
+        "title": "Ensemble Enarmonia",
+        "orchestra": "Ensemble Enarmonia",
+        "conductor": "Daniele Camiz",
+        "program": "F.Mendelssohn, Das Märchen von der schönen Melusine op.32\nF.Mendelssohn, Die Hebriden \"Fingals Höhle\" op. 26\nF.Schubert, Sinfonia “Incompiuta” D759\nF.Schubert, Ouverture in re maggiore \"im italienischen Stile\" D590",
+        "poster": "img/locandine/2024-11-24-chiesa-di-santa-maria-in-via-roma-ensemble-enarmonia.jpg"
+      },
+      {
+        "date": "2024-11-23",
+        "location": "Basilica di San Camillo De Lellis – Roma",
+        "title": "Ensemble Enarmonia",
+        "orchestra": "Ensemble Enarmonia",
+        "conductor": "Daniele Camiz",
+        "program": "F.Mendelssohn, Das Märchen von der schönen Melusine op.32\nF.Mendelssohn, Die Hebriden \"Fingals Höhle\" op. 26\nF.Schubert, Sinfonia “Incompiuta” D759\nF.Schubert, Ouverture in re maggiore \"im italienischen Stile\" D590",
+        "poster": "img/locandine/2024-11-23-basilica-di-san-camillo-de-lellis-roma-ensemble-enarmonia.jpg"
+      },
+      {
+        "date": "2024-10-27",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Mozart Symphonies Challenge N.15",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K200\nSinfonia K201",
+        "poster": "img/locandine/2024-10-27-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-15.jpg",
+        "youtube": ""
+      },
+      {
+        "date": "2024-09-14",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Concerto D’Autunno 2024",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "Maria Cerreto, violino",
+        "program": "L.v.Beethoven, Egmont Ouverture op.84\nF.Schubert, Rondo per violino e orchestra D438\nL.v.Beethoven, Sinfonia n.5 op.67",
+        "youtube": "",
+        "poster": "img/locandine/concerto-d-autunno2024.jpg"
+      },
+      {
+        "date": "2024-08-08",
+        "location": "Gwanglim Jangcheon Hall - Seoul",
+        "title": "Notte di mezza estate - Pazzi per la musica",
+        "orchestra": "Ilsan Youth Orchestra & Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "Carlo Severini, violino\nHyun Hae Young, soprano",
+        "program": "W.A.Mozart, Allegro vivace dalla Sinfonia K551\nJ.Sibelius, Allegro moderato dal Concerto per violino op.47\nC.Saint-Saëns, Fossiles da Le carnaval des animaux\nG.Puccini, Un bel dì vedremo da Madama Butterfly",
+        "youtube": "",
+        "poster": "img/locandine/2024-08-08-gwanglim-jangcheon-hall-seoul-notte-di-mezza-estate-pazzi-per-la-musica.jpg"
+      },
+      {
+        "date": "2024-05-12",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Mozart Symphonies Challenge N.14",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K199\nSinfonia K121",
+        "youtube": "",
+        "poster": "img/locandine/2024-05-12-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-14.jpg"
+      },
+      {
+        "date": "2024-04-01",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Concerto Di Pasquetta 2024 – I fratelli Mendelssohn",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Fanny Mendelssohn, Ouverture in do\nFelix Mendelssohn, Sinfonia “Scozzese” op.56",
+        "youtube": "",
+        "poster": "img/locandine/2024-04-01-chiesa-valdese-di-piazza-cavour-roma-concerto-di-pasquetta-2024-i-fratelli-mendelssohn.jpg"
+      },
+      {
+        "date": "2024-02-25",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Mozart Symphonies Challenge N.13",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "Sinfonia K183\nSinfonia K184",
+        "youtube": "",
+        "poster": "img/locandine/2024-02-25-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-13.jpg"
+      },
+      {
+        "date": "2024-01-06",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Concerto D’Inverno 2024",
+        "soloists": "Hyein Lee soprano, Haneul Kim tenore, Hangyeol Son baritono",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "program": "G.Verdi, Sinfonia da Nabucco\nG.Verdi, Romanza di Medora da Il corsaro\nJ.Strauss Jr., Ägyptischer Marsch op.335\nG.Verdi, Aria di Manrico da Il trovatore\nB.Smetana, Vltava da Má Vlast\nG.Rossini, Miei rampolli femminini da La Cenerentola\nJ.Strauss Jr., Wein, Weib und Gesang op.333",
+        "youtube": "",
+        "poster": "img/locandine/2024-01-06-chiesa-valdese-di-piazza-cavour-roma-concerto-d-inverno-2024.jpg"
+      }
+    ]
+  },
+  {
+    "year": 2025,
+    "concerts": [
+      {
+        "date": "2025-11-30",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Mozart Symphonies Challenge N.19",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "",
+        "program": "Sinfonia K385 - Haffner",
+        "notes": "",
+        "poster": "img/locandine/2025-05-18-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-18.jpeg"
+      },
+      {
+        "date": "2025-10-26",
+        "location": "Chiesa valdese dipiazza Cavour – Roma",
+        "title": "Magisterium 2025",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "Allievi Pianisti Del Corso Di Perfezionamento Di Marcella Crudeli",
+        "program": "G.Paisiello, Allegro dal Concerto in fa\nL.v.Beethoven, Allegro con brio dal Concerto n.1 op.15\nL.v.Beethoven, Allegro con brio dal Concerto n.3 op.37\nF.Chopin, Maestoso dal Concerto op.21",
+        "poster": "img/locandine/2024-11-30-auditorium-santa-maria-in-gradi-viterbo-magisterium-2024.jpg"
+      },
+      {
+        "date": "2025-09-27",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Concerto D’Autunno 2025",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "Stefano Vasselli, organo",
+        "program": "M.E Bossi, Concerto per organo e orchestra op.100 in laminore\nP.I.Tchaikovsky, Sinfonia n.6 op.74 in si minore Patetica",
+        "youtube": "",
+        "poster": "img/locandine/2025-04-21-chiesa-valdese-di-piazza-cavour-roma-concerto-di-pasquetta-2025.jpg"
+      },
+      {
+        "date": "2025-05-18",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Mozart Symphonies Challenge N.18",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "",
+        "program": "Sinfonia K338",
+        "notes": "",
+        "poster": "img/locandine/2025-05-18-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-18.jpeg"
+      },
+      {
+        "date": "2025-04-21",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Concerto Di Pasquetta 2025",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "Seo Jiyoung, soprano\nCarlo Severini, violino",
+        "program": "J.Brahms, Ouverture tragica op.81\nFanny Mendelssohn, Hero und Leander\nJ.Sibelius, Concerto per violino op.47",
+        "notes": "",
+        "poster": "img/locandine/2025-04-21-chiesa-valdese-di-piazza-cavour-roma-concerto-di-pasquetta-2025.jpg"
+      },
+      {
+        "date": "2025-03-30",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Mozart Symphonies Challenge N.17",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "",
+        "program": "Sinfonia K318\nSinfonia K319",
+        "notes": "",
+        "poster": "img/locandine/2025-03-30-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-17.jpg"
+      },
+      {
+        "date": "2025-02-23",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Mozart Symphonies Challenge N.16",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "",
+        "program": "Sinfonia K202\nSinfonia K297 \"Paris\"",
+        "notes": "",
+        "poster": "img/locandine/2025-02-23-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-16.jpg"
+      },
+      {
+        "date": "2025-01-05",
+        "location": "Chiesa valdese di piazza Cavour – Roma",
+        "title": "Concerto D’Inverno 2025",
+        "orchestra": "Orchestra ICNT",
+        "conductor": "Daniele Camiz",
+        "soloists": "",
+        "program": "G.Verdi, Sinfonia da I vespri siciliani\nF.Mendelssohn, Sinfonia \"Italiana\" op.90\nP.I.Tchaikovsky, Capriccio italiano op.45",
+        "notes": "",
+        "poster": "img/locandine/2025-01-05-chiesa-valdese-di-piazza-cavour-roma-concerto-d-inverno-2025.jpg"
+      }
+    ]
+  }
+]

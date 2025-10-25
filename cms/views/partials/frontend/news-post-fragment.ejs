@@ -1,0 +1,16 @@
+<article class="news_post_fragment">
+  <h2 id="news_modal_title" class="section-title"><%= post.title %></h2>
+  <% if (post.date) { %><p class="news_post_date"><%= post.date %></p><% } %>
+  <div class="news_post_content"><%- post.content %></div>
+
+  <% if (post.images && post.images.length) { %>
+    <div class="news_post_images">
+      <% post.images.forEach(img => { %>
+        <img src="<%= img %>" alt="news_image" style="max-width: 100%; margin: 0.5rem 0;">
+      <% }) %>
+    </div>
+  <% } %>
+  <div class="news_post_actions" style="margin-top:1rem;">
+    <a class="btn" href="/news"><%= (lang === 'en') ? 'All news' : 'Tutte le news' %></a>
+  </div>
+</article>

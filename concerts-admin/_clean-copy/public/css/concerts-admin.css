@@ -1,0 +1,780 @@
+/* concerts-admin/public/css/concerts-admin.css */
+/* Stili specifici per dashboard concerti */
+
+/* ============================================ */
+/* GRIGLIA CONCERTI */
+/* ============================================ */
+
+.concerts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+  padding: 20px 0;
+}
+
+.concert-card {
+  background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.concert-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-color: rgba(214, 178, 94, 0.3);
+}
+
+.concert-card.future {
+  border-left: 4px solid #52d273;
+}
+
+.concert-card.past {
+  border-left: 4px solid #7aa2ff;
+}
+
+/* ============================================ */
+/* POSTER */
+/* ============================================ */
+
+.concert-poster-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: #0d0d0d;
+}
+
+.concert-poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.concert-card:hover .concert-poster {
+  transform: scale(1.05);
+}
+
+.poster-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 40%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.concert-poster-wrapper:hover .poster-overlay {
+  opacity: 1;
+}
+
+.btn-upload {
+  background: #d6b25e;
+  color: #1a1a1a;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-upload:hover {
+  background: #e6c36e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(214, 178, 94, 0.4);
+}
+
+/* Badge status */
+.concert-status-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.badge-future {
+  background: rgba(82, 210, 115, 0.9);
+  color: #fff;
+}
+
+.badge-past {
+  background: rgba(122, 162, 255, 0.9);
+  color: #fff;
+}
+
+/* ============================================ */
+/* CONTENUTO CARD */
+/* ============================================ */
+
+.concert-card-content {
+  padding: 20px;
+}
+
+.concert-date {
+  font-size: 13px;
+  color: #d6b25e;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.concert-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f1f1f1;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.concert-subtitle {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.concert-location {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Meta info */
+.concert-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #333;
+}
+
+.meta-item {
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-item i {
+  color: #d6b25e;
+}
+
+/* Azioni */
+.concert-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.concert-actions .btn {
+  flex: 1;
+  min-width: fit-content;
+  justify-content: center;
+}
+
+.concert-actions .btn-danger {
+  flex: 0;
+}
+
+/* ============================================ */
+/* FILTRI */
+/* ============================================ */
+
+.filters-bar {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+}
+
+.filter-btn {
+  padding: 10px 18px;
+  background: #0d0d0d;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #888;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-btn:hover {
+  background: rgba(214, 178, 94, 0.1);
+  border-color: #d6b25e;
+  color: #d6b25e;
+}
+
+.filter-btn.active {
+  background: #d6b25e;
+  border-color: #d6b25e;
+  color: #1a1a1a;
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+  flex: 0 0 auto;
+  min-width: 300px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  background: #0d0d0d;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #f1f1f1;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #d6b25e;
+  box-shadow: 0 0 0 3px rgba(214, 178, 94, 0.1);
+}
+
+.btn-search {
+  padding: 10px 15px;
+  background: #d6b25e;
+  border: none;
+  border-radius: 8px;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-search:hover {
+  background: #e6c36e;
+}
+
+/* ============================================ */
+/* EMPTY STATE */
+/* ============================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  border: 2px dashed #333;
+}
+
+.empty-state i {
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  color: #f1f1f1;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #888;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+/* ============================================ */
+/* PAGE HEADER */
+/* ============================================ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #333;
+}
+
+.page-title-section h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #f1f1f1;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.page-title-section h1 i {
+  color: #d6b25e;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #888;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ============================================ */
+/* BOTTONI */
+/* ============================================ */
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: #d6b25e;
+  color: #1a1a1a;
+}
+
+.btn-primary:hover {
+  background: #e6c36e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(214, 178, 94, 0.4);
+}
+
+.btn-secondary {
+  background: #333;
+  color: #f1f1f1;
+}
+
+.btn-secondary:hover {
+  background: #444;
+}
+
+.btn-danger {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #ff5252;
+}
+
+.btn-sm {
+  padding: 8px 15px;
+  font-size: 13px;
+}
+
+.btn-xs {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.btn-info {
+  background: #7aa2ff;
+  color: #fff;
+}
+
+.btn-info:hover {
+  background: #6a92ef;
+}
+
+/* ============================================ */
+/* NAVBAR */
+/* ============================================ */
+
+.admin-nav {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+  border-bottom: 2px solid #333;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+}
+
+.nav-brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: #d6b25e;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: color 0.3s ease;
+}
+
+.nav-brand:hover {
+  color: #e6c36e;
+}
+
+.nav-brand i {
+  font-size: 24px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.nav-links a {
+  padding: 10px 18px;
+  color: #888;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-links a:hover {
+  background: rgba(214, 178, 94, 0.1);
+  color: #d6b25e;
+}
+
+.nav-links a.active {
+  background: #d6b25e;
+  color: #1a1a1a;
+}
+
+.nav-link-external {
+  border-left: 1px solid #333;
+  margin-left: 10px;
+  padding-left: 20px;
+}
+
+.btn-logout {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  margin-left: 10px;
+}
+
+.btn-logout:hover {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+/* ============================================ */
+/* RESPONSIVE */
+/* ============================================ */
+
+@media (max-width: 1024px) {
+  .concerts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-buttons {
+    width: 100%;
+  }
+  
+  .search-form {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .concerts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .header-actions {
+    width: 100%;
+  }
+  
+  .header-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .nav-container {
+    flex-direction: column;
+    height: auto;
+    padding: 15px 20px;
+    gap: 15px;
+  }
+  
+  .nav-links {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .nav-links a {
+    flex: 1;
+    min-width: fit-content;
+    justify-content: center;
+  }
+  
+  .filter-buttons {
+    flex-wrap: wrap;
+  }
+  
+  .filter-btn {
+    flex: 1;
+    min-width: fit-content;
+    justify-content: center;
+  }
+}
+
+/* ============================================ */
+/* ANIMAZIONI */
+/* ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.concert-card {
+  animation: fadeIn 0.5s ease;
+}
+
+/* ============================================ */
+/* TOAST NOTIFICATIONS */
+/* ============================================ */
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 15px 25px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  z-index: 10000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.toast-success {
+  background: #52d273;
+}
+
+.toast-error {
+  background: #ff6b6b;
+}
+
+.toast-info {
+  background: #7aa2ff;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+}
+
+/* ============================================ */
+/* LOADING STATE */
+/* ============================================ */
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #333;
+  border-top-color: #d6b25e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================ */
+/* UTILITY CLASSES */
+/* ============================================ */
+
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: #888;
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 10px; }
+.mb-2 { margin-bottom: 20px; }
+.mb-3 { margin-bottom: 30px; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 10px; }
+.mt-2 { margin-top: 20px; }
+.mt-3 { margin-top: 30px; }
+
+.hidden {
+  display: none;
+}
+/* Aggiungi in concerts-admin.css */
+
+.program-selection {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.works-checklist {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.work-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s;
+}
+
+.work-item:hover {
+  background: #f0f0f0;
+}
+
+.work-item label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.work-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.work-item .composer {
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 150px;
+}
+
+.work-item .title {
+  flex: 1;
+  color: #34495e;
+}
+
+.work-item .catalogue {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.help-text {
+  display: block;
+  margin-top: 10px;
+  color: #6c757d;
+  font-style: italic;
+}

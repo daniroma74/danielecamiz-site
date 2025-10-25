@@ -1,0 +1,212 @@
+<!-- FIX #10, #11: Footer fisso con contenuti diversi e copyright -->
+<footer class="site-footer-fixed">
+  <div class="footer-container">
+    <!-- Quick Links -->
+    <div class="footer-section">
+      <h4 class="footer-title">Collegamenti</h4>
+      <div class="footer-links">
+        <a href="/stagione/<%= ui?.code || '2025-26' %>">Calendario</a>
+        <a href="/next">Prossimo Evento</a>
+        <a href="https://danielecamiz.com" target="_blank">Daniele Camiz</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/cookies">Cookie</a>
+      </div>
+    </div>
+    
+    <!-- Social -->
+    <div class="footer-section">
+      <h4 class="footer-title">Seguici</h4>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/iconcertineltempio/" target="_blank" aria-label="Facebook">
+          <span class="social-icon">📘</span>
+        </a>
+        <a href="https://www.instagram.com/danielecamiz/" target="_blank" aria-label="Instagram">
+          <span class="social-icon">📷</span>
+        </a>
+        <a href="https://www.youtube.com/@DanieleCamiz" target="_blank" aria-label="YouTube">
+          <span class="social-icon">📺</span>
+        </a>
+        <a href="mailto:iconcertineltempio@gmail.com" aria-label="Email">
+          <span class="social-icon">✉️</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Info -->
+    <div class="footer-section">
+      <h4 class="footer-title">ICNT</h4>
+      <p class="footer-info">
+        I Concerti nel Tempio<br>
+        Chiesa Valdese<br>
+        Piazza Cavour 32, Roma
+      </p>
+    </div>
+    
+    <!-- QR Code -->
+    <div class="footer-section">
+      <h4 class="footer-title">Condividi</h4>
+      <div class="footer-qr">
+        <img src="/q.svg" alt="QR Code" width="80" height="80">
+        <small>icnt.danielecamiz.com</small>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Copyright Bar -->
+  <div class="footer-bottom">
+    <div class="footer-copyright">
+      <p>© <%= new Date().getFullYear() %> ICNT - I Concerti nel Tempio. Tutti i diritti riservati.</p>
+      <p>Realizzato con ❤️ da <a href="https://danielecamiz.com" target="_blank">Daniele Camiz</a></p>
+    </div>
+  </div>
+</footer>
+
+<style>
+/* Footer Fisso Moderno */
+.site-footer-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(5, 5, 6, 0.95) 0%, rgba(10, 10, 12, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 50;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.footer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-gold);
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent-gold);
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-icon {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.footer-social a:hover .social-icon {
+  transform: translateY(-3px);
+}
+
+.footer-info {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.footer-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-qr img {
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.footer-qr small {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.footer-bottom {
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.75rem 2rem;
+}
+
+.footer-copyright {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-copyright p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.footer-copyright a {
+  color: var(--accent-gold);
+  text-decoration: none;
+}
+
+.footer-copyright a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Footer */
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .footer-copyright {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .site-footer-fixed {
+    position: relative;
+  }
+}
+
+/* Adjust main content for fixed footer */
+body {
+  padding-bottom: var(--footer-height, 120px);
+}
+</style>

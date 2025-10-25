@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Orchestra ICNT · Portale</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo-dot"></div>
+        <div>
+          <div class="site-title">Orchestra ICNT · Portale</div>
+          <div class="site-sub">solo orchestrali — dati protetti</div>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="#/" data-route>Home</a>
+        <a href="#/me" data-route>I miei concerti</a>
+        <a href="#/parti" data-route>Le mie parti</a>
+        <a href="/admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+  <main id="app"></main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>ICNT — Portale interno</div>
+      <div class="muted">v1.4</div>
+    </div>
+  </footer>
+
+  <div id="gate" class="gate hidden">
+    <div class="gate-card">
+      <h2>Accesso orchestrali</h2>
+      <p class="muted">Usa <b>la stessa email</b> del Google Form.<br/>Codice condiviso: <code id="code-hint">icnt2025</code></p>
+      <input id="email" type="email" placeholder="tua@email" />
+      <input id="code" type="password" placeholder="codice (es. icnt2025)" />
+      <button id="login" class="btn">Entra</button>
+      <p id="err" class="error"></p>
+      <p class="small muted">Problemi? Controlla di aver usato l'email inserita nel Form.</p>
+    </div>
+  </div>
+</body>
+</html>

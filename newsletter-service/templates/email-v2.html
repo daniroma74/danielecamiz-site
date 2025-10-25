@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{SUBJECT}}</title>
+  <style>
+    /* Reset */
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { border-collapse: collapse; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+    
+    /* Base */
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100% !important;
+      min-width: 100%;
+      background-color: #0b0b0b;
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Container */
+    .wrapper {
+      width: 100%;
+      background-color: #0b0b0b;
+      padding: 40px 0;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #121212;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      margin: 0;
+      color: #ffffff;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+    
+    .header p {
+      margin: 10px 0 0 0;
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+    }
+    
+    /* Content */
+    .content {
+      padding: 40px 30px;
+      color: #f1f1f1;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    
+    .content h2 {
+      color: #d6b25e;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px;
+      margin: 30px 0 15px;
+      font-weight: 400;
+    }
+    
+    .content h3 {
+      color: #d6b25e;
+      font-size: 22px;
+      margin: 20px 0 10px;
+    }
+    
+    .content p {
+      margin: 0 0 20px;
+      color: #f1f1f1;
+    }
+    
+    .content a {
+      color: #d6b25e;
+      text-decoration: underline;
+    }
+    
+    .content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    
+    /* Button */
+    .btn-wrapper {
+      text-align: center;
+      margin: 30px 0;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 15px 40px;
+      background: #d6b25e;
+      color: #0b0b0b !important;
+      text-decoration: none;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    
+    /* Event block */
+    .event-block {
+      background: #1a1a1a;
+      border-left: 4px solid #d6b25e;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    
+    .event-block h3 {
+      color: #d6b25e;
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+    
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: #2a2a2a;
+      margin: 30px 0;
+    }
+    
+    /* Signature */
+    .signature {
+      padding: 30px;
+      background: #1a1a1a;
+      border-top: 2px solid #2a2a2a;
+    }
+    
+    .signature h4 {
+      margin: 0 0 10px 0;
+      color: #d6b25e;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .signature p {
+      margin: 5px 0;
+      color: #b8b8b8;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .signature a {
+      color: #d6b25e;
+      text-decoration: none;
+    }
+    
+    /* Footer */
+    .footer {
+      padding: 30px 20px;
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      border-top: 1px solid #2a2a2a;
+    }
+    
+    .footer p {
+      margin: 8px 0;
+    }
+    
+    .footer a {
+      color: #d6b25e;
+      text-decoration: none;
+    }
+    
+    .manage-btn {
+      display: inline-block;
+      margin: 15px 0;
+      padding: 12px 28px;
+      background: #667eea;
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    /* Mobile */
+    @media only screen and (max-width: 600px) {
+      .container { width: 100% !important; border-radius: 0; }
+      .content { padding: 30px 20px; }
+      .header { padding: 30px 20px; }
+      .signature { padding: 20px; }
+      .footer { padding: 20px; }
+      .header h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Preheader nascosto -->
+  {{PREHEADER}}
+  
+  <div class="wrapper">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>ICNT - I Concerti nel Tempio</h1>
+        <p></p>
+      </div>
+      
+      <!-- Contenuto principale -->
+      <div class="content">
+        {{CONTENT}}
+      </div>
+      
+      <!-- Firma associazione -->
+      <div class="signature">
+        <h4>ICNT - I Concerti nel Tempio</h4>
+        <p>
+          Associazione Culturale<br>
+          Via dei Cristofori 34, 00168 Roma (RM)<br>
+          📧 <a href="mailto:icnt@danielecamiz.com">icnt@danielecamiz.com</a> | 
+            <p>🌐 <a href="https://icnt.danielecamiz.com">icnt.danielecamiz.com</a>
+        </p>
+      </div>
+      
+      <!-- Footer legale -->
+      <div class="footer">
+        <p style="margin: 0 0 15px 0; font-size: 13px; color: #aaa;">
+          <strong>Stai ricevendo questa email perché sei iscritto alla newsletter di ICNT</strong>
+        </p>
+        
+        <a href="{{MANAGE_LINK}}" class="manage-btn">
+          Gestisci le tue preferenze
+        </a>
+        
+        <p style="margin: 20px 0 0 0; font-size: 12px; color: #777;">
+          Non vuoi più ricevere queste email?<br>
+          <a href="{{UNSUBSCRIBE_LINK}}">Cancella iscrizione</a>
+        </p>
+        
+        <div style="margin: 30px auto; width: 60%; height: 1px; background: #2a2a2a;"></div>
+        
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto; text-align: center;">
+          <tr>
+            <td style="padding: 0;">
+              <p style="margin: 0 0 8px 0; font-size: 12px; color: #888; line-height: 1.6;">
+                © {{YEAR}} ICNT - I Concerti nel Tempio<br>
+                Tutti i diritti riservati
+              </p>
+              <p style="margin: 0 0 12px 0; font-size: 11px; color: #666;">
+                <strong>C.F.</strong> 97982090587 | <strong>P.IVA</strong> 15010831004
+              </p>
+              <p style="margin: 0 0 12px 0; font-size: 11px; color: #666; line-height: 1.5;">
+                ICNT - Associazione Culturale<br>
+                Via dei Cristofori 34, 00168 Roma (RM)
+              </p>
+              <p style="margin: 0; font-size: 10px; color: #555;">
+                Questa email è stata inviata a <span style="color: #777;">{{EMAIL}}</span>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Pixel tracking -->
+  {{TRACKING_PIXEL}}
+</body>
+</html>

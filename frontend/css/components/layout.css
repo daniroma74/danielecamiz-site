@@ -1,0 +1,38 @@
+/* Sticky layout baseline: caricato globalmente via cssGlobal */
+html, body { height: 100%; }
+
+/* In alcuni browser mobile usare anche 100dvh può aiutare */
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1 0 auto;
+  min-height: 1px;
+}
+
+/* Evita che il footer si comprima */
+footer,
+.site-footer { flex-shrink: 0; }
+
+/* === Reservations (CSS-only, no JS) === */
+:root {
+  --navbar-h: 52px;  /* altezza barra fissa in alto (slim) */
+  --footer-h: 32px;  /* altezza una riga in basso  */
+}
+
+/* Spazio per navbar fissa (anche su responsive) + safe area iOS */
+#main_content {
+  padding-top: var(--navbar-h);
+  padding-top: max(var(--navbar-h), env(safe-area-inset-top));
+  padding-bottom: var(--footer-h);
+  padding-bottom: max(var(--footer-h), env(safe-area-inset-bottom));
+}
+
+/* Mobile/tablet: navbar leggermente più bassa */
+@media (max-width: 1024px){
+  :root { --navbar-h: 48px; }
+}

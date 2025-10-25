@@ -1,0 +1,79 @@
+[4.0K]  .
+├── [   0]  admin-hub-tree-2025-09-20.txt
+├── [4.0K]  config
+│   ├── [ 12K]  database.js
+│   └── [5.1K]  modules.json
+├── [4.0K]  controllers
+│   ├── [ 12K]  authController.js
+│   ├── [9.5K]  dashboardController.js
+│   ├── [   0]  modulesController.js
+│   └── [   0]  settingsController.js
+├── [4.0K]  database
+├── [   0]  ecosystem.config.cjs
+├── [1.5K]  .env
+├── [4.0K]  logs
+├── [4.0K]  middleware
+│   ├── [8.7K]  auth.js
+│   ├── [2.4K]  rateLimits.js
+│   ├── [3.2K]  security.js
+│   └── [1.8K]  session.js
+├── [1.4K]  package.json
+├── [266K]  package-lock.json
+├── [4.0K]  public
+│   ├── [4.0K]  css
+│   │   ├── [   0]  auth.css
+│   │   ├── [   0]  components.css
+│   │   ├── [   0]  dashboard.css
+│   │   └── [9.4K]  main.css
+│   ├── [4.0K]  img
+│   │   └── [4.0K]  modules
+│   └── [4.0K]  js
+│       ├── [ 10K]  app.js
+│       ├── [   0]  auth.js
+│       ├── [8.0K]  dashboard.js
+│       ├── [   0]  modules.js
+│       └── [   0]  utils.js
+├── [4.0K]  routes
+│   ├── [   0]  admin.js
+│   ├── [9.5K]  apiRoutes.js
+│   ├── [ 871]  authRoutes.js
+│   ├── [1.7K]  dashboardRoutes.js
+│   └── [9.2K]  settingRoutes.js
+├── [4.0K]  scripts
+│   ├── [ 11K]  createAdmin.js
+│   ├── [1.2K]  generateSecrets.js
+│   ├── [   0]  migrate.js
+│   └── [7.2K]  setup.js
+├── [9.8K]  server.js
+├── [4.0K]  services
+│   ├── [   0]  activityService.js
+│   ├── [   0]  authService.js
+│   ├── [   0]  moduleService.js
+│   ├── [   0]  tokenService.js
+│   └── [   0]  totpService.js
+└── [4.0K]  views
+    ├── [4.0K]  auth
+    │   ├── [9.7K]  login.ejs
+    │   ├── [   0]  setup2FA.ejs
+    │   └── [ 12K]  twoFactor.ejs
+    ├── [4.0K]  dashboard
+    │   ├── [   0]  activity.ejs
+    │   ├── [   0]  index.ejs
+    │   └── [   0]  modules.ejs
+    ├── [4.0K]  errors
+    │   ├── [   0]  403.ejs
+    │   ├── [3.5K]  404.ejs
+    │   ├── [2.8K]  500.ejs
+    │   └── [   0]  maintenance.ejs
+    ├── [4.0K]  partials
+    │   ├── [   0]  footer.ejs
+    │   ├── [   0]  header.ejs
+    │   ├── [   0]  notifications.ejs
+    │   └── [   0]  sidebar.ejs
+    └── [4.0K]  settings
+        ├── [   0]  index.ejs
+        ├── [   0]  profile.ejs
+        ├── [   0]  security.ejs
+        └── [   0]  users.ejs
+
+20 directories, 57 files

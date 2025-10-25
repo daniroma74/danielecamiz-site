@@ -1,0 +1,36 @@
+{
+    "id": "2025-09-27-concerto-d-autunno-roma",
+    "slug": "2025-09-27-concerto-d-autunno-roma",
+    "title": { "it": "Concerto d’Autunno", "en": "Autumn Concert" },
+    "subtitle": { "it": "Orchestra ICNT", "en": "ICNT Orchestra" },
+    "poster": {
+      "url": "/img/posters/concerto-d-autunno2024.jpg",
+      "alt": { "it": "Locandina Concerto d’Autunno", "en": "Autumn Concert Poster" }
+    },
+    "datetime": "2025-09-27T19:00:00+02:00",
+    "end_datetime": "2025-09-27T20:30:00+02:00",
+    "location": {
+      "name": "Chiesa Valdese di Piazza Cavour",
+      "address": "Piazza Cavour 32, 00193 Roma RM, Italia"
+    },
+    "description_html": {
+      "it": "<p>Concerto d’esempio per la landing v1. Prenotazione gratuita.</p>",
+      "en": "<p>Example concert for landing v1. Free reservation.</p>"
+    },
+    "description_plain": {
+      "it": "Concerto d’esempio per la landing v1. Prenotazione gratuita.",
+      "en": "Example concert for landing v1. Free reservation."
+    },
+    "program": {
+      "it": ["Brano I", "Brano II", "Brano III"],
+      "en": ["Piece I", "Piece II", "Piece III"]
+    },
+    "tickets": [
+      { "type": "free", "label": { "it": "Posto gratuito", "en": "Free seat" }, "maxQty": 4 }
+    ],
+    "capacity": 200,
+    "holdback": 10,
+    "waitlist": true,
+    "stats": { "reserved": 0 }
+  }
+  

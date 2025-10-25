@@ -1,0 +1,554 @@
+.
+├── _archive
+│   └── landing-newsletter-legacy
+│       └── 2025-09-07
+│           ├── cms
+│           │   ├── landingMount.js
+│           │   ├── models
+│           │   │   └── landingRepo.js
+│           │   ├── public
+│           │   │   └── admin
+│           │   │       └── js
+│           │   │           └── events
+│           │   │               ├── event-assignments.js
+│           │   │               ├── event-attendance.js
+│           │   │               ├── event-landing.js
+│           │   │               ├── event-lineup.js
+│           │   │               ├── event-poster.js
+│           │   │               ├── event-program.js
+│           │   │               └── events-list.js
+│           │   ├── routes
+│           │   │   ├── admin
+│           │   │   │   └── eventsRoutes.js
+│           │   │   ├── bookingsRoutes.js
+│           │   │   ├── concertoAutunno.js
+│           │   │   ├── eventsRoutes.js
+│           │   │   └── newsletterRoutes.js
+│           │   └── views
+│           │       └── pages
+│           │           ├── admin
+│           │           │   └── events
+│           │           │       ├── edit.ejs
+│           │           │       ├── index.ejs
+│           │           │       └── new.ejs
+│           │           └── frontend
+│           │               └── event.ejs
+│           └── frontend
+│               └── js
+│                   └── event.js
+├── backups
+├── config
+│   ├── 2fa-secret.json
+│   ├── maintenance.json
+│   └── redirects.json
+├── controllers
+│   ├── admin
+│   │   ├── eventsController.js
+│   │   └── newsController.js
+│   ├── bioController.js
+│   ├── concertsController.js
+│   ├── contactController.js
+│   ├── eventsController.js
+│   ├── galleryController.js
+│   ├── homeController.js
+│   ├── newsController.js
+│   ├── newsletterController.js
+│   ├── pressController.js
+│   ├── repertoireController.js
+│   ├── sitemapController.js
+│   └── videoController.js
+├── data
+│   ├── assets
+│   │   └── pages.json
+│   ├── backup
+│   │   ├── audit
+│   │   │   ├── 2025-08-17T16-21-35-279Z__demo_audit.json
+│   │   │   ├── 2025-08-17T16-23-29-996Z__news_create.json
+│   │   │   ├── 2025-08-17T16-23-45-660Z__news_update.json
+│   │   │   ├── 2025-08-17T16-23-45-664Z__news_publish.json
+│   │   │   ├── 2025-08-17T16-30-42-745Z__news_update.json
+│   │   │   ├── 2025-08-17T16-30-42-746Z__news_depublish.json
+│   │   │   ├── 2025-08-17T17-07-17-367Z__news_update.json
+│   │   │   ├── 2025-08-17T17-07-17-369Z__news_publish.json
+│   │   │   ├── 2025-08-17T17-28-24-529Z__news_update.json
+│   │   │   ├── 2025-08-17T17-29-13-485Z__news_update.json
+│   │   │   ├── 2025-08-17T17-29-29-287Z__news_update.json
+│   │   │   ├── 2025-08-17T17-29-29-289Z__news_depublish.json
+│   │   │   ├── 2025-08-17T17-37-17-048Z__news_update.json
+│   │   │   ├── 2025-08-17T17-37-53-616Z__news_update.json
+│   │   │   ├── 2025-08-17T17-38-08-643Z__news_update.json
+│   │   │   ├── 2025-08-17T17-38-08-644Z__news_publish.json
+│   │   │   ├── 2025-08-17T17-38-15-574Z__news_update.json
+│   │   │   ├── 2025-08-17T17-38-15-575Z__news_depublish.json
+│   │   │   ├── 2025-08-17T17-39-24-651Z__news_update.json
+│   │   │   ├── 2025-08-17T17-39-35-515Z__news_update.json
+│   │   │   ├── 2025-08-17T17-39-35-518Z__news_publish.json
+│   │   │   ├── 2025-08-17T17-50-32-575Z__news_update.json
+│   │   │   ├── 2025-08-17T17-50-44-873Z__news_update.json
+│   │   │   ├── 2025-08-17T17-51-18-866Z__news_update.json
+│   │   │   ├── 2025-08-17T17-51-21-869Z__news_update.json
+│   │   │   ├── 2025-08-17T17-51-34-364Z__news_update.json
+│   │   │   ├── 2025-08-17T17-51-38-949Z__news_update.json
+│   │   │   ├── 2025-08-18T09-27-32-413Z__demo_audit.json
+│   │   │   ├── 2025-08-18T09-27-48-779Z__news_create.json
+│   │   │   ├── 2025-08-18T09-27-48-779Z__news_duplicate.json
+│   │   │   ├── 2025-08-18T09-27-52-288Z__news_update.json
+│   │   │   ├── 2025-08-18T09-27-52-291Z__news_publish.json
+│   │   │   ├── 2025-08-18T12-52-57-747Z__news_update.json
+│   │   │   ├── 2025-08-18T13-07-57-083Z__news_update.json
+│   │   │   ├── 2025-08-18T13-08-42-058Z__news_update.json
+│   │   │   ├── 2025-08-18T13-08-42-060Z__news_depublish.json
+│   │   │   ├── 2025-08-18T13-09-12-840Z__news_update.json
+│   │   │   ├── 2025-08-18T13-09-12-841Z__news_publish.json
+│   │   │   ├── 2025-08-18T13-24-24-540Z__news_update.json
+│   │   │   ├── 2025-08-18T13-24-39-582Z__news_update.json
+│   │   │   ├── 2025-08-18T13-25-59-041Z__news_update.json
+│   │   │   ├── 2025-08-18T13-25-59-043Z__news_depublish.json
+│   │   │   ├── 2025-08-18T13-26-03-675Z__news_update.json
+│   │   │   ├── 2025-08-18T13-26-05-079Z__news_update.json
+│   │   │   ├── 2025-08-18T13-26-05-082Z__news_publish.json
+│   │   │   ├── 2025-08-18T13-34-35-794Z__news_update.json
+│   │   │   ├── 2025-08-18T13-37-16-307Z__news_update.json
+│   │   │   ├── 2025-08-18T13-37-16-309Z__news_depublish.json
+│   │   │   ├── 2025-08-18T13-37-22-891Z__news_update.json
+│   │   │   ├── 2025-08-18T13-37-24-022Z__news_update.json
+│   │   │   ├── 2025-08-18T13-37-24-026Z__news_publish.json
+│   │   │   ├── 2025-08-18T13-37-35-428Z__news_update.json
+│   │   │   ├── 2025-08-18T13-37-35-431Z__news_depublish.json
+│   │   │   ├── 2025-08-18T13-37-37-433Z__news_update.json
+│   │   │   ├── 2025-08-18T13-37-38-977Z__news_update.json
+│   │   │   ├── 2025-08-18T13-37-38-980Z__news_publish.json
+│   │   │   ├── 2025-08-18T13-37-40-136Z__news_update.json
+│   │   │   ├── 2025-08-18T13-42-48-014Z__news_update.json
+│   │   │   ├── 2025-08-18T13-42-48-017Z__news_depublish.json
+│   │   │   ├── 2025-08-18T13-42-50-554Z__news_update.json
+│   │   │   ├── 2025-08-18T13-42-57-049Z__news_update.json
+│   │   │   ├── 2025-08-18T13-42-57-051Z__news_depublish.json
+│   │   │   ├── 2025-08-18T13-43-30-583Z__news_update.json
+│   │   │   ├── 2025-08-18T13-43-31-911Z__news_update.json
+│   │   │   ├── 2025-08-18T13-43-31-913Z__news_publish.json
+│   │   │   ├── 2025-08-18T13-43-33-116Z__news_update.json
+│   │   │   ├── 2025-08-18T14-17-13-006Z__news_update.json
+│   │   │   ├── 2025-08-18T14-17-13-011Z__news_publish.json
+│   │   │   ├── 2025-08-18T14-17-28-654Z__news_update.json
+│   │   │   ├── 2025-08-19T19-48-56-339Z__news_create.json
+│   │   │   ├── 2025-08-19T19-49-46-758Z__news_update.json
+│   │   │   ├── 2025-08-19T19-51-41-768Z__news_update.json
+│   │   │   ├── 2025-08-19T19-51-45-880Z__news_publish.json
+│   │   │   ├── 2025-08-19T19-51-45-880Z__news_update.json
+│   │   │   ├── 2025-08-19T19-57-45-028Z__news_update.json
+│   │   │   ├── 2025-08-19T19-58-17-820Z__news_update.json
+│   │   │   ├── 2025-08-19T20-26-33-831Z__news_update.json
+│   │   │   ├── 2025-08-19T20-55-36-686Z__news_update.json
+│   │   │   ├── 2025-08-19T21-05-03-707Z__news_depublish.json
+│   │   │   ├── 2025-08-19T21-05-03-707Z__news_update.json
+│   │   │   ├── 2025-08-19T21-05-25-760Z__news_update.json
+│   │   │   ├── 2025-08-19T21-11-24-869Z__news_update.json
+│   │   │   ├── 2025-08-19T21-11-35-747Z__news_update.json
+│   │   │   ├── 2025-08-19T21-18-58-688Z__news_update.json
+│   │   │   ├── 2025-08-19T21-19-04-908Z__news_update.json
+│   │   │   ├── 2025-08-19T21-24-10-939Z__news_update.json
+│   │   │   ├── 2025-08-19T21-25-21-662Z__news_update.json
+│   │   │   ├── 2025-08-19T21-34-26-117Z__news_update.json
+│   │   │   ├── 2025-08-19T22-22-02-735Z__news_update.json
+│   │   │   ├── 2025-08-19T22-44-28-633Z__news_update.json
+│   │   │   ├── 2025-08-19T23-39-53-861Z__news_update.json
+│   │   │   ├── newsletter
+│   │   │   │   └── sub-2025-08-18T00-15-40-475Z-0c56d90b-12ab-4d83-a4b4-c2b193deaae9.json
+│   │   │   └── social-202508.jsonl
+│   │   ├── concerti-2025-08-04T10-42-12-779Z.json
+│   │   ├── concerti-2025-08-04T10-43-39-803Z.json
+│   │   ├── concerti-2025-08-04T10-44-36-311Z.json
+│   │   ├── concerti-2025-08-04T10-45-13-725Z.json
+│   │   ├── concerti-2025-08-04T10-45-46-260Z.json
+│   │   ├── concerti-2025-08-04T10-58-43-110Z.json
+│   │   ├── concerti-2025-08-04T10-59-11-628Z.json
+│   │   ├── concerti-2025-08-04T11-22-40-980Z.json
+│   │   ├── concerti-2025-08-04T11-26-03-011Z.json
+│   │   ├── concerti-2025-08-04T12-35-19-681Z.json
+│   │   ├── concerti-2025-08-04T12-38-04-000Z.json
+│   │   ├── concerti-2025-08-04T12-38-09-960Z.json
+│   │   ├── concerti-2025-08-04T12-38-12-944Z.json
+│   │   ├── concerti-2025-08-04T12-43-29-842Z.json
+│   │   ├── concerti-2025-08-04T12-48-55-638Z.json
+│   │   ├── concerti-2025-08-04T13-40-58-194Z.json
+│   │   ├── concerti-2025-08-04T13-42-06-017Z.json
+│   │   ├── concerti-2025-08-04T13-42-15-258Z.json
+│   │   ├── concerti-2025-08-04T13-42-31-468Z.json
+│   │   ├── concerti-2025-08-04T13-42-32-781Z.json
+│   │   ├── concertsc-2025-08-05T20-53-38-792Z.json
+│   │   ├── concertsc-2025-08-05T20-54-32-131Z.json
+│   │   ├── concertsc-2025-08-05T21-13-41-878Z.json
+│   │   ├── concertsc-2025-08-05T22-48-12-294Z.json
+│   │   ├── concertsc-2025-08-06T12-22-22-560Z.json
+│   │   ├── database-iniziale.sqlite
+│   │   ├── galleria-1746915345598.json
+│   │   ├── galleria-1746915862373.json
+│   │   ├── galleria-1746915991120.json
+│   │   ├── galleria-1746916147595.json
+│   │   ├── galleria-1747005207689.json
+│   │   ├── galleria-1747005387018.json
+│   │   ├── galleria-1747005590826.json
+│   │   ├── galleria-1747005612427.json
+│   │   ├── galleria-1747005627185.json
+│   │   ├── galleria-1747006768485.json
+│   │   ├── galleria-1747006958616.json
+│   │   ├── galleria-1747006965969.json
+│   │   ├── galleria-1747009056323.json
+│   │   ├── galleria-2025-05-10T13-22-54-764Z.json
+│   │   ├── galleria-2025-05-10T13-24-55-483Z.json
+│   │   ├── galleria-2025-05-10T21-14-40-660Z.json
+│   │   ├── galleria-2025-05-10T21-15-56-545Z.json
+│   │   ├── galleria-2025-05-10T21-15-59-148Z.json
+│   │   ├── galleria-2025-05-10T21-37-01-427Z.json
+│   │   ├── galleria-2025-05-10T21-52-46-121Z.json
+│   │   ├── news-2025-06-15T23-05-15-563Z.json
+│   │   └── partecipanti.json.bak
+│   ├── certificates
+│   │   ├── comuni.json
+│   │   └── partecipanti.json
+│   ├── events
+│   │   ├── concerto-autunno-2025.json
+│   │   └── template-event.json
+│   ├── i18n
+│   │   ├── bandcamp-en.json
+│   │   ├── bandcamp-it.json
+│   │   ├── bio-en.json
+│   │   ├── bio-it.json
+│   │   ├── concerts-en.json
+│   │   ├── concerts-it.json
+│   │   ├── contact-en.json
+│   │   ├── contact-it.json
+│   │   ├── gallery-en.json
+│   │   ├── gallery-it.json
+│   │   ├── home-en.json
+│   │   ├── home-it.json
+│   │   ├── labels-bio-en.json
+│   │   ├── labels-bio-it.json
+│   │   ├── labels-concerts-en.json
+│   │   ├── labels-concerts-it.json
+│   │   ├── labels-contact-en.json
+│   │   ├── labels-contact-it.json
+│   │   ├── labels-gallery-en.json
+│   │   ├── labels-gallery-it.json
+│   │   ├── labels-global-en.json
+│   │   ├── labels-global-it.json
+│   │   ├── labels-home-en.json
+│   │   ├── labels-home-it.json
+│   │   ├── labels-meta-en.json
+│   │   ├── labels-meta-it.json
+│   │   ├── labels-news-en.json
+│   │   ├── labels-news-it.json
+│   │   ├── labels-press-en.json
+│   │   ├── labels-press-it.json
+│   │   ├── labels-repertoire-en.json
+│   │   ├── labels-repertoire-it.json
+│   │   ├── labels-video-en.json
+│   │   ├── labels-video-it.json
+│   │   ├── press-en.json
+│   │   ├── press-it.json
+│   │   ├── privacy-en.json
+│   │   ├── privacy-it.json
+│   │   ├── terms-en.json
+│   │   └── terms-it.json
+│   ├── import
+│   │   ├── cleaned_mailchimp.csv
+│   │   ├── subscribed_mailchimp.csv
+│   │   └── unsubscribed_mailchimp.csv
+│   ├── legacy
+│   │   ├── concerts.json
+│   │   ├── repertoire-composers-index.json
+│   │   ├── repertoire.json
+│   │   └── repertoire-structured-expanded.json
+│   └── news
+│       ├── categories.json
+│       └── posts.json
+├── db
+│   ├── _archive
+│   │   └── 2025-08-14-2224.tar.gz
+│   ├── exports
+│   ├── main-backup-2025-09-04-1208.sqlite
+│   ├── main-backup-2025-09-04-1215.sqlite
+│   ├── main.sqlite
+│   ├── main.sqlite.backup-20250915-191338
+│   ├── main.sqlite-shm
+│   ├── main.sqlite-wal
+│   ├── migrations
+│   │   ├── 009_media_base.sql
+│   │   ├── 010_media_v2.sql
+│   │   ├── 011b_ensemble_members.sql
+│   │   ├── 011_lineup.sql
+│   │   ├── 012_attendance.sql
+│   │   ├── 013_press.sql
+│   │   ├── 014_videos.sql
+│   │   ├── 015_mailing.sql
+│   │   ├── 016_concerts_slug.sql
+│   │   ├── 017_repertory.sql
+│   │   ├── 018_indexes.sql
+│   │   ├── 019_rehearsals.sql
+│   │   ├── 020_schema_migrations.sql
+│   │   ├── 021_instruments.sql
+│   │   ├── 022_event_assignements.sql
+│   │   ├── 023_rehearsals_extras.sql
+│   │   ├── 024_entity_media_links.sql
+│   │   ├── 025_media_tags.sql
+│   │   ├── 026_seed_instruments.sql
+│   │   ├── 027_seed_ensemble_icnt.sql
+│   │   ├── 028_seed_sample_artists.sql
+│   │   ├── 029_extend_ensemble_members.sql
+│   │   ├── 031_event_landing.sql
+│   │   ├── 032_bookings.sql
+│   │   └── 20250926_add_concert_time.sql
+│   ├── patches
+│   └── schema
+│       ├── bookings.sql
+│       └── main.sql
+├── .DS_Store
+├── .env
+├── middleware
+│   ├── contentLoader.js
+│   ├── ensureAuthenticated.js
+│   └── maintenanceMiddleware.js
+├── models
+│   ├── assignmentsRepo.js
+│   ├── attendanceRepo.js
+│   ├── concertsRepo.js
+│   ├── landingRepo.js
+│   ├── lineupRepo.js
+│   ├── mediaRepo.js
+│   └── programRepo.js
+├── package.json
+├── package-lock.json
+├── public
+│   └── admin
+│       ├── assets
+│       │   ├── fonts
+│       │   │   ├── SourceSerif4-Bold.ttf
+│       │   │   ├── SourceSerif4-Italic.ttf
+│       │   │   └── SourceSerif4-Regular.ttf
+│       │   └── img
+│       │       ├── blocco_firma.png
+│       │       └── logo_icnt.png
+│       ├── css
+│       │   ├── forms.css
+│       │   ├── layout.css
+│       │   ├── modal.css
+│       │   ├── table.css
+│       │   └── toast.css
+│       └── js
+│           ├── admin-certificati-cf-generator.js
+│           ├── admin-concerti.js
+│           ├── admin-contatti.js
+│           ├── admin-galleria.js
+│           ├── admin-maintenance.js
+│           ├── admin-video.js
+│           ├── core
+│           │   ├── confirm.js
+│           │   ├── dom.js
+│           │   ├── forms.js
+│           │   ├── http.js
+│           │   ├── modal.js
+│           │   └── toast.js
+│           └── news
+│               ├── edit.js
+│               └── list.js
+├── README_dev.md
+├── routes
+│   ├── admin
+│   │   ├── newsCategoryRoutes.js
+│   │   ├── newsRoutes.js
+│   │   └── socialRoutes.js
+│   ├── admin.js
+│   ├── admin-repertorioRoutes.js
+│   ├── admin-videoRoutes.js
+│   ├── api
+│   │   ├── attendanceRoutes.js
+│   │   ├── index.js
+│   │   └── lineupRoutes.js
+│   ├── authRoutes.js
+│   ├── bioRoutes.js
+│   ├── certificatiRoutes.js
+│   ├── certificatiUtils.js
+│   ├── concertsRoutes.js
+│   ├── contactRoutes.js
+│   ├── galleryRoutes.js
+│   ├── health.js
+│   ├── homeRoutes.js
+│   ├── langRoutes.js
+│   ├── maintenanceRoutes.js
+│   ├── newsRoutes.js
+│   ├── pressRoutes.js
+│   ├── privacyRoutes.js
+│   ├── redirects.js
+│   ├── repertoireRoutes.js
+│   ├── sitemapRoutes.js
+│   ├── termsRoutes.js
+│   ├── uploadRoutes.js
+│   └── videoRoutes.js
+├── scripts
+│   ├── archive-landing-newsletter.mjs
+│   ├── cleanupBackups.mjs
+│   ├── convertConcerti.js
+│   ├── genAssetsManifest.mjs
+│   ├── generate-2fa-secret.js
+│   ├── hash-password.js
+│   ├── importa_concerti.mjs
+│   ├── import_contacts_from_mailchimp_csv.js
+│   ├── migrate_legacy_personnel.js
+│   ├── restore_backup.mjs
+│   └── restore_concerti_json.mjs
+├── server.js
+├── server.log
+├── services
+│   └── social
+│       ├── facebook.js
+│       ├── index.js
+│       ├── linkedin.js
+│       └── threads.js
+├── struttura-cartelle-reale.md
+├── struttura-cartelle.txt
+├── struttura-views.txt
+├── SYNC_TEST.txt
+├── templateServer.js
+├── templateServer.js.bak.2025-09-14-1230
+├── templateServer.js.bak.2025-09-14-1306
+├── tools
+│   └── _archive
+│       ├── 2025-08-14-2224-dedupe_composers.py
+│       └── 2025-08-14-2224-migrate_unified.py
+├── uploads
+│   ├── certificates
+│   │   ├── alessandro_paolini_certificato_annuale_2024.pdf
+│   │   ├── asia_paradiso_certificato_annuale_2024.pdf
+│   │   ├── carlotta_babusci_certificato_annuale_2024.pdf
+│   │   ├── emma_santagati_certificato_annuale_2024.pdf
+│   │   ├── leonardo_camiz_mozart-symphonies-challenge-n.18_2025.pdf
+│   │   ├── manuel_chiricozzi_certificato_annuale_2024.pdf
+│   │   ├── nicolò_sirianni_certificato_annuale_2024.pdf
+│   │   └── viola luna_rodriguez russo_certificato_annuale_2024.pdf
+│   ├── gallery_covers
+│   │   ├── cover-concert.jpg
+│   │   ├── cover-official.jpg
+│   │   └── cover-rehersal.jpg
+│   ├── news_covers
+│   │   └── 2025
+│   │       ├── articolo-di-prova-n-1
+│   │       │   ├── cover.jpg
+│   │       │   └── cover.png
+│   │       ├── articolo-n-3
+│   │       │   ├── cover.jpg
+│   │       │   └── cover.png
+│   │       └── test-di-prova
+│   │           ├── cover-1024.webp
+│   │           ├── cover-1200.webp
+│   │           ├── cover-24.webp
+│   │           ├── cover-480.webp
+│   │           ├── cover-768.webp
+│   │           └── cover.jpg
+│   ├── posters_future
+│   │   └── 2025-04-21-chiesa-valdese-di-piazza-cavour-roma-concerto-di-pasquetta-2025.jpg
+│   └── posters_past
+│       ├── 2016-03-28-chiesa-valdese-di-piazza-cavour-roma-nostalgia-sguardi-moderni-verso-l-antico.jpeg
+│       ├── 2018-01-07-teatro-comunale-ramarini-monterotondo-concerto-d-inverno.jpeg
+│       ├── 2022-10-23-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-10.jpg
+│       ├── 2022-11-13-chiesa-valdese-di-piazza-cavour-roma-magisterium-2022-roma.jpeg
+│       ├── 2023-01-07-chiesa-valdese-di-piazza-cavour-roma-concerto-d-inverno-2023-roma.jpeg
+│       ├── 2023-01-07-chiesa-valdese-di-piazza-cavour-roma-concerto-d-inverno-2023-roma.jpg
+│       ├── 2023-01-15-st-paul-within-the-walls-roma-concerto-d-inverno-2023-st-paul.jpg
+│       ├── 2023-02-26-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-10.jpg
+│       ├── 2023-04-10-chiesa-valdese-di-piazza-cavour-roma-concerto-di-pasquetta-2023.jpg
+│       ├── 2023-05-14-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-11.jpg
+│       ├── 2023-09-16-chiesa-valdese-di-piazza-cavour-roma-concerto-d-autunno-2023.jpg
+│       ├── 2023-10-22-chiesa-valdese-di-piazza-cavour-roma-magisterium-2023-roma.jpeg
+│       ├── 2023-12-03-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-12.jpeg
+│       ├── 2024-01-06-chiesa-valdese-di-piazza-cavour-roma-concerto-d-inverno-2024.jpg
+│       ├── 2024-02-25-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-13.jpg
+│       ├── 2024-04-01-chiesa-valdese-di-piazza-cavour-roma-concerto-di-pasquetta-2024-i-fratelli-mendelssohn.jpg
+│       ├── 2024-05-12-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-14.jpg
+│       ├── 2024-08-08-gwanglim-jangcheon-hall-seoul-notte-di-mezza-estate-pazzi-per-la-musica.jpg
+│       ├── 2024-10-27-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-15.jpg
+│       ├── 2024-11-23-basilica-di-san-camillo-de-lellis-roma-ensemble-enarmonia.jpg
+│       ├── 2024-11-24-chiesa-di-santa-maria-in-via-roma-ensemble-enarmonia.jpg
+│       ├── 2024-11-30-auditorium-santa-maria-in-gradi-viterbo-magisterium-2024.jpg
+│       ├── 2024-12-01-chiesa-valdese-di-piazza-cavour-roma-magisterium-2024.jpg
+│       ├── 2025-01-05-chiesa-valdese-di-piazza-cavour-roma-concerto-d-inverno-2025.jpg
+│       ├── 2025-02-23-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-16.jpg
+│       ├── 2025-03-30-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-17.jpg
+│       ├── 2025-04-21-chiesa-valdese-di-piazza-cavour-roma-concerto-di-pasquetta-2025.jpg
+│       ├── 2025-05-18-chiesa-valdese-di-piazza-cavour-roma-mozart-symphonies-challenge-n-18.jpeg
+│       ├── concerto-d-autunno2024.jpg
+│       └── notte-di-mezza-estate-seoul2024.jpg
+├── utils
+│   ├── assetHelpers.js
+│   ├── auditLogger.js
+│   ├── events.js
+│   ├── mailer.js
+│   ├── mediaResolver.js
+│   ├── newsCategories.js
+│   ├── newsStore.js
+│   ├── pagination.js
+│   ├── renderPage.js
+│   ├── sqliteMain.js
+│   ├── utils.js
+│   ├── validators.js
+│   └── youtubeService.js
+└── views
+    ├── layouts
+    │   ├── base-admin.ejs
+    │   └── base-frontend.ejs
+    ├── pages
+    │   ├── admin
+    │   │   ├── admin-2fa.ejs
+    │   │   ├── admin-bio.ejs
+    │   │   ├── admin-certificati.ejs
+    │   │   ├── admin-concerti.ejs
+    │   │   ├── admin-contatti.ejs
+    │   │   ├── admin-galleria.ejs
+    │   │   ├── admin-index.ejs
+    │   │   ├── admin-login.ejs
+    │   │   ├── admin-press.ejs
+    │   │   ├── admin-repertorio.ejs
+    │   │   ├── admin-video.ejs
+    │   │   ├── dashboard.ejs
+    │   │   ├── news-edit.ejs
+    │   │   └── news-list.ejs
+    │   ├── frontend
+    │   │   ├── bio.ejs
+    │   │   ├── concerts.ejs
+    │   │   ├── contact.ejs
+    │   │   ├── gallery.ejs
+    │   │   ├── index.ejs
+    │   │   ├── maintenance.ejs
+    │   │   ├── news.ejs
+    │   │   ├── news-post.ejs
+    │   │   ├── press.ejs
+    │   │   ├── privacy.ejs
+    │   │   ├── repertoire.ejs
+    │   │   ├── terms.ejs
+    │   │   └── video.ejs
+    │   └── landing
+    │       └── concerto-autunno.ejs
+    └── partials
+        ├── admin
+        │   ├── confirm-modal.ejs
+        │   ├── footer.ejs
+        │   ├── header.ejs
+        │   ├── maintenance-global-control.ejs
+        │   ├── maintenance-page-control.ejs
+        │   ├── manutenzione-status.ejs
+        │   ├── sidebar.ejs
+        │   ├── toast.ejs
+        │   └── toolbar.ejs
+        └── frontend
+            ├── cookie-banner.ejs
+            ├── footer.ejs
+            ├── head.ejs
+            ├── hero-bio.ejs
+            ├── hero-concerts.ejs
+            ├── hero-home.ejs
+            ├── navbar.ejs
+            ├── news
+            │   └── card.ejs
+            └── news-post-fragment.ejs
+
+80 directories, 472 files

@@ -1,0 +1,10 @@
+{
+  "gallery": {
+    "title": "Photo gallery",
+    "claim": "Some photos from concerts, rehearsals and official shots.<br>If you want to take a look, here they all are",
+    "btn_return": "Back to gallery",
+    "category_concert": "Concert",
+    "category_official": "Official photos",
+    "category_rehearsal": "Rehearsal"
+  }
+}

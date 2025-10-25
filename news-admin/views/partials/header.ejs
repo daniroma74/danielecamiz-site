@@ -1,0 +1,123 @@
+<!-- news-admin/views/partials/header.ejs -->
+<header class="admin-header">
+  <div class="header-container">
+    <div class="logo">
+      <a href="/news">
+        📰 NEWS ADMIN
+      </a>
+    </div>
+    
+    <nav class="main-nav">
+      <a href="/news" class="<%= currentPath.startsWith('/news') && !currentPath.includes('/new') ? 'active' : '' %>">
+        📋 Lista News
+      </a>
+      <a href="/news/new" class="<%= currentPath.includes('/new') ? 'active' : '' %>">
+        ✍️ Nuovo
+      </a>
+    </nav>
+    
+    <div class="user-menu">
+      <% if (user) { %>
+        <span class="user-info">
+          👤 <%= user.username || user.email || 'Admin' %>
+        </span>
+        <a href="/logout" class="btn-logout">
+          🚪 Esci
+        </a>
+      <% } %>
+    </div>
+  </div>
+</header>
+
+<style>
+.admin-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.logo a {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+}
+
+.main-nav {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.main-nav a {
+  padding: 0.5rem 1rem;
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.main-nav a:hover {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.main-nav a.active {
+  background: rgba(255,255,255,0.3);
+  color: white;
+  font-weight: 600;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.btn-logout {
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+  }
+  
+  .main-nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .user-info {
+    display: none;
+  }
+}
+</style>

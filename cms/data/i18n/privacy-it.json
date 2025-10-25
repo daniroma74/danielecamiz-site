@@ -1,0 +1,21 @@
+{
+  "title": "Informativa sulla Privacy",
+  "claim": "La privacy è importante per noi.",
+  "keywords": "privacy, dati, protezione, Daniele Camiz",
+  "canonical": "https://www.danielecamiz.com/privacy",
+  "ogImage": "https://www.danielecamiz.com/img/privacy-og.jpg",
+  "intro": "La presente informativa descrive come raccogliamo, utilizziamo e proteggiamo i dati personali degli utenti del sito www.danielecamiz.com.",
+  "data_collected_title": "Dati raccolti",
+  "data_collected_list": [
+    "Dati forniti direttamente dall’utente (es. nome, email, messaggi inviati)",
+    "Dati di navigazione (cookie, indirizzi IP, log di accesso)"
+  ],
+  "purpose_title": "Finalità del trattamento",
+  "purpose_text": "I dati sono utilizzati per fornire i servizi richiesti, migliorare l’esperienza utente e inviare comunicazioni informative o promozionali previo consenso.",
+  "cookie_title": "Cookie",
+  "cookie_text": "Utilizziamo cookie tecnici e di terze parti per analisi e marketing. È possibile gestire il consenso attraverso il banner cookie presente sul sito.",
+  "rights_title": "Diritti degli utenti",
+  "rights_text": "Gli utenti possono in qualsiasi momento esercitare i diritti di accesso, rettifica, cancellazione, limitazione, opposizione e portabilità dei dati scrivendo a info@danielecamiz.com.",
+  "controller_title": "Responsabile del trattamento",
+  "controller_text": "Daniele Camiz - info@danielecamiz.com"
+}

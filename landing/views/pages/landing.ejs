@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  
+  <!-- Title -->
+  <title>ICNT - <%= event.event_title_override || event.title %></title>
+  
+  <!-- Meta Description -->
+  <meta name="description" content="<%= event.meta_description || event.description_short || event.title %>">
+  
+ <% 
+    // Determina immagine migliore per social
+    const socialImage = event.social_image_override || 
+                       event.hero_image_override || 
+                       (event.poster_cloudinary_id ? 
+                         'https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1200,h_630,q_auto/' + event.poster_cloudinary_id : 
+                         '');
+    
+    const eventUrl = `https://${event.slug}.danielecamiz.com`;
+    const eventDate = new Date(event.date);
+    const eventDateTime = `${event.date}T${event.starts_at || '20:00'}:00`;
+    
+    // Calcola date per schema.org
+    const startDate = new Date(`${event.date}T${event.starts_at || '20:00'}:00`);
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+    const startDateTime = startDate.toISOString().slice(0, -5);
+    const endDateTime = endDate.toISOString().slice(0, -5);
+    
+    const schemaImage = event.social_image_override || 
+                        event.hero_image_override || 
+                        (event.poster_cloudinary_id ? 
+                          `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1200,h_630,q_auto/${event.poster_cloudinary_id}` : 
+                          'https://icnt.danielecamiz.com/images/default-event.jpg');
+  %>
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= eventUrl %>">
+  <meta property="og:title" content="ICNT - <%= event.event_title_override || event.title %>">
+  <meta property="og:description" content="<%= event.meta_description || event.description_short || '' %>">
+  <% if (socialImage) { %>
+  <meta property="og:image" content="<%= socialImage %>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <% } %>
+  <meta property="og:site_name" content="ICNT - I Concerti Nel Tempio">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="<%= eventUrl %>">
+  <meta name="twitter:title" content="ICNT - <%= event.event_title_override || event.title %>">
+  <meta name="twitter:description" content="<%= event.meta_description || event.description_short || '' %>">
+  <% if (socialImage) { %>
+  <meta name="twitter:image" content="<%= socialImage %>">
+  <% } %>
+  <% if (socialImage) { %>
+<meta property="og:image" content="<%= socialImage %>">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="<%= event.event_title_override || event.title %>">
+<meta property="og:image:type" content="image/jpeg">
+<% } %>
+  
+  <!-- Schema.org Event Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicEvent",
+    "name": "<%= (event.event_title_override || event.title).replace(/"/g, '\\"') %>",
+    <% if (event.subtitle) { %>"description": "<%= event.subtitle.replace(/"/g, '\\"') %>",<% } %>
+    "image": "<%= schemaImage %>",
+    "startDate": "<%= startDateTime %>",
+    "endDate": "<%= endDateTime %>",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "location": {
+      "@type": "Place",
+      "name": "<%= event.location.replace(/"/g, '\\"') %>",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "<%= (event.venue_address || event.location).replace(/"/g, '\\"') %>"
+      }
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "ICNT - I Concerti Nel Tempio",
+      "url": "https://icnt.danielecamiz.com"
+    }<% 
+    const performersJson = [];
+    if (event.performers.conductor) {
+      performersJson.push(JSON.stringify({"@type": "Person", "name": event.performers.conductor}));
+    }
+    if (event.performers.orchestra) {
+      performersJson.push(JSON.stringify({"@type": "MusicGroup", "name": event.performers.orchestra}));
+    }
+    if (event.performers.soloists && event.performers.soloists.length > 0) {
+      event.performers.soloists.forEach(s => {
+        performersJson.push(JSON.stringify({"@type": "Person", "name": s.name}));
+      });
+    }
+    if (performersJson.length > 0) { %>,
+    "performer": [<%- performersJson.join(',') %>]<% } %><% if (event.venue_capacity) { %>,
+    "maximumAttendeeCapacity": <%= event.venue_capacity %><% } %>,
+    "offers": {
+      "@type": "Offer",
+      "url": "<%= eventUrl %>",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "availability": "<%= event.booking_enabled ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut' %>",
+      "validFrom": "<%= new Date().toISOString() %>"
+    }
+  }
+  </script>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- GLightbox CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+  <link rel="stylesheet" href="/public/css/landing-modern.css">
+  
+  <% if (event.custom_css) { %>
+    <style><%= event.custom_css %></style>
+  <% } %>
+</head>
+<body>
+
+<!-- Hero Section -->
+<% 
+  const showTitle = event.show_hero_title !== 0;
+  const heroImageUrl = event.hero_image_override || (event.poster_horizontal_cloudinary ? `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1920,h_1080,g_center,q_auto/${event.poster_horizontal_cloudinary}` : '');
+%>
+
+<section class="hero <%= showTitle ? '' : 'hero-fullscreen' %>" 
+         style="background-image: url('<%= heroImageUrl %>');">
+  
+  <% if (showTitle) { %>
+    <!-- MODALITÀ CON TESTO SOVRAPPOSTO -->
+    <div class="hero-overlay-dark">
+      <div class="hero-content">
+        
+        <!-- Header ICNT -->
+        <div class="icnt-header">
+          <span class="icnt-logo">ICNT</span>
+          <span class="icnt-subtitle">I Concerti Nel Tempio</span>
+        </div>
+        
+        <div class="event-badge">
+          <i class="fas fa-calendar-alt"></i>
+          <%= new Date(event.date).toLocaleDateString('it-IT', { 
+            weekday: 'long', 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric' 
+          }) %>
+        </div>
+        
+        <h1 class="hero-title"><%= event.event_title_override || event.title %></h1>
+        
+        <% if (event.subtitle) { %>
+          <p class="hero-subtitle"><%= event.subtitle %></p>
+        <% } %>
+        
+        <div class="event-details">
+          <div class="detail-item">
+            <i class="fas fa-clock"></i>
+            <span>Ore <%= event.starts_at || '20:00' %></span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span><%= event.location %></span>
+          </div>
+          <% if (event.venue_capacity) { %>
+          <div class="detail-item">
+            <i class="fas fa-chair"></i>
+            <span>Max <%= event.venue_capacity %> posti</span>
+          </div>
+          <% } %>
+        </div>
+        
+        <% if (event.show_counter) { %>
+          <div id="countdown" class="countdown">
+            <div class="countdown-item">
+              <span class="countdown-value" id="days">0</span>
+              <span class="countdown-label">Giorni</span>
+            </div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="hours">0</span>
+              <span class="countdown-label">Ore</span>
+            </div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="minutes">0</span>
+              <span class="countdown-label">Minuti</span>
+            </div>
+          </div>
+        <% } %>
+        
+        <% if (event.booking_enabled !== 0) { %>
+          <a href="#booking" class="btn-cta">
+            <i class="fas fa-ticket-alt"></i> Prenota Ora
+          </a>
+        <% } %>
+      </div>
+    </div>
+  
+  <% } else { %>
+    <!-- MODALITÀ SOLO POSTER (colori originali, niente overlay) -->
+    <div class="hero-poster-clean">
+      <% if (event.booking_enabled !== 0) { %>
+        <a href="#booking" class="btn-cta-floating">
+          <i class="fas fa-ticket-alt"></i> Prenota Ora
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+  
+</section>
+  <!-- Performers Section -->
+  <% if (event.performers.conductor || event.performers.orchestra || event.performers.soloists.length > 0) { %>
+    <section class="section performers-section">
+      <div class="container">
+        <h2 class="section-title">Interpreti</h2>
+        
+        <% 
+          const displayMode = event.performers_display_mode || 'icons';
+          const orderArray = event.performersOrder || ['conductor', 'orchestra', 'soloists'];
+          
+          let photos = {};
+          try {
+            photos = event.performers_photos ? JSON.parse(event.performers_photos) : {};
+          } catch(e) {
+            photos = {};
+          }
+        %>
+        
+        <% if (displayMode === 'minimal') { %>
+          <!-- MINIMAL: Solo lista nomi -->
+          <div class="performers-minimal">
+            <% orderArray.forEach(role => {
+              if (role === 'conductor' && event.performers.conductor) { %>
+                <div class="performer-minimal">
+                  <strong>Direttore:</strong> <%= event.performers.conductor %>
+                </div>
+              <% } else if (role === 'orchestra' && event.performers.orchestra) { %>
+                <div class="performer-minimal">
+                  <strong>Orchestra:</strong> <%= event.performers.orchestra %>
+                </div>
+              <% } else if (role === 'soloists' && event.performers.soloists.length > 0) {
+                event.performers.soloists.forEach(soloist => { %>
+                  <div class="performer-minimal">
+                    <strong><%= soloist.name %></strong>
+                    <% if (soloist.instrument) { %> - <%= soloist.instrument %><% } %>
+                  </div>
+                <% });
+              }
+            }); %>
+          </div>
+          
+        <% } else if (displayMode === 'cards') { %>
+          <!-- CARDS: Espanse con foto/icone -->
+          <div class="performers-cards">
+            <% 
+              let soloistIndex = 0;
+              orderArray.forEach(role => {
+                if (role === 'conductor' && event.performers.conductor) { 
+                  const photoUrl = photos['conductor'];
+            %>
+                <div class="performer-card-expanded">
+                  <div class="performer-card-header">
+                    <% if (photoUrl) { %>
+                      <div class="performer-photo-circle">
+                        <img src="<%= photoUrl %>" alt="Direttore">
+                      </div>
+                    <% } else { %>
+                      <i class="fas fa-user-tie"></i>
+                    <% } %>
+                  </div>
+                  <div class="performer-card-content">
+                    <div class="performer-role">Direttore</div>
+                    <div class="performer-name"><%= event.performers.conductor %></div>
+                  </div>
+                </div>
+              <% 
+                } else if (role === 'orchestra' && event.performers.orchestra) { 
+                  const photoUrl = photos['orchestra'];
+              %>
+                <div class="performer-card-expanded">
+                  <div class="performer-card-header">
+                    <% if (photoUrl) { %>
+                      <div class="performer-photo-circle">
+                        <img src="<%= photoUrl %>" alt="Orchestra">
+                      </div>
+                    <% } else { %>
+                      <i class="fas fa-users"></i>
+                    <% } %>
+                  </div>
+                  <div class="performer-card-content">
+                    <div class="performer-role">Orchestra</div>
+                    <div class="performer-name"><%= event.performers.orchestra %></div>
+                  </div>
+                </div>
+              <% 
+                } else if (role === 'soloists' && event.performers.soloists.length > 0) {
+                  event.performers.soloists.forEach(soloist => { 
+                    const photoUrl = photos[`soloist_${soloistIndex}`];
+                    soloistIndex++;
+              %>
+                <div class="performer-card-expanded">
+                  <div class="performer-card-header">
+                    <% if (photoUrl) { %>
+                      <div class="performer-photo-circle">
+                        <img src="<%= photoUrl %>" alt="<%= soloist.name %>">
+                      </div>
+                    <% } else { %>
+                      <i class="fas fa-microphone"></i>
+                    <% } %>
+                  </div>
+                  <div class="performer-card-content">
+                    <div class="performer-name"><%= soloist.name %></div>
+                    <% if (soloist.instrument) { %>
+                      <div class="performer-instrument"><%= soloist.instrument %></div>
+                    <% } %>
+                  </div>
+                </div>
+              <% 
+                  });
+                }
+              }); 
+              %>
+          </div>
+          
+        <% } else { %>
+          <!-- ICONS: Default con foto tonde o icone -->
+          <div class="performers-grid">
+            <% 
+              let soloistIndexIcons = 0;
+              orderArray.forEach(role => {
+                if (role === 'conductor' && event.performers.conductor) { 
+                  const photoUrl = photos['conductor'];
+            %>
+                <div class="performer-card">
+                  <% if (photoUrl) { %>
+                    <div class="performer-photo-round">
+                      <img src="<%= photoUrl %>" alt="Direttore">
+                    </div>
+                  <% } else { %>
+                    <div class="performer-icon">
+                      <i class="fas fa-user-tie"></i>
+                    </div>
+                  <% } %>
+                  <div class="performer-role">Direttore</div>
+                  <div class="performer-name"><%= event.performers.conductor %></div>
+                </div>
+              <% 
+                } else if (role === 'orchestra' && event.performers.orchestra) { 
+                  const photoUrl = photos['orchestra'];
+              %>
+                <div class="performer-card">
+                  <% if (photoUrl) { %>
+                    <div class="performer-photo-round">
+                      <img src="<%= photoUrl %>" alt="Orchestra">
+                    </div>
+                  <% } else { %>
+                    <div class="performer-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+                  <% } %>
+                  <div class="performer-role">Orchestra</div>
+                  <div class="performer-name"><%= event.performers.orchestra %></div>
+                </div>
+              <% 
+                } else if (role === 'soloists' && event.performers.soloists.length > 0) {
+                  event.performers.soloists.forEach(soloist => { 
+                    const photoUrl = photos[`soloist_${soloistIndexIcons}`];
+                    soloistIndexIcons++;
+              %>
+                <div class="performer-card">
+                  <% if (photoUrl) { %>
+                    <div class="performer-photo-round">
+                      <img src="<%= photoUrl %>" alt="<%= soloist.name %>">
+                    </div>
+                  <% } else { %>
+                    <div class="performer-icon">
+                      <i class="fas fa-microphone"></i>
+                    </div>
+                  <% } %>
+                  <div class="performer-name"><%= soloist.name %></div>
+                  <% if (soloist.instrument) { %>
+                    <div class="performer-instrument"><%= soloist.instrument %></div>
+                  <% } %>
+                </div>
+              <% 
+                  });
+                }
+              }); 
+              %>
+          </div>
+        <% } %>
+        
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Program Section -->
+  <% if (event.program && event.program.length > 0) { %>
+    <section class="section program-section">
+      <div class="container">
+        <h2 class="section-title">Programma</h2>
+        
+        <div class="program-list">
+          <% event.program.forEach((work, index) => { %>
+            <div class="program-item" style="animation-delay: <%= index * 0.1 %>s">
+              <div class="program-composer"><%= work.composer %></div>
+              <div class="program-work">
+                <%= work.title %>
+                <% if (work.subtitle) { %>
+                  <span class="program-subtitle"><%= work.subtitle %></span>
+                <% } %>
+              </div>
+              <div class="program-meta">
+                <% if (work.catalogue) { %>
+                  <span class="program-catalogue"><%= work.catalogue %></span>
+                <% } %>
+                <% if (work.work_key) { %>
+                  <span class="program-key"><%= work.work_key %></span>
+                <% } %>
+                <!-- ✅ SOLISTA -->
+                <% if (work.soloist) { %>
+                  <span class="program-soloist">
+                    <i class="fas fa-user"></i>
+                    <%= work.soloist.name %>
+                    <% if (work.soloist.instrument) { %>
+                      - <%= work.soloist.instrument %>
+                    <% } %>
+                  </span>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Event Description -->
+  <% if (event.event_description) { %>
+    <section class="section description-section">
+      <div class="container">
+        <h2 class="section-title">Note di Sala</h2>
+        <div class="event-description">
+          <%- event.event_description %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+  <!-- FAQ Section -->
+  <% 
+    let faqs = [];
+    if (event.faqs) {
+      try {
+        faqs = JSON.parse(event.faqs);
+      } catch(e) { faqs = []; }
+    }
+    if (faqs.length > 0) { 
+  %>
+    <section class="section faq-section">
+      <div class="container">
+        <h2 class="section-title">Domande Frequenti</h2>
+        
+        <div class="faq-list">
+          <% faqs.forEach((faq, index) => { %>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                <span><%= faq.question %></span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="faq-answer">
+                <p><%= faq.answer %></p>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+    
+    <script>
+      function toggleFaq(btn) {
+        const item = btn.parentElement;
+        const isOpen = item.classList.contains('active');
+        
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        
+        if (!isOpen) {
+          item.classList.add('active');
+        }
+      }
+    </script>
+  <% } %>
+
+ <!-- Gallery Section -->
+  <% 
+    let images = [];
+    if (event.gallery_images) {
+      try {
+        images = typeof event.gallery_images === 'string' ? JSON.parse(event.gallery_images) : event.gallery_images;
+        if (!Array.isArray(images)) images = [];
+      } catch(e) {
+        images = [];
+      }
+    }
+    
+    if (images.length > 0) { 
+  %>
+    <section class="section gallery-section">
+      <div class="container">
+        <h2 class="section-title">Foto</h2>
+        
+        <div class="gallery-grid">
+          <% images.forEach((img, index) => { %>
+            <a href="<%= img %>" 
+               class="gallery-item" 
+               data-gallery="event-gallery"
+               data-glightbox="description: Foto <%= index + 1 %>">
+              <img src="<%= img %>" alt="Foto <%= index + 1 %>" loading="lazy">
+              <div class="gallery-overlay">
+                <i class="fas fa-search-plus"></i>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Mappa Location -->
+  <% 
+    let mapEmbed = event.venue_map_embed;
+    if (!mapEmbed && (event.venue_address || event.location)) {
+      const address = encodeURIComponent(event.venue_address || event.location);
+      mapEmbed = `<iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${address}" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>`;
+    }
+    
+    if (mapEmbed) {
+  %>
+    <section class="section map-section">
+      <div class="container">
+        <h2 class="section-title">Come Raggiungerci</h2>
+        <div class="map-container">
+          <%- mapEmbed %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Solo la sezione Booking modificata - da inserire nel file landing.ejs esistente -->
+
+<!-- Booking Section -->
+<% if (event.booking_enabled !== 0) { %>
+<section class="section booking-section" id="booking">
+  <div class="container">
+    <h2 class="section-title">Prenota il tuo posto</h2>
+    
+    <!-- NUOVA SEZIONE: Disponibilità Posti -->
+    <% 
+      const maxCapacity = event.max_capacity || 200;
+      const totalBooked = event.booking_count || 0;
+      const remainingSeats = maxCapacity - totalBooked;
+      const fillPercentage = Math.min((totalBooked / maxCapacity) * 100, 100);
+    %>
+    
+    <div class="availability-section" style="margin-bottom: 30px; padding: 20px; background: #f8f8f8; border-radius: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div>
+          <h3 style="margin: 0; font-size: 1.2em;">
+            <i class="fas fa-chair"></i> Disponibilità
+          </h3>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 2em; font-weight: bold; color: <%= remainingSeats > 20 ? '#28a745' : remainingSeats > 10 ? '#ffc107' : '#dc3545' %>;">
+            <span class="remaining-seats"><%= remainingSeats %></span>
+          </div>
+          <div style="font-size: 0.9em; color: #666;">posti rimanenti</div>
+        </div>
+      </div>
+      
+      <div class="capacity-bar" style="height: 30px; background: #e0e0e0; border-radius: 15px; overflow: hidden; position: relative;">
+        <div class="capacity-fill" 
+             style="height: 100%; background: linear-gradient(90deg, #d4af37, #f0e68c); transition: width 0.5s; display: flex; align-items: center; justify-content: center; font-weight: bold; width: <%= fillPercentage %>%;">
+          <%= Math.round(fillPercentage) %>%
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.85em; color: #666;">
+        <span><i class="fas fa-users"></i> Prenotati: <strong class="total-seats"><%= totalBooked %></strong></span>
+        <span><i class="fas fa-building"></i> Capienza: <strong><%= maxCapacity %></strong></span>
+      </div>
+    </div>
+    
+    <div class="booking-info-box">
+      <i class="fas fa-info-circle"></i>
+      <div>
+        <strong>Prenotazione Indicativa</strong>
+        <p>La prenotazione indica la tua partecipazione all'evento ma non garantisce un posto fisico specifico. L'ingresso è libero fino ad esaurimento posti.</p>
+      </div>
+    </div>
+    
+    <% if (event.booking_disclaimer) { %>
+      <div class="booking-disclaimer">
+        <i class="fas fa-bell"></i>
+        <%= event.booking_disclaimer %>
+      </div>
+    <% } %>
+    
+    <form id="bookingForm" class="booking-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first_name">Nome *</label>
+          <input type="text" id="first_name" name="first_name" required>
+        </div>
+        <div class="form-group">
+          <label for="last_name">Cognome</label>
+          <input type="text" id="last_name" name="last_name">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Telefono</label>
+          <input type="tel" id="phone" name="phone">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="seats">Numero Persone *</label>
+        <select id="seats" name="seats" required>
+          <option value="">Seleziona...</option>
+          <% for(let i = 1; i <= Math.min(10, remainingSeats); i++) { %>
+            <option value="<%= i %>"><%= i %> person<%= i > 1 ? 'e' : 'a' %></option>
+          <% } %>
+        </select>
+        <% if (remainingSeats < 10) { %>
+          <small style="color: #dc3545; display: block; margin-top: 5px;">
+            <i class="fas fa-exclamation-triangle"></i> 
+            Ultimi <%= remainingSeats %> posti disponibili!
+          </small>
+        <% } %>
+      </div>
+      
+      <div class="form-group">
+        <label for="note">Note (opzionale)</label>
+        <textarea id="note" name="note" rows="3" placeholder="Esigenze particolari, domande..."></textarea>
+      </div>
+      
+      <!-- Consensi -->
+      <div class="consent-section">
+        <label class="consent-checkbox">
+          <input type="checkbox" name="privacy_consent" id="privacy_consent" required>
+          <span class="checkmark"></span>
+          <span class="consent-text">
+            Ho letto e accetto la <a href="https://icnt.danielecamiz.com/privacy" target="_blank">Privacy Policy</a> *
+          </span>
+        </label>
+        
+        <label class="consent-checkbox">
+          <input type="checkbox" name="newsletter_consent" id="newsletter_consent">
+          <span class="checkmark"></span>
+          <span class="consent-text">
+            Desidero ricevere aggiornamenti sui prossimi concerti via email
+          </span>
+        </label>
+      </div>
+      
+      <button type="submit" class="btn-submit">
+        <i class="fas fa-check-circle"></i> Conferma Partecipazione
+      </button>
+    </form>
+    
+    <div id="bookingResult" class="booking-result"></div>
+  </div>
+</section>
+<% } else { %>
+  <section class="section booking-closed">
+    <div class="container">
+      <div class="closed-notice">
+        <i class="fas fa-lock"></i>
+        <h3>Prenotazioni Chiuse</h3>
+        <p>Le prenotazioni per questo evento non sono al momento disponibili.</p>
+      </div>
+    </div>
+  </section>
+<% } %>
+
+  <!-- Tags & Share Section -->
+  <% if (event.event_tags || event.show_share_buttons) { %>
+    <section class="section share-section">
+      <div class="container">
+        
+        <% if (event.event_tags) { %>
+          <div class="tags-container">
+            <h3>Categorie</h3>
+            <div class="tags">
+              <% 
+                const tags = event.event_tags.split(',').map(t => t.trim()).filter(t => t);
+                tags.forEach(tag => { 
+              %>
+                <span class="tag"><i class="fas fa-tag"></i> <%= tag %></span>
+              <% }); %>
+            </div>
+          </div>
+        <% } %>
+        
+        <% if (event.show_share_buttons) { %>
+          <div class="share-container">
+            <h3>Condividi questo evento</h3>
+            <div class="share-buttons">
+              <button class="share-btn facebook" onclick="shareOnFacebook()">
+                <i class="fab fa-facebook-f"></i>
+                <span>Facebook</span>
+              </button>
+              <button class="share-btn twitter" onclick="shareOnTwitter()">
+                <i class="fab fa-twitter"></i>
+                <span>Twitter</span>
+              </button>
+              <button class="share-btn whatsapp" onclick="shareOnWhatsApp()">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp</span>
+              </button>
+              <button class="share-btn email" onclick="shareViaEmail()">
+                <i class="fas fa-envelope"></i>
+                <span>Email</span>
+              </button>
+              <button class="share-btn copy" onclick="copyLink()">
+                <i class="fas fa-link"></i>
+                <span>Copia Link</span>
+              </button>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <% if (event.footer_text) { %>
+        <p><%= event.footer_text %></p>
+      <% } else { %>
+        <p>&copy; <%= new Date().getFullYear() %> ICNT - I Concerti Nel Tempio</p>
+      <% } %>
+      <p>
+        <a href="https://icnt.danielecamiz.com/stagione/2025-26">Stagione Completa</a> | 
+        <a href="https://icnt.danielecamiz.com/privacy">Privacy</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    window.EVENT_DATA = {
+      slug: '<%= event.slug %>',
+      date: '<%= event.date %>',
+      time: '<%= event.starts_at || "20:00" %>'
+    };
+    
+    const pageUrl = encodeURIComponent(window.location.href);
+    const pageTitle = encodeURIComponent('<%= event.event_title_override || event.title %>');
+    
+    function shareOnFacebook() {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`, '_blank', 'width=600,height=400');
+    }
+    
+    function shareOnTwitter() {
+      window.open(`https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`, '_blank', 'width=600,height=400');
+    }
+    
+    function shareOnWhatsApp() {
+      window.open(`https://wa.me/?text=${pageTitle}%20${pageUrl}`, '_blank');
+    }
+    
+    function shareViaEmail() {
+      window.location.href = `mailto:?subject=${pageTitle}&body=Ti%20segnalo%20questo%20concerto:%20${pageUrl}`;
+    }
+    
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Link copiato negli appunti!');
+      });
+    }
+  </script>
+  <script src="/public/js/landing-modern.js"></script>
+  <!-- GLightbox JS -->
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+<script>
+  // Inizializza lightbox per galleria
+  if (document.querySelector('.gallery-item')) {
+    const lightbox = GLightbox({
+      selector: '.gallery-item',
+      touchNavigation: true,
+      loop: true,
+      autoplayVideos: true
+    });
+  }
+</script>
+
+</body>
+</html>

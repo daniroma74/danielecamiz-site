@@ -1,0 +1,61 @@
+<!-- news-admin/views/partials/footer.ejs -->
+<footer class="admin-footer">
+  <div class="footer-container">
+    <p>
+      📰 <strong>NEWS-ADMIN</strong> | 
+      Powered by <a href="https://www.danielecamiz.com" target="_blank">danielecamiz.com</a>
+    </p>
+    <p class="footer-links">
+      <a href="<%= config.frontendUrl %>" target="_blank">🌐 Sito</a>
+      <a href="<%= config.adminHubUrl %>" target="_blank">🔒 Admin Hub</a>
+      <a href="/health" target="_blank">💚 Status</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+.admin-footer {
+  margin-top: 4rem;
+  padding: 2rem 0;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.footer-container p {
+  margin: 0.5rem 0;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.admin-footer a {
+  color: #667eea;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.admin-footer a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .footer-links {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+</style>

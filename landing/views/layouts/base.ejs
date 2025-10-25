@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'ICNT' %></title>
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : '' %>">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'ICNT' %>">
+  <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : '' %>">
+  <meta property="og:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : '/img/default.jpg' %>">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/landing.css">
+  <% if (typeof additionalStyles !== 'undefined') { %>
+    <% additionalStyles.forEach(style => { %>
+      <link rel="stylesheet" href="<%= style %>">
+    <% }) %>
+  <% } %>
+</head>
+<body>
+  <%- body %>
+  
+  <!-- Scripts -->
+  <script src="/public/js/utils.js"></script>
+  <% if (typeof additionalScripts !== 'undefined') { %>
+    <% additionalScripts.forEach(script => { %>
+      <script src="<%= script %>"></script>
+    <% }) %>
+  <% } %>
+</body>
+</html>

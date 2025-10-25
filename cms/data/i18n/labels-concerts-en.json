@@ -1,0 +1,15 @@
+{
+  "concerts": {
+    "title": "Concerts",
+    "claim2": "Here are the upcoming concerts and all the <span id=\"concert-count\">{{past_count}}</span> concerts I have conducted so far ({{start}}–{{end}}).<br>Some I remember more clearly, others less; not all went the same way.<br>But each one, in one way or another, taught me something.<br>Even today, reviewing them continues to teach me.",
+    "upcoming": "Upcoming performances",
+    "past": "Past concerts",
+    "view_details": "View details",
+    "no_upcoming": "No scheduled concerts.",
+    "show_more": "Show more",
+    "show_less": "Show less",
+    "orchestra": "Orchestra",
+    "conductor": "Conductor",
+    "soloist": "Soloist"
+  }
+}

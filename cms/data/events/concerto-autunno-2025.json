@@ -1,0 +1,26 @@
+{
+  "id": "concerto-autunno-2025",
+  "slug": "concerto-autunno-2025",
+  "title": { "it": "Concerto d'Autunno 2025", "en": "Autumn Concert 2025" },
+  "subtitle": { "it": "Orchestra ICNT", "en": "ICNT Orchestra" },
+  "poster": {
+    "url": "/img/posters/concerto-autunno2024.jpg",
+    "alt": { "it": "Locandina Concerto d'Autunno", "en": "Autumn Concert Poster" }
+  },
+  "datetime": "2025-09-27T20:00:00+02:00",
+  "end_datetime": "2025-09-27T21:30:00+02:00",
+  "location": {
+    "name": "Chiesa Valdese di Piazza Cavour",
+    "address": "Piazza Cavour 32, 00193 Roma RM, Italia"
+  },
+  "description_html": {
+    "it": "<p>Ingresso libero con prenotazione consigliata.</p>",
+    "en": "<p>Free admission with recommended reservation.</p>"
+  },
+  "program": {
+    "it": ["Bossi - Concerto per organo Op.100", "Čajkovskij - Sinfonia n.6"],
+    "en": ["Bossi - Organ Concerto Op.100", "Tchaikovsky - Symphony No.6"]
+  },
+  "capacity": 200,
+  "booking_enabled": true
+}

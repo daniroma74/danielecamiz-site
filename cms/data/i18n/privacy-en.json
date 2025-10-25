@@ -1,0 +1,21 @@
+{
+  "title": "Privacy Policy",
+  "claim": "Privacy is important to us.",
+  "keywords": "privacy, data, protection, Daniele Camiz",
+  "canonical": "https://www.danielecamiz.com/privacy",
+  "ogImage": "https://www.danielecamiz.com/img/privacy-og.jpg",
+  "intro": "This policy explains how we collect, use, and protect the personal data of users of www.danielecamiz.com.",
+  "data_collected_title": "Data Collected",
+  "data_collected_list": [
+    "Data provided directly by users (e.g., name, email, messages sent)",
+    "Browsing data (cookies, IP addresses, access logs)"
+  ],
+  "purpose_title": "Purpose of Processing",
+  "purpose_text": "Data is used to provide requested services, improve user experience, and send informational or promotional communications with consent.",
+  "cookie_title": "Cookies",
+  "cookie_text": "We use technical and third-party cookies for analytics and marketing. Consent can be managed through the cookie banner on the site.",
+  "rights_title": "User Rights",
+  "rights_text": "Users may exercise their rights of access, rectification, deletion, restriction, objection, and portability by contacting info@danielecamiz.com.",
+  "controller_title": "Data Controller",
+  "controller_text": "Daniele Camiz - info@danielecamiz.com"
+}

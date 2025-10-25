@@ -1,0 +1,36 @@
+<h1>Gestione Contatti Linktree</h1>
+
+<%- include('../../partials/admin/maintenance-page-control') %>
+
+<div class="container">
+  <div class="left-panel">
+    <section>
+      <h2>In evidenza</h2>
+      <button id="add-evidenza" type="button">+ Aggiungi Link</button>
+      <ul id="evidenza-list" class="link-list"></ul>
+    </section>
+
+    <section>
+      <h2>Social</h2>
+      <button id="add-social" type="button">+ Aggiungi Social</button>
+      <ul id="social-list" class="link-list"></ul>
+    </section>
+
+    <section>
+      <h2>Link Extra</h2>
+      <button id="add-extra" type="button">+ Aggiungi Link Extra</button>
+      <ul id="extra-list" class="link-list"></ul>
+    </section>
+
+    <button id="save-btn" type="button" class="save-btn">Salva Tutto</button>
+  </div>
+
+  <div class="right-panel">
+    <h2>Anteprima Mobile</h2>
+    <div id="preview-mobile" class="preview-mobile"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script src="/admin/assets/js/admin-contatti.js" defer></script>
+<link rel="stylesheet" href="/admin/assets/css/admin-contatti.css">

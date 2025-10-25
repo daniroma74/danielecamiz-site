@@ -1,0 +1,263 @@
+<%
+// views/frontend/event.ejs — LP aggiornata per main.sqlite + endpoints prenotazioni
+// Supporta i dati esistenti (event JSON lato server) e gli endpoint REST nuovi.
+
+const ev = event || {};
+const L = (lang === 'en' ? 'en' : 'it');
+const t = {
+  it: { description:"Descrizione", program:"Programma", where:"Dove", show:"Mostra", hide:"Nascondi", book:"Prenota gratis", addCal:"+ Calendario", share:"Condividi", footer:"I Concerti nel Tempio • Prenotazione gratuita", counter:"Prenotazioni registrate" },
+  en: { description:"Description", program:"Program", where:"Where", show:"Show", hide:"Hide", book:"Reserve free seat", addCal:"+ Calendar", share:"Share", footer:"I Concerti nel Tempio • Free reservation", counter:"Reservations recorded" }
+}[L];
+
+// Compat: slug e ICS
+const slug = ev.slug || '';
+const icsHref = `/api/events/${encodeURIComponent(slug)}.ics`;
+
+// Poster / testi base
+const titleTxt = (ev.title?.[L] || ev.title?.it || 'Evento');
+const subtitleTxt = (ev.subtitle?.[L] || ev.subtitle?.it || '');
+const posterUrl = ev.poster?.url || '';
+const posterAlt = (ev.poster?.alt?.[L] || ev.poster?.alt?.it || 'Locandina evento');
+
+// Programma (se presente)
+const programItems = (ev.program?.[L] || ev.program?.it || []);
+%>
+
+<!DOCTYPE html>
+<html lang="<%= L %>">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= pageTitle || `${titleTxt} — I Concerti nel Tempio` %></title>
+  <meta name="description" content="<%= pageDescription || 'Prenota un posto gratuito per il prossimo concerto.' %>" />
+  <link rel="preload" href="/frontend/css/event.css" as="style">
+  <link rel="stylesheet" href="/frontend/css/event.css">
+</head>
+<body class="theme-dark">
+  <a class="skip-link" href="#mainContent">Skip to content</a>
+
+  <main id="mainContent" class="event-page" role="main" data-slug="<%= slug %>" data-lang="<%= L %>"
+        data-book-path="book" data-count-path="bookings/count">
+    <!-- HERO -->
+    <section class="hero" aria-label="Hero">
+      <div class="hero-media">
+        <img id="poster" src="<%= posterUrl %>" alt="<%= posterAlt %>" loading="lazy" width="1200" height="1600">
+      </div>
+      <div class="hero-content">
+        <h1 id="title" class="event-title"><%= titleTxt %></h1>
+        <p id="subtitle" class="event-subtitle"><%= subtitleTxt %></p>
+
+        <ul class="event-facts" aria-label="Dettagli rapidi">
+          <li><span class="icon" aria-hidden="true">📅</span> <time id="dateTime" datetime="<%= ev.datetime || '' %>"></time></li>
+          <li><span class="icon" aria-hidden="true">📍</span> <span id="place"><%= ev.location?.name || ev.location?.address || '' %></span></li>
+          <li id="capacityLine" hidden><span class="icon" aria-hidden="true">🎟️</span> <span id="capacityInfo"></span></li>
+        </ul>
+
+        <div class="cta-group">
+          <button id="bookBtn" class="btn btn-primary" type="button"><%= t.book %></button>
+          <a id="icsLink" class="btn btn-outline" href="<%= icsHref %>" download><%= t.addCal %></a>
+          <button id="shareBtn" class="btn btn-ghost" type="button"><%= t.share %></button>
+        </div>
+
+        <p class="muted" id="bookingCounterLine" hidden>
+          <span class="icon" aria-hidden="true">👥</span>
+          <span><%= t.counter %>: <b id="bookingCounter">--</b></span>
+        </p>
+      </div>
+    </section>
+
+    <!-- DESCRIZIONE -->
+    <section class="section" aria-labelledby="descHeading">
+      <h2 id="descHeading" class="section-title"><%= t.description %></h2>
+      <div id="description" class="richtext"><%- (ev.description_html?.[L] || ev.description_html?.it || '') %></div>
+    </section>
+
+    <!-- PROGRAMMA (mostra la sezione solo se ci sono elementi) -->
+    <% if (programItems.length) { %>
+    <section class="section" aria-labelledby="programHeading">
+      <div class="section-title-row">
+        <h2 id="programHeading" class="section-title"><%= t.program %></h2>
+        <button id="programToggle" class="btn btn-ghost" type="button" aria-expanded="false" aria-controls="programPanel"><%= t.show %></button>
+      </div>
+      <div id="programPanel" class="collapse" hidden>
+        <ol id="programList" class="program-list">
+          <% programItems.forEach(function(item){ %>
+            <li><%= item %></li>
+          <% }) %>
+        </ol>
+      </div>
+    </section>
+    <% } %>
+
+    <!-- MAPPA -->
+    <section class="section" aria-labelledby="mapHeading">
+      <h2 id="mapHeading" class="section-title"><%= t.where %></h2>
+      <p id="addressLine" class="muted"><%= ev.location?.address || '' %></p>
+      <div class="map-embed">
+        <iframe id="mapFrame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="border:0;" allowfullscreen title="<%= L==='it'?'Mappa del luogo dell\'evento':'Event venue map' %>"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODALE PRENOTAZIONE -->
+  <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="bookingTitle" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="document">
+      <header class="modal-header">
+        <h2 id="bookingTitle"><%= titleTxt %></h2>
+        <button class="icon-btn" id="closeModal" type="button" aria-label="<%= L==='it'?'Chiudi':'Close' %>">✕</button>
+      </header>
+      <div class="modal-body">
+        <form id="bookingForm" novalidate>
+          <input type="text" name="website" id="hpWebsite" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field">
+
+          <div class="form-row">
+            <label for="firstName"><%= L==='it'?'Nome':'First name' %></label>
+            <input id="firstName" name="first_name" required autocomplete="given-name">
+            <span class="field-error" id="errFirstName" aria-live="polite"></span>
+          </div>
+
+          <div class="form-row">
+            <label for="lastName"><%= L==='it'?'Cognome':'Last name' %></label>
+            <input id="lastName" name="last_name" required autocomplete="family-name">
+            <span class="field-error" id="errLastName" aria-live="polite"></span>
+          </div>
+
+          <div class="form-row">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required autocomplete="email" inputmode="email">
+            <span class="field-error" id="errEmail" aria-live="polite"></span>
+          </div>
+
+          <div class="form-row">
+            <label for="phone"><%= L==='it'?'Telefono (opzionale)':'Phone (optional)' %></label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel">
+          </div>
+
+          <fieldset class="ticket-fieldset">
+            <legend><%= L==='it'?'Biglietti':'Tickets' %></legend>
+            <div id="ticketTypes" class="ticket-types"></div>
+            <span class="field-error" id="errTickets" aria-live="polite"></span>
+          </fieldset>
+
+          <div class="form-row checkbox-row">
+            <label>
+              <input type="checkbox" id="privacyConsent" name="privacy_consent" required>
+              <span id="privacyLabel"><%= L==='it'?'Acconsento al trattamento dei dati (privacy).':'I consent to data processing (privacy).' %></span>
+            </label>
+            <span class="field-error" id="errPrivacy" aria-live="polite"></span>
+          </div>
+
+          <div class="form-row checkbox-row">
+            <label>
+              <input type="checkbox" id="newsletterOptin" name="newsletter_optin">
+              <span id="newsletterLabel"><%= L==='it'?'Voglio ricevere aggiornamenti via email.':'I want to receive email updates.' %></span>
+            </label>
+          </div>
+
+          <div class="form-row">
+            <label for="notes"><%= L==='it'?'Note (opz.)':'Notes (opt.)' %></label>
+            <textarea id="notes" name="note" rows="3"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submitBooking"><%= L==='it'?'Conferma prenotazione':'Confirm reservation' %></button>
+            <button type="button" class="btn btn-ghost" id="cancelBooking"><%= L==='it'?'Annulla':'Cancel' %></button>
+          </div>
+
+          <div id="formStatus" class="form-status" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <small id="footerNote"><%= t.footer %></small>
+  </footer>
+
+  <!-- Config LP per event.js + fallback -->
+  <script>
+    window.__LP_CONFIG__ = {
+      slug: '<%= slug %>',
+      lang: '<%= L %>',
+      // Endpoints relativi alla pagina corrente (funzionano con /event, /eventi, /events, anche /en/...)
+      bookPath: 'book',
+      countPath: 'bookings/count',
+      icsHref: '<%= icsHref %>'
+    };
+  </script>
+
+  <!-- Fallback minimale (si attiva solo se event.js non inizializza) -->
+  <script>
+  (function(){
+    if (window.EVENT_LP_INITED) return; // event.js ha priorità
+    const main = document.getElementById('mainContent');
+    const slug = main?.dataset?.slug || window.__LP_CONFIG__?.slug || '';
+    const bookBtn = document.getElementById('bookBtn');
+    const modal = document.getElementById('bookingModal');
+    const closeBtn = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelBooking');
+    const form = document.getElementById('bookingForm');
+    const formStatus = document.getElementById('formStatus');
+    const counterLine = document.getElementById('bookingCounterLine');
+    const counterEl = document.getElementById('bookingCounter');
+
+    const rel = (p) => (window.location.pathname.replace(/\/$/, '') + '/' + p);
+    const countUrl = rel(main?.dataset?.countPath || 'bookings/count');
+    const bookUrl  = rel(main?.dataset?.bookPath  || 'book');
+
+    function showModal(v){ modal?.setAttribute('aria-hidden', v? 'false':'true'); if (!v) modal?.classList.remove('open'); else modal?.classList.add('open'); }
+
+    async function refreshCount(){
+      try{ const r = await fetch(countUrl); const j = await r.json(); if (j && j.ok) { counterEl.textContent = j.count; counterLine.hidden = false; } }catch(_){/*noop*/}
+    }
+
+    function validate(){
+      const fn = document.getElementById('firstName').value.trim();
+      const ln = document.getElementById('lastName').value.trim();
+      const em = document.getElementById('email').value.trim();
+      const pv = document.getElementById('privacyConsent').checked;
+      let ok = true; formStatus.textContent='';
+      if (!fn){ ok=false; document.getElementById('errFirstName').textContent=' '; }
+      if (!ln){ ok=false; document.getElementById('errLastName').textContent=' '; }
+      if (!em){ ok=false; document.getElementById('errEmail').textContent=' '; }
+      if (!pv){ ok=false; document.getElementById('errPrivacy').textContent=' '; }
+      return ok;
+    }
+
+    async function postBooking(payload){
+      const res = await fetch(bookUrl, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+      return res.json();
+    }
+
+    bookBtn?.addEventListener('click', () => showModal(true));
+    closeBtn?.addEventListener('click', () => showModal(false));
+    cancelBtn?.addEventListener('click', () => showModal(false));
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validate()) { formStatus.textContent = (window.__LP_CONFIG__?.lang==='en'?'Please fill required fields.':'Compila i campi obbligatori.'); return; }
+      if (document.getElementById('hpWebsite').value) { return; } // honeypot
+      const name = (document.getElementById('firstName').value.trim() + ' ' + document.getElementById('lastName').value.trim()).trim();
+      const seats = 1; // fallback minimale (tipi biglietto gestiti da event.js quando presente)
+      const payload = { name, email: document.getElementById('email').value.trim(), phone: document.getElementById('phone').value.trim(), seats, note: document.getElementById('notes')?.value || '' };
+      formStatus.textContent = '...';
+      try{
+        const out = await postBooking(payload);
+        if (out && out.ok){
+          formStatus.textContent = (window.__LP_CONFIG__?.lang==='en'?'Reservation saved. Check your email.':'Prenotazione registrata. Controlla la mail.');
+          showModal(false); form.reset(); refreshCount();
+        } else {
+          formStatus.textContent = 'Errore: ' + (out?.error || 'riprovare');
+        }
+      }catch(err){ formStatus.textContent = 'Errore di rete.'; }
+    });
+
+    refreshCount();
+    setInterval(refreshCount, 15000);
+  })();
+  </script>
+
+  <script type="module" src="/frontend/js/event.js"></script>
+</body>
+</html>

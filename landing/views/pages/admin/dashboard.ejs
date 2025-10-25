@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/admin-dashboard.css">
+</head>
+<body>
+  
+  <nav class="top-nav">
+    <div class="nav-brand">
+      <i class="fas fa-calendar-alt"></i>
+      <span>Events Manager</span>
+    </div>
+    <div class="nav-actions">
+      <a href="/archive" class="btn-icon" title="Archivio">
+        <i class="fas fa-archive"></i>
+      </a>
+      <a href="https://danielecamiz.com/admin" class="btn-icon" title="CMS Admin">
+        <i class="fas fa-cog"></i>
+      </a>
+      <div class="user-menu">
+        <i class="fas fa-user-circle"></i>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1>Dashboard Eventi</h1>
+        <p class="subtitle">Gestisci le landing page dei concerti futuri</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-pill">
+          <i class="fas fa-calendar-check"></i>
+          <span><%= events.length %> Eventi Attivi</span>
+        </div>
+        <div class="stat-pill">
+          <i class="fas fa-ticket-alt"></i>
+          <span><%= events.reduce((sum, e) => sum + (e.total_seats || 0), 0) %> Prenotazioni</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="filters-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchEvents" placeholder="Cerca evento...">
+      </div>
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">
+          Tutti <span class="badge"><%= events.length %></span>
+        </button>
+        <button class="filter-btn" data-filter="with-bookings">
+          Con Prenotazioni <span class="badge"><%= events.filter(e => e.booking_count > 0).length %></span>
+        </button>
+        <button class="filter-btn" data-filter="upcoming">
+          Prossimi 30gg <span class="badge"><%= events.filter(e => new Date(e.date) <= new Date(Date.now() + 30*24*60*60*1000)).length %></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="events-grid" id="eventsGrid">
+      <% if (events.length === 0) { %>
+        <div class="empty-state">
+          <i class="fas fa-calendar-times"></i>
+          <h3>Nessun evento futuro</h3>
+          <p>Crea prima un concerto in Concerts Admin</p>
+          <a href="https://danielecamiz.com/admin/concerts/new" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Crea Concerto
+          </a>
+        </div>
+      <% } else { %>
+        <% events.forEach(event => { 
+          const eventDate = new Date(event.date);
+          const daysUntil = Math.ceil((eventDate - new Date()) / (1000 * 60 * 60 * 24));
+          const isUrgent = daysUntil <= 7;
+        %>
+          <div class="event-card" 
+               data-event-id="<%= event.id %>"
+               data-has-bookings="<%= event.booking_count > 0 ? 'true' : 'false' %>"
+               data-days-until="<%= daysUntil %>">
+            
+            <div class="event-card-header">
+              <% if (event.poster_cloudinary_id) { %>
+                <div class="event-poster" style="background-image: url('https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_400,h_250,q_auto/<%= event.poster_cloudinary_id %>')"></div>
+              <% } else if (event.poster_horizontal_cloudinary) { %>
+                <div class="event-poster" style="background-image: url('https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_400,h_250,q_auto/<%= event.poster_horizontal_cloudinary %>')"></div>
+              <% } else if (event.poster_vertical_cloudinary) { %>
+                <div class="event-poster" style="background-image: url('https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_400,h_250,q_auto/<%= event.poster_vertical_cloudinary %>')"></div>
+              <% } else { %>
+                <div class="event-poster event-poster-placeholder">
+                  <i class="fas fa-image"></i>
+                </div>
+              <% } %>
+              <% if (isUrgent) { %>
+                <span class="urgent-badge">
+                  <i class="fas fa-exclamation-triangle"></i> <%= daysUntil %> giorni
+                </span>
+              <% } %>
+            </div>
+
+            <div class="event-card-body">
+              <div class="event-meta">
+                <span class="event-date">
+                  <i class="fas fa-calendar"></i>
+                  <%= eventDate.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                </span>
+                <span class="event-time">
+                  <i class="fas fa-clock"></i>
+                  <%= event.starts_at || '20:00' %>
+                </span>
+              </div>
+
+              <h3 class="event-title"><%= event.title %></h3>
+              
+              <% if (event.subtitle) { %>
+                <p class="event-subtitle"><%= event.subtitle %></p>
+              <% } %>
+
+              <div class="event-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <%= event.location %>
+              </div>
+
+              <div class="event-stats">
+                <div class="stat-item">
+                  <i class="fas fa-users"></i>
+                  <span><%= event.booking_count || 0 %> prenotazioni</span>
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-chair"></i>
+                  <span><%= event.total_seats || 0 %> posti</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="event-card-footer">
+              <a href="/edit/<%= event.slug %>" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit"></i> Editor
+              </a>
+              <a href="/bookings/<%= event.slug %>" class="btn btn-secondary btn-sm">
+                <i class="fas fa-ticket-alt"></i> Prenotazioni
+              </a>
+              <a href="https://<%= event.slug %>.danielecamiz.com" target="_blank" class="btn btn-outline btn-sm">
+                <i class="fas fa-external-link-alt"></i> LP
+              </a>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('searchEvents');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const eventsGrid = document.getElementById('eventsGrid');
+      const eventCards = document.querySelectorAll('.event-card');
+      
+      let currentFilter = 'all';
+      let searchTerm = '';
+      
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          searchTerm = this.value.toLowerCase();
+          filterEvents();
+        });
+      }
+      
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentFilter = this.dataset.filter;
+          filterEvents();
+        });
+      });
+      
+      function filterEvents() {
+        let visibleCount = 0;
+        
+        eventCards.forEach(card => {
+          const title = card.querySelector('.event-title')?.textContent.toLowerCase() || '';
+          const subtitle = card.querySelector('.event-subtitle')?.textContent.toLowerCase() || '';
+          const location = card.querySelector('.event-location')?.textContent.toLowerCase() || '';
+          
+          const matchesSearch = !searchTerm || 
+            title.includes(searchTerm) || 
+            subtitle.includes(searchTerm) || 
+            location.includes(searchTerm);
+          
+          let matchesFilter = true;
+          
+          if (currentFilter === 'with-bookings') {
+            matchesFilter = card.dataset.hasBookings === 'true';
+          } else if (currentFilter === 'upcoming') {
+            const daysUntil = parseInt(card.dataset.daysUntil);
+            matchesFilter = daysUntil <= 30;
+          }
+          
+          const isVisible = matchesSearch && matchesFilter;
+          
+          if (isVisible) {
+            card.style.display = '';
+            card.style.animation = 'fadeInUp 0.5s ease';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+        
+        const existingEmpty = eventsGrid.querySelector('.no-results');
+        if (existingEmpty) existingEmpty.remove();
+        
+        if (visibleCount === 0 && eventCards.length > 0) {
+          const emptyDiv = document.createElement('div');
+          emptyDiv.className = 'empty-state no-results';
+          emptyDiv.innerHTML = `
+            <i class="fas fa-search"></i>
+            <h3>Nessun evento trovato</h3>
+            <p>Prova a modificare i filtri o la ricerca</p>
+          `;
+          eventsGrid.appendChild(emptyDiv);
+        }
+      }
+      
+      const navBrand = document.querySelector('.nav-brand');
+      if (navBrand) {
+        navBrand.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

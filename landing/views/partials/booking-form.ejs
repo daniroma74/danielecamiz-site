@@ -1,0 +1,65 @@
+<div class="booking-card">
+  <h3>Prenota il tuo posto</h3>
+  
+  <% 
+    const bookingCount = event.booking_count || 0;
+    const maxCapacity = event.max_capacity || 200;
+    const percentage = Math.min((bookingCount / maxCapacity) * 100, 100);
+    const spotsLeft = Math.max(maxCapacity - bookingCount, 0);
+    const isFull = spotsLeft === 0;
+  %>
+  
+  <div class="capacity-bar">
+    <div class="capacity-fill" style="width: <%= percentage %>%">
+      <%= Math.round(percentage) %>%
+    </div>
+  </div>
+  
+  <p class="spots-status">
+    <% if (isFull) { %>
+      <strong style="color: var(--danger);">SOLD OUT</strong><br>
+      <small>Puoi comunque presentarti</small>
+    <% } else { %>
+      <strong><%= spotsLeft %></strong> posti disponibili su <%= maxCapacity %>
+    <% } %>
+  </p>
+  
+  <% if (!isFull) { %>
+    <form id="booking-form" class="booking-form">
+      <input type="hidden" id="event_id" value="<%= event.id %>">
+      <input type="hidden" id="max-capacity" value="<%= maxCapacity %>">
+      
+      <input type="text" id="name" placeholder="Nome e Cognome" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="tel" id="phone" placeholder="Telefono (opzionale)">
+      
+      <select id="quantity">
+        <% for(let i = 1; i <= Math.min(10, spotsLeft); i++) { %>
+          <option value="<%= i %>"><%= i %> <%= i === 1 ? 'persona' : 'persone' %></option>
+        <% } %>
+      </select>
+      
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" id="privacy_consent" required>
+          <span>Accetto la <a href="https://danielecamiz.com/privacy" target="_blank">Privacy Policy</a> *</span>
+        </label>
+      </div>
+      
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" id="newsletter_consent">
+          <span>Desidero ricevere aggiornamenti</span>
+        </label>
+      </div>
+      
+      <button type="submit" class="btn-book">PRENOTA ORA</button>
+    </form>
+  <% } else { %>
+    <button class="btn-book" disabled>SOLD OUT</button>
+  <% } %>
+  
+  <div class="disclaimer">
+    <%= event.booking_disclaimer || 'La prenotazione è un\'adesione all\'evento. Ingresso gratuito in ordine di arrivo.' %>
+  </div>
+</div>

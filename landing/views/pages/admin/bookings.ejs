@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prenotazioni - <%= event.title %></title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/public/css/admin-dashboard.css">
+  <style>
+    /* Stili aggiuntivi specifici per booking */
+    .admin-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #d4af37;
+      margin-bottom: 10px;
+    }
+    
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .capacity-bar {
+      height: 30px;
+      background: #f0f0f0;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    
+    .capacity-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d4af37, #f0e68c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1a1a1a;
+      font-weight: bold;
+      transition: width 0.3s;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .card-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+    }
+    
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .table thead {
+      background: #f8f9fa;
+    }
+    
+    .table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #666;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .table td {
+      padding: 1rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    
+    .booking-code {
+      background: #f0f0f0;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+    
+    .badge-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .badge-danger {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .booking-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    
+    .btn-action {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85em;
+      font-weight: 600;
+      transition: all 0.2s;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .btn-cancel {
+      background: #e74c3c;
+    }
+    
+    .btn-cancel:hover {
+      background: #c0392b;
+      transform: translateY(-1px);
+    }
+    
+    .btn-edit {
+      background: #3498db;
+    }
+    
+    .btn-edit:hover {
+      background: #2980b9;
+      transform: translateY(-1px);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.show {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+      justify-content: flex-end;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 1em;
+      transition: border-color 0.2s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #d4af37;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+    
+    .btn-primary {
+      background: #d4af37;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #b8941f;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    
+    .checkin-success {
+      color: #27ae60;
+      font-size: 1.2em;
+    }
+    
+    .top-nav {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .dashboard-header h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #333;
+    }
+    
+    .d-flex {
+      display: flex;
+    }
+    
+    .gap-1 {
+      gap: 10px;
+    }
+    
+    .btn-back {
+      background: #f8f9fa;
+      color: #333;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    
+    .btn-back:hover {
+      background: #e9ecef;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-nav">
+    <div class="dashboard-header">
+      <h1>📋 Prenotazioni: <%= event.title %></h1>
+      <div class="d-flex gap-1">
+        <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        <a href="/bookings/<%= event.slug %>/export" class="btn btn-secondary">
+          <i class="fas fa-download"></i> Esporta CSV
+        </a>
+        <a href="/checkin/<%= event.slug %>" class="btn btn-primary">
+          <i class="fas fa-qrcode"></i> Check-in
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value"><%= bookings.filter(b => b.status === 'confirmed').length %></div>
+        <div class="stat-label">Prenotazioni Confermate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value"><%= bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.seats || 0), 0) %></div>
+        <div class="stat-label">Posti Totali</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value"><%= bookings.filter(b => b.checked_in === 1).reduce((sum, b) => sum + (b.seats || 0), 0) %></div>
+        <div class="stat-label">Check-in Effettuati</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value"><%= (event.max_capacity || 200) - bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.seats || 0), 0) %></div>
+        <div class="stat-label">Posti Rimanenti</div>
+      </div>
+    </div>
+
+    <% 
+      const maxCapacity = event.max_capacity || 200;
+      const totalSeats = bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.seats || 0), 0);
+      const fillPercentage = Math.min((totalSeats / maxCapacity) * 100, 100);
+    %>
+    <div class="capacity-bar">
+      <div class="capacity-fill" style="width: <%= fillPercentage %>%"><%= Math.round(fillPercentage) %>%</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Elenco Prenotazioni</h2>
+      </div>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Codice</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Telefono</th>
+              <th>Posti</th>
+              <th>Stato</th>
+              <th>Check-in</th>
+              <th>Data</th>
+              <th>Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(booking => { %>
+              <tr>
+                <td><code class="booking-code"><%= booking.code %></code></td>
+                <td><%= booking.first_name %> <%= booking.last_name || '' %></td>
+                <td><%= booking.email %></td>
+                <td><%= booking.phone || '-' %></td>
+                <td><strong><%= booking.seats %></strong></td>
+                <td>
+                  <% if (booking.status === 'confirmed') { %>
+                    <span class="badge badge-success">Confermata</span>
+                  <% } else if (booking.status === 'canceled') { %>
+                    <span class="badge badge-danger">Cancellata</span>
+                  <% } else { %>
+                    <span class="badge"><%= booking.status %></span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if (booking.checked_in === 1) { %>
+                    <span class="checkin-success">✅</span>
+                  <% } else { %>
+                    <span style="color: #ccc;">-</span>
+                  <% } %>
+                </td>
+                <td><%= new Date(booking.created_at).toLocaleDateString('it-IT') %></td>
+                <td>
+                  <div class="booking-actions">
+                    <% if (booking.status === 'confirmed') { %>
+                      <button class="btn-action btn-edit" onclick="editBooking('<%= booking.id %>', <%= booking.seats %>, '<%= (booking.note || '').replace(/'/g, "\\'") %>')">
+                        <i class="fas fa-edit"></i> Modifica
+                      </button>
+                      <button class="btn-action btn-cancel" onclick="confirmCancel('<%= booking.id %>', '<%= booking.first_name %>')">
+                        <i class="fas fa-times"></i> Cancella
+                      </button>
+                    <% } else { %>
+                      <span style="color: #999;">-</span>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <% if (bookings.length === 0) { %>
+        <div class="empty-state">
+          <p>Nessuna prenotazione ancora</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div id="cancelModal" class="modal">
+    <div class="modal-content">
+      <h3><i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i> Conferma Cancellazione</h3>
+      <p>Sei sicuro di voler cancellare la prenotazione di <strong id="cancelName"></strong>?</p>
+      <p style="color: #999; font-size: 0.9em;">Questa azione non può essere annullata.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-danger" onclick="cancelBooking()"><i class="fas fa-trash"></i> Cancella Prenotazione</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <h3><i class="fas fa-edit" style="color: #3498db;"></i> Modifica Prenotazione</h3>
+      <div class="form-group">
+        <label>Numero Posti</label>
+        <input type="number" id="editSeats" min="1" max="10" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Note</label>
+        <textarea id="editNote" class="form-control" rows="3"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Annulla</button>
+        <button class="btn btn-primary" onclick="saveBooking()"><i class="fas fa-save"></i> Salva Modifiche</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentBookingId = null;
+    
+    function confirmCancel(id, name) {
+      console.log('🔴 confirmCancel chiamato con ID:', id, 'Nome:', name);
+      currentBookingId = id;
+      document.getElementById('cancelName').textContent = name;
+      document.getElementById('cancelModal').classList.add('show');
+    }
+    
+    async function cancelBooking() {
+      console.log('🔴 cancelBooking chiamato');
+      console.log('🔴 currentBookingId:', currentBookingId);
+      
+      if (!currentBookingId) {
+        console.error('❌ Nessun ID prenotazione impostato!');
+        alert('Errore: ID prenotazione mancante');
+        return;
+      }
+      
+      const btn = event.target;
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cancellazione...';
+      
+      const url = `/api/booking/cancel/${currentBookingId}`;
+      console.log('🔴 Chiamata DELETE a:', url);
+      
+      try {
+        const response = await fetch(url, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        console.log('🔴 Response status:', response.status);
+        console.log('🔴 Response ok:', response.ok);
+        
+        const result = await response.json();
+        console.log('🔴 Result:', result);
+        
+        if (result.success) {
+          console.log('✅ Cancellazione riuscita');
+          alert('✅ Prenotazione cancellata con successo');
+          location.reload();
+        } else {
+          console.error('❌ Cancellazione fallita:', result.message);
+          alert('❌ Errore: ' + result.message);
+          btn.disabled = false;
+          btn.innerHTML = originalHTML;
+        }
+      } catch (error) {
+        console.error('❌ Errore fetch:', error);
+        alert('❌ Errore durante la cancellazione: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      } finally {
+        console.log('🔴 Operazione terminata');
+      }
+    }
+    
+    function editBooking(id, seats, note) {
+      console.log('🟡 editBooking chiamato con ID:', id);
+      currentBookingId = id;
+      document.getElementById('editSeats').value = seats;
+      document.getElementById('editNote').value = note;
+      document.getElementById('editModal').classList.add('show');
+    }
+    
+    async function saveBooking() {
+      console.log('🟡 saveBooking chiamato');
+      
+      if (!currentBookingId) {
+        console.error('❌ Nessun ID prenotazione impostato!');
+        return;
+      }
+      
+      const seats = document.getElementById('editSeats').value;
+      const note = document.getElementById('editNote').value;
+      
+      const btn = event.target;
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvataggio...';
+      
+      const url = `/api/booking/update/${currentBookingId}`;
+      console.log('🟡 Chiamata PUT a:', url);
+      
+      try {
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ seats: parseInt(seats), note, status: 'confirmed' })
+        });
+        
+        console.log('🟡 Response status:', response.status);
+        
+        const result = await response.json();
+        console.log('🟡 Result:', result);
+        
+        if (result.success) {
+          console.log('✅ Modifica riuscita');
+          alert('✅ Prenotazione aggiornata con successo');
+          location.reload();
+        } else {
+          console.error('❌ Modifica fallita:', result.message);
+          alert('❌ Errore: ' + result.message);
+          btn.disabled = false;
+          btn.innerHTML = originalHTML;
+        }
+      } catch (error) {
+        console.error('❌ Errore fetch:', error);
+        alert('❌ Errore durante l\'aggiornamento: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      }
+    }
+    
+    function closeModal() {
+      console.log('🔵 closeModal chiamato');
+      document.getElementById('cancelModal').classList.remove('show');
+      document.getElementById('editModal').classList.remove('show');
+      currentBookingId = null;
+    }
+    
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          console.log('🔵 Click fuori dal modal, chiudo');
+          closeModal();
+        }
+      });
+    });
+    
+    console.log('✅ Script bookings caricato correttamente');
+  </script>
+</body>
+</html>

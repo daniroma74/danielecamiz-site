@@ -1,0 +1,15 @@
+{
+  "concerts": {
+    "title": "Concerti",
+    "claim2": "Ecco i prossimi concerti e tutti i <span id=\"concert-count\">{{past_count}}</span> concerti che ho diretto finora ({{start}}–{{end}}).<br>Alcuni li ricordo più chiaramente, altri meno; non sono andati tutti allo stesso modo.<br>Ma ciascuno, in un modo o nell’altro, mi ha insegnato qualcosa.<br>Anche oggi, ripassarli continua a insegnarmi.",
+    "upcoming": "Prossimi concerti",
+    "past": "Concerti passati",
+    "view_details": "Vedi dettagli",
+    "no_upcoming": "Nessun concerto in programma.",
+    "show_more": "Mostra di più",
+    "show_less": "Mostra di meno",
+    "orchestra": "Orchestra",
+    "conductor": "Direttore",
+    "soloist": "Solista"
+  }
+}

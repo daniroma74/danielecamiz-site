@@ -1,0 +1,7 @@
+@media (max-width: 600px) {
+  #contact_linktree {
+    max-width: 100%;
+    margin: 1rem;
+  }
+  /* Altre regole responsive specifiche possono andare qui */
+}

@@ -1,0 +1,140 @@
+[
+  {
+    "id": "6qeawqsjhmsmeiyirgy",
+    "lang": "it",
+    "title": "[TEST] Verifica tecnica",
+    "slug": "test-verifica-tecnica",
+    "excerpt": "Post di prova per verificare la pubblicazione automatica. Sarà rimosso a breve",
+    "content_md": "Post di prova per verificare la pubblicazione automatica. Sarà rimosso a breve",
+    "cover_url": "",
+    "status": "draft",
+    "published_at": null,
+    "created_at": "2025-08-19T19:48:56.338Z",
+    "updated_at": "2025-08-19T23:39:53.859Z",
+    "seo": {
+      "meta_title": "",
+      "meta_description": "",
+      "og_image": "/uploads/news_covers/2025/test-di-prova/cover.jpg"
+    },
+    "category_id": null,
+    "group_id": null,
+    "canonical_id": null,
+    "social": {
+      "share_on_publish": true,
+      "providers": {
+        "linkedin": true,
+        "facebook": true,
+        "threads": true,
+        "mastodon": false,
+        "pinterest": false,
+        "instagram": false,
+        "x": false
+      },
+      "message_overrides": {
+        "linkedin": "🔧 Test tecnico del sito danielecamiz.com.\nQuesto è un post di prova e verrà rimosso a breve. Grazie!",
+        "facebook": "🔧 Test tecnico del sito danielecamiz.com.\nQuesto è un post di prova e verrà rimosso a breve. Grazie!",
+        "threads": "🔧 Test tecnico del sito danielecamiz.com.\nQuesto è un post di prova e verrà rimosso a breve. Grazie!",
+        "mastodon": "",
+        "pinterest": "",
+        "instagram": "",
+        "x": ""
+      },
+      "status": {
+        "linkedin": {
+          "ok": true,
+          "post_id": "urn:li:share:7363696679306354689",
+          "permalink": "",
+          "ts": "2025-08-19T22:22:02.732Z",
+          "error": ""
+        },
+        "facebook": {
+          "ok": true,
+          "post_id": "",
+          "permalink": "",
+          "ts": "2025-08-19T23:39:53.857Z",
+          "error": "",
+          "pages": [
+            {
+              "pageId": "951887301682962",
+              "ok": true,
+              "post_id": "951887301682962_1130536732463584",
+              "permalink": "https://www.facebook.com/1130502099133714/posts/1130536732463584"
+            },
+            {
+              "pageId": "1871818076428830",
+              "ok": true,
+              "post_id": "1871818076428830_1255736629583674",
+              "permalink": "https://www.facebook.com/1255700776253926/posts/1255736629583674"
+            },
+            {
+              "pageId": "1616191748630205",
+              "ok": true,
+              "post_id": "1616191748630205_1285094616649375",
+              "permalink": "https://www.facebook.com/1285059526652884/posts/1285094616649375"
+            },
+            {
+              "pageId": "181986748549037",
+              "ok": true,
+              "post_id": "181986748549037_1396018368738224",
+              "permalink": "https://www.facebook.com/1395945815412146/posts/1396018368738224"
+            }
+          ]
+        },
+        "threads": {
+          "ok": true,
+          "post_id": "17890904502315599",
+          "permalink": "",
+          "ts": "2025-08-19T22:22:02.732Z",
+          "error": ""
+        }
+      }
+    }
+  },
+  {
+    "id": "obepeu4tsvbmegww4yy",
+    "lang": "it",
+    "title": "Articolo di prova n.1 (copy)",
+    "slug": "articolo-di-prova-n-1-copy-w4yx",
+    "excerpt": "Riassunto breve dell'articolo n.1",
+    "content_md": "Johannes Brahms[N 1] (pron. [ˈbrams][1]; Amburgo, 7 maggio 1833 – Vienna, 3 aprile 1897) è stato un compositore, pianista e direttore d'orchestra tedesco del periodo tardo-romantico.\n\nNato da una famiglia luterana, ha trascorso gran parte della sua vita professionale a Vienna. A volte è definito, insieme a Johann Sebastian Bach e Ludwig van Beethoven, come uno dei \"Tre B\" della musica.[2] Ha lavorato con i principali interpreti del suo tempo, tra cui la pianista Clara Schumann e il violinista Joseph Joachim (i tre erano amici intimi). Molte delle sue opere sono diventate punti fermi del repertorio concertistico moderno.\n\nBrahms è stato considerato sia un tradizionalista che un innovatore, sia dai suoi contemporanei sia dai musicologi successivi. La sua musica è radicata nelle strutture e nelle tecniche compositive dei maestri del romanticismo, e anche se alcuni suoi contemporanei la trovavano eccessivamente accademica, il suo contributo fu ampiamente riconosciuto e in seguito ammirato da musicisti come Arnold Schoenberg ed Edward Elgar.[",
+    "cover_url": "/uploads/news_covers/2025/articolo-di-prova-n-1/cover.png",
+    "status": "published",
+    "published_at": "2025-08-18T13:43:31.911Z",
+    "created_at": "2025-08-18T09:27:48.778Z",
+    "updated_at": "2025-08-18T14:17:28.654Z",
+    "seo": {
+      "meta_title": "",
+      "meta_description": "",
+      "og_image": "/uploads/news_covers/2025/articolo-di-prova-n-1/cover.png"
+    },
+    "category_id": "behind_the_scenes",
+    "category": "Dietro le quinte"
+  },
+  {
+    "id": "7zpzggzp9zwmefwav2k",
+    "cover_url": "/uploads/news_covers/2025/articolo-di-prova-n-1/cover.png",
+    "published_at": "2025-08-18T14:17:13.004Z",
+    "created_at": "2025-08-17T16:23:29.995Z",
+    "updated_at": "2025-08-18T14:17:13.005Z",
+    "seo": {
+      "meta_title": "",
+      "meta_description": "",
+      "og_image": "/uploads/news_covers/2025/articolo-di-prova-n-1/cover.png"
+    },
+    "lang": "it",
+    "title": "Articolo di prova n.1",
+    "slug": "articolo-di-prova-n-1",
+    "excerpt": "Riassunto breve dell'articolo n.1",
+    "content_md": "Johannes Brahms[N 1] (pron. [ˈbrams][1]; Amburgo, 7 maggio 1833 – Vienna, 3 aprile 1897) è stato un compositore, pianista e direttore d'orchestra tedesco del periodo tardo-romantico.\n\nNato da una famiglia luterana, ha trascorso gran parte della sua vita professionale a Vienna. A volte è definito, insieme a Johann Sebastian Bach e Ludwig van Beethoven, come uno dei \"Tre B\" della musica.[2] Ha lavorato con i principali interpreti del suo tempo, tra cui la pianista Clara Schumann e il violinista Joseph Joachim (i tre erano amici intimi). Molte delle sue opere sono diventate punti fermi del repertorio concertistico moderno.\n\nBrahms è stato considerato sia un tradizionalista che un innovatore, sia dai suoi contemporanei sia dai musicologi successivi. La sua musica è radicata nelle strutture e nelle tecniche compositive dei maestri del romanticismo, e anche se alcuni suoi contemporanei la trovavano eccessivamente accademica, il suo contributo fu ampiamente riconosciuto e in seguito ammirato da musicisti come Arnold Schoenberg ed Edward Elgar.[",
+    "status": "published",
+    "category_id": "video",
+    "category": "Video",
+    "tags": [
+      "nostalgia",
+      "brahms",
+      "prova",
+      "articolo",
+      "danielecamiz"
+    ]
+  }
+]

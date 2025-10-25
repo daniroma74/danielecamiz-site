@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newsletter Dashboard</title>
+    <link rel="stylesheet" href="/shared/css/admin-base.css">
+    <link rel="stylesheet" href="/css/newsletter-light.css">
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>📧 Newsletter Dashboard</h1>
+            <div class="header-actions">
+                <a href="/admin/campaign/new" class="btn btn-primary">
+                    ✨ Nuova Campagna
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value"><%= stats.total_subscribers || 0 %></div>
+                <div class="stat-label">Iscritti Totali</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value"><%= stats.active_subscribers || 0 %></div>
+                <div class="stat-label">Iscritti Attivi</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📮</div>
+                <div class="stat-value"><%= stats.campaigns_sent || 0 %></div>
+                <div class="stat-label">Campagne Inviate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value"><%= stats.new_this_week || 0 %></div>
+                <div class="stat-label">Nuovi questa Settimana</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">⚡ Azioni Rapide</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <a href="/admin/campaigns" class="btn btn-outline" style="justify-content: center;">
+                    📮 Gestisci Campagne
+                </a>
+                <a href="/admin/subscribers" class="btn btn-outline" style="justify-content: center;">
+                    👥 Gestisci Iscritti
+                </a>
+                <a href="/admin/test-email" class="btn btn-outline" style="justify-content: center;">
+                    🧪 Invia Test Email
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Campaigns -->
+        <% if (campaigns && campaigns.length > 0) { %>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">📮 Campagne Recenti</h3>
+                <a href="/admin/campaigns" class="btn btn-outline">Vedi tutte</a>
+            </div>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Oggetto</th>
+                            <th>Stato</th>
+                            <th>Data</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% campaigns.slice(0, 5).forEach(campaign => { %>
+                        <tr>
+                            <td><%= campaign.name %></td>
+                            <td><%= campaign.subject %></td>
+                            <td>
+                                <span class="badge badge-<%= campaign.status === 'sent' ? 'success' : 'warning' %>">
+                                    <%= campaign.status === 'sent' ? 'Inviata' : 'Bozza' %>
+                                </span>
+                            </td>
+                            <td><%= new Date(campaign.created_at).toLocaleDateString('it-IT') %></td>
+                            <td>
+                                <a href="/admin/campaign/<%= campaign.id %>/edit" class="btn btn-sm">
+                                    ✏️ Modifica
+                                </a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <% } else { %>
+        <div class="card" style="text-align: center; padding: 60px 20px;">
+            <div style="font-size: 64px; margin-bottom: 20px;">📮</div>
+            <h3>Nessuna campagna ancora</h3>
+            <p style="color: var(--text-light); margin: 20px 0;">
+                Crea la tua prima campagna newsletter per iniziare
+            </p>
+            <a href="/admin/campaign/new" class="btn btn-primary">
+                ✨ Crea Prima Campagna
+            </a>
+        </div>
+        <% } %>
+    </div>
+</body>
+</html>

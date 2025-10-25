@@ -1,0 +1,5 @@
+/* toast.css */
+.toast-root{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:.5rem;z-index:9999}
+.toast{background:#111;border:1px solid #333;border-left:6px solid var(--gold);border-radius:12px;padding:.7rem .9rem;box-shadow:0 8px 18px rgba(0,0,0,.35);min-width:220px}
+.toast.ok{border-left-color:var(--ok)}
+.toast.err{border-left-color:var(--danger)}

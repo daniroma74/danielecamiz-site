@@ -1,0 +1,40 @@
+# File di ambiente (PASSWORD E CHIAVI!)
+.env
+**/.env
+
+# Dipendenze
+node_modules/
+**/node_modules/
+package-lock.json
+
+# Database locale
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup
+**/backups/
+**/backup/
+backup-*.tar.gz
+*.bak
+
+# Log
+*.log
+logs/
+
+# File temporanei
+.DS_Store
+Thumbs.db
+*.tmp
+.cache/
+
+# Uploads (immagini caricate localmente)
+**/uploads/
+
+# IDE
+.vscode/
+.idea/
+
+# Archivi
+*.zip
+*.tar.gz

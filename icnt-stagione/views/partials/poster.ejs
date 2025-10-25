@@ -1,0 +1,29 @@
+<% /* views/partials/poster.ejs */ %>
+<aside class="poster-card">
+  <a href="#poster_modal" class="poster-link" aria-label="Apri locandina della stagione">
+    <picture>
+      <source type="image/avif"
+              srcset="/public/img/poster-2526-640.avif 640w, /public/img/poster-2526-1200.avif 1200w">
+      <source type="image/webp"
+              srcset="/public/img/poster-2526-640.webp 640w, /public/img/poster-2526-1200.webp 1200w">
+      <img
+        src="/public/img/poster-2526-640.jpg"
+        srcset="/public/img/poster-2526-640.jpg 640w, /public/img/poster-2526-1200.jpg 1200w"
+        sizes="(min-width:1024px) 320px, 90vw"
+        width="320" height="auto"
+        loading="lazy" decoding="async"
+        alt="ICNT Stagione 2025–26 – Locandina">
+    </picture>
+  </a>
+
+  <div id="poster_modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="poster_modal_title">
+    <a href="#" class="modal__backdrop" aria-label="Chiudi"></a>
+    <div class="modal__dialog">
+      <a href="#" class="modal__close" aria-label="Chiudi">×</a>
+      <div class="modal__content">
+        <h3 id="poster_modal_title" class="sr-only">Locandina stagione 2025–26</h3>
+        <img src="/public/img/poster-2526-1200.jpg" alt="ICNT Stagione 2025–26 – Locandina (grande)">
+      </div>
+    </div>
+  </div>
+</aside>

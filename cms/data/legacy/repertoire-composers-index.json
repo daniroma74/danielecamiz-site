@@ -1,0 +1,130 @@
+{
+    "meta": {
+      "version": 1,
+      "generated_at": "2025-08-13T17:43:08.327249Z",
+      "notes": "Espansione di voci aggregate in voci singole; elementi espansi: 2"
+    },
+    "composers": [
+      {
+        "name": "Samuel Barber",
+        "composer_sort": "Barber, Samuel",
+        "count": 1
+      },
+      {
+        "name": "Felix Mendelssohn Bartholdy",
+        "composer_sort": "Bartholdy, Felix Mendelssohn",
+        "count": 7
+      },
+      {
+        "name": "Ludwig van Beethoven",
+        "composer_sort": "Beethoven, Ludwig van",
+        "count": 6
+      },
+      {
+        "name": "Frédéric Chopin",
+        "composer_sort": "Chopin, Frédéric",
+        "count": 1
+      },
+      {
+        "name": "G. Donizetti",
+        "composer_sort": "Donizetti, G.",
+        "count": 1
+      },
+      {
+        "name": "Antonín Dvořák",
+        "composer_sort": "Dvořák, Antonín",
+        "count": 1
+      },
+      {
+        "name": "E. Elgar",
+        "composer_sort": "Elgar, E.",
+        "count": 1
+      },
+      {
+        "name": "Edvard Grieg",
+        "composer_sort": "Grieg, Edvard",
+        "count": 4
+      },
+      {
+        "name": "Fanny Mendelssohn Hensel",
+        "composer_sort": "Hensel, Fanny Mendelssohn",
+        "count": 1
+      },
+      {
+        "name": "Johann Strauss II",
+        "composer_sort": "II, Johann Strauss",
+        "count": 3
+      },
+      {
+        "name": "P. Mascagni",
+        "composer_sort": "Mascagni, P.",
+        "count": 1
+      },
+      {
+        "name": "Wolfgang Amadeus Mozart",
+        "composer_sort": "Mozart, Wolfgang Amadeus",
+        "count": 10
+      },
+      {
+        "name": "Giovanni Paisiello",
+        "composer_sort": "Paisiello, Giovanni",
+        "count": 1
+      },
+      {
+        "name": "Giacomo Puccini",
+        "composer_sort": "Puccini, Giacomo",
+        "count": 3
+      },
+      {
+        "name": "O. Respighi",
+        "composer_sort": "Respighi, O.",
+        "count": 1
+      },
+      {
+        "name": "Gioachino Rossini",
+        "composer_sort": "Rossini, Gioachino",
+        "count": 5
+      },
+      {
+        "name": "Camille Saint-Saëns",
+        "composer_sort": "Saint-Saëns, Camille",
+        "count": 1
+      },
+      {
+        "name": "Franz Schubert",
+        "composer_sort": "Schubert, Franz",
+        "count": 3
+      },
+      {
+        "name": "Robert Schumann",
+        "composer_sort": "Schumann, Robert",
+        "count": 1
+      },
+      {
+        "name": "Jean Sibelius",
+        "composer_sort": "Sibelius, Jean",
+        "count": 1
+      },
+      {
+        "name": "B. Smetana",
+        "composer_sort": "Smetana, B.",
+        "count": 1
+      },
+      {
+        "name": "P.I. Tchaikovsky",
+        "composer_sort": "Tchaikovsky, P.I.",
+        "count": 1
+      },
+      {
+        "name": "Giuseppe Verdi",
+        "composer_sort": "Verdi, Giuseppe",
+        "count": 6
+      },
+      {
+        "name": "P. Warlock",
+        "composer_sort": "Warlock, P.",
+        "count": 1
+      }
+    ]
+  }
+  

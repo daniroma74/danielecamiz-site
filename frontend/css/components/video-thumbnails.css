@@ -1,0 +1,110 @@
+/* ==========================================================================
+   Video thumbnails component (standard)
+   Convenzioni: id_snake_case, classi kebab-case
+   - Griglia: .video-grid
+   - Card: .video-item
+   - Thumb: .video-thumb (link con <img.youtube-thumbnail>)
+   - Titolo sotto: .video-title
+   ========================================================================== */
+
+   .video-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    justify-content: center;
+    align-items: stretch;
+  }
+  
+  /* Card generica */
+  .video-item {
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+  }
+  
+  /* Link immagine */
+  .video-thumb {
+    position: relative;
+    display: block;
+    background: #181818;
+    border: 2px solid var(--accent-color, #cba135);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px #0005;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .video-thumb:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 34px rgba(230,200,50,0.13);
+  }
+  
+  /* Immagine */
+  .youtube-thumbnail {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  /* Titolo SOTTO alla miniatura */
+  .video-title {
+    margin: 0.55rem 0 0;
+    padding: 0 0.2rem;
+    font-family: var(--font-ui, Montserrat, Arial, sans-serif);
+    font-weight: 600;
+    font-size: 0.95rem;            /* più piccolo e discreto */
+    line-height: 1.25;
+    color: var(--accent-color, #cba135);
+    text-align: left;
+  
+    /* 2 righe max, ellissi */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;         /* Standard property */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+  .video-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .video-title a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Variante EMBED (riutilizzabile per /video) */
+  .video-card {
+    width: min(560px, 92vw);
+    background: #181818;
+    border: 2px solid var(--accent-color, #cba135);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px #0005;
+    padding: 0;
+  }
+  .video-card .video-frame {
+    width: 100%;
+    display: block;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+  }
+  .video-card .video-title {
+    display: block;
+    max-width: 90%;
+    margin: 0.6rem auto 0.9rem;
+    text-align: center;
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--accent-color, #cba135);
+    line-height: 1.18;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .video-item { width: 100%; }
+    .video-thumb { border-radius: 10px; }
+  }
+  

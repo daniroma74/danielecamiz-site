@@ -1,0 +1,79 @@
+/* Titolo: ora ereditato da .section-title globale */
+
+/* Griglia progetti */
+.projects_grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.4vw;
+  justify-content: center;
+  align-items: stretch;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.project_box {
+  flex: 1 1 310px;
+  max-width: 370px;
+  min-width: 250px;
+  margin: 0 0.5vw 2vw 0.5vw;
+  background: #191919;
+  border-radius: 18px;
+  box-shadow: 0 2px 18px rgba(180,160,60,0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.14s, box-shadow 0.16s;
+  position: relative;
+}
+.project_box:hover {
+  transform: translateY(-7px) scale(1.025);
+  box-shadow: 0 10px 30px 0 rgba(230,200,50,0.13);
+}
+
+.project_img {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1.3em;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 10px 0 rgba(0,0,0,0.08);
+}
+.project_img img {
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.project_box h3 {
+  font-size: 1.21em;
+  font-family: 'Montserrat', serif;
+  color: var(--accent-color);
+  font-weight: 600;
+  margin-bottom: 0.45em;
+  margin-top: 0;
+}
+
+.project_desc {
+  font-size: 1.02em;
+  color: #f4eed4;
+  margin-bottom: 1.2em;
+  min-height: 2.7em;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+}
+
+.project_links,
+.project_box .btn {
+  display: flex;
+  gap: 0.7em;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}

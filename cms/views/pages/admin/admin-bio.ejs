@@ -1,0 +1,146 @@
+<% /* admin-bio.ejs */ %>
+
+<h1>Pannello Admin – Biografia</h1>
+<%- include('../../partials/admin/maintenance-page-control') %>
+
+<div class="controls">
+  <label>Modalità:
+    <select id="modo" onchange="caricaEditor()">
+      <option value="tutti">Tutti i campi</option>
+      <option value="singolo">Campo singolo</option>
+    </select>
+  </label>
+  <label>Sezione:
+    <select id="sezione" onchange="caricaEditor()">
+      <option value="biografia">Biografia</option>
+      <option value="curriculum">Curriculum</option>
+      <option value="storia">Storia</option>
+    </select>
+  </label>
+  <label>Campo:
+    <select id="campoSingolo"></select>
+  </label>
+</div>
+
+<div id="editori"></div>
+
+<script>
+  // Qui incolla tutto il codice JS che mi hai mandato
+  let dati = {};
+
+  const labelMap = {
+    title: "Titolo", intro: "Intro", more: "Contenuto",
+    titolo: "Titolo", testoBreve: "Intro", testoEsteso: "Contenuto",
+    contenuto: "Contenuto"
+  };
+
+  const campiDisponibili = {
+    biografia: ["title", "intro", "more"],
+    curriculum: ["titolo", "testoBreve", "testoEsteso"],
+    storia: ["titolo", "intro", "contenuto"]
+  };
+
+  async function caricaDati() {
+    const res = await fetch('/api/bio');
+    dati = await res.json();
+    caricaEditor();
+  }
+
+  function markdownToHtml(md) {
+    return md
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+      .replace(/\n/gim, '<br>');
+  }
+
+  function creaEditor(lang, campo, valore) {
+    const id = `${campo}-${lang}`;
+    const label = `${labelMap[campo] || campo} (${lang})`;
+
+    return `
+      <div class="section">
+        <h2>${label}</h2>
+        <div class="editor-block">
+          <div class="editor-column">
+            <div class="toolbar">
+              <button onclick="inserisci('${id}', '**', '**')">B</button>
+              <button onclick="inserisci('${id}', '*', '*')">i</button>
+              <button onclick="inserisci('${id}', '# ', '')">H1</button>
+            </div>
+            <textarea id="${id}" oninput="aggiornaAnteprima('${id}')">${valore}</textarea>
+            <button class="save-btn" onclick="salva('${lang}', '${campo}')">Salva</button>
+          </div>
+          <div class="preview" id="prev-${id}">${markdownToHtml(valore)}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function caricaEditor() {
+    const modo = document.getElementById('modo').value;
+    const sezione = document.getElementById('sezione').value;
+    const campoSelezionato = document.getElementById('campoSingolo').value;
+    const container = document.getElementById('editori');
+    container.innerHTML = '';
+
+    if (modo === 'singolo') {
+      const campoSelect = document.getElementById('campoSingolo');
+      campoSelect.innerHTML = '';
+
+      campiDisponibili[sezione].forEach(c => {
+        const label = labelMap[c] || c;
+        const option = document.createElement('option');
+        option.value = c;
+        option.textContent = label;
+        campoSelect.appendChild(option);
+      });
+    }
+
+    const campi = campiDisponibili[sezione];
+    const daMostrare = modo === 'singolo' ? [campoSelezionato] : campi;
+
+    daMostrare.forEach(campo => {
+      ['it', 'en'].forEach(lang => {
+        const val = dati[sezione]?.[lang]?.[campo] || '';
+        container.innerHTML += creaEditor(lang, campo, val);
+      });
+    });
+  }
+
+  function aggiornaAnteprima(id) {
+    const val = document.getElementById(id).value;
+    document.getElementById(`prev-${id}`).innerHTML = markdownToHtml(val);
+  }
+
+  function inserisci(id, inizio, fine) {
+    const textarea = document.getElementById(id);
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textarea.value.substring(start, end);
+    const before = textarea.value.substring(0, start);
+    const after = textarea.value.substring(end);
+    textarea.value = before + inizio + selected + fine + after;
+    aggiornaAnteprima(id);
+  }
+
+  async function salva(lang, campo) {
+    const sezione = document.getElementById('sezione').value;
+    const id = `${campo}-${lang}`;
+    const nuovoTesto = document.getElementById(id).value;
+    dati[sezione][lang][campo] = nuovoTesto;
+
+    const res = await fetch('/api/bio', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(dati)
+    });
+
+    if (res.ok) alert('Salvato con successo!');
+    else alert('Errore nel salvataggio.');
+  }
+
+  caricaDati();
+</script>

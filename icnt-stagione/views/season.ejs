@@ -1,0 +1,796 @@
+<!-- Layout con poster fisso a sinistra su desktop -->
+<div class="season-layout">
+  <!-- Poster Sidebar - Fisso a sinistra su desktop -->
+  <aside class="poster-sidebar" id="poster_sidebar">
+    <div class="poster-inner">
+      <div class="poster-frame">
+        <a class="poster-link" 
+           href="/public/img/poster/poster-1200x1710.webp"
+           data-lightbox="poster"
+           aria-label="Visualizza locandina in alta risoluzione">
+          <picture>
+            <source type="image/webp" 
+                    srcset="/public/img/poster/poster-480x684.webp 480w,
+                            /public/img/poster/poster-640x912.webp 640w,
+                            /public/img/poster/poster-1000x1425.webp 1000w,
+                            /public/img/poster/poster-1200x1710.webp 1200w"
+                    sizes="(max-width: 768px) 100vw, 380px">
+            <img src="/public/img/poster/poster-1200x1710.webp"
+                 alt="Locandina Stagione <%= ui.code %>"
+                 loading="eager"
+                 width="380" 
+                 height="541"
+                 class="poster-image">
+          </picture>
+          <div class="poster-overlay">
+            <span class="poster-zoom">🔍 Ingrandisci</span>
+          </div>
+        </a>
+      </div>
+      
+      <div class="poster-actions">
+        <a class="btn primary small full-width" 
+           href="/public/img/poster/poster-1200x1710.webp" 
+           download="ICNT-Stagione-<%= ui.code %>.webp">
+          📥 Scarica Locandina
+        </a>
+        <a class="btn ghost small full-width" 
+           href="/q.svg" 
+           download="ICNT-QR-<%= ui.code %>.svg">
+          🔗 Scarica QR Code
+        </a>
+      </div>
+      
+      <!-- Quick Stats -->
+      <div class="poster-stats">
+        <div class="stat-item">
+          <span class="stat-value"><%= data.allCount %></span>
+          <span class="stat-label">Concerti</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="live_bookings"><%= stats?.bookings || 0 %></span>
+          <span class="stat-label">Prenotazioni</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+  
+  <!-- Main Content Area - Scrollabile -->
+  <div class="content-area">
+    <div class="content-inner">
+      <!-- Hero Section con Prossimo Evento -->
+      <section class="hero-section card glass" id="hero_section">
+        <div class="hero-content">
+          <h1 class="hero-title gradient-text">
+            Stagione ICNT <%= ui.code %>
+          </h1>
+          <p class="hero-subtitle">
+            I Concerti nel Tempio • Chiesa Valdese di piazza Cavour, Roma
+          </p>
+          
+          <% if (data.nextEvent) { %>
+          <%
+          // Helper function definita UNA SOLA VOLTA qui
+          function asLocalDate(dateStr) {
+              const [y, m, d] = (dateStr || '').split('-').map(Number);
+              return new Date(y, (m || 1) - 1, d || 1);
+          }
+          const nextD = asLocalDate(data.nextEvent.date);
+          %>
+          <div class="next-event-card">
+            <div class="next-event-badge">Prossimo Evento</div>
+            <h2 class="next-event-title"><%= data.nextEvent.title %></h2>
+            <% if (data.nextEvent.subtitle) { %>
+              <p class="next-event-subtitle"><%= data.nextEvent.subtitle %></p>
+            <% } %>
+            <div class="next-event-info">
+              <span class="next-event-date">
+                📅 <%= nextD.toLocaleDateString('it-IT', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) %>
+              </span>
+              <span class="next-event-time">
+                🕐 Ora: <%= data.nextEvent.time || '20:00' %>
+              </span>
+            </div>
+            <% if (data.nextEvent.detailUrl) { %>
+            <a href="<%= data.nextEvent.detailUrl %>" 
+               class="btn primary" 
+               target="_blank" 
+               rel="noopener">
+              Maggiori informazioni →
+            </a>
+            <% } %>
+          </div>
+          <% } %>
+        </div>
+      </section>
+      
+      <!-- Filters Section -->
+      <section class="filters-section card glass" id="filters_section">
+        <div class="filters-wrapper">
+          <h3 class="filters-title">Filtra per tipo:</h3>
+          <div class="filters-chips">
+            <a href="?f=all" 
+               class="chip <%= ui.filter === 'all' ? 'active' : '' %>"
+               data-filter="all">
+              Tutti (<%= data.allCount %>)
+            </a>
+            <a href="?f=icnt" 
+               class="chip <%= ui.filter === 'icnt' ? 'active' : '' %>"
+               data-filter="icnt">
+              Solo ICNT
+            </a>
+            <a href="?f=msc" 
+               class="chip <%= ui.filter === 'msc' ? 'active' : '' %>"
+               data-filter="msc">
+              Solo MSC
+            </a>
+          </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-wrapper">
+          <input type="search" 
+                 id="search_events" 
+                 class="search-input"
+                 placeholder="🔍 Cerca concerto..."
+                 autocomplete="off">
+        </div>
+      </section>
+      
+      <!-- Events List -->
+      <section class="events-section" id="events_section">
+        <% if (data.events && data.events.length > 0) { %>
+          <div class="events-grid">
+            <% data.events.forEach((event, index) => { 
+                 const d = asLocalDate(event.date);
+            %>
+              <article class="event-card glass animate-in" 
+                       data-type="<%= event.mscNumber ? 'msc' : 'icnt' %>"
+                       data-index="<%= index %>"
+                       style="animation-delay: <%= index * 0.05 %>s">
+
+                <!-- Date Column -->
+                <div class="event-date-column">
+                  <div class="event-date-box">
+                    <div class="date-day"><%= d.getDate() %></div>
+                    <div class="date-month"><%= d.toLocaleString('it', { month: 'short' }).toUpperCase() %></div>
+                    <div class="date-year"><%= d.getFullYear() %></div>
+                    <div class="date-weekday"><%= d.toLocaleString('it', { weekday: 'short' }).toUpperCase() %></div>
+                  </div>
+                </div>
+                
+                <!-- Content Column -->
+                <div class="event-content">
+                  <div class="event-header">
+                    <h3 class="event-title">
+                      <%= event.title %>
+                      <% if (event.mscNumber) { %>
+                        <span class="msc-badge" title="Musica Sacra Contemporanea">
+                          MSC <%= event.mscNumber %>
+                        </span>
+                      <% } %>
+                    </h3>
+                    <% if (event.subtitle) { %>
+                      <p class="event-subtitle"><%= event.subtitle %></p>
+                    <% } %>
+                  </div>
+                  
+                  <div class="event-meta">
+                    <span class="event-time">🕐 <%= event.time || '20:00' %></span>
+                    <% if (event.location) { %>
+                      <span class="event-location">📍 <%= event.location %></span>
+                    <% } %>
+                  </div>
+                  
+                  <% if (event.description_short) { %>
+                    <p class="event-description"><%= event.description_short %></p>
+                  <% } %>
+                </div>
+                
+                <!-- Actions Column -->
+                <div class="event-actions">
+                  <% if (event.detailUrl) { %>
+                    <a href="<%= event.detailUrl %>" 
+                       class="btn primary small"
+                       target="_blank"
+                       rel="noopener">
+                      Dettagli
+                    </a>
+                  <% } %>
+                  
+                  <button class="btn ghost small icon-btn share-btn"
+                          type="button"
+                          data-title="<%- (event.title || '').replace(/"/g,'&quot;') %>"
+                          data-url="<%- (event.detailUrl || '') %>"
+                          title="Condividi">
+                    📤
+                  </button>
+                  
+                  <a href="/ics/<%= event.slug %>.ics" 
+                     class="btn ghost small icon-btn"
+                     download
+                     title="Aggiungi al calendario">
+                    📅
+                  </a>
+                </div>
+              </article>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <p class="empty-message">Nessun evento trovato per i criteri selezionati.</p>
+          </div>
+        <% } %>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Poster Modal -->
+<div class="mobile-poster-trigger" id="mobile_poster_trigger">
+  <span>📷 Locandina</span>
+</div>
+
+<script>
+  // niente onclick inline: aggancio qui (la tua CSP lo consente)
+  (function(){
+    // Condivisione
+    document.querySelectorAll('.share-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var title = btn.getAttribute('data-title') || document.title;
+        var url   = btn.getAttribute('data-url') || location.href;
+        try {
+          if (navigator.share && url) {
+            navigator.share({ title: title, url: url }).catch(function(){});
+          } else if (url) {
+            window.open(url, '_blank', 'noopener');
+          }
+        } catch(e){
+          if (url) window.open(url, '_blank', 'noopener');
+        }
+      });
+    });
+
+    // Mobile: apri la locandina in nuova scheda (nessun “forza download”)
+    var t = document.getElementById('mobile_poster_trigger');
+    if (t) {
+      t.addEventListener('click', function(){
+        window.open('/public/img/poster/poster-1200x1710.webp', '_blank');
+      });
+    }
+  })();
+</script>
+
+<style>
+/* Layout con poster fisso */
+.season-layout {
+  display: flex;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  position: relative;
+}
+
+/* Poster Sidebar - Fisso a sinistra */
+.poster-sidebar {
+  position: sticky;
+  top: var(--header-height);
+  left: 0;
+  width: 400px;
+  height: calc(100vh - var(--header-height));
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.03) 0%, transparent 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.poster-inner {
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.poster-frame {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1.5rem;
+}
+
+.poster-link {
+  display: block;
+  position: relative;
+  line-height: 0;
+}
+
+.poster-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.poster-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.poster-link:hover .poster-overlay {
+  opacity: 1;
+}
+
+.poster-zoom {
+  color: white;
+  font-weight: 500;
+  font-size: 1.125rem;
+}
+
+.poster-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.poster-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  font-family: 'Playfair Display', serif;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* Content Area - Scrollabile */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background: var(--bg-primary);
+}
+
+.content-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Mobile Layout */
+@media (max-width: 1024px) {
+  .season-layout {
+    flex-direction: column;
+  }
+  
+  .poster-sidebar {
+    display: none;
+  }
+  
+  .mobile-poster-trigger {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: var(--gradient-gold);
+    color: var(--bg-primary);
+    padding: 12px 20px;
+    border-radius: 30px;
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+    z-index: 100;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+    display: block;
+  }
+  
+  .mobile-poster-trigger:active {
+    transform: scale(0.95);
+  }
+}
+
+@media (min-width: 1025px) {
+  .mobile-poster-trigger {
+    display: none;
+  }
+}
+
+/* Glass morphism cards */
+.card.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Hero Section */
+.hero-section {
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* Next Event Card */
+.next-event-card {
+  background: rgba(212, 175, 55, 0.1);
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.next-event-badge {
+  display: inline-block;
+  background: var(--gradient-gold);
+  color: var(--bg-primary);
+  padding: 0.25rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.next-event-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.next-event-subtitle {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.next-event-info {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.next-event-date,
+.next-event-time {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+/* Filters Section */
+.filters-section {
+  margin-bottom: 2rem;
+}
+
+.filters-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filters-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.filters-chips {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.chip.active {
+  background: var(--gradient-gold);
+  color: var(--bg-primary);
+  border-color: var(--accent-gold);
+  font-weight: 600;
+}
+
+.search-wrapper {
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-gold);
+}
+
+/* Event Cards Grid */
+.events-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.event-card {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.event-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateX(8px);
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Date Box */
+.event-date-column {
+  display: flex;
+  align-items: center;
+}
+
+.event-date-box {
+  text-align: center;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.date-day {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  line-height: 1;
+}
+
+.date-month {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0.25rem 0;
+}
+
+.date-year {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.date-weekday {
+  font-size: 0.75rem;
+  color: var(--accent-gold);
+  margin-top: 0.25rem;
+}
+
+/* Event Content */
+.event-content {
+  flex: 1;
+}
+
+.event-header {
+  margin-bottom: 0.75rem;
+}
+
+.event-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.msc-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid var(--accent-gold);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: var(--accent-gold);
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.event-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0.25rem 0;
+}
+
+.event-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.event-description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Event Actions */
+.event-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn.primary {
+  background: var(--gradient-gold);
+  color: var(--bg-primary);
+}
+
+.btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.btn.small {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn.icon-btn {
+  padding: 0.375rem;
+  min-width: 32px;
+}
+
+/* Animations */
+.animate-in {
+  animation: fadeInLeft 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.empty-message {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+}
+
+/* Utilities */
+.full-width { 
+  width: 100%; 
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .event-card {
+    grid-template-columns: 80px 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .event-actions {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+  }
+  
+  .filters-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .next-event-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+</style>

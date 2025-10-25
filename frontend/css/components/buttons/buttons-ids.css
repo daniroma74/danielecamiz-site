@@ -1,0 +1,33 @@
+/* buttons-ids.css */
+
+/* ===== ID PULSANTI SPECIFICI ===== */
+#btn_it,
+#btn_en,
+#btn_expand,
+#btn_return {
+  cursor: pointer;
+  padding: 0.4em 0.8em;
+  border-radius: 6px;
+  border: 1.5px solid var(--accent-color);
+  background: transparent;
+  color: var(--accent-color);
+  font-weight: 600;
+  font-family: var(--font-ui);
+  transition: all 0.2s;
+  outline: none;
+}
+
+#btn_it.active,
+#btn_en.active {
+  background: var(--accent-color);
+  color: #181818;
+  font-weight: 700;
+}
+
+#btn_it:focus,
+#btn_en:focus,
+#btn_expand:focus,
+#btn_return:focus {
+  outline: 2px solid var(--light-accent);
+  outline-offset: 2px;
+}

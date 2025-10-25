@@ -1,0 +1,12 @@
+{
+  "global": false,
+  "pages": {
+    "concerts": false,
+    "bio": false,
+    "contact": false,
+    "gallery": false,
+    "video": false,
+    "repertoire": false,
+    "press": false
+  }
+}

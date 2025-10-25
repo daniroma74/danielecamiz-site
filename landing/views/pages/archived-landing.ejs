@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/public/css/landing.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .archive-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .archive-banner-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .archive-banner i {
+      font-size: 1.5rem;
+    }
+    .booking-section {
+      opacity: 0.5;
+      pointer-events: none;
+      position: relative;
+    }
+    .booking-disabled-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Banner Archivio -->
+  <div class="archive-banner">
+    <div class="archive-banner-content">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <i class="fas fa-archive"></i>
+        <span>
+          Evento Archiviato - 
+          <%= new Date(event.date).toLocaleDateString('it-IT', { 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric' 
+          }) %>
+        </span>
+      </div>
+      <a href="/archive" style="color: white; text-decoration: underline;">
+        ← Torna all'archivio
+      </a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero" style="background-image: url('https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1920,h_800,q_auto,e_grayscale/<%= event.poster_cloudinary_id || 'placeholder' %>')">
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <div class="event-date-badge">
+          <%= new Date(event.date).toLocaleDateString('it-IT', { 
+            weekday: 'long', 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric' 
+          }) %>
+        </div>
+        <h1 class="event-title"><%= event.title %></h1>
+        <% if (event.subtitle) { %>
+          <p class="event-subtitle"><%= event.subtitle %></p>
+        <% } %>
+        <div class="event-meta">
+          <span><i class="fas fa-clock"></i> <%= event.starts_at || '20:00' %></span>
+          <span><i class="fas fa-map-marker-alt"></i> <%= event.location %></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performers -->
+  <% if (event.performers.conductor || event.performers.orchestra || event.performers.soloists.length > 0) { %>
+    <section class="performers-section">
+      <div class="container">
+        <h2>Interpreti</h2>
+        
+        <% if (event.performers.conductor) { %>
+          <div class="performer">
+            <strong>Direttore:</strong> <%= event.performers.conductor %>
+          </div>
+        <% } %>
+        
+        <% if (event.performers.orchestra) { %>
+          <div class="performer">
+            <strong>Orchestra:</strong> <%= event.performers.orchestra %>
+          </div>
+        <% } %>
+        
+        <% if (event.performers.soloists.length > 0) { %>
+          <div class="soloists">
+            <strong>Solisti:</strong>
+            <ul>
+              <% event.performers.soloists.forEach(soloist => { %>
+                <li><%= soloist.name %><% if (soloist.instrument) { %> (<%= soloist.instrument %>)<% } %></li>
+              <% }) %>
+            </ul>
+          </div>
+        <% } %>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Program -->
+  <% if (event.program && event.program.length > 0) { %>
+    <section class="program-section">
+      <div class="container">
+        <h2>Programma</h2>
+        <div class="program-list">
+          <% event.program.forEach(work => { %>
+            <div class="program-item">
+              <div class="composer"><%= work.composer %></div>
+              <div class="work-title">
+                <%= work.title %>
+                <% if (work.subtitle) { %>
+                  <span class="work-subtitle"><%= work.subtitle %></span>
+                <% } %>
+                <% if (work.catalogue) { %>
+                  <span class="catalogue"><%= work.catalogue %></span>
+                <% } %>
+                <% if (work.work_key) { %>
+                  <span class="work-key"><%= work.work_key %></span>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Booking Section - Disabled -->
+  <section class="booking-section">
+    <div class="container">
+      <h2>Prenotazioni</h2>
+      <div class="booking-disabled-overlay">
+        <i class="fas fa-lock"></i> Evento concluso - Prenotazioni chiuse
+      </div>
+      <div class="booking-stats" style="text-align: center; padding: 2rem;">
+        <p style="font-size: 1.2rem; color: #666;">
+          <strong><%= event.bookingStats.count %></strong> persone hanno partecipato<br>
+          (<strong><%= event.bookingStats.seats %></strong> posti occupati)
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery (se presente) -->
+  <% if (event.gallery_images) { %>
+    <section class="gallery-section">
+      <div class="container">
+        <h2>Galleria</h2>
+        <div class="gallery-grid">
+          <% 
+            const images = typeof event.gallery_images === 'string' 
+              ? JSON.parse(event.gallery_images) 
+              : event.gallery_images;
+            
+            images.forEach(img => { 
+          %>
+            <div class="gallery-item">
+              <img src="<%= img %>" alt="Foto evento" loading="lazy">
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
+  <footer class="event-footer">
+    <div class="container">
+      <p>&copy; <%= new Date().getFullYear() %> Daniele Camiz</p>
+      <p>
+        <a href="/archive">Archivio Eventi</a> | 
+        <a href="https://danielecamiz.com">Sito Ufficiale</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

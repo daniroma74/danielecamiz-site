@@ -1,0 +1,23 @@
+{
+  "repertoire": {
+    "title": "Repertorio",
+    "claim": "Questi sono i brani che ho diretto almeno una volta in concerto",
+
+    "categories": {
+      "symphonies": "Sinfonie",
+      "ouverture": "Ouverture e Ouverture-Fantasia",
+      "concert": "Concerti per Strumento Solista e Orchestra",
+      "vocal": "Musica Vocale e Scene Drammatiche",
+      "suite": "Musica Orchestrale – Suite e Danze"
+    },
+
+    "category_symphonies": "Sinfonie",
+    "category_simphony": "Sinfonie",
+    "category_ouverture": "Ouverture e Ouverture-Fantasia",
+    "category_concert": "Concerti per Strumento Solista e Orchestra",
+    "category_vocal": "Musica Vocale e Scene Drammatiche",
+    "category_suite": "Musica Orchestrale – Suite e Danze",
+
+    "no_repertoire": "Nessun repertorio disponibile."
+  }
+}

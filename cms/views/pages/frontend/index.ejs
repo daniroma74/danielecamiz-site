@@ -1,0 +1,263 @@
+<%
+/* ==== Helpers locali per i18n SSR e fallback ==== */
+const _t = (k, defIt, defEn) => {
+  try { if (typeof t === 'function') { const v = t(k); if (v && v !== k) return v; } } catch {}
+  return (lang === 'en' ? defEn : defIt);
+};
+function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? val : fb; }
+%>
+
+<!-- ===== HERO ===== -->
+<%- include('../../partials/frontend/hero-home', { hero: (homeData && homeData.hero) ? homeData.hero : {} }) %>
+
+<!-- ===== PROJECTS ===== -->
+<section id="projects">
+  <div class="section-title" id="projects_title">
+    <%= (
+      (labels?.home?.projects_title || labels?.home?.project_title) ||
+      homeData?.projectsTitle ||
+      _t('home.project_title', 'Progetti', 'Projects')
+    ) %>
+  </div>
+
+  <div class="projects_grid" id="projects_grid">
+    <%
+      const _projects = Array.isArray(homeData?.projects) ? homeData.projects.slice(0,3) : [];
+      if (_projects.length) {
+        _projects.forEach(p => {
+    %>
+      <article class="project_box" id="project_<%= p.id %>">
+        <% if (p.img) { %>
+          <div class="project_img">
+            <img src="<%= p.img %>" alt="<%= safe(p.imgAlt, p.title || '') %>">
+          </div>
+        <% } %>
+        <% if (p.title) { %><h3><%= p.title %></h3><% } %>
+        <% if (p.desc) { %><p class="project_desc"><%= p.desc %></p><% } %>
+        <div class="project_links">
+          <% if (Array.isArray(p.links) && p.links.length) { %>
+            <% p.links.forEach(l => { if (l && l.url) { %>
+              <a class="btn" href="<%= l.url %>" target="_blank" rel="noopener noreferrer"><%= safe(l.text, lang === 'en' ? 'Open' : 'Apri') %></a>
+            <% } }) %>
+          <% } %>
+          <% if (p.btnUrl) { %>
+            <a class="btn" href="<%= p.btnUrl %>" target="_blank" rel="noopener noreferrer"><%= safe(p.btnText, lang === 'en' ? 'Open' : 'Apri') %></a>
+          <% } %>
+        </div>
+      </article>
+    <% }); } else { %>
+      <p class="empty-state"><%= (lang === 'en') ? 'No projects available.' : 'Nessun progetto disponibile.' %></p>
+    <% } %>
+  </div>
+</section>
+
+
+<!-- ===== NEWS (TEASER) ===== -->
+<section id="news_section" class="home-news">
+  <div class="section-title" id="news_title"><%= _t('home.news_title', 'Novità', 'News') %></div>
+
+  <%
+    const teaser = Array.isArray(newsTeaser) ? newsTeaser : [];
+    const hasTeaser = teaser.length > 0;
+  %>
+
+  <% if (hasTeaser) { %>
+    <ul class="news-grid" id="home_news_teaser" role="list" aria-label="<%= (lang==='en') ? 'Latest news' : 'Ultime news' %>">
+      <% teaser.forEach(post => { %>
+        <%- include('../../partials/frontend/news/card', { post, lang, href: post.href || ('/news/' + post.id) }) %>
+      <% }) %>
+    </ul>
+    <p class="section-cta">
+      <a class="btn btn-link" href="/news"><%= _t('home.all_news', 'Tutte le news', 'All news') %></a>
+    </p>
+  <% } else { %>
+    <p class="empty-state"><%= (lang === 'en') ? 'No news yet.' : 'Nessuna news al momento.' %></p>
+  <% } %>
+</section>
+
+<!-- ===== LATEST VIDEOS ===== -->
+<section id="latest_videos">
+  <div class="section-title" id="video_title"><%= _t('home.video_title', 'Ultimi video', 'Latest videos') %></div>
+
+  <% if (Array.isArray(videoItems) && videoItems.length) { %>
+    <div id="youtube_videos" class="video-grid">
+      <% videoItems.forEach(v => { %>
+        <article class="video-item">
+          <a class="video-thumb" href="https://www.youtube.com/watch?v=<%= v.id %>" target="_blank" rel="noopener">
+            <img class="youtube-thumbnail" src="<%= v.thumbnail %>" alt="<%= safe(v.title, 'YouTube video') %>">
+          </a>
+          <h4 class="video-title">
+            <a href="https://www.youtube.com/watch?v=<%= v.id %>" target="_blank" rel="noopener"><%= safe(v.title, '') %></a>
+          </h4>
+        </article>
+      <% }) %>
+    </div>
+    <p class="section-cta">
+      <a class="btn btn-link" href="/video"><%= _t('home.all_videos', 'Tutti i video', 'All videos') %></a>
+    </p>
+  <% } else { %>
+    <p class="empty-state"><%= (lang === 'en') ? 'No videos available.' : 'Nessun video disponibile.' %></p>
+  <% } %>
+</section>
+
+<!-- ===== BANDCAMP (consenso marketing richiesto) ===== -->
+<section id="bandcamp_section">
+  <div class="section-title" id="bandcamp_title">
+    <%= _t('home.bandcamp.title', 'Ultime pubblicazioni', 'Latest releases') %>
+  </div>
+
+  <% if (Array.isArray(bandcampItems) && bandcampItems.length) { 
+       const bc = bandcampItems[0]; %>
+
+    <!-- Embed vero: nascosto se manca consenso marketing -->
+    <div class="bandcamp-embed" data-consent-group="marketing" <%= (cookieConsent==='reject' ? 'hidden' : '') %>>
+      <div class="bandcamp-embed__inner">
+        <%- (bc.embedCode || '') %>
+      </div>
+    </div>
+
+    <!-- Placeholder se niente consenso -->
+    <div class="consent-placeholder" <%= (cookieConsent && cookieConsent!=='reject' ? 'hidden' : '') %>>
+      <p class="bc-placeholder-text">
+        <%= (lang==='en'
+            ? 'To view the Bandcamp player, please enable marketing cookies.'
+            : 'Per vedere il player Bandcamp, abilita i cookie di marketing.') %>
+      </p>
+      <button type="button" class="btn btn-link" id="bc_manage_from_placeholder">
+        <%= (t && t('cookies.manage')!=='cookies.manage') ? t('cookies.manage') : (lang==='en'?'Manage cookies':'Gestisci cookie') %>
+      </button>
+      <% if (bc.ctaUrl) { %>
+        <a class="btn" href="<%= bc.ctaUrl %>" target="_blank" rel="noopener">
+          <%= safe(bc.ctaLabel, _t('home.bandcamp.cta','Ascolta su Bandcamp','Listen on Bandcamp')) %>
+        </a>
+      <% } %>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function(){
+        const btn = document.getElementById('bc_manage_from_placeholder');
+        if (btn) btn.addEventListener('click', function(e){ e.preventDefault(); if (window.CookieConsent) window.CookieConsent.open(); });
+      });
+    </script>
+
+  <% } else { %>
+    <p class="empty-state"><%= (lang==='en') ? 'No Bandcamp items.' : 'Nessuna pubblicazione Bandcamp.' %></p>
+  <% } %>
+</section>
+
+<!-- ===== UPCOMING CONCERTS ===== -->
+<section id="upcoming_concerts">
+  <div class="section-title" id="concerts_title"><%= _t('home.concerts_title', 'Prossimi concerti', 'Upcoming concerts') %></div>
+
+  <% if (Array.isArray(homeConcerts) && homeConcerts.length) { %>
+    <div id="concerts_list" class="concerts-list">
+      <% homeConcerts.forEach(c => { %>
+        <article class="concert-card" role="button" tabindex="0" data-open="concert">
+          <% if (c.poster) { %>
+            <div class="concert-media">
+              <img class="concert-poster" src="<%= c.poster %>" alt="<%= safe(c.title, 'concert poster') %>">
+            </div>
+          <% } %>
+
+          <div class="concert-content">
+            <div class="concert-meta">
+              <% if (c.date) { %><div class="concert-date"><%= c.date %></div><% } %>
+              <div class="concert-place"><%= safe(c.place, '') %><% if (c.city) { %> – <%= c.city %><% } %></div>
+            </div>
+
+            <% if (c.title) { %><h4 class="concert-title"><%= c.title %></h4><% } %>
+
+            <% if (c.canWatch && c.youtube) { %>
+              <div class="concert-actions">
+                <a class="btn" href="<%= c.youtube %>" target="_blank" rel="noopener">
+                  <%= (lang === 'en') ? 'Watch on YouTube' : 'Guarda su YouTube' %>
+                </a>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Template dettagli per lightbox (SSR, nessun fetch) -->
+          <template class="concert-details-template">
+            <div class="lb-body">
+              <% if (c.poster) { %>
+                <div class="lb-media">
+                  <img src="<%= c.poster %>" alt="<%= safe(c.title, 'concert poster') %>">
+                </div>
+              <% } %>
+
+              <div class="lb-info">
+                <% if (c.title) { %><h3 class="lb-title"><%= c.title %></h3><% } %>
+                <ul class="lb-meta">
+                  <% if (c.date) { %><li><strong><%= (lang==='en'?'Date':'Data') %>:</strong> <%= c.date %></li><% } %>
+                  <% if (c.place || c.city) { %><li><strong><%= (lang==='en'?'Place':'Luogo') %>:</strong> <%= safe(c.place,'') %><% if (c.city) { %> – <%= c.city %><% } %></li><% } %>
+                  <% if (c.orchestra) { %><li><strong>Orchestra:</strong> <%= c.orchestra %></li><% } %>
+                  <% if (c.conductor) { %><li><strong><%= (lang==='en'?'Conductor':'Direttore') %>:</strong> <%= c.conductor %></li><% } %>
+                  <% if (c.soloists) { %><li><strong><%= (lang==='en'?'Soloists':'Solisti') %>:</strong> <%= c.soloists %></li><% } %>
+                </ul>
+
+                <% if (c.program) { %>
+                  <div class="lb-program">
+                    <h4><%= (lang==='en'?'Program':'Programma') %></h4>
+                    <pre><%= c.program %></pre>
+                  </div>
+                <% } %>
+
+                <% if (c.notes) { %>
+                  <div class="lb-notes">
+                    <h4><%= (lang==='en'?'Notes':'Note') %></h4>
+                    <p><%= c.notes %></p>
+                  </div>
+                <% } %>
+
+                <div class="lb-actions">
+                  <a class="btn btn-link" href="/concerts"><%= (lang==='en'?'All concerts':'Tutti i concerti') %></a>
+                  <% if (c.canWatch && c.youtube) { %>
+                    <a class="btn" href="<%= c.youtube %>" target="_blank" rel="noopener"><%= (lang==='en'?'Watch on YouTube':'Guarda su YouTube') %></a>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </template>
+        </article>
+      <% }) %>
+    </div>
+
+    <p class="section-cta">
+      <a class="btn btn-link" href="/concerts"><%= _t('home.all_concerts', 'Tutti i concerti', 'All concerts') %></a>
+    </p>
+  <% } else { %>
+    <p class="empty-state"><%= (lang === 'en') ? 'No upcoming concerts.' : 'Nessun concerto in programma.' %></p>
+    <p class="section-cta"><a class="btn btn-link" href="/concerts"><%= _t('home.all_concerts', 'Tutti i concerti', 'All concerts') %></a></p>
+  <% } %>
+</section>
+
+<!-- ===== MINI CONTACTS ===== -->
+<section id="contact_home">
+  <div class="section-title" id="contact_title"><%= _t('home.contact_title', 'Contatti', 'Contacts') %></div>
+  <div class="contact-mini">
+    <a href="mailto:<%= safe(contactMini?.email, 'info@danielecamiz.com') %>" class="contact-mail" id="contact_mail"><%= safe(contactMini?.email, 'info@danielecamiz.com') %></a>
+    <span class="separator">|</span>
+    <a href="<%= safe(contactMini?.moreUrl, '/contact') %>" class="contact-all" id="contact_more"><%= _t('home.contact_more', 'Tutti i contatti', 'All contacts') %></a>
+  </div>
+</section>
+
+<!-- Spacer anti-footer -->
+<div class="footer-spacer" aria-hidden="true"></div>
+
+<!-- ===== MODAL NEWS ===== -->
+<div id="news_modal" class="news-modal hidden" aria-hidden="true">
+  <div class="news-modal_backdrop" data-close="1"></div>
+  <div class="news-modal_dialog" role="dialog" aria-modal="true" aria-labelledby="news_modal_title">
+    <button id="news_modal_close" class="btn" data-close="1" aria-label="Close">×</button>
+    <div id="news_modal_body" class="news-modal_body"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL CONCERT (HOME) ===== -->
+<div id="concert_lightbox" class="concert-lightbox hidden" aria-hidden="true">
+  <div class="lightbox-backdrop" data-close="1"></div>
+  <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="concert_lightbox_title" tabindex="-1">
+    <button class="lightbox-close btn" data-close="1" aria-label="Close">×</button>
+    <div class="lightbox-content" id="concert_lightbox_content"></div>
+  </div>
+</div>

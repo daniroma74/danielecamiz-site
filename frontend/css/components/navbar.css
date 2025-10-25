@@ -1,0 +1,113 @@
+/* navbar.css — Navbar fissa e responsive (modulare, senza inline) */
+
+/* BASE */
+nav.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000;
+  padding: 6px 12px;              /* desktop slim */
+  min-height: var(--navbar-h, 52px);
+  box-sizing: border-box;
+  width: 100%;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  flex-wrap: wrap;
+  font-family: var(--font-ui);
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;         /* leggermente più compatta */
+  z-index: 999;
+}
+
+/* Stato fisso (desktop e mobile) */
+nav.navbar.navbar--fixed{
+  position: fixed;
+  top: 0; left: 0; right: 0;
+}
+
+/* Logo */
+.nav-left .logo {
+  font-weight: 600;
+  font-size: 1.05rem;             /* desktop sottile */
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+/* Centro: menu desktop */
+.nav-center { flex: 1; display: flex; justify-content: center; }
+
+.menu {
+  display: flex;
+  gap: 1.2rem;                    /* leggermente ridotto */
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.menu a { color: #fff; font-weight: 300; transition: color 0.2s; font-family: var(--font-ui); }
+.menu a:hover,
+.menu a.active { color: var(--accent-color); font-weight: 600; }
+
+/* Destra: toggle lingua + hamburger */
+.nav-right { display: flex; align-items: center; gap: .75rem; }
+
+/* Language switch */
+.lang-switch button{
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-family: var(--font-ui);
+  font-weight: 300;
+  font-size: .95rem;               /* desktop leggermente più piccolo */
+  cursor: pointer;
+  padding: 0 .25rem;
+  transition: color 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.lang-switch button:hover:not([aria-checked="true"]) { color: var(--light-accent); }
+.lang-switch button[aria-checked="true"] { color: #fff; font-weight: 600; text-decoration: underline; cursor: default; pointer-events: none; }
+
+/* ===== Responsive: hamburger e pannello mobile ===== */
+/* Nascondo il checkbox di controllo */
+.nav-toggle{ position:absolute; left:-9999px; }
+
+/* L’hamburger di default è nascosto (desktop); i suoi dettagli grafici sono in hamburger.css */
+.hamburger{ display:none; }
+
+@media (max-width: 1024px){
+  /* Navbar più sottile su mobile */
+  nav.navbar{ padding: 4px 10px; min-height: var(--navbar-h, 48px); letter-spacing: 0.05em; }
+  .nav-right{ gap: .5rem; }
+  .nav-left .logo{ font-size: 1rem; }
+  .lang-switch button{ font-size: .85rem; padding: 0 .2rem; }
+
+  /* Su mobile/tablet: nascondo il menu inline e mostro l’hamburger */
+  .nav-center{ display:none; }
+  .hamburger{ display:inline-flex; line-height: 1; }
+
+  /* Quando il toggle è attivo, mostro un pannello fisso sotto la navbar */
+  .nav-toggle:checked ~ .nav-center{
+    display:block;
+    position:fixed;
+    top: var(--navbar-h);         /* offset: legge da layout.css (48px) */
+    left:0; right:0;
+    background:#000;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    z-index: 998;                 /* sopra ai contenuti, sotto la navbar */
+    padding: 10px 12px;
+  }
+
+  .nav-toggle:checked ~ .nav-center .menu{ display:flex; flex-direction: column; gap:10px; }
+  .nav-toggle:checked ~ .nav-center .menu a{ padding: 6px 0; }
+}
+
+/* Accessibilità focus */ menuitem
+.lang-switch button:focus-visible,
+.hamburger:focus-visible{ outline:2px solid var(--accent-color); outline-offset:2px; }

@@ -1,0 +1,71 @@
+<div class="form-group">
+  <label>Locandina verticale (3:4)</label>
+  <div class="image-uploader" onclick="document.getElementById('upload_vertical').click()">
+    <span>Clicca per caricare o trascinare l'immagine</span>
+    <input type="file" id="upload_vertical" accept="image/*" style="display:none" onchange="uploadImage(this, 'vertical')">
+  </div>
+  <input type="hidden" id="poster_vertical_url" value="<%= event.poster_vertical_cloudinary || '' %>">
+  <div id="preview_vertical" class="image-preview-grid">
+    <% if (event.poster_vertical_cloudinary) { %>
+      <div class="image-thumb">
+        <img src="<%= event.poster_vertical_cloudinary %>" alt="Vertical">
+        <button type="button" onclick="removeImage('vertical')" class="btn-remove-thumb">✕</button>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Locandina orizzontale (16:9)</label>
+  <div class="image-uploader" onclick="document.getElementById('upload_horizontal').click()">
+    <span>Clicca per caricare o trascinare l'immagine</span>
+    <input type="file" id="upload_horizontal" accept="image/*" style="display:none" onchange="uploadImage(this, 'horizontal')">
+  </div>
+  <input type="hidden" id="poster_horizontal_url" value="<%= event.poster_horizontal_cloudinary || '' %>">
+  <div id="preview_horizontal" class="image-preview-grid">
+    <% if (event.poster_horizontal_cloudinary) { %>
+      <div class="image-thumb">
+        <img src="<%= event.poster_horizontal_cloudinary %>" alt="Horizontal">
+        <button type="button" onclick="removeImage('horizontal')" class="btn-remove-thumb">✕</button>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<style>
+.image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.image-thumb {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.image-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #2a2a2a;
+}
+
+.btn-remove-thumb {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+</style>

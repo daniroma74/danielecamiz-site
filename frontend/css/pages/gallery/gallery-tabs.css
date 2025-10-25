@@ -1,0 +1,55 @@
+.gallery-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+  
+  .gallery-tabs button {
+    position: relative;
+    width: 140px;
+    height: 100px;
+    padding: 0;
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    color: var(--accent-color);
+    font-weight: bold;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.9rem;
+    user-select: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
+  
+  .gallery-tabs button span {
+    position: relative;
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    padding: 0.3rem 0.5rem;
+    box-sizing: border-box;
+    color: var(--accent-color);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    transition: color 0.3s ease;
+  }
+  
+  .gallery-tabs button:hover,
+  .gallery-tabs button.active {
+    background-color: var(--accent-color);
+    color: black;
+    border-color: var(--accent-color);
+  }
+  
+  .gallery-tabs button:hover span,
+  .gallery-tabs button.active span {
+    color: black;
+  }

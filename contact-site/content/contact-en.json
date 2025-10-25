@@ -1,0 +1,126 @@
+{
+  "name": "Daniele Camiz",
+  "role": "Conductor ",
+  "bio": "Musician, conductor, pianist and teacher. Music is magic",
+  "avatar": "/img/daniele-camiz-foto-profilo.png",
+  
+  "pageTitle": "Links - Daniele Camiz",
+  "description": "All my links in one place - Contacts, social media, projects and news",
+  
+  "highlightsTitle": "Highlights",
+  "highlights": [
+    {
+      "text": "🎭 Next Concert - Magisterium 2025",
+      "url": "https://magisterium2025.danielecamiz.com",
+      "target": "_blank"
+    },
+    {
+      "text": "ICNT Season",
+      "url": "https://icnt.danielecamiz.com",
+      "target": "_blank"
+    },
+    {
+      "text": "🎬 Recent Videos",
+      "url": "https://www.danielecamiz.com/en/video",
+      "target": "_blank"
+    }
+  ],
+  
+  "socialTitle": "Follow me",
+  "socialLinks": [
+    {
+      "text": "Instagram",
+      "url": "https://instagram.com/danielecamiz",
+      "icon": "instagram-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "Facebook",
+      "url": "https://facebook.com/danielecamizofficial",
+      "icon": "facebook-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "YouTube",
+      "url": "https://youtube.com/@danielecamiz",
+      "icon": "youtube-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "LinkedIn",
+      "url": "https://linkedin.com/in/danielecamiz",
+      "icon": "linkedin-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "Twitter/X",
+      "url": "https://twitter.com/danielecamiz",
+      "icon": "twitterx-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "Threads",
+      "url": "https://threads.net/@danielecamiz",
+      "icon": "threads-gold.svg",
+      "target": "_blank"
+    }
+  ],
+  
+  "contactTitle": "Direct contact",
+  "contactLinks": [
+    {
+      "text": "Professional Email",
+      "url": "mailto:info@danielecamiz.com",
+      "icon": "mail-gold.svg",
+      "target": "_self"
+    },
+    {
+      "text": "WhatsApp",
+      "url": "https://wa.me/393331234567",
+      "icon": "whatsapp-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "Newsletter",
+      "url": "https://newsletter.danielecamiz.com",
+      "icon": "newsletter-gold.svg",
+      "target": "_blank"
+    }
+  ],
+  
+  "extraTitle": "More links",
+  "extraLinks": [
+    {
+      "text": "Official Website",
+      "url": "https://www.danielecamiz.com/en",
+      "icon": "internet-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "Biography",
+      "url": "https://www.danielecamiz.com/en/bio",
+      "icon": "bio-light-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "Concert Calendar",
+      "url": "https://www.danielecamiz.com/en/concerts",
+      "icon": "calendar-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "Press Kit",
+      "url": "https://www.danielecamiz.com/en/press",
+      "icon": "press-light-gold.svg",
+      "target": "_blank"
+    },
+    {
+      "text": "Bandcamp",
+      "url": "https://danielecamiz.bandcamp.com",
+      "icon": "bandcamp-gold.svg",
+      "target": "_blank"
+    }
+  ],
+  
+  "footerText": "© 2025 Daniele Camiz"
+}

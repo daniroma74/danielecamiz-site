@@ -1,0 +1,91 @@
+<!-- frontend/views/partials/work-card.ejs -->
+<div class="work-card" 
+     data-composer="<%= work.composer_name %>"
+     data-category="<%= work.category_slug || '' %>"
+     data-title="<%= work.title %>">
+  
+  <div class="work-card-header">
+    <div class="work-composer">
+      <%= work.composer_name %>
+    </div>
+    <div class="work-badges">
+      <% if (work.execution_count > 0) { %>
+        <span class="work-badge badge-executions" title="<%= work.execution_count %> esecuzioni">
+          <i class="fas fa-calendar-check"></i> <%= work.execution_count %>
+        </span>
+      <% } %>
+      <% if (work.movements && work.movements.length > 0) { %>
+        <span class="work-badge badge-movements" title="<%= work.movements.length %> movimenti">
+          <i class="fas fa-list-ol"></i> <%= work.movements.length %>
+        </span>
+      <% } %>
+    </div>
+  </div>
+  
+  <h3 class="work-title"><%= work.title %></h3>
+  
+  <% if (work.catalogue || work.key || work.year) { %>
+    <div class="work-meta">
+      <% if (work.catalogue) { %>
+        <span class="work-catalogue"><%= work.catalogue %></span>
+      <% } %>
+      <% if (work.key) { %>
+        <span class="work-key"><%= work.key %></span>
+      <% } %>
+      <% if (work.year) { %>
+        <span class="work-year">(<%= work.year %>)</span>
+      <% } %>
+    </div>
+  <% } %>
+  
+  <% if (work.category_label) { %>
+    <div class="work-category">
+      <i class="fas fa-tag"></i>
+      <span><%= work.category_label %></span>
+    </div>
+  <% } %>
+  
+  <!-- Movimenti -->
+  <% if (work.movements && work.movements.length > 0) { %>
+    <div class="work-movements">
+      <button class="movements-toggle" data-work-id="<%= work.id %>">
+        <i class="fas fa-chevron-down"></i>
+        <span>Movimenti (<%= work.movements.length %>)</span>
+      </button>
+      <div class="movements-list" style="display: none;">
+        <% work.movements.forEach((mov, idx) => { %>
+          <div class="movement">
+            <span class="movement-number"><%= idx + 1 %>.</span>
+            <div class="movement-info">
+              <strong><%= mov.title %></strong>
+              <% if (mov.tempo) { %>
+                <em><%= mov.tempo %></em>
+              <% } %>
+              <% if (mov.duration_minutes) { %>
+                <span class="movement-duration">
+                  <i class="far fa-clock"></i> <%= mov.duration_minutes %> min
+                </span>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+  
+  <!-- Media Links -->
+  <% if (work.media_video || work.media_audio) { %>
+    <div class="work-media">
+      <% if (work.media_video) { %>
+        <a href="<%= work.media_video %>" target="_blank" class="media-link">
+          <i class="fab fa-youtube"></i> Video
+        </a>
+      <% } %>
+      <% if (work.media_audio) { %>
+        <a href="<%= work.media_audio %>" target="_blank" class="media-link">
+          <i class="fas fa-volume-up"></i> Audio
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+</div>

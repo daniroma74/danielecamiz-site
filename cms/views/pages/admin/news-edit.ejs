@@ -1,0 +1,304 @@
+<form id="news_form" class="form-grid">
+
+  <!-- ===== Dettagli post ===== -->
+  <details open>
+    <summary>Dettagli post</summary>
+
+    <div class="form-row">
+      <label class="label" for="f_title">Titolo</label>
+      <input id="f_title" name="title" class="input" value="<%= data.post?.title || '' %>" required />
+    </div>
+
+    <div class="form-row">
+      <label class="label" for="f_slug">Slug</label>
+      <input id="f_slug" name="slug" class="input" value="<%= data.post?.slug || '' %>" placeholder="titolo-in-kebab-case" required />
+      <div class="help">Solo minuscole e trattini.</div>
+    </div>
+
+    <div class="form-row">
+      <label class="label" for="f_lang">Lingua</label>
+      <select id="f_lang" name="lang" class="select">
+        <option value="it" <%= (data.post?.lang||'it')==='it'?'selected':'' %>>Italiano</option>
+        <option value="en" <%= (data.post?.lang||'it')==='en'?'selected':'' %>>English</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label class="label" for="f_status">Stato</label>
+      <select id="f_status" name="status" class="select">
+        <option value="draft" <%= (data.post?.status||'draft')==='draft'?'selected':'' %>>Bozza</option>
+        <option value="scheduled" <%= (data.post?.status||'draft')==='scheduled'?'selected':'' %>>Programmato</option>
+        <option value="published" <%= (data.post?.status||'draft')==='published'?'selected':'' %>>Pubblicato</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label class="label" for="f_category_id">Categoria</label>
+      <div class="inline-group">
+        <select id="f_category_id" name="category_id" class="select">
+          <option value="">— Nessuna —</option>
+          <% (data.categories || []).forEach(function(c){
+               const currentId = data.post?.category_id;
+               const currentLabel = data.post?.category;
+               const sel = currentId ? (c.id === currentId) : (currentLabel && (c.label === currentLabel || c.label_it === currentLabel || c.label_en === currentLabel));
+          %>
+            <option value="<%= c.id %>" <%= sel ? 'selected' : '' %>><%= c.label || c.label_it || c.label_en %></option>
+          <% }) %>
+        </select>
+        <button type="button" class="btn" id="btn_manage_categories">Gestisci categorie…</button>
+      </div>
+      <div class="help">La selezione salva l’ID; l’etichetta viene risolta automaticamente in base alla lingua.</div>
+    </div>
+
+    <div class="form-row">
+      <label class="label" for="f_excerpt">Estratto</label>
+      <textarea id="f_excerpt" name="excerpt" class="textarea"><%= data.post?.excerpt || '' %></textarea>
+    </div>
+
+    <!-- Modal Gestione Categorie -->
+    <div id="cat_modal" class="modal hidden" aria-hidden="true">
+      <div class="modal__overlay" data-close="1"></div>
+      <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="cat_modal_title">
+        <div class="modal__header">
+          <h3 id="cat_modal_title" class="modal__title">Gestione categorie</h3>
+          <button type="button" class="modal__close" data-close="1" aria-label="Chiudi">×</button>
+        </div>
+        <div class="modal__body">
+          <ul id="cat_list" class="table-like">
+          </ul>
+          <div class="form-grid">
+            <input type="hidden" id="cat_edit_id" />
+            <div class="form-row">
+              <label class="label" for="cat_label_it">Label IT</label>
+              <input id="cat_label_it" class="input" placeholder="es. Concerti" />
+            </div>
+            <div class="form-row">
+              <label class="label" for="cat_label_en">Label EN</label>
+              <input id="cat_label_en" class="input" placeholder="es. Concerts" />
+            </div>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn-primary" id="cat_save">Salva</button>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ===== Media (cover) ===== -->
+  <details>
+    <summary>Media (cover)</summary>
+
+    <div class="form-row">
+      <label class="label" for="f_cover">Cover URL</label>
+      <input id="f_cover" name="cover_url" class="input" value="<%= data.post?.cover_url || '' %>" placeholder="https://... oppure /uploads/news_covers/YYYY/slug/cover.jpg" />
+      <div class="help">Formato consigliato: 1200×630 (1.91:1). Puoi incollare un URL/Path oppure caricare un file qui sotto.</div>
+    </div>
+
+    <div class="form-row">
+      <label class="label">Carica cover da computer</label>
+      <div class="actions">
+        <input type="file" id="cover_file" accept="image/*" />
+        <button class="btn" id="btn_upload_cover" type="button">Carica</button>
+      </div>
+      <div class="help">Il file verrà salvato in <code>/uploads/news_covers/&lt;YYYY&gt;/&lt;slug&gt;/cover.ext</code>. L'upload <strong>sovrascrive sempre</strong> se esiste. Dopo il caricamento salviamo automaticamente il post.</div>
+      <img id="cover_preview" class="cover-preview" alt="Anteprima cover" src="<%= data.post?.cover_url || '' %>" />
+    </div>
+  </details>
+
+  <!-- ===== Contenuto ===== -->
+  <details open>
+    <summary>Contenuto</summary>
+
+    <div class="form-row full-row">
+      <label class="label" for="f_content">Contenuto (Markdown o testo)</label>
+      <div class="editor-grid">
+        <textarea id="f_content" name="content_md" class="textarea editor-col"><%= data.post?.content_md || '' %></textarea>
+        <aside id="preview_panel" class="preview-pane editor-col hidden">
+          <div class="preview-pane__title">Anteprima</div>
+          <div id="live_preview" class="preview-pane__body"></div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="label" for="f_tags">Tag (separati da virgola)</label>
+      <input id="f_tags" name="tags" class="input" value="<%= (data.post?.tags||[]).join(', ') %>" />
+      <div id="tags_chips" class="chips"></div>
+    </div>
+  </details>
+
+  <!-- ===== SEO ===== -->
+  <details class="full-row">
+  <summary>SEO</summary>
+
+  <div class="form-row">
+    <label class="label" for="f_meta_title">SEO Title</label>
+    <input id="f_meta_title" name="seo.meta_title" class="input" value="<%= data.post?.seo?.meta_title || '' %>" />
+  </div>
+
+  <div class="form-row">
+    <label class="label" for="f_meta_desc">SEO Description</label>
+    <input id="f_meta_desc" name="seo.meta_description" class="input" value="<%= data.post?.seo?.meta_description || '' %>" />
+  </div>
+
+  <div class="form-row">
+    <label class="label" for="f_og_img">OG Image</label>
+    <input id="f_og_img" name="seo.og_image" class="input" value="<%= data.post?.seo?.og_image || '' %>" />
+  </div>
+</details>
+
+  <!-- ================= Condivisione social ================= -->
+  <details class="full-row">
+  <summary>Condivisione social</summary>
+
+  <% const prov = (data.post?.social?.providers) || {}; %>
+
+  <div id="share_panel" class="form-grid" data-post-id="<%= data.post?.id || '' %>" data-endpoint-base="/admin/news">
+    <div class="form-row">
+      <label class="label" for="f_share_on_publish">Condividi alla pubblicazione</label>
+      <input type="checkbox" id="f_share_on_publish" <%= (data.post?.social?.share_on_publish) ? 'checked' : '' %> />
+      <div class="help">Se attivo, alla pubblicazione il post verrà condiviso sui provider selezionati.</div>
+    </div>
+
+    <div class="form-row">
+      <label class="label">Provider</label>
+      <div class="inline-group">
+        <label class="checkbox">
+          <input type="checkbox" id="f_provider_linkedin" class="js-share-provider" data-provider="linkedin" data-target="#box_linkedin" <%= prov.linkedin ? 'checked' : '' %> />
+          LinkedIn (Azienda)
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="f_provider_facebook" class="js-share-provider" data-provider="facebook" data-target="#box_facebook" <%= prov.facebook ? 'checked' : '' %> />
+          Facebook Page
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="f_provider_threads" class="js-share-provider" data-provider="threads" data-target="#box_threads" <%= prov.threads ? 'checked' : '' %> />
+          Threads
+        </label>
+      </div>
+    </div>
+
+    <!-- LinkedIn -->
+    <fieldset id="box_linkedin" class="provider share-block" <%= prov.linkedin ? '' : 'hidden' %>>
+      <legend>LinkedIn</legend>
+      <div class="form-row">
+        <label class="label" for="f_msg_linkedin">Messaggio LinkedIn (opzionale)</label>
+        <textarea id="f_msg_linkedin" class="textarea js-share-message" data-provider="linkedin" maxlength="3000" placeholder="Se vuoto: Titolo — URL con UTM"><%= data.post?.social?.message_overrides?.linkedin || '' %></textarea>
+        <div class="help">Max 3000 caratteri. URL e hashtag sono consentiti.</div>
+      </div>
+    </fieldset>
+
+    <!-- Facebook: selezione pagine + messaggi -->
+    <fieldset id="box_facebook" class="provider share-block" <%= prov.facebook ? '' : 'hidden' %>>
+      <legend>Facebook</legend>
+
+      <div class="form-row" id="fb_pages_selector" data-provider="facebook" data-api="/admin/social/facebook/pages" aria-live="polite">
+        <label class="label">Pagine Facebook &amp; messaggi</label>
+        <div id="fb_pages_list" class="fb-pages-grid">
+          <div class="help">Le pagine verranno caricate…</div>
+        </div>
+        <div class="help">Seleziona una o più Pagine e, facoltativamente, specifica un messaggio diverso per ognuna. Se lasci vuoto, verrà usato il messaggio generico Facebook o il fallback (Titolo — URL).</div>
+
+        <template id="tpl_fb_page_item">
+          <div class="fb-page-item" data-page-id="">
+            <label class="checkbox fb-page-row">
+              <input type="checkbox" class="js-fb-page" value="">
+              <span class="fb-page-name"></span>
+            </label>
+            <div class="fb-page-editor">
+              <textarea class="textarea fb-page-message js-fb-page-message" data-page-id="" rows="6" maxlength="5000" placeholder="Messaggio per questa Pagina (opzionale)"></textarea>
+              <div class="help fb-page-preview" aria-live="polite"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="form-row">
+        <label class="label" for="f_msg_facebook">Messaggio Facebook (opzionale)</label>
+        <textarea id="f_msg_facebook" class="textarea js-share-message" data-provider="facebook" maxlength="5000" placeholder="Se vuoto: Titolo — URL con UTM"><%= data.post?.social?.message_overrides?.facebook || '' %></textarea>
+        <div class="help">Suggerimento: se tutte le pagine selezionate hanno un messaggio specifico, questo campo generico può restare vuoto.</div>
+      </div>
+    </fieldset>
+
+    <!-- Threads -->
+    <fieldset id="box_threads" class="provider share-block" <%= prov.threads ? '' : 'hidden' %>>
+      <legend>Threads</legend>
+      <div class="form-row">
+        <label class="label" for="f_msg_threads">Messaggio Threads (opzionale)</label>
+        <textarea id="f_msg_threads" class="textarea js-share-message" data-provider="threads" maxlength="500" placeholder="Se vuoto: Titolo — URL con UTM"><%= data.post?.social?.message_overrides?.threads || '' %></textarea>
+      </div>
+    </fieldset>
+
+    <div class="form-row">
+      <div class="inline-group">
+        <% if (data.post) { %>
+          <button type="button" class="btn js-share-now" id="btn_share_now" data-id="<%= data.post.id %>">Condividi ora</button>
+        <% } else { %>
+          <button type="button" class="btn js-share-now" id="btn_share_now" disabled title="Disponibile dopo il salvataggio">Condividi ora</button>
+        <% } %>
+        <div class="help">Esegue subito la condivisione sui provider selezionati. Non modifica lo stato di pubblicazione.</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="label">Stato condivisioni</label>
+      <div id="social_status" class="table-like">
+        <% const st = (data.post?.social?.status) || {}; %>
+        <% const rows = Object.keys(st); %>
+        <% if (!rows.length) { %>
+          <div class="help">Nessuna condivisione effettuata.</div>
+        <% } else { %>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Esito</th>
+                <th>Permalink</th>
+                <th>Data</th>
+                <th>Errore</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% rows.forEach(function(p){ const r = st[p] || {}; %>
+                <tr>
+                  <td><%= p %></td>
+                  <td><%= r.ok ? 'OK' : 'KO' %></td>
+                  <td>
+                    <% if (r.permalink) { %>
+                      <a href="<%= r.permalink %>" target="_blank" rel="noopener">apri</a>
+                    <% } %>
+                  </td>
+                  <td><%= r.ts || '' %></td>
+                  <td><%= r.error || '' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</details>
+<!-- =============== /Condivisione social =============== -->
+
+  <!-- ===== Azioni ===== -->
+  <div class="form-row full-row">
+    <div class="actions">
+      <button type="submit" class="btn btn-primary"><%= data.post ? 'Salva' : 'Crea' %></button>
+      <% if(data.post){ %>
+        <a class="btn" target="_blank" href="/admin/news/preview/<%= data.post.id %>">Anteprima SSR</a>
+        <% if(data.post.status !== 'published'){ %>
+          <button class="btn" data-act="publish" data-id="<%= data.post.id %>" type="button">Pubblica</button>
+        <% } else { %>
+          <button class="btn" data-act="depublish" data-id="<%= data.post.id %>" type="button">Depubblica</button>
+        <% } %>
+        <a class="btn" href="/admin/news/api/<%= data.post.id %>/export/html">Esporta HTML</a>
+        <a class="btn" href="/admin/news/api/<%= data.post.id %>/export/json">Esporta JSON</a>
+      <% } %>
+      <button class="btn" id="btn_toggle_preview" type="button">Live Preview</button>
+      <a href="/admin/news" class="btn">Torna alla lista</a>
+    </div>
+  </div>
+
+</form>

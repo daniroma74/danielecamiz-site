@@ -1,0 +1,8 @@
+
+
+[
+  { "id": "news",               "label_it": "News",              "label_en": "News" },
+  { "id": "concerts",           "label_it": "Concerti",          "label_en": "Concerts" },
+  { "id": "video",              "label_it": "Video",             "label_en": "Video" },
+  { "id": "behind_the_scenes",  "label_it": "Dietro le quinte",  "label_en": "Behind the scenes" }
+]

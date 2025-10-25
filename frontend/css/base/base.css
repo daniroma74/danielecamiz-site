@@ -1,0 +1,82 @@
+:root {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --accent-color: #cba135;
+  --light-accent: #e6c46a;
+  --section-padding: 4rem 1rem;
+  --max-width: 900px;
+
+  --font-content: 'Cormorant Garamond', serif;
+  --font-ui: 'Montserrat', sans-serif;
+}
+
+/* ====== RESET BASE ====== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  padding-top: 78px;
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-content);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Link generali */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: var(--light-accent);
+  text-decoration: underline;
+}
+
+/* Titoli e testo contenuto */
+h1, h2, h3, h4 {
+  font-family: var(--font-content);
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+h2 {
+  font-size: 1.8rem;
+  color: var(--accent-color);
+  text-align: center;
+}
+
+/* Base container e sezioni */
+section {
+  padding: var(--section-padding);
+  max-width: var(--max-width);
+  margin: auto;
+}
+
+/* ====== SECTION TITLE (centrale per tutte le sezioni) ======
+   Usa lo stesso stile in Home: Projects, News, Video, Concerts, ecc.
+   Markup atteso: <div class="section-title">Titolo</div>
+*/
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--accent-color);
+  font-size: clamp(2.2rem, 4vw, 2.9rem);
+  font-weight: 700;
+  margin-top: 2.5vw;
+  margin-bottom: 3vw;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-shadow: 0 2px 16px #000, 0 0px 1px #f7cc3c80;
+}

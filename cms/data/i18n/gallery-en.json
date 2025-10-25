@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "category": "category_concert",
+      "title": "Concert",
+      "cover": "covers/cover-concerto-1746919502622.JPG",
+      "photos": [
+        {
+          "file": "1747005590817-daniele-camiz-concerto-enarmonia2017.jpg",
+          "description": "",
+          "alt": ""
+        },
+        {
+          "file": "1747005612422-daniele-camiz-in-concerto7.jpg",
+          "description": "",
+          "alt": ""
+        },
+        {
+          "file": "1747006965964-daniele-camiz-dirige-l-orchestra-icnt.jpg",
+          "description": "Daniele Camiz conducts the ICNT orchestra",
+          "alt": ""
+        },
+        {
+          "file": "1747009056313-daniele-camiz-in-concerto6.jpg",
+          "description": "",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "category": "category_official",
+      "title": "Official photos",
+      "cover": "covers/cover-ufficiali-1746918927994.jpg",
+      "photos": [
+        {
+          "file": "1746913952916-daniele_camiz_bacchetta_mento_nero.jpg",
+          "description": "Daniele Camiz with baton",
+          "alt": "Official portrait with baton"
+        },
+        {
+          "file": "1746913963894-daniele_camiz_braccia_incrociate_nero.jpg",
+          "description": "Daniele Camiz hand on chin",
+          "alt": "Daniele"
+        }
+      ]
+    },
+    {
+      "category": "category_rehearsal",
+      "title": "Rehearsal",
+      "cover": "covers/cover-prove-1746919624567.JPG",
+      "photos": [
+        {
+          "file": "1746915813182-daniele_camiz_prova_cantante_corea2.jpg",
+          "description": "",
+          "alt": "During an orchestra rehearsal"
+        },
+        {
+          "file": "1747006768458-daniele-camiz-durante-una-prova-in-corea.jpg",
+          "description": "Daniele Camiz during a rehearsal in Korea",
+          "alt": ""
+        },
+        {
+          "file": "1747005207643-daniele-camiz-in-prova3.jpg",
+          "description": "",
+          "alt": "Daniele Camiz rehearses Mozart"
+        }
+      ]
+    }
+  ]
+}
