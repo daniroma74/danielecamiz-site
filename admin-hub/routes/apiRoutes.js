@@ -5,7 +5,91 @@ const router = express.Router();
 const { generateModuleToken, verifyModuleToken } = require('../middleware/auth');
 const { get, run, all } = require('../config/database');
 
-// Genera token per accesso modulo
+// Genera token per accesso modulo (con cookie cross-subdomain)
+router.post('/generate-module-token/:moduleId', async (req, res) => {
+    try {
+        const { moduleId } = req.params;
+
+        if (!moduleId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Module ID richiesto'
+            });
+        }
+
+        // Verifica che il modulo esista e sia attivo
+        const module = await get(
+            'SELECT * FROM hub_modules WHERE id = ? AND status = ?',
+            [moduleId, 'active']
+        );
+
+        if (!module) {
+            return res.status(404).json({
+                success: false,
+                message: 'Modulo non trovato o non attivo'
+            });
+        }
+
+        // Verifica permessi utente per il modulo
+        const modulePermissions = JSON.parse(module.permissions || '[]');
+        const hasAccess = req.user.role === 'admin' ||
+            modulePermissions.some(p => req.user.permissions.includes(p));
+
+        if (!hasAccess) {
+            return res.status(403).json({
+                success: false,
+                message: 'Accesso al modulo negato'
+            });
+        }
+
+        // Genera token JWT
+        const token = generateModuleToken(req.user.id, moduleId);
+
+        // Salva token nel database per tracking
+        await run(
+            `INSERT INTO hub_module_tokens (token, user_id, module_id, expires_at)
+             VALUES (?, ?, ?, datetime('now', '+1 hour'))`,
+            [token, req.user.id, moduleId]
+        );
+
+        // Log accesso
+        await run(
+            `INSERT INTO hub_activity_logs (user_id, action, details, module_id)
+             VALUES (?, ?, ?, ?)`,
+            [
+                req.user.id,
+                'module_access_token_generated',
+                JSON.stringify({ moduleId, timestamp: Date.now() }),
+                moduleId
+            ]
+        );
+
+        // 🔐 SET COOKIE FOR CROSS-SUBDOMAIN ACCESS
+        res.cookie('auth_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            domain: `.${process.env.MAIN_DOMAIN || 'danielecamiz.com'}`, // Shared across subdomains!
+            maxAge: 3600000 // 1 hour
+        });
+
+        res.json({
+            success: true,
+            token,
+            moduleUrl: module.url,
+            expiresIn: 3600
+        });
+
+    } catch (error) {
+        console.error('Errore generazione token modulo:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Errore generazione token'
+        });
+    }
+});
+
+// Genera token per accesso modulo (backward compatibility)
 router.post('/module-token', async (req, res) => {
     try {
         const { moduleId } = req.body;

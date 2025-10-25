@@ -14,7 +14,7 @@ import cookieParser from 'cookie-parser';
 import { config } from './config/config.js';
 import { ensureSchema } from './utils/database.js';
 import newsRoutes from './routes/news.js';
-import { ensureAuthenticated, handleLogin, handleLogout } from './middleware/simpleAuth.js';
+import { ensureAuthenticated, optionalAuth } from './middleware/auth.js';
 
 const app = express();
 
@@ -39,25 +39,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Login routes (NON protette)
-app.get('/login', (req, res) => {
-  res.render('login', {
-    error: req.query.error || null,
-    expired: req.query.expired || null,
-    redirect: req.query.redirect || '/news'
-  });
+// Logout route - clears auth cookie and redirects to Admin Hub
+app.get('/logout', (req, res) => {
+  res.clearCookie('auth_token', { domain: `.${process.env.MAIN_DOMAIN || 'danielecamiz.com'}` });
+  res.redirect(`${config.adminHubUrl}/auth/logout`);
 });
 
-app.post('/login', handleLogin);
-
-app.get('/logout', handleLogout);
-
-// Routes protette
+// Root redirect
 app.get('/', (req, res) => {
   res.redirect('/news');
 });
 
-app.use('/news', newsRoutes);
+// 🔐 Protected routes - require JWT authentication from Admin Hub
+app.use('/news', ensureAuthenticated, newsRoutes);
 
 // Health check (non protetto)
 app.get('/health', (req, res) => {

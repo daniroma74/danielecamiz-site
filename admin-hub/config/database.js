@@ -257,6 +257,24 @@ function insertDefaultModules() {
                 'Gestione poster',
                 'Repertorio'
             ])
+        },
+        {
+            id: 'news-admin',
+            name: 'News & Social',
+            description: 'Gestione news e pubblicazioni social media',
+            url: `https://news-admin.${process.env.MAIN_DOMAIN || 'danielecamiz.com'}`,
+            subdomain: 'news-admin',
+            icon: '📰',
+            color: '#10B981',
+            status: 'active',
+            order_index: 4,
+            permissions: JSON.stringify(['admin', 'editor']),
+            features: JSON.stringify([
+                'Gestione articoli news',
+                'Pubblicazione social media',
+                'Integrazione Cloudinary',
+                'Auto-posting Facebook/LinkedIn/Threads'
+            ])
         }
     ];
     

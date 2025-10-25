@@ -9,9 +9,8 @@ import { connectDB } from './config/database.js';
 import adminRoutes from './routes/admin.js';
 import apiRoutes from './routes/api.js';
 
-// === MINI AUTH: middleware session + auth controller ===
-import sessionLite from './middleware/sessionLite.js';
-import { requireAuth, showLogin, processLogin, processLogout } from './middleware/simpleAuth.js';
+// === JWT AUTHENTICATION: Admin Hub Integration ===
+import { requireAuth } from './middleware/jwtAuth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,8 +26,9 @@ app.locals.db = db;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Sessione leggera per autenticazione admin
-app.use(sessionLite({ cookieName: 'nsid', ttlSec: 60 * 60 * 8 })); // 8 ore
+// Cookie parser for JWT authentication
+import cookieParser from 'cookie-parser';
+app.use(cookieParser());
 
 // Static files
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
@@ -61,12 +61,14 @@ app.get('/gestione-iscrizione', (req, res) => {
 // ====== API ROUTES (pubbliche) ======
 app.use('/api', apiRoutes);
 
-// ====== AUTH ROUTES (login/logout) ======
-app.get('/auth/login', showLogin);
-app.post('/auth/login', processLogin);
-app.post('/auth/logout', processLogout);
+// ====== LOGOUT ROUTE ======
+app.get('/logout', (req, res) => {
+  res.clearCookie('auth_token', { domain: `.${process.env.MAIN_DOMAIN || 'danielecamiz.com'}` });
+  const adminHubUrl = process.env.ADMIN_HUB_URL || 'http://localhost:3100';
+  res.redirect(`${adminHubUrl}/auth/logout`);
+});
 
-// ====== ADMIN ROUTES (PROTETTE) ======
+// ====== ADMIN ROUTES (🔐 PROTECTED BY JWT) ======
 app.use('/admin', requireAuth, adminRoutes);
 
 // ====== ROOT REDIRECT ======

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Dashboard - Admin HUB' %></title>
+    <link rel="stylesheet" href="/public/css/dashboard.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .modules-section h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--module-color, #667eea);
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .module-card h3 {
+            font-size: 1.25rem;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-card p {
+            color: #718096;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .module-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-inactive {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logout-button {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background: #c53030;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><› Admin HUB Dashboard</h1>
+            <p>Benvenuto, <strong><%= user.username %></strong> | Ultimo accesso: <%= lastLogin || 'N/D' %></p>
+            <button class="logout-button" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <% if (stats) { %>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Moduli Attivi</h3>
+                <div class="value"><%= stats.activeModules || 0 %></div>
+            </div>
+            <div class="stat-card">
+                <h3>Utenti Online</h3>
+                <div class="value"><%= stats.onlineUsers || 0 %></div>
+            </div>
+            <div class="stat-card">
+                <h3>Ultima Attività</h3>
+                <div class="value" style="font-size: 1.25rem;"><%= stats.lastActivity || 'N/D' %></div>
+            </div>
+            <div class="stat-card">
+                <h3>Sicurezza</h3>
+                <div class="value" style="font-size: 1.25rem; color: <%= stats.securityStatus === 'secure' ? '#22543d' : '#c05621' %>">
+                    <%= stats.securityText || 'N/D' %>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <div class="modules-section">
+            <h2>=æ Moduli Disponibili</h2>
+            <div class="modules-grid">
+                <% if (modules && modules.length > 0) { %>
+                    <% modules.forEach(module => { %>
+                        <div class="module-card"
+                             style="--module-color: <%= module.color %>"
+                             onclick="accessModule('<%= module.id %>', '<%= module.url %>')">
+                            <span class="module-icon"><%= module.icon %></span>
+                            <h3><%= module.name %></h3>
+                            <p><%= module.description %></p>
+                            <span class="module-status status-<%= module.status %>">
+                                <%= module.status %>
+                            </span>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p style="color: white;">Nessun modulo disponibile</p>
+                <% } %>
+            </div>
+        </div>
+
+        <% if (activities && activities.length > 0) { %>
+        <div class="modules-section">
+            <h2>=Ê Attività Recenti</h2>
+            <div class="stat-card">
+                <ul style="list-style: none;">
+                    <% activities.forEach(activity => { %>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0;">
+                            <span><%= activity.icon %></span>
+                            <%= activity.description %>
+                            <span style="color: #a0aec0; font-size: 0.875rem;"> - <%= activity.time %></span>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+    <script>
+        // = ACCESS MODULE WITH JWT TOKEN GENERATION
+        async function accessModule(moduleId, moduleUrl) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                // Show loading
+                loadingOverlay.classList.add('active');
+                errorMessage.classList.remove('active');
+
+                console.log(`[Hub] Generating JWT token for module: ${moduleId}`);
+
+                // Call Admin Hub API to generate JWT token and set cookie
+                const response = await fetch(`/api/generate-module-token/${moduleId}`, {
+                    method: 'POST',
+                    credentials: 'include', // Important: include cookies
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Failed to generate access token');
+                }
+
+                console.log('[Hub] JWT token generated and set in cookie');
+                console.log('[Hub] Redirecting to:', moduleUrl);
+
+                // Cookie is now set by server, redirect to module
+                // Use location assignment to ensure clean navigation
+                window.location.assign(moduleUrl);
+
+            } catch (error) {
+                console.error('[Hub] Error accessing module:', error);
+                loadingOverlay.classList.remove('active');
+                errorMessage.textContent = `Errore: ${error.message}`;
+                errorMessage.classList.add('active');
+
+                // Hide error after 5 seconds
+                setTimeout(() => {
+                    errorMessage.classList.remove('active');
+                }, 5000);
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Sei sicuro di voler uscire?')) {
+                window.location.href = '/auth/logout';
+            }
+        }
+
+        // Auto-hide error messages
+        setTimeout(() => {
+            const errorMessage = document.getElementById('errorMessage');
+            if (errorMessage) {
+                errorMessage.classList.remove('active');
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
