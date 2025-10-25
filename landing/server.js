@@ -9,7 +9,7 @@ import { connectDB } from './config/database.js';
 import { PORT } from './config/constants.js';
 
 import { routeByDomain } from './middleware/routing.js';
-import { requireAuth } from './middleware/jwtAuth.js';
+// import { requireAuth } from './middleware/jwtAuth.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 import publicRoutes from './routes/public.js';
@@ -40,7 +40,7 @@ app.set('trust proxy', 1);
 app.use(routeByDomain);
 
 // 🔐 JWT AUTHENTICATION - Protects admin routes only (public landing pages unaffected)
-app.use(requireAuth);
+// app.use(requireAuth);
 
 // Routes admin (solo su events-admin.danielecamiz.com)
 app.use((req, res, next) => {
