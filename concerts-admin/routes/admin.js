@@ -1,12 +1,11 @@
 // concerts-admin/routes/admin.js
 import { Router } from 'express';
 import ConcertsController from '../controllers/concertsController.js';
-import { requireAuth } from '../middleware/simpleAuth.js';  // ✅ FILE CORRETTO
-
 const router = Router();
 const concertsController = new ConcertsController();
 
-router.use(requireAuth);
+// Note: ensureAuthenticated is applied at server.js level for /admin routes
+// No need to import or reapply it here
 
 router.get('/', (req, res) => res.redirect('/admin/dashboard'));
 router.get('/dashboard', (req, res, next) => concertsController.renderDashboard(req, res, next));

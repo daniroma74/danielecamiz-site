@@ -3,9 +3,10 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
-import { requireAuth } from './middleware/jwtAuth.js';
 import adminRoutes from './routes/admin.js';
 import apiRoutes from './routes/api.js';
+import authRoutes from './routes/auth.js';
+import { ensureAuthenticated } from './middleware/simpleAuth.js';
 import errorHandler from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,7 +19,7 @@ const PORT = process.env.PORT || 3004;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🔐 Cookie parser for JWT authentication
+// 🔐 Cookie parser for auth (NO express-session needed!)
 app.use(cookieParser());
 
 // IMPORTANTE: Servi cartella /shared dal livello superiore
@@ -55,16 +56,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Logout route
-app.get('/logout', (req, res) => {
-  res.clearCookie('auth_token', { domain: `.${process.env.MAIN_DOMAIN || 'danielecamiz.com'}` });
-  const adminHubUrl = process.env.ADMIN_HUB_URL || 'http://localhost:3100';
-  res.redirect(`${adminHubUrl}/auth/logout`);
-});
+// Auth routes (NO authentication required - must be BEFORE protected routes)
+app.use('/auth', authRoutes);
 
-// Routes
+// API routes (public)
 app.use('/api', apiRoutes);
-app.use('/admin', requireAuth, adminRoutes); // 🔐 Protected by JWT
+
+// Admin routes (🔐 Protected by SimpleAuth)
+app.use('/admin', ensureAuthenticated, adminRoutes);
 
 // Redirect root
 app.get('/', (req, res) => {

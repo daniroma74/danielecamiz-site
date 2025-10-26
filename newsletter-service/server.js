@@ -8,9 +8,9 @@ import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js';
 import adminRoutes from './routes/admin.js';
 import apiRoutes from './routes/api.js';
+import { ensureAuthenticated, handleLogin, handleLogout } from './middleware/simpleAuth.js';
 
-// === JWT AUTHENTICATION: Admin Hub Integration ===
-import { requireAuth } from './middleware/jwtAuth.js';
+// === Using SimpleAuth (cloned from news-admin) ===
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,7 +26,7 @@ app.locals.db = db;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Cookie parser for JWT authentication
+// Cookie parser for auth (NO express-session needed!)
 import cookieParser from 'cookie-parser';
 app.use(cookieParser());
 
@@ -61,15 +61,21 @@ app.get('/gestione-iscrizione', (req, res) => {
 // ====== API ROUTES (pubbliche) ======
 app.use('/api', apiRoutes);
 
-// ====== LOGOUT ROUTE ======
-app.get('/logout', (req, res) => {
-  res.clearCookie('auth_token', { domain: `.${process.env.MAIN_DOMAIN || 'danielecamiz.com'}` });
-  const adminHubUrl = process.env.ADMIN_HUB_URL || 'http://localhost:3100';
-  res.redirect(`${adminHubUrl}/auth/logout`);
+// ====== LOGIN ROUTES ======
+app.get('/login', (req, res) => {
+  res.render('pages/login', {
+    title: 'Login - Newsletter Admin',
+    error: req.query.expired ? 'Sessione scaduta' : null,
+    returnTo: req.query.redirect || '/admin'  // Template expects 'returnTo'
+  });
 });
 
-// ====== ADMIN ROUTES (🔐 PROTECTED BY JWT) ======
-app.use('/admin', requireAuth, adminRoutes);
+// Mount POST handler at /auth/login to match form action in template
+app.post('/auth/login', handleLogin);
+app.get('/logout', handleLogout);
+
+// ====== ADMIN ROUTES (🔐 Protected by SimpleAuth) ======
+app.use('/admin', ensureAuthenticated, adminRoutes);
 
 // ====== ROOT REDIRECT ======
 app.get('/', (req, res) => {

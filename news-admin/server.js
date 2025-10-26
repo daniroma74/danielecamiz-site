@@ -14,7 +14,8 @@ import cookieParser from 'cookie-parser';
 import { config } from './config/config.js';
 import { ensureSchema } from './utils/database.js';
 import newsRoutes from './routes/news.js';
-import { ensureAuthenticated, optionalAuth } from './middleware/auth.js';
+import { handleLogin, handleLogout } from './middleware/simpleAuth.js';
+// TEMPORARILY DISABLED - import { ensureAuthenticated, optionalAuth } from './middleware/auth.js';
 
 const app = express();
 
@@ -39,19 +40,25 @@ app.use((req, res, next) => {
   next();
 });
 
-// Logout route - clears auth cookie and redirects to Admin Hub
-app.get('/logout', (req, res) => {
-  res.clearCookie('auth_token', { domain: `.${process.env.MAIN_DOMAIN || 'danielecamiz.com'}` });
-  res.redirect(`${config.adminHubUrl}/auth/logout`);
-});
-
 // Root redirect
 app.get('/', (req, res) => {
   res.redirect('/news');
 });
 
-// 🔐 Protected routes - require JWT authentication from Admin Hub
-app.use('/news', ensureAuthenticated, newsRoutes);
+// Login routes
+app.get('/login', (req, res) => {
+  res.render('login', {
+    title: 'Login - News Admin',
+    error: req.query.expired ? 'Sessione scaduta' : null,
+    redirect: req.query.redirect || '/news'
+  });
+});
+
+app.post('/login', handleLogin);
+app.get('/logout', handleLogout);
+
+// 🔐 JWT TEMPORARILY DISABLED
+app.use('/news', /* TEMPORARILY DISABLED: ensureAuthenticated, */ newsRoutes);
 
 // Health check (non protetto)
 app.get('/health', (req, res) => {

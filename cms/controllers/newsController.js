@@ -97,43 +97,26 @@ async function collectPageScripts() {
 }
 
 /* ===================== store access ===================== */
-function fetchPublished(lang, limit = 300) {
+async function fetchPublished(lang, limit = 300) {
   const now = Date.now();
   // Prefer modern list API if present
   if (typeof Store.list === 'function') {
-    const out = Store.list({ lang, status: 'published', q: '', offset: 0, limit });
+    const out = await Store.list({ lang, status: 'published', q: '', offset: 0, limit });
     const items = Array.isArray(out?.items) ? out.items : (Array.isArray(out) ? out : []);
     return items.filter(p => (!p.scheduled_at || ts(p.scheduled_at) <= now) && (!p.published_at || ts(p.published_at) <= now));
   }
   // Fallback to listPublished
   if (typeof Store.listPublished === 'function') {
-    const arr = Store.listPublished({ lang, limit }) || [];
+    const arr = await Store.listPublished({ lang, limit }) || [];
     return arr.filter(p => (!p.scheduled_at || ts(p.scheduled_at) <= now) && (!p.published_at || ts(p.published_at) <= now));
   }
   // Last resort
   if (typeof Store.all === 'function') {
-    const arr = Store.all() || [];
+    const arr = await Store.all() || [];
     return arr.filter(p => p.status === 'published' && (!p.scheduled_at || ts(p.scheduled_at) <= now) && (!p.published_at || ts(p.published_at) <= now) && (!lang || p.lang === lang));
   }
   return [];
 }
-function findByIdOrSlug(idOrSlug, { lang } = {}) {
-  if (!idOrSlug) return null;
-  if (typeof Store.getByIdOrSlug === 'function') {
-    const mixed = Store.getByIdOrSlug(idOrSlug, { lang });
-    if (mixed) return mixed;
-  }
-  if (typeof Store.getById === 'function') {
-    const byId = Store.getById(idOrSlug);
-    if (byId) return byId;
-  }
-  const all = fetchPublished('', 500);
-  let hit = null;
-  if (lang) hit = all.find(p => (p.lang === lang) && (p.slug === idOrSlug));
-  if (!hit) hit = all.find(p => p.slug === idOrSlug);
-  return hit || null;
-}
-// Aggiungi DOPO la funzione fetchPublished()
 
 // Fix: rendi ASYNC
 async function findByIdOrSlug(idOrSlug, { lang } = {}) {
@@ -168,8 +151,8 @@ export async function listNews(req, res) {
     const L = labelsAll.news || (labelsAll.pages && labelsAll.pages.news) || {};
 
     // ===== fetch & sort =====
-    const published = fetchPublished(lang, 600)
-      .sort((a, b) => ts(b.published_at || b.updated_at || b.created_at) - ts(a.published_at || a.updated_at || a.created_at));
+    const items = await fetchPublished(lang, 600);
+    const published = items.sort((a, b) => ts(b.published_at || b.updated_at || b.created_at) - ts(a.published_at || a.updated_at || a.created_at));
 
     // ===== map to view model =====
     const mapped = published.map(p => {
@@ -328,7 +311,7 @@ export async function getNewsArticle(req, res) {
     if (key) {
       // try counterpart in the other language
       const otherLang = (selfLang === 'it') ? 'en' : 'it';
-      const others = fetchPublished(otherLang, 300);
+      const others = await fetchPublished(otherLang, 300);
       const match = others.find(q => String(q.group_id || q.canonical_id || '').trim() === key);
       if (match) {
         const otherAbs = `${baseUrl(req)}/news/${match.slug || match.id}` + `?lng=${otherLang}`;
@@ -362,7 +345,7 @@ export async function getNewsArticle(req, res) {
       pageStyles: cssFiles,
       pageScripts,
       post: viewPost,
-      related: fetchPublished(viewPost.lang, 50).filter(q => q.id !== p.id).slice(0, 3).map(q => ({
+      related: (await fetchPublished(viewPost.lang, 50)).filter(q => q.id !== p.id).slice(0, 3).map(q => ({
         ...q,
         href: `/news/${q.slug || q.id}`,
         date: shortDate(q.published_at || q.created_at)
@@ -388,13 +371,13 @@ export async function feedXml(req, res) {
     let lang = qLang || normalizeLang(res.locals.lang || req.language || 'it', 'it');
 
     const siteBase = baseUrl(req);
-    let items = fetchPublished(lang, 200)
+    let items = (await fetchPublished(lang, 200))
       .sort((a, b) => ts(b.published_at || b.updated_at || b.created_at) - ts(a.published_at || a.updated_at || a.created_at))
       .slice(0, 20);
 
     if (!items.length) {
       const fallback = (lang === 'it') ? 'en' : 'it';
-      items = fetchPublished(fallback, 200).slice(0, 20);
+      items = (await fetchPublished(fallback, 200)).slice(0, 20);
       if (items.length) lang = fallback;
     }
 

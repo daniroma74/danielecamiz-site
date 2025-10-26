@@ -139,8 +139,11 @@ function collectFormData() {
 async function uploadCover() {
   const file = await selectFile('image/*');
   if (!file) return;
-  
-  const url = await uploadToCloudinary(file, 'news/covers');
+
+  const url = await uploadToCloudinary(file, {
+    preset: 'poster_horizontal_unsigned',
+    folder: 'danielecamiz/posters/horizontal'
+  });
   if (url) {
     document.getElementById('cover_image').value = url;
     displayCoverPreview(url);
@@ -150,13 +153,16 @@ async function uploadCover() {
 async function uploadGallery() {
   const files = await selectFiles('image/*');
   if (!files || files.length === 0) return;
-  
+
   const urls = [];
   for (const file of files) {
-    const url = await uploadToCloudinary(file, 'news/galleries');
+    const url = await uploadToCloudinary(file, {
+      preset: 'gallery_unsigned',
+      folder: 'danielecamiz/gallery'
+    });
     if (url) urls.push(url);
   }
-  
+
   if (urls.length > 0) {
     const currentGallery = JSON.parse(document.getElementById('gallery_images')?.value || '[]');
     const updatedGallery = [...currentGallery, ...urls];
@@ -165,18 +171,18 @@ async function uploadGallery() {
   }
 }
 
-async function uploadToCloudinary(file, folder) {
+async function uploadToCloudinary(file, options) {
   if (!window.CloudinaryManager) {
     alert('❌ Cloudinary Manager non disponibile');
     return null;
   }
-  
+
   try {
     const result = await window.CloudinaryManager.upload(file, {
-      preset: 'news_uploads',
-      folder: folder
+      preset: options.preset,
+      folder: options.folder
     });
-    
+
     if (result.success) {
       return result.url;
     } else {

@@ -12,7 +12,7 @@ module.exports = {
   NODE_ENV: 'production',
   PORT: 3004,  // ← Cambiato da 5001 a 3004
   ADMIN_USERNAME: 'admin',
-  ADMIN_PASSWORD: 'Vyasaji74',
+  ADMIN_PASSWORD: 'DanieleCamiz2025!',
   SESSION_SECRET: 'concerts-admin-secret-production-2025'
 },
     error_file: './logs/err.log',

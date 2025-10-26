@@ -1,53 +1,93 @@
-// middleware/simpleAuth.js
-import crypto from 'crypto';
+// newsletter-service/middleware/simpleAuth.js
+// Sistema di autenticazione semplice temporaneo (CLONED FROM news-admin)
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'newsletter2025';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || ''; // opzionale (sha256 esadecimale)
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'changeme123';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'newsletter-admin-secret-key';
 
-function hashPassword(pw) {
-  return crypto.createHash('sha256').update(pw).digest('hex');
+// Simple session store in memory (usa Redis in produzione!)
+const sessions = new Map();
+
+function generateSessionId() {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
 
-function checkPassword(pw) {
-  if (ADMIN_PASSWORD_HASH) return hashPassword(pw) === ADMIN_PASSWORD_HASH;
-  return pw === ADMIN_PASSWORD;
-}
+export function ensureAuthenticated(req, res, next) {
+  const sessionId = req.cookies?.newsletter_session;
 
-export function requireAuth(req, res, next) {
-  if (req.session && req.session.authenticated === true) return next();
-  req.session.returnTo = req.originalUrl;
-  return res.redirect('/auth/login');
-}
-
-export function showLogin(req, res) {
-  if (req.session && req.session.authenticated === true) {
-    return res.redirect('/admin');
+  if (!sessionId || !sessions.has(sessionId)) {
+    // Se è una richiesta JSON/AJAX
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+      return res.status(401).json({ error: 'Non autenticato' });
+    }
+    // Altrimenti redirect al login
+    return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
   }
-  const err = req.query.error === 'invalid' ? 'Credenziali non valide' : null;
-  res.render('pages/login', {
-    title: 'Login - Newsletter Admin',
-    error: err,
-    returnTo: req.session.returnTo || '/admin'
-  });
-}
 
-export function processLogin(req, res) {
-  const { username, password } = req.body || {};
-  const ok = username === ADMIN_USERNAME && checkPassword(password || '');
-  if (ok) {
-    req.session.authenticated = true;
-    req.session.username = username;
-    req.session.loginTime = new Date().toISOString();
-    const dest = req.session.returnTo || '/admin';
-    delete req.session.returnTo;
-    return res.redirect(dest);
+  // Verifica che la sessione non sia scaduta (24h)
+  const session = sessions.get(sessionId);
+  const now = Date.now();
+  const maxAge = 24 * 60 * 60 * 1000; // 24 ore
+
+  if (now - session.createdAt > maxAge) {
+    sessions.delete(sessionId);
+    return res.redirect('/login?expired=1');
   }
-  return res.redirect('/auth/login?error=invalid');
+
+  // Rinnova la sessione
+  session.lastAccess = now;
+  req.user = session.user;
+
+  next();
 }
 
-export function processLogout(req, res) {
-  // azzera la sessione tramite helper del sessionLite
-  if (typeof res.clearSession === 'function') res.clearSession();
-  return res.redirect('/auth/login');
+export function handleLogin(req, res) {
+  const { username, password, returnTo } = req.body;
+
+  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    const sessionId = generateSessionId();
+    const session = {
+      user: { username, role: 'admin' },
+      createdAt: Date.now(),
+      lastAccess: Date.now()
+    };
+
+    sessions.set(sessionId, session);
+
+    // Imposta cookie con la sessione
+    res.cookie('newsletter_session', sessionId, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 ore
+      sameSite: 'lax'
+    });
+
+    // Redirect alla pagina richiesta (from form) o query param o default
+    const redirect = returnTo || req.query.redirect || '/admin';
+    return res.redirect(redirect);
+  } else {
+    res.status(401).json({ error: 'Credenziali non valide' });
+  }
 }
+
+export function handleLogout(req, res) {
+  const sessionId = req.cookies?.newsletter_session;
+
+  if (sessionId) {
+    sessions.delete(sessionId);
+  }
+
+  res.clearCookie('newsletter_session');
+  res.redirect('/login');
+}
+
+// Cleanup sessioni scadute ogni ora
+setInterval(() => {
+  const now = Date.now();
+  const maxAge = 24 * 60 * 60 * 1000;
+
+  for (const [sessionId, session] of sessions.entries()) {
+    if (now - session.lastAccess > maxAge) {
+      sessions.delete(sessionId);
+    }
+  }
+}, 60 * 60 * 1000);
