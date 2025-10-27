@@ -22,9 +22,9 @@ router.use((req, res, next) => {
     return res.redirect(301, LEGACY_MAP.get(p));
   }
 
-  // 2) Whitelist percorsi “reali” che non vanno mai toccati.
-  //    (event/events, api, admin, assets, uploads, ecc.)
-  if (/^\/(event|events|api|admin|assets|uploads|frontend|health|sitemap|privacy|terms|news|concerts|bio|contact|gallery|video)(\/|$)/.test(p)) {
+  // 2) Whitelist percorsi "reali" che non vanno mai toccati.
+  //    (event/events, api, assets, uploads, ecc.)
+  if (/^\/(event|events|api|assets|uploads|frontend|health|sitemap|privacy|terms|news|concerts|bio|contact|gallery|video)(\/|$)/.test(p)) {
     return next();
   }
 

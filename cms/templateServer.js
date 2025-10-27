@@ -26,15 +26,11 @@ import middleware from 'i18next-http-middleware';
 import { checkMaintenance as maintenance } from './middleware/maintenanceMiddleware.js';
 
 // Routes (API)
-import newsCategoryAdminRoutes from './routes/admin/newsCategoryRoutes.js';
-import socialRoutes            from './routes/admin/socialRoutes.js';
 import sitemapRoutes           from './routes/sitemapRoutes.js';
 import healthRoutes            from './routes/health.js';
 import apiRoutes               from './routes/api/index.js';
 
 // Routes (pages)
-import authRoutes        from './routes/authRoutes.js';
-import adminRoutes       from './routes/admin.js';
 import homeRoutes        from './routes/homeRoutes.js';
 import bioRoutes         from './routes/bioRoutes.js';
 import concertsRoutes    from './routes/concertsRoutes.js';
@@ -203,7 +199,7 @@ app.use((req, res, next) => {
   if (!Array.isArray(res.locals.pageScripts)) res.locals.pageScripts = [];
   if (typeof res.locals.bodyClass === 'undefined') res.locals.bodyClass = '';
 
-  // Link esterni (moduli separati) — usati nell'admin
+  // Link esterni (moduli admin separati)
   res.locals.externalLinks = {
     bookingsAdmin: process.env.BOOKINGS_ADMIN_URL || '',
     newsletterAdmin: process.env.NEWSLETTER_ADMIN_URL || ''
@@ -252,9 +248,6 @@ app.use('/uploads',   express.static(path.join(__dirname, 'uploads')));
 app.use('/media',     express.static(path.join(__dirname, 'uploads')));
 app.use('/frontend',  express.static(path.join(__dirname, '..', 'frontend')));
 app.use('/manifest.json', express.static(path.join(__dirname, '..', 'frontend', 'manifest.json')));
-app.use('/admin/assets', express.static(path.join(__dirname, 'public', 'admin')));
-app.use('/admin/js',     express.static(path.join(__dirname, 'public', 'admin', 'js')));
-app.use('/admin/css',    express.static(path.join(__dirname, 'public', 'admin', 'css')));
 
 /* /lang/:lng */
 app.get('/lang/:lng', (req, res) => {
@@ -275,8 +268,6 @@ app.get('/lang/:lng', (req, res) => {
 /* APIs (prima della maintenance) */
 app.use('/api',       apiRoutes);
 app.use('/upload',    uploadRoutes);
-app.use('/',          newsCategoryAdminRoutes);
-app.use('/admin',     socialRoutes);
 app.use('/',          sitemapRoutes);
 app.use('/health',    healthRoutes);
 
@@ -284,8 +275,6 @@ app.use('/health',    healthRoutes);
 app.use((req, res, next) => {
   const p = req.path || '';
   if (
-    p.startsWith('/auth') ||
-    p.startsWith('/admin/assets') ||
     p.startsWith('/upload') ||
     p.startsWith('/uploads') ||
     p.startsWith('/media') ||
@@ -297,8 +286,6 @@ app.use((req, res, next) => {
 });
 
 /* Pages - ordine critico */
-app.use('/auth',  authRoutes);
-app.use('/admin', adminRoutes);
 
 // Pagine specifiche prima
 app.use('/bio',        bioRoutes);
@@ -313,6 +300,10 @@ app.use('/video',      videoRoutes);
 
 // ⛔ Blocca qualunque /contact residuo
 app.all('/contact', (req, res) => res.sendStatus(410)); // Gone
+
+// ⛔ Blocca qualunque /admin o /auth residuo
+app.use('/admin', (req, res) => res.sendStatus(410)); // Gone
+app.use('/auth', (req, res) => res.sendStatus(410)); // Gone
 
 // Home — PER ULTIMA
 app.use('/', homeRoutes);

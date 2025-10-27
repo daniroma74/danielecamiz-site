@@ -134,6 +134,43 @@ export async function getRepertoirePage(req, res) {
       LIMIT 20
     `).catch(e => { console.error('[Repertoire] upcomingWorks:', e); return []; });
 
+    // Get all works for the main listing
+    const works = await qAll(db, `
+      SELECT w.*,
+             c.full_name AS composer_name,
+             ${catLangLabel === 'id' ? 'cat.id' : `cat.${catLangLabel}`} AS category_name
+      FROM works w
+      JOIN composers c         ON w.composer_id = c.id
+      LEFT JOIN categories cat ON w.category_id = cat.id
+      ORDER BY c.full_name, w.title
+    `).catch(e => { console.error('[Repertoire] works:', e); return []; });
+
+    // Build composers with their works
+    const composersWithWorks = composers.map(composer => {
+      const composerWorks = works.filter(w => w.composer_id === composer.id);
+      const frequentCount = composerWorks.filter(w =>
+        topWorks.some(top => top.id === w.id)
+      ).length;
+      return {
+        ...composer,
+        name: composer.full_name,
+        birth_year: composer.birth_year || null,
+        death_year: composer.death_year || null,
+        works: composerWorks,
+        frequently_performed_count: frequentCount
+      };
+    });
+
+    // Build genres (categories) with their works
+    const genres = categories.map(cat => {
+      const genreWorks = works.filter(w => w.category_id === cat.id);
+      return {
+        name: cat[catLabelCol] || cat.label || cat.label_it || 'Unknown',
+        count: genreWorks.length,
+        works: genreWorks
+      };
+    }).filter(g => g.count > 0);
+
     const view = 'pages/frontend/repertoire';
     const data = {
       layout: 'layouts/base-frontend',
@@ -143,11 +180,18 @@ export async function getRepertoirePage(req, res) {
         ? 'Esplora il repertorio completo di Daniele Camiz'
         : 'Explore Daniele Camiz complete repertoire',
       pageKey: 'repertoire',
-      composers,
+      composers: composersWithWorks,
       categories,
-      stats,
+      genres,
+      stats: {
+        ...stats,
+        total_genres: genres.length
+      },
+      works,
       topWorks,
       upcomingWorks,
+      frequentlyPerformed: topWorks,
+      comingSoon: upcomingWorks,
       pageStyles: [
         '/css/pages/repertoire/repertoire-base.css',
         '/css/pages/repertoire/repertoire-responsive.css',

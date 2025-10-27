@@ -1,5 +1,3 @@
-<%- include('../partials/header') %>
-
 <main class="repertoire-page">
   <!-- Hero Section -->
   <section class="repertoire-hero">
@@ -7,10 +5,10 @@
       <div class="hero-content">
         <h1 class="hero-title">
           <i class="fas fa-book-open"></i>
-          <%= __('repertoire.title') %>
+          <%= t('repertoire.title') %>
         </h1>
         <p class="hero-subtitle">
-          <%= __('repertoire.subtitle') || 'Esplora il mio repertorio musicale' %>
+          <%= t('repertoire.subtitle') || 'Esplora il mio repertorio musicale' %>
         </p>
       </div>
       
@@ -18,15 +16,15 @@
       <div class="repertoire-stats">
         <div class="stat-item">
           <div class="stat-number"><%= stats.total_works %></div>
-          <div class="stat-label"><%= __('repertoire.total_works') || 'Brani' %></div>
+          <div class="stat-label"><%= t('repertoire.total_works') || 'Brani' %></div>
         </div>
         <div class="stat-item">
           <div class="stat-number"><%= stats.total_composers %></div>
-          <div class="stat-label"><%= __('repertoire.composers') || 'Compositori' %></div>
+          <div class="stat-label"><%= t('repertoire.composers') || 'Compositori' %></div>
         </div>
         <div class="stat-item">
           <div class="stat-number"><%= stats.total_genres %></div>
-          <div class="stat-label"><%= __('repertoire.genres') || 'Generi' %></div>
+          <div class="stat-label"><%= t('repertoire.genres') || 'Generi' %></div>
         </div>
       </div>
     </div>
@@ -39,23 +37,23 @@
         <div class="filter-tabs">
           <button class="filter-tab active" data-filter="all">
             <i class="fas fa-th"></i>
-            <span><%= __('repertoire.all') || 'Tutto' %></span>
+            <span><%= t('repertoire.all') || 'Tutto' %></span>
           </button>
           <button class="filter-tab" data-filter="composers">
             <i class="fas fa-user-tie"></i>
-            <span><%= __('repertoire.by_composer') || 'Per Compositore' %></span>
+            <span><%= t('repertoire.by_composer') || 'Per Compositore' %></span>
           </button>
           <button class="filter-tab" data-filter="genres">
             <i class="fas fa-list"></i>
-            <span><%= __('repertoire.by_genre') || 'Per Genere' %></span>
+            <span><%= t('repertoire.by_genre') || 'Per Genere' %></span>
           </button>
           <button class="filter-tab" data-filter="frequent">
             <i class="fas fa-star"></i>
-            <span><%= __('repertoire.frequently_performed') || '+ Eseguiti' %></span>
+            <span><%= t('repertoire.frequently_performed') || '+ Eseguiti' %></span>
           </button>
           <button class="filter-tab" data-filter="coming">
             <i class="fas fa-clock"></i>
-            <span><%= __('repertoire.coming_soon') || 'In Arrivo' %></span>
+            <span><%= t('repertoire.coming_soon') || 'In Arrivo' %></span>
           </button>
         </div>
         
@@ -64,7 +62,7 @@
           <input type="text" 
                  id="repertoireSearch" 
                  class="search-input" 
-                 placeholder="<%= __('repertoire.search_placeholder') || 'Cerca brano o compositore...' %>">
+                 placeholder="<%= t('repertoire.search_placeholder') || 'Cerca brano o compositore...' %>">
         </div>
       </div>
     </div>
@@ -75,13 +73,13 @@
     <!-- All Works View -->
     <section id="allView" class="repertoire-section active">
       <div class="section-header">
-        <h2><%= __('repertoire.all_works') || 'Tutto il Repertorio' %></h2>
+        <h2><%= t('repertoire.all_works') || 'Tutto il Repertorio' %></h2>
         <p class="section-subtitle"><%= works.length %> brani totali</p>
       </div>
       
       <div class="works-grid" id="allWorksGrid">
         <% works.forEach(work => { %>
-          <%- include('../partials/work-card', { work }) %>
+          <%- include('../../partials/frontend/work-card', { work }) %>
         <% }) %>
       </div>
     </section>
@@ -89,7 +87,7 @@
     <!-- Composers View -->
     <section id="composersView" class="repertoire-section">
       <div class="section-header">
-        <h2><%= __('repertoire.composers_title') || 'Compositori' %></h2>
+        <h2><%= t('repertoire.composers_title') || 'Compositori' %></h2>
         <p class="section-subtitle"><%= composers.length %> compositori</p>
       </div>
       
@@ -123,12 +121,12 @@
             </div>
             <button class="composer-expand-btn" data-composer="<%= composer.name %>">
               <i class="fas fa-chevron-down"></i>
-              <span><%= __('repertoire.view_works') || 'Visualizza brani' %></span>
+              <span><%= t('repertoire.view_works') || 'Visualizza brani' %></span>
             </button>
             
             <div class="composer-works" style="display: none;">
               <% composer.works.forEach(work => { %>
-                <%- include('../partials/work-card', { work }) %>
+                <%- include('../../partials/frontend/work-card', { work }) %>
               <% }) %>
             </div>
           </div>
@@ -139,7 +137,7 @@
     <!-- Genres View -->
     <section id="genresView" class="repertoire-section">
       <div class="section-header">
-        <h2><%= __('repertoire.genres_title') || 'Generi Musicali' %></h2>
+        <h2><%= t('repertoire.genres_title') || 'Generi Musicali' %></h2>
         <p class="section-subtitle"><%= genres.length %> generi</p>
       </div>
       
@@ -169,12 +167,12 @@
             </div>
             <button class="genre-expand-btn" data-genre="<%= genre.name %>">
               <i class="fas fa-chevron-down"></i>
-              <span><%= __('repertoire.view_works') || 'Visualizza brani' %></span>
+              <span><%= t('repertoire.view_works') || 'Visualizza brani' %></span>
             </button>
             
             <div class="genre-works" style="display: none;">
               <% genre.works.forEach(work => { %>
-                <%- include('../partials/work-card', { work }) %>
+                <%- include('../../partials/frontend/work-card', { work }) %>
               <% }) %>
             </div>
           </div>
@@ -187,22 +185,22 @@
       <div class="section-header">
         <h2>
           <i class="fas fa-star"></i>
-          <%= __('repertoire.frequently_performed_title') || 'Brani Più Eseguiti' %>
+          <%= t('repertoire.frequently_performed_title') || 'Brani Più Eseguiti' %>
         </h2>
         <p class="section-subtitle">
-          <%= __('repertoire.frequently_performed_desc') || 'Il mio repertorio principale' %>
+          <%= t('repertoire.frequently_performed_desc') || 'Il mio repertorio principale' %>
         </p>
       </div>
       
       <% if (frequentlyPerformed.length === 0) { %>
         <div class="empty-state">
           <i class="fas fa-music"></i>
-          <p><%= __('repertoire.no_frequent') || 'Nessun brano contrassegnato come frequentemente eseguito' %></p>
+          <p><%= t('repertoire.no_frequent') || 'Nessun brano contrassegnato come frequentemente eseguito' %></p>
         </div>
       <% } else { %>
         <div class="works-grid">
           <% frequentlyPerformed.forEach(work => { %>
-            <%- include('../partials/work-card', { work }) %>
+            <%- include('../../partials/frontend/work-card', { work }) %>
           <% }) %>
         </div>
       <% } %>
@@ -213,29 +211,25 @@
       <div class="section-header">
         <h2>
           <i class="fas fa-clock"></i>
-          <%= __('repertoire.coming_soon_title') || 'Repertorio in Arrivo' %>
+          <%= t('repertoire.coming_soon_title') || 'Repertorio in Arrivo' %>
         </h2>
         <p class="section-subtitle">
-          <%= __('repertoire.coming_soon_desc') || 'Brani che sto attualmente studiando' %>
+          <%= t('repertoire.coming_soon_desc') || 'Brani che sto attualmente studiando' %>
         </p>
       </div>
       
       <% if (comingSoon.length === 0) { %>
         <div class="empty-state">
           <i class="fas fa-music"></i>
-          <p><%= __('repertoire.no_coming') || 'Nessun brano in studio al momento' %></p>
+          <p><%= t('repertoire.no_coming') || 'Nessun brano in studio al momento' %></p>
         </div>
       <% } else { %>
         <div class="works-grid">
           <% comingSoon.forEach(work => { %>
-            <%- include('../partials/work-card', { work }) %>
+            <%- include('../../partials/frontend/work-card', { work }) %>
           <% }) %>
         </div>
       <% } %>
     </section>
   </div>
 </main>
-
-<script src="/js/repertoire.js"></script>
-
-<%- include('../partials/footer') %>

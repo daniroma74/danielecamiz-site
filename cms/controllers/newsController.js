@@ -152,6 +152,7 @@ export async function listNews(req, res) {
 
     // ===== fetch & sort =====
     const items = await fetchPublished(lang, 600);
+    console.log(`[listNews] fetched ${items.length} items for lang=${lang}`, items.map(i => ({ id: i.id, title: i.title, status: i.status })));
     const published = items.sort((a, b) => ts(b.published_at || b.updated_at || b.created_at) - ts(a.published_at || a.updated_at || a.created_at));
 
     // ===== map to view model =====
@@ -284,7 +285,7 @@ export async function getNewsArticle(req, res) {
       lang: p.lang || lang,
       date: shortDate(p.published_at || p.created_at),
       image: resolvedCover,
-      content: `<div class=\"content-md\">${mdToHtml(p.content_md || '')}</div>`
+      content: p.content_md || '' // ✅ HTML diretto dal DB
     };
 
     // Local responsive variants (if present)
@@ -392,7 +393,7 @@ export async function feedXml(req, res) {
       const pubDate = rfc822(p.published_at || p.created_at);
       const description = xmlEscape(p.excerpt || '');
       const imageUrl = absolutize(siteBase, p.seo?.og_image || p.cover_url || '/img/icons/favicon-180.png');
-      const contentHtml = `<div class=\"content-md\">${mdToHtml(p.content_md || '')}</div>`;
+      const contentHtml = `<div class=\"content-md\">${p.content_md || ''}</div>`; // ✅ HTML diretto
       return (
         `  <item>\n` +
         `    <title>${xmlEscape(p.title || '')}</title>\n` +

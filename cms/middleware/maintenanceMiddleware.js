@@ -47,8 +47,8 @@ export async function checkMaintenance(req, res, next) {
   try {
     const p = req.path || '/';
 
-    // Admin/auth/upload sempre accessibili
-    if (p.startsWith('/admin') || p.startsWith('/auth') || p.startsWith('/upload')) return next();
+    // Upload sempre accessibile
+    if (p.startsWith('/upload')) return next();
 
     // Whitelist: lingua, statici, legali, API yt
     if (isWhitelisted(p)) return next();

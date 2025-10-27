@@ -96,29 +96,6 @@ export function getFrontendCoreStyles() {
   ];
 }
 
-// ===== ADMIN bundles (mounted at /admin/assets) =====
-// Espliciti per ordine e stabilità; niente I/O runtime
-export function getAdminCoreStyles() {
-  return [
-    '/admin/assets/css/layout.css',
-    '/admin/assets/css/forms.css',
-    '/admin/assets/css/table.css',
-    '/admin/assets/css/modal.css',
-    '/admin/assets/css/toast.css'
-  ];
-}
-
-export function getAdminCoreScripts() {
-  return [
-    '/admin/assets/js/core/dom.js',
-    '/admin/assets/js/core/http.js',
-    '/admin/assets/js/core/toast.js',
-    '/admin/assets/js/core/modal.js',
-    '/admin/assets/js/core/confirm.js',
-    '/admin/assets/js/core/forms.js'
-  ];
-}
-
 // ===== Page asset manifest + fallback =====
 export function getPageAssets(rawKey = '') {
   const pageKey = String(rawKey || '').toLowerCase();
