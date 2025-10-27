@@ -1,0 +1,32 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Bio Admin</h2>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="/bio" class="nav-item <%= currentPath === '/bio' ? 'active' : '' %>">
+      <span class="icon">📊</span>
+      <span>Dashboard</span>
+    </a>
+    <a href="/bio/biography" class="nav-item <%= currentPath.startsWith('/bio/biography') ? 'active' : '' %>">
+      <span class="icon">📝</span>
+      <span>Biografia</span>
+    </a>
+    <a href="/bio/curriculum" class="nav-item <%= currentPath.startsWith('/bio/curriculum') ? 'active' : '' %>">
+      <span class="icon">📄</span>
+      <span>Curriculum</span>
+    </a>
+    <a href="/bio/story" class="nav-item <%= currentPath.startsWith('/bio/story') ? 'active' : '' %>">
+      <span class="icon">📖</span>
+      <span>Storia</span>
+    </a>
+    <a href="/bio/presskit" class="nav-item <%= currentPath.startsWith('/bio/presskit') ? 'active' : '' %>">
+      <span class="icon">📦</span>
+      <span>Press Kit</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="<%= config.frontend.siteUrl %>" target="_blank" class="btn btn-sm btn-outline">
+      Vai al sito
+    </a>
+  </div>
+</aside>

@@ -91,22 +91,45 @@ async function collectPageScripts() {
 async function loadPressFromDb(lang = 'it') {
   try {
     const db = await getMainDb();
-    const rows = await new Promise((resolve, reject) => {
+
+    // Carica articoli da press_items
+    const articles = await new Promise((resolve, reject) => {
       db.all(
         `SELECT p.id, p.slug, p.kind, p.publisher, p.date, p.url, p.pdf_id, p.created_at,
                 i.title, i.excerpt, i.body_md
          FROM press_items p
          LEFT JOIN press_i18n i ON (i.press_id = p.id AND i.lang = ?)
+         WHERE p.kind = 'article'
          ORDER BY CASE WHEN p.date IS NULL THEN 1 ELSE 0 END, p.date DESC, p.created_at DESC`,
         [lang],
         (err, r) => (err ? reject(err) : resolve(r || []))
       );
     });
 
-    const mapped = await Promise.all(rows.map(async r => ({
+    // Carica citazioni da press_quotes
+    const quotesRows = await new Promise((resolve, reject) => {
+      db.all(
+        `SELECT id,
+                CASE WHEN ? = 'en' THEN quote_en ELSE quote_it END as quote,
+                source,
+                CASE WHEN ? = 'en' THEN source_role_en ELSE source_role_it END as author,
+                published_date as date,
+                url,
+                is_featured as interview,
+                display_order,
+                created_at
+         FROM press_quotes
+         WHERE is_published = 1
+         ORDER BY display_order ASC, CASE WHEN published_date IS NULL THEN 1 ELSE 0 END, published_date DESC, created_at DESC`,
+        [lang, lang],
+        (err, r) => (err ? reject(err) : resolve(r || []))
+      );
+    });
+
+    const mappedArticles = await Promise.all(articles.map(async r => ({
       id: r.id,
       slug: r.slug,
-      kind: r.kind || 'citation',
+      kind: 'article',
       title: r.title || '',
       excerpt: r.excerpt || '',
       body_html: r.body_md ? `<div class=\"content-md\">${mdToHtml(r.body_md)}</div>` : '',
@@ -117,10 +140,19 @@ async function loadPressFromDb(lang = 'it') {
       pdf_url: r.pdf_id ? (await resolveMediaById(r.pdf_id)) : ''
     })));
 
-    const quotes = mapped.filter(x => x.kind === 'citation');
-    const articles = mapped.filter(x => x.kind === 'article');
+    const mappedQuotes = quotesRows.map(r => ({
+      id: r.id,
+      quote: r.quote || '',
+      source: r.source || '',
+      author: r.author || '',
+      link: r.url || '',
+      interview: r.interview ? true : false,
+      icon: r.interview ? '✦' : '',
+      date: r.date || r.created_at,
+      date_short: shortDate(r.date || r.created_at, lang)
+    }));
 
-    return { quotes, articles };
+    return { quotes: mappedQuotes, articles: mappedArticles };
   } catch (err) {
     console.warn('[press] DB load failed, will fallback to JSON:', err?.message || err);
     return null;

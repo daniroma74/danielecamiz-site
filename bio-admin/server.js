@@ -1,0 +1,77 @@
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import { config } from './config/config.js';
+import { ensureSchema } from './utils/database.js';
+import bioRoutes from './routes/bio.js';
+import { handleLogin, handleLogout } from './middleware/simpleAuth.js';
+
+const app = express();
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
+
+app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use((req, res, next) => {
+  res.locals.config = config;
+  res.locals.user = req.user || null;
+  res.locals.currentPath = req.path;
+  next();
+});
+
+app.get('/', (req, res) => {
+  res.redirect('/bio');
+});
+
+app.get('/login', (req, res) => {
+  res.render('login', {
+    title: 'Login - Bio Admin',
+    error: null
+  });
+});
+
+app.post('/login', handleLogin);
+app.get('/logout', handleLogout);
+
+app.use('/bio', bioRoutes);
+
+app.use((err, req, res, next) => {
+  console.error('❌ Error:', err.stack);
+  res.status(500).json({
+    error: err.message,
+    stack: config.env === 'development' ? err.stack : undefined
+  });
+});
+
+async function startServer() {
+  try {
+    await ensureSchema();
+
+    app.listen(config.port, () => {
+      console.log(`\n✅ Bio Admin Server Running`);
+      console.log(`📍 Environment: ${config.env}`);
+      console.log(`🌐 URL: ${config.baseUrl}`);
+      console.log(`🔌 Port: ${config.port}`);
+      console.log(`📁 Database: ${config.db.path}\n`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();

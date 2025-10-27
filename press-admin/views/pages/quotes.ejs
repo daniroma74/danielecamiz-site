@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/press-admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+        <div class="page-header">
+          <h2>Citazioni</h2>
+          <button onclick="showQuoteModal()" class="btn btn-primary">Nuova Citazione</button>
+        </div>
+
+        <% if (quotes && quotes.length > 0) { %>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Citazione (IT)</th>
+                <th>Fonte</th>
+                <th>Data</th>
+                <th>Ordine</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% quotes.forEach(quote => { %>
+                <tr>
+                  <td><%= quote.quote_it?.substring(0, 80) %><%= quote.quote_it?.length > 80 ? '...' : '' %></td>
+                  <td><%= quote.source %></td>
+                  <td><%= quote.published_date || '-' %></td>
+                  <td><%= quote.display_order %></td>
+                  <td>
+                    <button onclick='editQuote(<%= JSON.stringify(quote) %>)' class="btn btn-sm">Modifica</button>
+                    <button onclick="deleteQuote(<%= quote.id %>)" class="btn btn-sm btn-danger">Elimina</button>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <p>Nessuna citazione presente.</p>
+        <% } %>
+      </main>
+    </div>
+  </div>
+
+  <div id="quoteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeQuoteModal()">&times;</span>
+      <h2 id="modalTitle">Nuova Citazione</h2>
+      <form id="quoteForm">
+        <input type="hidden" id="quote_id" name="id">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="quote_it">Citazione (IT) *</label>
+            <textarea id="quote_it" name="quote_it" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="quote_en">Citazione (EN)</label>
+            <textarea id="quote_en" name="quote_en" rows="4"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="source">Fonte *</label>
+            <input type="text" id="source" name="source" required>
+          </div>
+          <div class="form-group">
+            <label for="published_date">Data</label>
+            <input type="date" id="published_date" name="published_date">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="url">URL</label>
+            <input type="url" id="url" name="url">
+          </div>
+          <div class="form-group">
+            <label for="display_order">Ordine</label>
+            <input type="number" id="display_order" name="display_order" value="0">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" onclick="closeQuoteModal()" class="btn btn-outline">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function showQuoteModal() {
+      document.getElementById('modalTitle').textContent = 'Nuova Citazione';
+      document.getElementById('quoteForm').reset();
+      document.getElementById('quote_id').value = '';
+      document.getElementById('quoteModal').style.display = 'block';
+    }
+
+    function closeQuoteModal() {
+      document.getElementById('quoteModal').style.display = 'none';
+    }
+
+    function editQuote(quote) {
+      document.getElementById('modalTitle').textContent = 'Modifica Citazione';
+      document.getElementById('quote_id').value = quote.id;
+      document.getElementById('quote_it').value = quote.quote_it || '';
+      document.getElementById('quote_en').value = quote.quote_en || '';
+      document.getElementById('source').value = quote.source || '';
+      document.getElementById('published_date').value = quote.published_date || '';
+      document.getElementById('url').value = quote.url || '';
+      document.getElementById('display_order').value = quote.display_order || 0;
+      document.getElementById('quoteModal').style.display = 'block';
+    }
+
+    document.getElementById('quoteForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      const id = data.id;
+      delete data.id;
+
+      try {
+        const url = id ? `/press/quotes/${id}` : '/press/quotes';
+        const method = id ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          alert('Errore durante il salvataggio');
+        }
+      } catch (error) {
+        alert('Errore di connessione');
+      }
+    });
+
+    async function deleteQuote(id) {
+      if (!confirm('Sei sicuro di voler eliminare questa citazione?')) return;
+
+      try {
+        const res = await fetch(`/press/quotes/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          alert('Errore durante l\'eliminazione');
+        }
+      } catch (error) {
+        alert('Errore di connessione');
+      }
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('quoteModal');
+      if (event.target == modal) {
+        closeQuoteModal();
+      }
+    }
+  </script>
+  <script src="/static/js/press-admin.js"></script>
+</body>
+</html>

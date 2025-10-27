@@ -1,0 +1,26 @@
+{
+  "name": "press-admin",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Admin panel per gestione articoli stampa e citazioni",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": ["press", "admin", "cms"],
+  "author": "Daniele Camiz",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "dotenv": "^16.3.1",
+    "sqlite3": "^5.1.6",
+    "cookie-parser": "^1.4.6",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

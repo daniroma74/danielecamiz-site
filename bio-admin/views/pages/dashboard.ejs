@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/bio-admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Biografia</h3>
+            <p class="stat-status">
+              IT: <%= stats.biography.it ? '✅' : '⚠️' %>
+              EN: <%= stats.biography.en ? '✅' : '⚠️' %>
+            </p>
+            <a href="/bio/biography" class="stat-link">Gestisci</a>
+          </div>
+          <div class="stat-card">
+            <h3>Curriculum</h3>
+            <p class="stat-status">
+              IT: <%= stats.curriculum.it ? '✅' : '⚠️' %>
+              EN: <%= stats.curriculum.en ? '✅' : '⚠️' %>
+            </p>
+            <a href="/bio/curriculum" class="stat-link">Gestisci</a>
+          </div>
+          <div class="stat-card">
+            <h3>Storia</h3>
+            <p class="stat-status">
+              IT: <%= stats.story.it ? '✅' : '⚠️' %>
+              EN: <%= stats.story.en ? '✅' : '⚠️' %>
+            </p>
+            <a href="/bio/story" class="stat-link">Gestisci</a>
+          </div>
+          <div class="stat-card">
+            <h3>Press Kit</h3>
+            <p class="stat-number"><%= presskitCount %></p>
+            <a href="/bio/presskit" class="stat-link">Gestisci assets</a>
+          </div>
+        </div>
+
+        <div class="quick-links">
+          <h2>Azioni Rapide</h2>
+          <div class="link-grid">
+            <a href="/bio/biography" class="quick-link-card">
+              <span class="icon">📝</span>
+              <span>Modifica Biografia</span>
+            </a>
+            <a href="/bio/curriculum" class="quick-link-card">
+              <span class="icon">📄</span>
+              <span>Modifica Curriculum</span>
+            </a>
+            <a href="/bio/story" class="quick-link-card">
+              <span class="icon">📖</span>
+              <span>Modifica Storia</span>
+            </a>
+            <a href="/bio/presskit" class="quick-link-card">
+              <span class="icon">📦</span>
+              <span>Gestisci Press Kit</span>
+            </a>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/bio-admin.js"></script>
+</body>
+</html>

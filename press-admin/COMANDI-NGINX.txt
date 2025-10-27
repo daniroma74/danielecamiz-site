@@ -1,0 +1,27 @@
+================================================================================
+COMANDI PER ATTIVARE PRESS-ADMIN IN NGINX
+================================================================================
+
+Copia e incolla questi 4 comandi nel terminale (ti chiederà la password sudo):
+
+# 1. Copia configurazione
+sudo cp /tmp/press-admin.danielecamiz.com.conf /etc/nginx/sites-available/press-admin.danielecamiz.com
+
+# 2. Crea link simbolico
+sudo ln -sf /etc/nginx/sites-available/press-admin.danielecamiz.com /etc/nginx/sites-enabled/press-admin.danielecamiz.com
+
+# 3. Testa configurazione (verifica che non ci siano errori)
+sudo nginx -t
+
+# 4. Ricarica Nginx
+sudo systemctl reload nginx
+
+================================================================================
+
+Dopo aver eseguito questi comandi:
+1. Apri: https://press-admin.danielecamiz.com
+2. Dovresti vedere la pagina di LOGIN
+3. Username: admin
+4. Password: DanieleCamiz2025!
+
+================================================================================

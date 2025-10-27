@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/press-admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+        <div class="page-header">
+          <h2>Articoli Stampa</h2>
+          <a href="/press/articles/new" class="btn btn-primary">Nuovo Articolo</a>
+        </div>
+
+        <% if (articles && articles.length > 0) { %>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Titolo</th>
+                <th>Fonte</th>
+                <th>Data</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% articles.forEach(article => { %>
+                <tr>
+                  <td><%= article.title || 'Senza titolo' %></td>
+                  <td><%= article.publisher || '-' %></td>
+                  <td><%= article.date || '-' %></td>
+                  <td>
+                    <a href="/press/articles/<%= article.id %>/edit" class="btn btn-sm">Modifica</a>
+                    <button onclick="deleteArticle(<%= article.id %>)" class="btn btn-sm btn-danger">Elimina</button>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <p>Nessun articolo presente. <a href="/press/articles/new">Creane uno nuovo</a></p>
+        <% } %>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    async function deleteArticle(id) {
+      if (!confirm('Sei sicuro di voler eliminare questo articolo?')) return;
+
+      try {
+        const res = await fetch(`/press/articles/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          alert('Errore durante l\'eliminazione');
+        }
+      } catch (error) {
+        alert('Errore di connessione');
+      }
+    }
+  </script>
+  <script src="/static/js/press-admin.js"></script>
+</body>
+</html>

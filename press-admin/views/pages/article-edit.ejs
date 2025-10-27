@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/press-admin.css">
+  <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/shared/config/editor-config.js"></script>
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+        <form id="articleForm" class="form-container">
+          <% if (!isNew) { %>
+            <input type="hidden" name="id" value="<%= article.id %>">
+          <% } %>
+
+          <h2><%= isNew ? 'Nuovo Articolo' : 'Modifica Articolo' %></h2>
+
+          <div class="form-section">
+            <h3>Informazioni Base</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input type="text" id="slug" name="slug" value="<%= article ? article.slug : '' %>" required>
+              </div>
+              <div class="form-group">
+                <label for="publisher">Fonte/Testata *</label>
+                <input type="text" id="publisher" name="publisher" value="<%= article ? article.publisher : '' %>" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="date">Data Pubblicazione</label>
+                <input type="date" id="date" name="date" value="<%= article ? article.date : '' %>">
+              </div>
+              <div class="form-group">
+                <label for="url">URL Fonte</label>
+                <input type="url" id="url" name="url" value="<%= article ? article.url : '' %>">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Contenuto Italiano</h3>
+            <div class="form-group">
+              <label for="title_it">Titolo (IT) *</label>
+              <input type="text" id="title_it" name="title_it" value="<%= article && article.translations && article.translations.it ? article.translations.it.title : '' %>" required>
+            </div>
+            <div class="form-group">
+              <label for="excerpt_it">Estratto (IT)</label>
+              <textarea id="excerpt_it" name="excerpt_it" rows="3"><%= article && article.translations && article.translations.it ? article.translations.it.excerpt : '' %></textarea>
+            </div>
+            <div class="form-group">
+              <label for="body_md_it">Contenuto (IT)</label>
+              <textarea id="body_md_it" name="body_md_it" rows="10"><%= article && article.translations && article.translations.it ? article.translations.it.body_md : '' %></textarea>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Contenuto Inglese</h3>
+            <div class="form-group">
+              <label for="title_en">Titolo (EN)</label>
+              <input type="text" id="title_en" name="title_en" value="<%= article && article.translations && article.translations.en ? article.translations.en.title : '' %>">
+            </div>
+            <div class="form-group">
+              <label for="excerpt_en">Estratto (EN)</label>
+              <textarea id="excerpt_en" name="excerpt_en" rows="3"><%= article && article.translations && article.translations.en ? article.translations.en.excerpt : '' %></textarea>
+            </div>
+            <div class="form-group">
+              <label for="body_md_en">Contenuto (EN)</label>
+              <textarea id="body_md_en" name="body_md_en" rows="10"><%= article && article.translations && article.translations.en ? article.translations.en.body_md : '' %></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="/press/articles" class="btn btn-outline">Annulla</a>
+            <button type="submit" class="btn btn-primary">Salva Articolo</button>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    if (window.SharedEditor) {
+      window.SharedEditor.init('#body_md_it', 'blog', {
+        height: 400
+      });
+      window.SharedEditor.init('#body_md_en', 'blog', {
+        height: 400
+      });
+    }
+
+    document.getElementById('articleForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      const id = data.id;
+      delete data.id;
+
+      const url = id ? `/press/articles/${id}` : '/press/articles';
+      const method = id ? 'PUT' : 'POST';
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          window.location.href = '/press/articles';
+        } else {
+          alert('Errore durante il salvataggio');
+        }
+      } catch (error) {
+        alert('Errore di connessione');
+      }
+    });
+
+    document.getElementById('slug').addEventListener('blur', function() {
+      this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
+    });
+  </script>
+  <script src="/static/js/press-admin.js"></script>
+</body>
+</html>

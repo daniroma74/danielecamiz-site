@@ -1,0 +1,24 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Press Admin</h2>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="/press" class="nav-item <%= currentPath === '/press' ? 'active' : '' %>">
+      <span class="icon">📊</span>
+      <span>Dashboard</span>
+    </a>
+    <a href="/press/articles" class="nav-item <%= currentPath.startsWith('/press/articles') ? 'active' : '' %>">
+      <span class="icon">📰</span>
+      <span>Articoli</span>
+    </a>
+    <a href="/press/quotes" class="nav-item <%= currentPath.startsWith('/press/quotes') ? 'active' : '' %>">
+      <span class="icon">💬</span>
+      <span>Citazioni</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="<%= config.frontend.siteUrl %>" target="_blank" class="btn btn-sm btn-outline">
+      Vai al sito
+    </a>
+  </div>
+</aside>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/bio-admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+        <div class="page-header">
+          <h2>Press Kit Assets</h2>
+          <button onclick="alert('Upload Cloudinary da implementare')" class="btn btn-primary">Nuovo Asset</button>
+        </div>
+
+        <% if (assets && assets.length > 0) { %>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Titolo (IT)</th>
+                <th>Cloudinary ID</th>
+                <th>Incluso</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% assets.forEach(asset => { %>
+                <tr>
+                  <td><%= asset.type %></td>
+                  <td><%= asset.title_it || '-' %></td>
+                  <td><%= asset.cloudinary_id %></td>
+                  <td><%= asset.is_included_in_kit ? '✅' : '❌' %></td>
+                  <td>
+                    <button onclick="deleteAsset(<%= asset.id %>)" class="btn btn-sm btn-danger">Elimina</button>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <p>Nessun asset nel press kit. <button onclick="alert('Upload da implementare')" class="btn btn-primary">Aggiungi primo asset</button></p>
+        <% } %>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    async function deleteAsset(id) {
+      if (!confirm('Sei sicuro di voler eliminare questo asset?')) return;
+
+      try {
+        const res = await fetch(`/bio/presskit/assets/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          alert('Errore durante l\'eliminazione');
+        }
+      } catch (error) {
+        alert('Errore di connessione');
+      }
+    }
+  </script>
+  <script src="/static/js/bio-admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/bio-admin.css">
+  <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/shared/config/editor-config.js"></script>
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+        <div class="lang-tabs">
+          <button class="tab-btn active" onclick="switchLang('it')">Italiano</button>
+          <button class="tab-btn" onclick="switchLang('en')">English</button>
+        </div>
+
+        <form id="formIt" class="lang-form active">
+          <input type="hidden" name="section" value="biography">
+          <input type="hidden" name="lang" value="it">
+
+          <div class="form-group">
+            <label for="title_it">Titolo</label>
+            <input type="text" id="title_it" name="title" value="<%= contentIt ? contentIt.title : '' %>">
+          </div>
+
+          <div class="form-group">
+            <label for="intro_it">Introduzione</label>
+            <textarea id="intro_it" name="intro" rows="3"><%= contentIt ? contentIt.intro : '' %></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="content_it">Contenuto Completo</label>
+            <textarea id="content_it" name="content" class="tinymce"><%= contentIt ? contentIt.content : '' %></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Salva Italiano</button>
+        </form>
+
+        <form id="formEn" class="lang-form">
+          <input type="hidden" name="section" value="biography">
+          <input type="hidden" name="lang" value="en">
+
+          <div class="form-group">
+            <label for="title_en">Title</label>
+            <input type="text" id="title_en" name="title" value="<%= contentEn ? contentEn.title : '' %>">
+          </div>
+
+          <div class="form-group">
+            <label for="intro_en">Introduction</label>
+            <textarea id="intro_en" name="intro" rows="3"><%= contentEn ? contentEn.intro : '' %></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="content_en">Full Content</label>
+            <textarea id="content_en" name="content" class="tinymce"><%= contentEn ? contentEn.content : '' %></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save English</button>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    if (window.SharedEditor) {
+      window.SharedEditor.init('#content_it', 'blog', { height: 500 });
+      window.SharedEditor.init('#content_en', 'blog', { height: 500 });
+    }
+
+    function switchLang(lang) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.lang-form').forEach(form => form.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById('form' + lang.charAt(0).toUpperCase() + lang.slice(1)).classList.add('active');
+    }
+
+    async function saveContent(form) {
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const res = await fetch('/bio/content/biography', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          alert('✅ Salvato con successo!');
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        alert('❌ Errore di connessione');
+      }
+    }
+
+    document.getElementById('formIt').addEventListener('submit', (e) => {
+      e.preventDefault();
+      saveContent(e.target);
+    });
+
+    document.getElementById('formEn').addEventListener('submit', (e) => {
+      e.preventDefault();
+      saveContent(e.target);
+    });
+  </script>
+  <script src="/static/js/bio-admin.js"></script>
+</body>
+</html>
