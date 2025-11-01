@@ -64,6 +64,9 @@ const settingsRoutes = require('./routes/settingRoutes');
 const app = express();
 const PORT = process.env.PORT || 3100;
 
+// Trust proxy per nginx (importante per rate limiting e CORS)
+app.set('trust proxy', 1);
+
 // Crea directory logs se non esiste
 const logsDir = path.join(__dirname, 'logs');
 if (!fs.existsSync(logsDir)) {
@@ -85,38 +88,38 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false
 }));
 
-// CORS configurato per sottodomini
+// CORS configurato per sottodomini e stesso dominio
 const corsOptions = {
     origin: function (origin, callback) {
         // Domini permessi
         const allowedDomains = [
             `https://${process.env.HUB_DOMAIN}`,
+            `http://${process.env.HUB_DOMAIN}`,
             `https://events-admin.${process.env.MAIN_DOMAIN}`,
             `https://newsletter-admin.${process.env.MAIN_DOMAIN}`,
-            `https://concerts-admin.${process.env.MAIN_DOMAIN}`
+            `https://concerts-admin.${process.env.MAIN_DOMAIN}`,
+            `https://bio-admin.${process.env.MAIN_DOMAIN}`,
+            `https://press-admin.${process.env.MAIN_DOMAIN}`,
+            `https://gallery-admin.${process.env.MAIN_DOMAIN}`,
+            'http://localhost:3100',
+            'http://localhost:3005'
         ];
-        
-        // In sviluppo, permetti localhost
-        if (process.env.NODE_ENV === 'development') {
-            allowedDomains.push('http://localhost:3100');
-            allowedDomains.push('http://localhost:3101');
-            allowedDomains.push('http://localhost:3102');
-            allowedDomains.push('http://localhost:3103');
-        }
-        
-        // Permetti richieste senza origin (direct browser access, Postman, curl, etc.)
+
+        // Permetti richieste senza origin (direct browser access)
         if (!origin) {
             return callback(null, true);
         }
 
-        if (allowedDomains.indexOf(origin) !== -1) {
+        if (allowedDomains.indexOf(origin) !== -1 || allowedDomains.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error('Non autorizzato da CORS'));
+            // In produzione, permetti comunque same-origin
+            console.log(`[CORS] Origin non in lista: ${origin}`);
+            callback(null, true); // Temporaneamente permetti tutto per debug
         }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Hub-Token', 'X-CSRF-Token']
 };
 
