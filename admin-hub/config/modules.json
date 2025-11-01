@@ -76,12 +76,12 @@
     {
       "id": "gallery-admin",
       "name": "Galleria Media",
-      "description": "Gestione foto, video e contenuti multimediali",
-      "icon": "🖼️",
+      "description": "Gestione collezioni foto, video e audio multimediali",
+      "icon": "📸",
       "url": "https://gallery-admin.danielecamiz.com",
       "subdomain": "gallery-admin",
-      "color": "#9B59B6",
-      "status": "planned",
+      "color": "#d4af37",
+      "status": "active",
       "order": 4,
       "permissions": ["admin", "media"],
       "features": [
@@ -98,6 +98,76 @@
       }
     },
     {
+      "id": "bio-admin",
+      "name": "Biografia & Portfolio",
+      "description": "Gestione biografia, curriculum, storia e press kit",
+      "icon": "👤",
+      "url": "https://bio-admin.danielecamiz.com",
+      "subdomain": "bio-admin",
+      "color": "#d4af37",
+      "status": "active",
+      "order": 5,
+      "permissions": ["admin", "editor"],
+      "features": [
+        "Biografia multilingua (IT/EN)",
+        "Curriculum vitae",
+        "Storia artistica",
+        "Press kit digitale",
+        "Editor testo avanzato"
+      ],
+      "api": {
+        "endpoint": "/api/bio",
+        "version": "v1"
+      }
+    },
+    {
+      "id": "press-admin",
+      "name": "Press & Stampa",
+      "description": "Gestione articoli stampa e citazioni",
+      "icon": "📰",
+      "url": "https://press-admin.danielecamiz.com",
+      "subdomain": "press-admin",
+      "color": "#d4af37",
+      "status": "active",
+      "order": 6,
+      "permissions": ["admin", "editor"],
+      "features": [
+        "Archivio articoli stampa",
+        "Citazioni e recensioni",
+        "Upload allegati",
+        "Ricerca e filtri avanzati",
+        "Traduzioni IT/EN"
+      ],
+      "api": {
+        "endpoint": "/api/press",
+        "version": "v1"
+      }
+    },
+    {
+      "id": "news-admin",
+      "name": "News & Blog",
+      "description": "Gestione articoli, news e post del blog",
+      "icon": "📝",
+      "url": "http://localhost:3005",
+      "subdomain": "news-admin",
+      "color": "#d4af37",
+      "status": "active",
+      "order": 7,
+      "permissions": ["admin", "editor"],
+      "features": [
+        "Editor articoli WYSIWYG",
+        "Categorie e tag",
+        "Immagini evidenza",
+        "Programmazione pubblicazioni",
+        "Multilingua IT/EN",
+        "SEO optimization"
+      ],
+      "api": {
+        "endpoint": "/api/news",
+        "version": "v1"
+      }
+    },
+    {
       "id": "content-admin",
       "name": "Gestione Contenuti",
       "description": "CMS per contenuti sito e traduzioni",
@@ -106,7 +176,7 @@
       "subdomain": "content-admin",
       "color": "#F39C12",
       "status": "planned",
-      "order": 5,
+      "order": 8,
       "permissions": ["admin", "editor", "translator"],
       "features": [
         "Editor pagine WYSIWYG",
@@ -130,7 +200,7 @@
       "subdomain": "analytics-admin",
       "color": "#3498DB",
       "status": "planned",
-      "order": 6,
+      "order": 9,
       "permissions": ["admin", "analyst"],
       "features": [
         "Dashboard interattive",

@@ -169,6 +169,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Servire file statici
 app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/shared', express.static(path.join(__dirname, '../shared')));
 
 // Variabili globali per views
 app.use((req, res, next) => {
