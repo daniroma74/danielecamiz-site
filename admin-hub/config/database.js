@@ -83,7 +83,7 @@ function initializeHubTables() {
                 user_agent TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 expires_at DATETIME,
-                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                FOREIGN KEY (user_id) REFERENCES hub_users(id) ON DELETE CASCADE
             )
         `);
         

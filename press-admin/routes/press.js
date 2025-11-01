@@ -1,5 +1,5 @@
 import express from 'express';
-import { ensureAuthenticated } from '../middleware/simpleAuth.js';
+import { ensureAuthenticated } from '../middleware/hybridAuth.js';
 import { allQuery, getQuery, runQuery } from '../utils/database.js';
 
 const router = express.Router();

@@ -237,7 +237,7 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
   <div class="contact-mini">
     <a href="mailto:<%= safe(contactMini?.email, 'info@danielecamiz.com') %>" class="contact-mail" id="contact_mail"><%= safe(contactMini?.email, 'info@danielecamiz.com') %></a>
     <span class="separator">|</span>
-    <a href="<%= safe(contactMini?.moreUrl, '/contact') %>" class="contact-all" id="contact_more"><%= _t('home.contact_more', 'Tutti i contatti', 'All contacts') %></a>
+    <a href="https://contact.danielecamiz.com" class="contact-all" id="contact_more" target="_blank" rel="noopener noreferrer"><%= _t('home.contact_more', 'Tutti i contatti', 'All contacts') %></a>
   </div>
 </section>
 

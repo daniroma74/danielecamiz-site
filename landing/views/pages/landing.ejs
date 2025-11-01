@@ -562,8 +562,8 @@
     <h2 class="section-title">Prenota il tuo posto</h2>
     
     <!-- NUOVA SEZIONE: Disponibilità Posti -->
-    <% 
-      const maxCapacity = event.max_capacity || 200;
+    <%
+      const maxCapacity = event.venue_capacity || 200;
       const totalBooked = event.booking_count || 0;
       const remainingSeats = maxCapacity - totalBooked;
       const fillPercentage = Math.min((totalBooked / maxCapacity) * 100, 100);

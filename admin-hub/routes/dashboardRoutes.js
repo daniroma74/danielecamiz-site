@@ -25,15 +25,15 @@ router.get('/refresh', async (req, res) => {
         
         // Ottieni dati aggiornati
         const onlineUsers = await get(
-            `SELECT COUNT(DISTINCT user_id) as count 
-             FROM user_sessions 
+            `SELECT COUNT(DISTINCT user_id) as count
+             FROM hub_sessions
              WHERE expires_at > datetime('now')`
         );
-        
+
         const activities = await all(
-            `SELECT a.*, u.username 
-             FROM activity_logs a
-             LEFT JOIN users u ON a.user_id = u.id
+            `SELECT a.*, u.username
+             FROM hub_activity_logs a
+             LEFT JOIN hub_users u ON a.user_id = u.id
              ORDER BY a.created_at DESC
              LIMIT 5`
         );

@@ -13,11 +13,16 @@ class RepertoireManager {
     this.attachEventListeners();
     this.loadData();
   }
-  
+
   attachEventListeners() {
     const workForm = document.getElementById('workForm');
     if (workForm) {
       workForm.addEventListener('submit', (e) => this.saveWork(e));
+    }
+
+    const composerForm = document.getElementById('composerForm');
+    if (composerForm) {
+      composerForm.addEventListener('submit', (e) => this.saveComposer(e));
     }
   }
   
@@ -368,19 +373,121 @@ class RepertoireManager {
     }
   }
   
+  showComposersList() {
+    const container = document.getElementById('composersListContainer');
+    container.innerHTML = this.composers.map(c => `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border);">
+        <div>
+          <strong>${c.full_name}</strong>
+          ${c.short_name ? `<span style="color: var(--text-muted); margin-left: 8px;">(${c.short_name})</span>` : ''}
+        </div>
+        <button onclick="editComposer(${c.id})" class="btn btn-sm btn-secondary">
+          <i class="fas fa-edit"></i> Modifica
+        </button>
+      </div>
+    `).join('');
+    this.showModal('composersListModal');
+  }
+
+  showAddComposer() {
+    document.getElementById('composerModalTitle').textContent = 'Nuovo Compositore';
+    document.getElementById('composerForm').reset();
+    document.getElementById('composer_id').value = '';
+    this.showModal('composerModal');
+  }
+
+  async editComposer(composerId) {
+    console.log('🎼 editComposer chiamato con ID:', composerId);
+    const composer = this.composers.find(c => c.id === composerId);
+    console.log('🎼 Compositore trovato:', composer);
+
+    if (!composer) {
+      console.error('❌ Compositore non trovato con ID:', composerId);
+      return;
+    }
+
+    document.getElementById('composerModalTitle').textContent = 'Modifica Compositore';
+    document.getElementById('composer_id').value = composer.id;
+    document.getElementById('composer_full_name').value = composer.full_name;
+    document.getElementById('composer_short_name').value = composer.short_name || '';
+
+    console.log('✅ Form popolato - ID:', document.getElementById('composer_id').value);
+
+    this.closeModal('composersListModal');
+    this.showModal('composerModal');
+  }
+
+  async saveComposer(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+
+    console.log('💾 saveComposer - Dati form:', data);
+
+    if (!data.full_name) {
+      this.showToast('Nome completo obbligatorio', 'error');
+      return;
+    }
+
+    const isEdit = !!data.id;
+    console.log(`💾 isEdit=${isEdit}, data.id="${data.id}"`);
+
+    try {
+      this.showToast('Salvataggio compositore...', 'info');
+
+      const url = isEdit ? `/api/composers/${data.id}` : '/api/composers';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      console.log(`💾 Sending ${method} to ${url}`, data);
+
+      const response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      console.log('💾 Risposta server:', result);
+
+      if (result.success) {
+        this.showToast(isEdit ? 'Compositore aggiornato!' : 'Compositore creato!', 'success');
+        this.closeModal('composerModal');
+
+        await this.loadData();
+
+        if (!isEdit) {
+          const composerSelect = document.getElementById('composer_id');
+          const newOption = document.createElement('option');
+          newOption.value = result.composer_id;
+          newOption.textContent = data.full_name;
+          composerSelect.appendChild(newOption);
+          composerSelect.value = result.composer_id;
+        }
+
+        setTimeout(() => window.location.reload(), 1000);
+      } else {
+        this.showToast('Errore: ' + (result.error || result.message), 'error');
+      }
+    } catch (error) {
+      console.error('Errore salvataggio compositore:', error);
+      this.showToast('Errore durante il salvataggio', 'error');
+    }
+  }
+
   showToast(message, type = 'info') {
     const existing = document.querySelector('.notification');
     if (existing) existing.remove();
-    
+
     const toast = document.createElement('div');
     toast.className = `notification notification-${type} show`;
     toast.innerHTML = `
       <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
       <span>${message}</span>
     `;
-    
+
     document.body.appendChild(toast);
-    
+
     setTimeout(() => {
       toast.classList.remove('show');
       setTimeout(() => toast.remove(), 300);
@@ -427,6 +534,44 @@ function closeModal(modalId) {
 
 function closeWorkModal() {
   closeModal('workModal');
+}
+
+function showAddComposer() {
+  if (window.repertoireManager) {
+    window.repertoireManager.showAddComposer();
+  }
+}
+
+function showComposersList() {
+  console.log('🔧 Funzione globale showComposersList chiamata');
+  if (window.repertoireManager) {
+    console.log('✅ window.repertoireManager trovato, compositori disponibili:', window.repertoireManager.composers.length);
+    window.repertoireManager.showComposersList();
+  } else {
+    console.error('❌ window.repertoireManager non definito!');
+  }
+}
+
+function closeComposersListModal() {
+  if (window.repertoireManager) {
+    window.repertoireManager.closeModal('composersListModal');
+  }
+}
+
+function editComposer(composerId) {
+  console.log('🔧 Funzione globale editComposer chiamata con ID:', composerId);
+  if (window.repertoireManager) {
+    console.log('✅ window.repertoireManager trovato');
+    window.repertoireManager.editComposer(composerId);
+  } else {
+    console.error('❌ window.repertoireManager non definito!');
+  }
+}
+
+function closeComposerModal() {
+  if (window.repertoireManager) {
+    window.repertoireManager.closeModal('composerModal');
+  }
 }
 
 async function saveMovement(movementId, workId) {
@@ -483,18 +628,18 @@ async function deleteMovement(movementId, workId) {
 async function addNewMovement(workId) {
   const currentMovements = document.querySelectorAll('.movement-item').length;
   const movementNumber = prompt(
-    `Numero del movimento (hai già ${currentMovements} movimento/i).\nInserisci il numero:`, 
+    `Numero del movimento (hai già ${currentMovements} movimento/i).\nInserisci il numero:`,
     currentMovements + 1
   );
-  
+
   if (!movementNumber || isNaN(movementNumber) || movementNumber < 1) {
     showToast('Numero non valido', 'error');
     return;
   }
-  
+
   const title = prompt('Titolo del movimento (opzionale):');
   const tempo = prompt('Tempo/Carattere (es: Allegro, Andante):');
-  
+
   try {
     const response = await fetch('/api/repertoire/movements', {
       method: 'POST',
@@ -506,14 +651,14 @@ async function addNewMovement(workId) {
         tempo: tempo || null
       })
     });
-    
+
     const result = await response.json();
-    
-    console.log('Response:', result); // ✅ DEBUG
-    
+
     if (result.success) {
       showToast('Movimento aggiunto con successo!', 'success');
-      await loadMovements(workId);
+      setTimeout(() => {
+        editMovements(workId);
+      }, 500);
     } else {
       showToast('Errore: ' + (result.error || 'Salvataggio fallito'), 'error');
     }

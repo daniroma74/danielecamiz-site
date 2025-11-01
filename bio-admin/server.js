@@ -12,7 +12,8 @@ import cookieParser from 'cookie-parser';
 import { config } from './config/config.js';
 import { ensureSchema } from './utils/database.js';
 import bioRoutes from './routes/bio.js';
-import { handleLogin, handleLogout } from './middleware/simpleAuth.js';
+import { handleLogin, handleLogout } from './middleware/hybridAuth.js';
+import cloudinaryRoutes from '../shared/cloudinary-manager/routes.js';
 
 const app = express();
 
@@ -48,6 +49,9 @@ app.post('/login', handleLogin);
 app.get('/logout', handleLogout);
 
 app.use('/bio', bioRoutes);
+
+// Cloudinary API routes
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err.stack);

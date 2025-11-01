@@ -6,6 +6,7 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/bio-admin.css">
+  <script src="/shared/cloudinary-manager/client.js"></script>
 </head>
 <body>
   <div class="admin-layout">
@@ -15,7 +16,7 @@
       <main class="content-area">
         <div class="page-header">
           <h2>Press Kit Assets</h2>
-          <button onclick="alert('Upload Cloudinary da implementare')" class="btn btn-primary">Nuovo Asset</button>
+          <button onclick="addNewAsset()" class="btn btn-primary">Nuovo Asset</button>
         </div>
 
         <% if (assets && assets.length > 0) { %>
@@ -44,7 +45,7 @@
             </tbody>
           </table>
         <% } else { %>
-          <p>Nessun asset nel press kit. <button onclick="alert('Upload da implementare')" class="btn btn-primary">Aggiungi primo asset</button></p>
+          <p>Nessun asset nel press kit. <button onclick="addNewAsset()" class="btn btn-primary">Aggiungi primo asset</button></p>
         <% } %>
       </main>
     </div>
@@ -64,6 +65,107 @@
       } catch (error) {
         alert('Errore di connessione');
       }
+    }
+
+    function addNewAsset() {
+      // Prima chiedi il tipo di asset
+      const assetType = prompt('Tipo di asset (photo/document/logo/video):', 'photo');
+      if (!assetType) return;
+
+      // Usa CloudinaryManager per selezionare/caricare il file
+      CloudinaryManager.showImageDialog((result) => {
+        showAssetMetadataForm(result, assetType);
+      }, {
+        folder: 'danielecamiz/presskit',
+        preset: 'gallery_unsigned'
+      });
+    }
+
+    function showAssetMetadataForm(uploadedData, assetType) {
+      const modal = document.createElement('div');
+      modal.id = 'asset-modal';
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 10001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+
+      modal.innerHTML = `
+        <div style="background: white; border-radius: 12px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 30px;">
+          <h2 style="margin-top: 0;">Dettagli Asset Press Kit</h2>
+
+          <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <p style="margin: 0; font-size: 14px; color: #7f8c8d;"><strong>Tipo:</strong> ${assetType}</p>
+            <p style="margin: 5px 0 0; font-size: 12px; color: #7f8c8d;">${uploadedData.publicId}</p>
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Titolo (Italiano):</label>
+            <input type="text" id="title-it" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Titolo (English):</label>
+            <input type="text" id="title-en" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Descrizione (Italiano):</label>
+            <textarea id="desc-it" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;"></textarea>
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Descrizione (English):</label>
+            <textarea id="desc-en" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;"></textarea>
+          </div>
+
+          <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+            <button onclick="document.getElementById('asset-modal').remove()" style="padding: 10px 24px; border: 1px solid #e1e8ed; background: white; color: #333; border-radius: 8px; cursor: pointer; font-weight: 600;">Annulla</button>
+            <button id="save-asset-btn" style="padding: 10px 24px; border: none; background: #d4af37; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Salva Asset</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+      const saveBtn = modal.querySelector('#save-asset-btn');
+
+      saveBtn.addEventListener('click', async () => {
+        const data = {
+          type: assetType,
+          cloudinary_id: uploadedData.publicId,
+          cloudinary_folder: uploadedData.publicId.split('/').slice(0, -1).join('/'),
+          title_it: modal.querySelector('#title-it').value,
+          title_en: modal.querySelector('#title-en').value,
+          description_it: modal.querySelector('#desc-it').value,
+          description_en: modal.querySelector('#desc-en').value,
+          file_size: uploadedData.bytes || 0,
+          file_format: uploadedData.format || ''
+        };
+
+        try {
+          const res = await fetch('/bio/presskit/assets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          if (res.ok) {
+            modal.remove();
+            window.location.reload();
+          } else {
+            alert('Errore durante il salvataggio');
+          }
+        } catch (error) {
+          alert('Errore di connessione');
+        }
+      });
     }
   </script>
   <script src="/static/js/bio-admin.js"></script>

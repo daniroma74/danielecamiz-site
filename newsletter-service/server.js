@@ -8,9 +8,10 @@ import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js';
 import adminRoutes from './routes/admin.js';
 import apiRoutes from './routes/api.js';
-import { ensureAuthenticated, handleLogin, handleLogout } from './middleware/simpleAuth.js';
+import { ensureAuthenticated, handleLogin, handleLogout } from './middleware/hybridAuth.js';
+import cloudinaryRoutes from '../shared/cloudinary-manager/routes.js';
 
-// === Using SimpleAuth (cloned from news-admin) ===
+// === Using HybridAuth (Hub JWT + Local Session) ===
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,6 +61,9 @@ app.get('/gestione-iscrizione', (req, res) => {
 
 // ====== API ROUTES (pubbliche) ======
 app.use('/api', apiRoutes);
+
+// Cloudinary API routes
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 // ====== LOGIN ROUTES ======
 app.get('/login', (req, res) => {

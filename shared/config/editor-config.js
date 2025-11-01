@@ -128,6 +128,38 @@ function initSharedEditor(selector, preset = 'default', customConfig = {}) {
     branding: false,   // ✅ FORZATO anche qui
     ...baseConfig,
     images_upload_handler: customConfig.images_upload_handler || promiseUploadHandler,
+
+    // ✅ AGGIUNGI BOTTONE CLOUDINARY A TOOLBAR
+    toolbar: (baseConfig.toolbar || '') + (baseConfig.toolbar && !baseConfig.toolbar.includes('cloudinaryImage') ? ' | cloudinaryImage' : ''),
+
+    setup: function(editor) {
+      // Registra bottone custom Cloudinary
+      editor.ui.registry.addButton('cloudinaryImage', {
+        text: '📸 Cloudinary',
+        tooltip: 'Scegli o carica immagine da Cloudinary',
+        onAction: function() {
+          if (typeof window.CloudinaryManager !== 'undefined' && window.CloudinaryManager.showImageDialog) {
+            const getOpts = (typeof customConfig.getUploadOptions === 'function')
+              ? customConfig.getUploadOptions
+              : () => ({ preset: 'gallery_unsigned', folder: 'danielecamiz/newsletter' });
+
+            const opts = getOpts() || {};
+
+            window.CloudinaryManager.showImageDialog((result) => {
+              editor.insertContent(`<img src="${result.url}" alt="" style="max-width: 100%; height: auto;">`);
+            }, opts);
+          } else {
+            alert('❌ CloudinaryManager non disponibile');
+          }
+        }
+      });
+
+      // Chiama eventuale setup custom
+      if (customConfig.setup && typeof customConfig.setup === 'function') {
+        customConfig.setup(editor);
+      }
+    },
+
     ...customConfig
   };
 

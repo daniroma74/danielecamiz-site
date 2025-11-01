@@ -103,7 +103,7 @@ router.post('/module-token', async (req, res) => {
         
         // Verifica che il modulo esista e sia attivo
         const module = await get(
-            'SELECT * FROM modules WHERE id = ? AND status = ?',
+            'SELECT * FROM hub_modules WHERE id = ? AND status = ?',
             [moduleId, 'active']
         );
         
@@ -131,14 +131,14 @@ router.post('/module-token', async (req, res) => {
         
         // Salva token nel database per tracking
         await run(
-            `INSERT INTO module_tokens (token, user_id, module_id, expires_at)
+            `INSERT INTO hub_module_tokens (token, user_id, module_id, expires_at)
              VALUES (?, ?, ?, datetime('now', '+1 hour'))`,
             [token, req.user.id, moduleId]
         );
-        
+
         // Log accesso
         await run(
-            `INSERT INTO activity_logs (user_id, action, details)
+            `INSERT INTO hub_activity_logs (user_id, action, details)
              VALUES (?, ?, ?)`,
             [
                 req.user.id,
@@ -185,7 +185,7 @@ router.post('/verify-token', async (req, res) => {
         
         // Recupera info utente
         const user = await get(
-            'SELECT id, username, email, role, permissions FROM users WHERE id = ?',
+            'SELECT id, username, email, role, permissions FROM hub_users WHERE id = ?',
             [decoded.userId]
         );
         
@@ -222,7 +222,7 @@ router.post('/verify-token', async (req, res) => {
 router.get('/session/check', async (req, res) => {
     try {
         const session = await get(
-            `SELECT * FROM user_sessions 
+            `SELECT * FROM hub_sessions
              WHERE id = ? AND expires_at > datetime('now')`,
             [req.session.sessionId]
         );
@@ -258,7 +258,7 @@ router.post('/session/extend', async (req, res) => {
         const newExpiry = new Date(Date.now() + 60 * 60 * 1000); // +1 ora
         
         const result = await run(
-            'UPDATE user_sessions SET expires_at = ? WHERE id = ?',
+            'UPDATE hub_sessions SET expires_at = ? WHERE id = ?',
             [newExpiry.toISOString(), req.session.sessionId]
         );
         
@@ -289,9 +289,9 @@ router.get('/activities/recent', async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         
         const activities = await all(
-            `SELECT a.*, u.username 
-             FROM activity_logs a
-             LEFT JOIN users u ON a.user_id = u.id
+            `SELECT a.*, u.username
+             FROM hub_activity_logs a
+             LEFT JOIN hub_users u ON a.user_id = u.id
              ORDER BY a.created_at DESC
              LIMIT ?`,
             [limit]
@@ -379,14 +379,14 @@ router.get('/system/info', async (req, res) => {
             });
         }
         
-        const totalUsers = await get('SELECT COUNT(*) as count FROM users');
+        const totalUsers = await get('SELECT COUNT(*) as count FROM hub_users');
         const activeSessions = await get(
-            `SELECT COUNT(*) as count FROM user_sessions 
+            `SELECT COUNT(*) as count FROM hub_sessions
              WHERE expires_at > datetime('now')`
         );
-        const totalModules = await get('SELECT COUNT(*) as count FROM modules');
+        const totalModules = await get('SELECT COUNT(*) as count FROM hub_modules');
         const activeModules = await get(
-            "SELECT COUNT(*) as count FROM modules WHERE status = 'active'"
+            "SELECT COUNT(*) as count FROM hub_modules WHERE status = 'active'"
         );
         
         res.json({

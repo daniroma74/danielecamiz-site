@@ -361,7 +361,9 @@
                 <% if (modules && modules.length > 0) { %>
                     <% modules.forEach(module => { %>
                         <div class="module-card"
-                             onclick="accessModule('<%= module.id %>', '<%= module.url %>')">
+                             data-module-id="<%= module.id %>"
+                             data-module-url="<%= module.url %>"
+                             style="cursor: pointer;">
                             <span class="module-icon"><%= module.icon %></span>
                             <h3><%= module.name %></h3>
                             <p><%= module.description %></p>
@@ -398,6 +400,21 @@
     </div>
 
     <script>
+        // DOMContentLoaded event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click listeners to all module cards
+            const moduleCards = document.querySelectorAll('.module-card');
+            moduleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const moduleId = this.getAttribute('data-module-id');
+                    const moduleUrl = this.getAttribute('data-module-url');
+                    if (moduleId && moduleUrl) {
+                        accessModule(moduleId, moduleUrl);
+                    }
+                });
+            });
+        });
+
         // Access module with JWT token generation
         async function accessModule(moduleId, moduleUrl) {
             const loadingOverlay = document.getElementById('loadingOverlay');
@@ -426,8 +443,8 @@
                 console.log('[Hub] JWT token generated successfully');
                 console.log('[Hub] Redirecting to:', moduleUrl);
 
-                // Redirect to module
-                window.location.assign(moduleUrl);
+                // Navigate to module
+                window.location.href = moduleUrl;
 
             } catch (error) {
                 console.error('[Hub] Error accessing module:', error);

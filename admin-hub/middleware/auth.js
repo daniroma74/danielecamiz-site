@@ -13,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
         
         // Verifica se la sessione è ancora valida nel database
         const session = await get(
-            `SELECT * FROM user_sessions 
+            `SELECT * FROM hub_sessions
              WHERE id = ? AND user_id = ? AND expires_at > datetime('now')`,
             [req.session.sessionId, req.session.userId]
         );
@@ -33,15 +33,15 @@ const authMiddleware = async (req, res, next) => {
         
         // Aggiorna timestamp ultima attività
         await run(
-            `UPDATE user_sessions 
-             SET expires_at = datetime('now', '+1 hour') 
+            `UPDATE hub_sessions
+             SET expires_at = datetime('now', '+1 hour')
              WHERE id = ?`,
             [req.session.sessionId]
         );
         
         // Carica dati utente aggiornati
         const user = await get(
-            'SELECT id, username, email, role, permissions FROM users WHERE id = ?',
+            'SELECT id, username, email, role, permissions FROM hub_users WHERE id = ?',
             [req.session.userId]
         );
         
@@ -216,18 +216,18 @@ const verifyModuleToken = async (token, moduleId) => {
         
         // Verifica che il token non sia già stato usato
         const tokenRecord = await get(
-            'SELECT * FROM module_tokens WHERE token = ?',
+            'SELECT * FROM hub_module_tokens WHERE token = ?',
             [token]
         );
-        
+
         if (tokenRecord && tokenRecord.used_at) {
             return null;
         }
-        
+
         // Marca il token come usato
         if (tokenRecord) {
             await run(
-                'UPDATE module_tokens SET used_at = CURRENT_TIMESTAMP WHERE token = ?',
+                'UPDATE hub_module_tokens SET used_at = CURRENT_TIMESTAMP WHERE token = ?',
                 [token]
             );
         }
@@ -258,7 +258,7 @@ async function logUserActivity(req) {
     if (significantActions.some(action => req.path.includes(action))) {
         try {
             await run(
-                `INSERT INTO activity_logs (user_id, action, details, ip_address, user_agent)
+                `INSERT INTO hub_activity_logs (user_id, action, details, ip_address, user_agent)
                  VALUES (?, ?, ?, ?, ?)`,
                 [
                     req.user.id,

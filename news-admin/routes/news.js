@@ -1,7 +1,7 @@
 // news-admin/routes/news.js
 import express from 'express';
 import { queryDB, getOne, runDB } from '../utils/database.js';
-import { ensureAuthenticated } from '../middleware/simpleAuth.js';
+import { ensureAuthenticated } from '../middleware/hybridAuth.js';
 import { config } from '../config/config.js';
 
 const router = express.Router();

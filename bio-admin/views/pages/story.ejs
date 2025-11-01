@@ -21,7 +21,7 @@
         </div>
 
         <form id="formIt" class="lang-form active">
-          <input type="hidden" name="section" value="biography">
+          <input type="hidden" name="section" value="story">
           <input type="hidden" name="lang" value="it">
 
           <div class="form-group">
@@ -43,7 +43,7 @@
         </form>
 
         <form id="formEn" class="lang-form">
-          <input type="hidden" name="section" value="biography">
+          <input type="hidden" name="section" value="story">
           <input type="hidden" name="lang" value="en">
 
           <div class="form-group">
@@ -86,7 +86,7 @@
       const data = Object.fromEntries(formData);
 
       try {
-        const res = await fetch('/bio/content/biography', {
+        const res = await fetch('/bio/content/story', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)

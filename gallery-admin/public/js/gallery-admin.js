@@ -30,8 +30,19 @@ function filterByCategory(category) {
 }
 
 async function uploadNewImage() {
+  // Usa CloudinaryManager per selezionare o caricare l'immagine
+  CloudinaryManager.showImageDialog((result) => {
+    // result contiene { url, publicId }
+    showMetadataFormAfterImageSelection(result);
+  }, {
+    folder: 'danielecamiz/gallery',
+    preset: 'gallery_unsigned'
+  });
+}
+
+function showMetadataFormAfterImageSelection(uploadedData) {
   const modal = document.createElement('div');
-  modal.id = 'image-modal';
+  modal.id = 'metadata-modal';
   modal.style.cssText = `
     position: fixed;
     top: 0;
@@ -39,7 +50,7 @@ async function uploadNewImage() {
     right: 0;
     bottom: 0;
     background: rgba(0,0,0,0.8);
-    z-index: 10000;
+    z-index: 10001;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,150 +58,89 @@ async function uploadNewImage() {
 
   modal.innerHTML = `
     <div style="background: white; border-radius: 12px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 30px;">
-      <h2 style="margin-top: 0;">Carica Nuova Immagine</h2>
+      <h2 style="margin-top: 0;">Dettagli Immagine</h2>
 
-      <div id="upload-zone" style="border: 2px dashed #e1e8ed; border-radius: 8px; padding: 60px; text-align: center; cursor: pointer; margin-bottom: 20px;">
-        <div style="font-size: 64px; margin-bottom: 12px;">📸</div>
-        <p style="margin: 0; color: #7f8c8d; font-size: 16px;">Clicca o trascina qui un'immagine</p>
+      <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+        <img src="${uploadedData.url}" style="max-width: 100%; max-height: 200px; display: block; margin: 0 auto; border-radius: 8px;">
+        <p style="margin: 10px 0 0; text-align: center; font-size: 12px; color: #7f8c8d;">${uploadedData.publicId}</p>
       </div>
 
-      <input type="file" id="file-input" accept="image/*" style="display: none;">
-
-      <div id="image-details" style="display: none;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Titolo (Italiano):</label>
-            <input type="text" id="title-it" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Titolo (English):</label>
-            <input type="text" id="title-en" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
-          </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Titolo (Italiano):</label>
+          <input type="text" id="title-it" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
         </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Descrizione (Italiano):</label>
-            <textarea id="desc-it" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;"></textarea>
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Descrizione (English):</label>
-            <textarea id="desc-en" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;"></textarea>
-          </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Titolo (English):</label>
+          <input type="text" id="title-en" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
         </div>
+      </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Categoria:</label>
-            <select id="category" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
-              <option value="">Nessuna categoria</option>
-              ${window.categories ? window.categories.map(cat => `<option value="${cat.slug}">${cat.name_it}</option>`).join('') : ''}
-            </select>
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Tags (separati da virgola):</label>
-            <input type="text" id="tags" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;" placeholder="ritratto, bianco e nero">
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Data scatto:</label>
-            <input type="date" id="taken-date" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
-          </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Descrizione (Italiano):</label>
+          <textarea id="desc-it" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;"></textarea>
         </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Descrizione (English):</label>
+          <textarea id="desc-en" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;"></textarea>
+        </div>
+      </div>
 
-        <div style="display: flex; gap: 12px; margin-bottom: 15px;">
-          <label style="display: flex; align-items: center; cursor: pointer;">
-            <input type="checkbox" id="is-published" checked style="margin-right: 8px;">
-            <span>Pubblica immediatamente</span>
-          </label>
-          <label style="display: flex; align-items: center; cursor: pointer;">
-            <input type="checkbox" id="is-featured" style="margin-right: 8px;">
-            <span>In evidenza</span>
-          </label>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Categoria:</label>
+          <select id="category" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+            <option value="">Nessuna categoria</option>
+            ${window.categories ? window.categories.map(cat => `<option value="${cat.slug}">${cat.name_it}</option>`).join('') : ''}
+          </select>
         </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Tags (separati da virgola):</label>
+          <input type="text" id="tags" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;" placeholder="ritratto, bianco e nero">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Data scatto:</label>
+          <input type="date" id="taken-date" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-bottom: 15px;">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" id="is-published" checked style="margin-right: 8px;">
+          <span>Pubblica immediatamente</span>
+        </label>
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" id="is-featured" style="margin-right: 8px;">
+          <span>In evidenza</span>
+        </label>
       </div>
 
       <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
-        <button onclick="document.getElementById('image-modal').remove()" style="padding: 10px 24px; border: 1px solid #e1e8ed; background: white; color: #333; border-radius: 8px; cursor: pointer; font-weight: 600;">Annulla</button>
-        <button id="save-image-btn" style="padding: 10px 24px; border: none; background: #d4af37; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; display: none;">Salva Immagine</button>
+        <button onclick="document.getElementById('metadata-modal').remove()" style="padding: 10px 24px; border: 1px solid #e1e8ed; background: white; color: #333; border-radius: 8px; cursor: pointer; font-weight: 600;">Annulla</button>
+        <button id="save-image-btn" style="padding: 10px 24px; border: none; background: #d4af37; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Salva Immagine</button>
       </div>
     </div>
   `;
 
   document.body.appendChild(modal);
 
-  const uploadZone = modal.querySelector('#upload-zone');
-  const fileInput = modal.querySelector('#file-input');
-  const imageDetails = modal.querySelector('#image-details');
   const saveBtn = modal.querySelector('#save-image-btn');
 
-  let uploadedData = null;
-
-  uploadZone.addEventListener('click', () => fileInput.click());
-
-  uploadZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadZone.style.borderColor = '#d4af37';
-    uploadZone.style.background = '#f8f9fa';
-  });
-
-  uploadZone.addEventListener('dragleave', () => {
-    uploadZone.style.borderColor = '#e1e8ed';
-    uploadZone.style.background = 'transparent';
-  });
-
-  uploadZone.addEventListener('drop', async (e) => {
-    e.preventDefault();
-    uploadZone.style.borderColor = '#e1e8ed';
-    uploadZone.style.background = 'transparent';
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      await handleUpload(file);
-    }
-  });
-
-  fileInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (file) await handleUpload(file);
-  });
-
-  async function handleUpload(file) {
-    uploadZone.innerHTML = '<div style="font-size: 64px;">⏳</div><p style="color: #7f8c8d; font-size: 16px;">Caricamento in corso...</p>';
-
-    try {
-      const result = await CloudinaryManager.upload(file, {
-        preset: 'gallery_unsigned',
-        folder: 'danielecamiz/gallery'
-      });
-
-      if (result.success) {
-        uploadedData = result;
-        uploadZone.innerHTML = '<div style="font-size: 64px;">✅</div><p style="color: #27ae60; font-size: 16px;">Immagine caricata con successo!</p>';
-        imageDetails.style.display = 'block';
-        saveBtn.style.display = 'block';
-      } else {
-        uploadZone.innerHTML = '<div style="font-size: 64px;">❌</div><p style="color: #e74c3c;">Errore: ' + result.error + '</p>';
-      }
-    } catch (error) {
-      uploadZone.innerHTML = '<div style="font-size: 64px;">❌</div><p style="color: #e74c3c;">Errore: ' + error.message + '</p>';
-    }
-  }
-
   saveBtn.addEventListener('click', async () => {
-    if (!uploadedData) return;
-
     const data = {
       cloudinary_id: uploadedData.publicId,
-      cloudinary_folder: uploadedData.folder,
+      cloudinary_folder: uploadedData.publicId.split('/').slice(0, -1).join('/'),
       title_it: modal.querySelector('#title-it').value,
       title_en: modal.querySelector('#title-en').value,
       description_it: modal.querySelector('#desc-it').value,
       description_en: modal.querySelector('#desc-en').value,
       category: modal.querySelector('#category').value,
       tags: modal.querySelector('#tags').value,
-      width: uploadedData.width,
-      height: uploadedData.height,
-      file_size: uploadedData.bytes,
-      file_format: uploadedData.format,
+      width: uploadedData.width || 0,
+      height: uploadedData.height || 0,
+      file_size: uploadedData.bytes || 0,
+      file_format: uploadedData.format || '',
       is_published: modal.querySelector('#is-published').checked,
       is_featured: modal.querySelector('#is-featured').checked,
       taken_date: modal.querySelector('#taken-date').value
@@ -205,6 +155,7 @@ async function uploadNewImage() {
 
       if (res.ok) {
         showNotification('Immagine salvata con successo!', 'success');
+        modal.remove();
         setTimeout(() => window.location.reload(), 1000);
       } else {
         showNotification('Errore durante il salvataggio', 'error');

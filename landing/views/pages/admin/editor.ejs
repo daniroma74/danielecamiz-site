@@ -291,11 +291,12 @@
             <!-- Tags -->
             <div class="form-group">
               <label for="event_tags">Tag Evento (separati da virgola)</label>
-              <input type="text" 
-                     id="event_tags" 
-                     name="event_tags" 
-                     value="<%= event.event_tags || '' %>"
-                     placeholder="Es: Beethoven, Sinfonie, Classica">
+              <textarea id="event_tags"
+                        name="event_tags"
+                        rows="3"
+                        class="form-control"
+                        placeholder="Es: Beethoven, Sinfonie, Classica, Mozart, Orchestra"><%= event.event_tags || '' %></textarea>
+              <small class="help-text">Inserisci i tag separati da virgola. Questi aiutano gli utenti a trovare l'evento e migliorano la SEO.</small>
             </div>
             
             <!-- FAQ -->

@@ -82,31 +82,31 @@ router.get('/composers/search', async (req, res, next) => {
 router.post('/composers', async (req, res, next) => {
   try {
     const { full_name, short_name } = req.body;
-    
+
     if (!full_name) {
       return res.status(400).json({
         success: false,
         error: 'full_name obbligatorio'
       });
     }
-    
+
     const parts = full_name.split(' ');
     const lastName = parts[parts.length - 1];
     const sortKey = `${lastName}, ${parts.slice(0, -1).join(' ')}`;
-    
+
     const slug = full_name
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
-    
+
     const result = await dbPromise.run(
       `INSERT INTO composers (full_name, short_name, sort_key, slug)
        VALUES (?, ?, ?, ?)`,
       [full_name, short_name || lastName, sortKey, slug]
     );
-    
+
     res.json({
       success: true,
       message: 'Compositore creato',
@@ -119,6 +119,63 @@ router.post('/composers', async (req, res, next) => {
         error: 'Compositore già esistente'
       });
     }
+    next(error);
+  }
+});
+
+router.put('/composers/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { full_name, short_name } = req.body;
+
+    if (!full_name) {
+      return res.status(400).json({
+        success: false,
+        error: 'full_name obbligatorio'
+      });
+    }
+
+    const parts = full_name.split(' ');
+    const lastName = parts[parts.length - 1];
+    const sortKey = `${lastName}, ${parts.slice(0, -1).join(' ')}`;
+
+    const slug = full_name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    // Verifica se esiste già un compositore con questo slug (escludendo l'ID corrente)
+    const existing = await dbPromise.get(
+      'SELECT id FROM composers WHERE slug = ? AND id != ?',
+      [slug, parseInt(id, 10)]
+    );
+
+    console.log(`🔍 Controllo slug "${slug}" per compositore ID ${id}. Trovato esistente:`, existing);
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        error: 'Un compositore con questo nome esiste già'
+      });
+    }
+
+    await dbPromise.run(
+      `UPDATE composers SET
+         full_name = ?,
+         short_name = ?,
+         sort_key = ?,
+         slug = ?
+       WHERE id = ?`,
+      [full_name, short_name || lastName, sortKey, slug, id]
+    );
+
+    res.json({
+      success: true,
+      message: 'Compositore aggiornato'
+    });
+  } catch (error) {
     next(error);
   }
 });
@@ -182,12 +239,13 @@ router.get('/concerts/:id', async (req, res, next) => {
     const soloists = performers.filter(p => p.role === 'soloist');
     
     const program = await dbPromise.all(
-      `SELECT 
+      `SELECT
          w.id, w.title, w.subtitle, w.catalogue,
          m.id as movement_id,
-         m.title as movement_title, 
+         m.title as movement_title,
          m.tempo as movement_tempo,
          m.movement_number,
+         cp.id as program_item_id,
          cp.position as program_position,
          c.full_name as composer_name
        FROM concert_program cp
@@ -198,6 +256,18 @@ router.get('/concerts/:id', async (req, res, next) => {
        ORDER BY cp.position`,
       [id]
     );
+
+    for (const item of program) {
+      const itemSoloists = await dbPromise.all(
+        `SELECT cps.performer_id, cp.name, cp.instrument
+         FROM concert_program_soloists cps
+         JOIN concert_performers cp ON cps.performer_id = cp.id
+         WHERE cps.program_item_id = ?`,
+        [item.program_item_id]
+      );
+      item.soloist_ids = itemSoloists.map(s => s.performer_id);
+      item.soloists = itemSoloists;
+    }
     
     const response = {
       ...concert,
@@ -320,16 +390,30 @@ router.post('/concerts', async (req, res, next) => {
       const worksList = typeof selected_works === 'string' ? JSON.parse(selected_works) : selected_works;
       for (let i = 0; i < worksList.length; i++) {
         const item = worksList[i];
-        await dbPromise.run(
+        const result = await dbPromise.run(
           `INSERT INTO concert_program (concert_id, work_id, movement_id, position)
            VALUES (?, ?, ?, ?)`,
           [
-            concertId, 
+            concertId,
             item.work_id || item.id,
-            item.movement_id || null, 
+            item.movement_id || null,
             i + 1
           ]
         );
+
+        const programItemId = result.lastID;
+
+        if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
+          for (const soloistIndex of item.soloist_indices) {
+            if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
+              await dbPromise.run(
+                `INSERT INTO concert_program_soloists (program_item_id, performer_id)
+                 VALUES (?, ?)`,
+                [programItemId, soloistIds[soloistIndex]]
+              );
+            }
+          }
+        }
       }
     }
     
@@ -430,53 +514,80 @@ router.put('/concerts/:id', async (req, res, next) => {
       );
     }
     
-    // Inserisci solisti e salva mapping
+    // Inserisci solisti e crea array ordinato di ID
+    const soloistIds = [];
     if (soloists) {
       const soloistsList = typeof soloists === 'string' ? JSON.parse(soloists) : soloists;
-      for (const soloist of soloistsList) {
+      console.log('🎤 Lista solisti ricevuta:', soloistsList);
+      for (let i = 0; i < soloistsList.length; i++) {
+        const soloist = soloistsList[i];
         if (soloist.name && soloist.name.trim()) {
           const result = await dbPromise.run(
             `INSERT INTO concert_performers (concert_id, role, name, instrument) VALUES (?, 'soloist', ?, ?)`,
             [id, soloist.name.trim(), soloist.instrument || null]
           );
-          
-          // Salva mapping nome -> ID
-          soloistIdMap.set(soloist.name.trim(), result.lastID);
-          console.log(`✅ Solista inserito: ${soloist.name} -> ID ${result.lastID}`);
+          soloistIds.push(result.lastID);
+          console.log(`✅ Solista indice ${i}: "${soloist.name}" -> DB ID ${result.lastID}`);
+        } else {
+          soloistIds.push(null);
+          console.log(`⚠️ Solista indice ${i}: vuoto, inserito null`);
         }
       }
     }
-    
+    console.log('🎤 Array completo solisti IDs:', soloistIds);
+
+    // Valida selected_works prima di cancellare
+    if (selected_works) {
+      const worksList = typeof selected_works === 'string' ? JSON.parse(selected_works) : selected_works;
+      console.log('📚 Selected works ricevuti:', JSON.stringify(worksList, null, 2));
+      for (let i = 0; i < worksList.length; i++) {
+        const item = worksList[i];
+        console.log(`📖 Brano ${i}: work_id=${item.work_id}, soloist_indices=${JSON.stringify(item.soloist_indices)}`);
+        if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
+          for (const idx of item.soloist_indices) {
+            if (idx !== undefined && (idx >= soloistIds.length || !soloistIds[idx])) {
+              console.error(`❌ ERRORE: Indice solista ${idx} non valido! Array soloistIds ha ${soloistIds.length} elementi:`, soloistIds);
+            } else {
+              console.log(`✓ Indice solista ${idx} valido -> performer_id=${soloistIds[idx]}`);
+            }
+          }
+        }
+      }
+    }
+
     // Cancella programma esistente
     await dbPromise.run('DELETE FROM concert_program WHERE concert_id = ?', [id]);
     
-    // Inserisci programma con soloist_id
+    // Inserisci programma con multipli solisti
     if (selected_works) {
       const worksList = typeof selected_works === 'string' ? JSON.parse(selected_works) : selected_works;
       for (let i = 0; i < worksList.length; i++) {
         const item = worksList[i];
-        
-        let soloistId = null;
-        if (item.soloist_id) {
-          if (typeof item.soloist_id === 'number') {
-            soloistId = item.soloist_id;
-          } else if (typeof item.soloist_id === 'string') {
-            soloistId = soloistIdMap.get(item.soloist_id) || null;
-          }
-        }
-        
-        console.log(`📋 Brano ${i + 1}: work_id=${item.work_id}, soloist_id=${soloistId}`);
-        
-        await dbPromise.run(
-          `INSERT INTO concert_program (concert_id, work_id, movement_id, position, soloist_id) VALUES (?, ?, ?, ?, ?)`,
+
+        const result = await dbPromise.run(
+          `INSERT INTO concert_program (concert_id, work_id, movement_id, position) VALUES (?, ?, ?, ?)`,
           [
-            id, 
-            item.work_id || item.id, 
-            item.movement_id || null, 
-            i + 1,
-            soloistId
+            id,
+            item.work_id || item.id,
+            item.movement_id || null,
+            i + 1
           ]
         );
+
+        const programItemId = result.lastID;
+
+        if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
+          for (const soloistIndex of item.soloist_indices) {
+            if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
+              console.log(`📋 Brano ${i + 1}: Assegnando solista indice ${soloistIndex} → ID ${soloistIds[soloistIndex]}`);
+              await dbPromise.run(
+                `INSERT INTO concert_program_soloists (program_item_id, performer_id)
+                 VALUES (?, ?)`,
+                [programItemId, soloistIds[soloistIndex]]
+              );
+            }
+          }
+        }
       }
     }
     

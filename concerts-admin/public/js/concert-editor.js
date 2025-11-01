@@ -41,17 +41,29 @@ class ConcertEditor {
     console.log('📡 Carico composers...');
     const composersRes = await fetch('/api/composers');
     const composersData = await composersRes.json();
+    console.log('📡 Risposta API composers:', composersData);
     if (composersData.success) {
       this.composers = composersData.composers;
-      console.log('✅ Compositori:', this.composers.length);
+      console.log('✅ Compositori caricati:', this.composers.length);
+      console.log('📝 Primi 3 compositori:', this.composers.slice(0, 3).map(c => c.full_name));
+
+      // Aggiorna placeholder per indicare che i dati sono pronti
+      const searchInput = document.getElementById('composerSearchQuick');
+      if (searchInput) {
+        searchInput.placeholder = `Cerca tra ${this.composers.length} compositori...`;
+      }
+    } else {
+      console.error('❌ Errore caricamento compositori:', composersData);
     }
-    
+
     console.log('📡 Carico works...');
     const worksRes = await fetch('/api/repertoire/search?limit=1000');
     const worksData = await worksRes.json();
     if (worksData.success) {
       this.allWorks = worksData.works;
-      console.log('✅ Opere:', this.allWorks.length);
+      console.log('✅ Opere caricate:', this.allWorks.length);
+    } else {
+      console.error('❌ Errore caricamento opere:', worksData);
     }
     
     // ✅ PRIMA: Carica solisti
@@ -66,6 +78,11 @@ class ConcertEditor {
     const selectedWorksData = document.getElementById('selectedWorksData');
     if (selectedWorksData && selectedWorksData.value) {
       this.selectedWorks = JSON.parse(selectedWorksData.value);
+      this.selectedWorks.forEach(w => {
+        if (!w.soloist_ids) {
+          w.soloist_ids = w.soloist_id ? [w.soloist_id] : [];
+        }
+      });
       console.log('✅ Selected works caricati:', this.selectedWorks.length);
       this.renderSelectedWorks();
     }
@@ -101,83 +118,49 @@ class ConcertEditor {
   }
   
   initCloudinaryWidgets() {
-    console.log('☁️ Init Cloudinary...');
-    
-    const cloudName = document.body.dataset.cloudinaryCloudName;
-    const uploadPreset = document.body.dataset.cloudinaryUploadPreset;
-    
-    if (!cloudName) {
-      console.error('❌ Cloud name mancante!');
-      return;
-    }
-    
-    this.posterVerticalWidget = cloudinary.createUploadWidget({
-      cloudName: cloudName,
-      uploadPreset: uploadPreset,
-      folder: 'danielecamiz/concerts/posters',
-      cropping: true,
-      croppingAspectRatio: 3/4,
-      sources: ['local', 'url'],
-      multiple: false,
-      clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-      maxFileSize: 5000000
-    }, (error, result) => {
-      if (result && result.event === 'success') {
-        document.getElementById('poster_vertical_cloudinary').value = result.info.public_id;
-        const img = document.getElementById('posterVerticalPreview');
-        if (img) {
-          img.src = result.info.secure_url;
-          img.style.display = 'block';
-        }
-        this.showToast('Poster caricato!', 'success');
-      }
-      if (error) {
-        console.error('Upload error:', error);
-        this.showToast('Errore upload', 'error');
-      }
-    });
-    
-    this.posterHorizontalWidget = cloudinary.createUploadWidget({
-      cloudName: cloudName,
-      uploadPreset: 'poster_horizontal_unsigned',
-      folder: 'danielecamiz/concerts/posters',
-      cropping: true,
-      croppingAspectRatio: 16/9,
-      sources: ['local', 'url'],
-      multiple: false,
-      clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-      maxFileSize: 5000000
-    }, (error, result) => {
-      if (result && result.event === 'success') {
-        document.getElementById('poster_horizontal_cloudinary').value = result.info.public_id;
-        const img = document.getElementById('posterHorizontalPreview');
-        if (img) {
-          img.src = result.info.secure_url;
-          img.style.display = 'block';
-        }
-        this.showToast('Poster caricato!', 'success');
-      }
-      if (error) {
-        console.error('Upload error:', error);
-        this.showToast('Errore upload', 'error');
-      }
-    });
-    
+    console.log('☁️ Init CloudinaryManager...');
+
+    // Widget VERTICALE
     const btnV = document.getElementById('uploadPosterVertical');
     if (btnV) {
       btnV.addEventListener('click', (e) => {
         e.preventDefault();
-        this.posterVerticalWidget.open();
+        CloudinaryManager.showImageDialog((result) => {
+          document.getElementById('poster_vertical_cloudinary').value = result.publicId;
+          const img = document.getElementById('posterVerticalPreview');
+          if (img) {
+            img.src = result.url;
+            img.style.display = 'block';
+          }
+          this.showToast('Poster verticale selezionato!', 'success');
+        }, {
+          folder: 'danielecamiz/concerts/posters',
+          preset: 'poster_unsigned'
+        });
       });
     }
-    
+
+    // Widget ORIZZONTALE
     const btnH = document.getElementById('uploadPosterHorizontal');
     if (btnH) {
       btnH.addEventListener('click', (e) => {
         e.preventDefault();
-        this.posterHorizontalWidget.open();
+        CloudinaryManager.showImageDialog((result) => {
+          document.getElementById('poster_horizontal_cloudinary').value = result.publicId;
+          const img = document.getElementById('posterHorizontalPreview');
+          if (img) {
+            img.src = result.url;
+            img.style.display = 'block';
+          }
+          this.showToast('Poster orizzontale selezionato!', 'success');
+        }, {
+          folder: 'danielecamiz/concerts/posters',
+          preset: 'poster_horizontal_unsigned'
+        });
       });
     }
+
+    console.log('✅ CloudinaryManager widgets pronti');
   }
   
   initTinyMCE() {
@@ -264,7 +247,8 @@ class ConcertEditor {
   }
   
   addSoloist() {
-    this.soloists.push({ name: '', instrument: '' });
+    const tempId = `temp_${Date.now()}`;
+    this.soloists.push({ id: tempId, name: '', instrument: '' });
     this.renderSoloists();
     this.renderSelectedWorks();
   }
@@ -317,27 +301,45 @@ class ConcertEditor {
   }
   
   searchComposerQuick() {
-    const query = document.getElementById('composerSearchQuick').value;
-    console.log('🔍 Cerca:', query);
-    
-    if (query.length < 2) {
-      document.getElementById('composerResultsQuick').innerHTML = '';
+    const input = document.getElementById('composerSearchQuick');
+    if (!input) {
+      console.error('❌ Campo composerSearchQuick non trovato!');
       return;
     }
-    
-    const filtered = this.composers.filter(c => 
-      c.full_name.toLowerCase().includes(query.toLowerCase())
-    );
-    
-    console.log('✅ Trovati:', filtered.length);
-    
+
+    const query = input.value;
+    console.log('🔍 Ricerca compositore:', query);
+    console.log('📊 Compositori disponibili:', this.composers ? this.composers.length : 'NESSUNO');
+
     const div = document.getElementById('composerResultsQuick');
-    
-    if (filtered.length === 0) {
-      div.innerHTML = '<div class="autocomplete-item text-muted">Nessuno</div>';
+    if (!div) {
+      console.error('❌ Div composerResultsQuick non trovato!');
       return;
     }
-    
+
+    if (query.length < 2) {
+      div.innerHTML = '';
+      return;
+    }
+
+    if (!this.composers || this.composers.length === 0) {
+      div.innerHTML = '<div class="autocomplete-item text-muted">Caricamento compositori...</div>';
+      return;
+    }
+
+    const filtered = this.composers.filter(c => {
+      const match = c.full_name.toLowerCase().includes(query.toLowerCase());
+      if (match) console.log('✓ Match:', c.full_name);
+      return match;
+    });
+
+    console.log('✅ Risultati trovati:', filtered.length);
+
+    if (filtered.length === 0) {
+      div.innerHTML = '<div class="autocomplete-item text-muted">Nessun compositore trovato</div>';
+      return;
+    }
+
     div.innerHTML = filtered.map(c => `
       <div class="autocomplete-item" onclick="concertEditor.selectComposerQuick(${c.id}, '${c.full_name.replace(/'/g, "\\'")}')">
         <strong>${c.full_name}</strong>
@@ -356,16 +358,18 @@ class ConcertEditor {
   }
   
   filterWorksByComposer(id) {
-    const filtered = this.allWorks.filter(w => w.composer_id === id);
-    console.log('Opere:', filtered.length);
-    
+    const composerId = parseInt(id);
+    const filtered = this.allWorks.filter(w => parseInt(w.composer_id) === composerId);
+    console.log('🎵 Compositore ID:', composerId, 'Opere trovate:', filtered.length);
+    console.log('📊 Total works:', this.allWorks.length);
+
     const div = document.getElementById('workResultsQuick');
-    
+
     if (filtered.length === 0) {
-      div.innerHTML = '<div class="text-muted" style="padding:10px">Nessuna opera</div>';
+      div.innerHTML = '<div class="text-muted" style="padding:10px">Nessuna opera trovata per questo compositore</div>';
       return;
     }
-    
+
     div.innerHTML = filtered.map(w => `
       <div class="search-result-item" onclick="concertEditor.selectWorkQuick(${w.id})">
         <strong>${w.title}</strong>
@@ -503,7 +507,7 @@ class ConcertEditor {
       title: work.title,
       composer_name: work.composer_name,
       catalogue: work.catalogue,
-      soloist_id: null
+      soloist_ids: []
     });
     
     this.renderSelectedWorks();
@@ -526,18 +530,25 @@ class ConcertEditor {
     this.renderSelectedWorks();
   }
   
-  updateWorkSoloist(index, soloistId) {
-    if (!this.selectedWorks[index]) return;
-    
-    const soloist = this.soloists.find(s => s.id == soloistId);
-    
-   if (soloist && soloist.id) {
-      this.selectedWorks[index].soloist_id = soloist.id;
-    } else {
-      this.selectedWorks[index].soloist_id = soloistId || null;
+  toggleWorkSoloist(workIndex, soloistId) {
+    if (!this.selectedWorks[workIndex]) return;
+
+    console.log(`🔧 Toggle solista ${soloistId} per brano ${workIndex}`);
+
+    if (!this.selectedWorks[workIndex].soloist_ids) {
+      this.selectedWorks[workIndex].soloist_ids = [];
     }
-    
-    console.log(`✅ Solista assegnato al brano ${index}:`, this.selectedWorks[index].soloist_id);
+
+    const currentIds = this.selectedWorks[workIndex].soloist_ids;
+    const index = currentIds.indexOf(soloistId);
+
+    if (index > -1) {
+      currentIds.splice(index, 1);
+    } else {
+      currentIds.push(soloistId);
+    }
+
+    console.log(`✅ Solisti assegnati al brano ${workIndex}:`, currentIds);
   }
   
   renderSelectedWorks() {
@@ -557,24 +568,34 @@ class ConcertEditor {
         <div class="work-number">${i + 1}</div>
         <div class="work-info-detail">
           <strong>${w.title}</strong>
+          ${w.subtitle ? `<div style="color:var(--text-muted);font-size:13px;margin-top:2px;font-style:italic">${w.subtitle}</div>` : ''}
           ${w.movement_title ? `<span style="color:var(--gold);font-style:italic;display:block;margin-top:4px">${w.movement_title}</span>` : ''}
           <span style="color:var(--text-secondary);font-size:13px">${w.composer_name}${w.catalogue ? ' - ' + w.catalogue : ''}</span>
-          
-          <!-- ✅ SELECT SOLISTA -->
+
+          <!-- ✅ CHECKBOX SOLISTI MULTIPLI -->
           <div style="margin-top:8px">
             <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">
-              <i class="fas fa-user"></i> Solista per questo brano:
+              <i class="fas fa-users"></i> Solisti per questo brano:
             </label>
-            <select class="form-control form-control-sm" 
-                    onchange="concertEditor.updateWorkSoloist(${i}, this.value)"
-                    style="max-width:250px">
-              <option value="">-- Nessuno --</option>
-              ${this.soloists.map(s => `
-                <option value="${s.id}" ${(w.soloist_id == s.id) ? 'selected' : ''}>
-                  ${s.name}${s.instrument ? ` (${s.instrument})` : ''}
-                </option>
-              `).join('')}
-            </select>
+            ${this.soloists.length > 0 ? `
+              <div style="display:flex;flex-direction:column;gap:4px;max-width:300px">
+                ${this.soloists.map((s, idx) => {
+                  const soloistKey = s.id || `idx_${idx}`;
+                  const isChecked = w.soloist_ids && w.soloist_ids.includes(soloistKey);
+                  return `
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px;border-radius:4px;transition:background 0.2s"
+                           onmouseover="this.style.background='var(--bg)'"
+                           onmouseout="this.style.background='transparent'">
+                      <input type="checkbox"
+                             ${isChecked ? 'checked' : ''}
+                             onchange="concertEditor.toggleWorkSoloist(${i}, '${soloistKey}')"
+                             style="cursor:pointer">
+                      <span style="font-size:13px">${s.name || 'Nuovo solista'}${s.instrument ? ` (${s.instrument})` : ''}</span>
+                    </label>
+                  `;
+                }).join('')}
+              </div>
+            ` : '<span style="color:#999;font-size:12px">Nessun solista disponibile</span>'}
           </div>
         </div>
         <div class="work-controls">
@@ -588,12 +609,21 @@ class ConcertEditor {
   
  async saveConcert(e) {
   e.preventDefault();
-  
+
   if (typeof tinymce !== 'undefined') {
     tinymce.triggerSave();
   }
-  
+
   const formData = new FormData(e.target);
+
+  const soloistIndexMap = new Map();
+  this.soloists.forEach((s, idx) => {
+    const key = s.id || `idx_${idx}`;
+    soloistIndexMap.set(key, idx);
+    console.log(`🗺️ Mapping: key="${key}" -> indice=${idx}, soloist={id:${s.id}, name:"${s.name}"}`);
+  });
+  console.log('🗺️ Mappa completa solisti:', soloistIndexMap);
+
   const data = {
     id: formData.get('id') || null,
     title: formData.get('title'),
@@ -609,16 +639,28 @@ class ConcertEditor {
     orchestra_name: formData.get('orchestra_name'),
     poster_vertical_cloudinary: formData.get('poster_vertical_cloudinary'),
     poster_horizontal_cloudinary: formData.get('poster_horizontal_cloudinary'),
-    soloists: JSON.stringify(this.soloists),
-    selected_works: JSON.stringify(this.selectedWorks.map(w => ({
-      work_id: w.id,
-      movement_id: w.movement_id,
-      soloist_id: w.soloist_id || null
-    })))
+    soloists: JSON.stringify(this.soloists.map(s => ({
+      name: s.name,
+      instrument: s.instrument
+    }))),
+    selected_works: JSON.stringify(this.selectedWorks.map((w, i) => {
+      console.log(`📖 Brano ${i}: work_id=${w.id}, soloist_ids=${JSON.stringify(w.soloist_ids)}`);
+      const indices = (w.soloist_ids || []).map(key => {
+        const idx = soloistIndexMap.get(key);
+        console.log(`  → Chiave "${key}" -> indice ${idx}`);
+        return idx;
+      }).filter(idx => idx !== undefined);
+      console.log(`  → Indici finali: ${JSON.stringify(indices)}`);
+      return {
+        work_id: w.id,
+        movement_id: w.movement_id,
+        soloist_indices: indices
+      };
+    }))
   };
-  
+
   console.log('💾 Dati da salvare:', data);
-  console.log('📋 Selected works con solisti:', this.selectedWorks);
+  console.log('📋 Selected works originali:', this.selectedWorks);
   
   if (!data.title || !data.date || !data.location) {
     this.showToast('Compila campi obbligatori', 'error');

@@ -1,7 +1,7 @@
 // concerts-admin/routes/auth.js
 // Routes per autenticazione temporanea
 import { Router } from 'express';
-import { handleLogin, handleLogout } from '../middleware/simpleAuth.js';
+import { handleLogin, handleLogout } from '../middleware/hybridAuth.js';
 
 const router = Router();
 

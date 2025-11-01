@@ -14,8 +14,8 @@ import cookieParser from 'cookie-parser';
 import { config } from './config/config.js';
 import { ensureSchema } from './utils/database.js';
 import newsRoutes from './routes/news.js';
-import { handleLogin, handleLogout } from './middleware/simpleAuth.js';
-// TEMPORARILY DISABLED - import { ensureAuthenticated, optionalAuth } from './middleware/auth.js';
+import { handleLogin, handleLogout } from './middleware/hybridAuth.js';
+import cloudinaryRoutes from '../shared/cloudinary-manager/routes.js';
 
 const app = express();
 
@@ -30,7 +30,10 @@ app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
 
 // Template engine
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', [
+  path.join(__dirname, 'views'),
+  path.join(__dirname, '../shared')
+]);
 
 // Locals globali
 app.use((req, res, next) => {
@@ -57,8 +60,11 @@ app.get('/login', (req, res) => {
 app.post('/login', handleLogin);
 app.get('/logout', handleLogout);
 
-// 🔐 JWT TEMPORARILY DISABLED
-app.use('/news', /* TEMPORARILY DISABLED: ensureAuthenticated, */ newsRoutes);
+// 🔐 Protected news routes - auth applied inside routes
+app.use('/news', newsRoutes);
+
+// Cloudinary API routes
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 // Health check (non protetto)
 app.get('/health', (req, res) => {

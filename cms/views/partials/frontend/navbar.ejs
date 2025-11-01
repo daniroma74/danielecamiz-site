@@ -24,7 +24,7 @@
            { path: '/press',      key: 'navbar.nav_press' },
            { path: '/video',      key: 'navbar.nav_video' },
            { path: '/repertoire', key: 'navbar.nav_repertoire' },
-           { path: '/contact',    key: 'navbar.nav_contact' },
+           { path: 'https://contact.danielecamiz.com', key: 'navbar.nav_contact', external: true },
            { path: '/news',       key: 'navbar.nav_news' }
          ];
       %>
@@ -33,7 +33,8 @@
           <a href="<%= item.path %>"
              role="menuitem"
              tabindex="-1"
-             class="nav-link">
+             class="nav-link"
+             <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>>
             <%= t(item.key) %>
           </a>
         </li>

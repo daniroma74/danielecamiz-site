@@ -1,16 +1,21 @@
 // concerts-admin/server.js
-import express from 'express';
+import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env file FIRST
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+import express from 'express';
 import cookieParser from 'cookie-parser';
 import adminRoutes from './routes/admin.js';
 import apiRoutes from './routes/api.js';
 import authRoutes from './routes/auth.js';
-import { ensureAuthenticated } from './middleware/simpleAuth.js';
 import errorHandler from './middleware/errorHandler.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import cloudinaryRoutes from '../shared/cloudinary-manager/routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3004;
@@ -62,8 +67,11 @@ app.use('/auth', authRoutes);
 // API routes (public)
 app.use('/api', apiRoutes);
 
-// Admin routes (🔐 Protected by SimpleAuth)
-app.use('/admin', ensureAuthenticated, adminRoutes);
+// Cloudinary API routes (🔐 Protected - require authentication)
+app.use('/api/cloudinary', cloudinaryRoutes);
+
+// Admin routes (🔐 Protected - auth inside routes)
+app.use('/admin', adminRoutes);
 
 // Redirect root
 app.get('/', (req, res) => {

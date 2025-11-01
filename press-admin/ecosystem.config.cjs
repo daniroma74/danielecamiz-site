@@ -8,8 +8,8 @@ module.exports = {
     watch: false,
     max_memory_restart: '300M',
     env: {
-      NODE_ENV: 'staging',
-      PRESS_ADMIN_PORT: 3012
+      NODE_ENV: 'production',
+      PRESS_ADMIN_PORT: 3013
     },
     error_file: './logs/error.log',
     out_file: './logs/out.log',

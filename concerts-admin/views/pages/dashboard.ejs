@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
-  
+
   <!-- CSS TEMA CHIARO -->
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/css/admin.css">
@@ -14,9 +14,19 @@
   
   <!-- Cloudinary Widget -->
   <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+  <script src="/shared/js/cloudinary-widget.js"></script>
 </head>
 <body>
-  
+  <!-- Back to Hub Button -->
+  <div style="position: fixed; top: 90px; right: 30px; z-index: 10000;">
+    <a href="https://hub.danielecamiz.com/dashboard" title="Torna all'Admin HUB" style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: white; padding: 0.6rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); transition: all 0.3s ease;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      <span>Hub</span>
+    </a>
+  </div>
+
   <!-- NAVBAR -->
 <nav class="admin-nav">
   <div class="nav-container">
@@ -70,12 +80,12 @@
         </a>
       </div>
       
-      <form method="GET" action="/admin" class="search-form">
+      <form method="GET" action="/admin/dashboard" class="search-form">
         <input type="hidden" name="filter" value="<%= filter %>">
-        <input 
-          type="search" 
-          name="search" 
-          placeholder="Cerca per titolo o luogo..." 
+        <input
+          type="search"
+          name="search"
+          placeholder="Cerca per titolo o luogo..."
           value="<%= search %>"
           class="search-input"
         >
@@ -382,30 +392,20 @@
       folder: 'danielecamiz/posters/vertical'
     };
     
-    // Upload poster
+    // Upload poster - Usa il widget unificato con Media Library
     function openPosterUpload(concertId) {
-      const widget = cloudinary.createUploadWidget({
-        cloudName: window.CLOUDINARY_CONFIG.cloudName,
-        uploadPreset: window.CLOUDINARY_CONFIG.uploadPreset,
-        folder: window.CLOUDINARY_CONFIG.folder,
-        sources: ['local', 'url'],
-        multiple: false,
-        resourceType: 'image',
-        clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-        maxFileSize: 10000000
-      }, async (error, result) => {
-        if (!error && result && result.event === "success") {
-          const publicId = result.info.public_id;
-          
+      openCloudinaryPicker(
+        window.CLOUDINARY_CONFIG,
+        async (imageData) => {
           try {
             const response = await fetch(`/api/concerts/${concertId}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ poster_vertical_cloudinary: publicId })
+              body: JSON.stringify({ poster_vertical_cloudinary: imageData.publicId })
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
               showNotification('Poster aggiornato con successo!', 'success');
               setTimeout(() => window.location.reload(), 1000);
@@ -415,10 +415,12 @@
           } catch (err) {
             showNotification('Errore durante l\'aggiornamento', 'error');
           }
+        },
+        {
+          multiple: false,
+          clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp']
         }
-      });
-      
-      widget.open();
+      );
     }
     
     // Delete concert

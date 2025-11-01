@@ -158,12 +158,13 @@ class ConcertsController {
           return res.status(404).render('errors/404', { message: 'Concerto non trovato' });
         }
         
-        // Query programma CON soloist_id
+        // Query programma CON subtitle
         const program = await dbPromise.all(`
-          SELECT 
+          SELECT
             cp.*,
             w.id as work_id,
             w.title as work_title,
+            w.subtitle as work_subtitle,
             w.catalogue,
             m.id as movement_id,
             m.title as movement_title,
@@ -179,8 +180,8 @@ class ConcertsController {
           ORDER BY cp.position
         `, [concertId]);
         
-        // Mappatura programma
-        selectedWorks = program.map(item => {
+        // Mappatura programma con soloist_ids dalla tabella di join
+        selectedWorks = await Promise.all(program.map(async (item) => {
           let movementTitle = null;
           if (item.movement_id && item.movement_number != null) {
             let parts = [`${item.movement_number}.`];
@@ -188,17 +189,24 @@ class ConcertsController {
             if (item.tempo) parts.push(`(${item.tempo})`);
             movementTitle = parts.join(' ');
           }
-          
+
+          // Carica solisti per questo item dal programma
+          const itemSoloists = await dbPromise.all(
+            `SELECT performer_id FROM concert_program_soloists WHERE program_item_id = ?`,
+            [item.id]
+          );
+
           return {
             id: item.work_id,
             title: item.work_title,
+            subtitle: item.work_subtitle,
             composer_name: item.composer_name,
             catalogue: item.catalogue,
             movement_id: item.movement_id,
             movement_title: movementTitle,
-            soloist_id: item.soloist_id
+            soloist_ids: itemSoloists.map(s => s.performer_id)
           };
-        });
+        }));
         
         // Carica performers CON id
         const performersData = await dbPromise.all(

@@ -112,34 +112,18 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   async function uploadHeroImage() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      
-      showNotification('Upload in corso...', 'info');
-      
-      try {
-        const result = await window.CloudinaryManager.upload(file, {
-          preset: 'poster_horizontal_unsigned',
-          folder: 'danielecamiz/posters/horizontal'
-        });
-        
-        if (result.success) {
-          setHeroImage(result.url);
-          showNotification('Hero image caricata!', 'success');
-        } else {
-          showNotification('Errore upload: ' + result.error, 'error');
-        }
-      } catch (error) {
-        showNotification('Errore upload', 'error');
-      }
-    };
-    
-    input.click();
+    if (!window.CloudinaryManager || !window.CloudinaryManager.showImageDialog) {
+      showNotification('CloudinaryManager non disponibile', 'error');
+      return;
+    }
+
+    window.CloudinaryManager.showImageDialog((result) => {
+      setHeroImage(result.url);
+      showNotification('Hero image caricata!', 'success');
+    }, {
+      preset: 'poster_horizontal_unsigned',
+      folder: 'danielecamiz/posters/horizontal'
+    });
   }
   
   function setHeroImage(url) {
@@ -183,34 +167,18 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   async function uploadSocialImage() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      
-      showNotification('Upload in corso...', 'info');
-      
-      try {
-        const result = await window.CloudinaryManager.upload(file, {
-          preset: 'gallery_unsigned',
-          folder: 'danielecamiz/gallery'
-        });
-        
-        if (result.success) {
-          setSocialImage(result.url);
-          showNotification('Immagine social caricata!', 'success');
-        } else {
-          showNotification('Errore upload: ' + result.error, 'error');
-        }
-      } catch (error) {
-        showNotification('Errore upload', 'error');
-      }
-    };
-    
-    input.click();
+    if (!window.CloudinaryManager || !window.CloudinaryManager.showImageDialog) {
+      showNotification('CloudinaryManager non disponibile', 'error');
+      return;
+    }
+
+    window.CloudinaryManager.showImageDialog((result) => {
+      setSocialImage(result.url);
+      showNotification('Immagine social caricata!', 'success');
+    }, {
+      preset: 'gallery_unsigned',
+      folder: 'danielecamiz/gallery'
+    });
   }
   
   function setSocialImage(url) {
@@ -294,39 +262,21 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   async function uploadGalleryImage() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.multiple = true;
-    
-    input.onchange = async (e) => {
-      const files = Array.from(e.target.files);
-      if (files.length === 0) return;
-      
-      showNotification(`Upload di ${files.length} foto...`, 'info');
-      
-      for (const file of files) {
-        try {
-          const result = await window.CloudinaryManager.upload(file, {
-            preset: 'gallery_unsigned',
-            folder: 'danielecamiz/gallery'
-          });
-          
-          if (result.success) {
-            galleryImages.push(result.url);
-          }
-        } catch (error) {
-          console.error('Upload error:', error);
-        }
-      }
-      
+    if (!window.CloudinaryManager || !window.CloudinaryManager.showImageDialog) {
+      showNotification('CloudinaryManager non disponibile', 'error');
+      return;
+    }
+
+    window.CloudinaryManager.showImageDialog((result) => {
+      galleryImages.push(result.url);
       renderGallery();
       hasUnsavedChanges = true;
       updateSaveButton();
-      showNotification('Foto caricate!', 'success');
-    };
-    
-    input.click();
+      showNotification('Foto aggiunta alla galleria!', 'success');
+    }, {
+      preset: 'gallery_unsigned',
+      folder: 'danielecamiz/gallery'
+    });
   }
   
   function removeGalleryImage(index) {
@@ -425,39 +375,25 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   async function uploadPerformerPhoto(role) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    
-    input.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      
-      showNotification('Upload foto...', 'info');
-      
-      try {
-        const result = await window.CloudinaryManager.upload(file, {
-          preset: 'performers_unsigned',
-          folder: 'danielecamiz/performers'
-        });
-        
-        if (result.success) {
-          const photosInput = document.getElementById('performers_photos');
-          const photos = JSON.parse(photosInput.value || '{}');
-          photos[role] = result.url;
-          photosInput.value = JSON.stringify(photos);
-          
-          renderPerformersPhotos(photos);
-          hasUnsavedChanges = true;
-          updateSaveButton();
-          showNotification('Foto caricata!', 'success');
-        }
-      } catch (error) {
-        showNotification('Errore upload', 'error');
-      }
-    };
-    
-    input.click();
+    if (!window.CloudinaryManager || !window.CloudinaryManager.showImageDialog) {
+      showNotification('CloudinaryManager non disponibile', 'error');
+      return;
+    }
+
+    window.CloudinaryManager.showImageDialog((result) => {
+      const photosInput = document.getElementById('performers_photos');
+      const photos = JSON.parse(photosInput.value || '{}');
+      photos[role] = result.url;
+      photosInput.value = JSON.stringify(photos);
+
+      renderPerformersPhotos(photos);
+      hasUnsavedChanges = true;
+      updateSaveButton();
+      showNotification('Foto caricata!', 'success');
+    }, {
+      preset: 'performers_unsigned',
+      folder: 'danielecamiz/performers'
+    });
   }
   
   function removePerformerPhoto(role) {
@@ -497,15 +433,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+  }
+
   function renderFAQ(faqs) {
     const list = document.getElementById('faqList');
-    
+
     if (faqs.length === 0) {
       list.innerHTML = '<p class="text-muted">Nessuna FAQ aggiunta</p>';
       updateFAQInput([]);
       return;
     }
-    
+
     list.innerHTML = faqs.map((faq, index) => `
       <div class="faq-editor-item">
         <div class="faq-editor-header">
@@ -517,23 +459,23 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="faq-editor-body">
           <div class="form-group">
             <label>Domanda</label>
-            <input type="text" 
-                   class="form-control" 
-                   value="${faq.question}" 
+            <input type="text"
+                   class="form-control"
+                   value="${escapeHtml(faq.question)}"
                    onchange="window.updateFAQItem(${index}, 'question', this.value)"
                    placeholder="Es: È obbligatorio prenotare?">
           </div>
           <div class="form-group">
             <label>Risposta</label>
-            <textarea class="form-control" 
+            <textarea class="form-control"
                       rows="3"
                       onchange="window.updateFAQItem(${index}, 'answer', this.value)"
-                      placeholder="Es: No, è consigliato...">${faq.answer}</textarea>
+                      placeholder="Es: No, è consigliato...">${escapeHtml(faq.answer)}</textarea>
           </div>
         </div>
       </div>
     `).join('');
-    
+
     updateFAQInput(faqs);
   }
   

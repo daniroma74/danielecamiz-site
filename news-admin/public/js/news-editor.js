@@ -135,40 +135,37 @@ function collectFormData() {
   };
 }
 
-// Cloudinary upload
+// Cloudinary upload con CloudinaryManager
 async function uploadCover() {
-  const file = await selectFile('image/*');
-  if (!file) return;
-
-  const url = await uploadToCloudinary(file, {
-    preset: 'poster_horizontal_unsigned',
-    folder: 'danielecamiz/posters/horizontal'
-  });
-  if (url) {
-    document.getElementById('cover_image').value = url;
-    displayCoverPreview(url);
+  if (!window.CloudinaryManager) {
+    alert('❌ CloudinaryManager non disponibile');
+    return;
   }
+
+  window.CloudinaryManager.showImageDialog((result) => {
+    document.getElementById('cover_image').value = result.url;
+    displayCoverPreview(result.url);
+  }, {
+    preset: 'poster_horizontal_unsigned',
+    folder: 'danielecamiz/news'
+  });
 }
 
 async function uploadGallery() {
-  const files = await selectFiles('image/*');
-  if (!files || files.length === 0) return;
-
-  const urls = [];
-  for (const file of files) {
-    const url = await uploadToCloudinary(file, {
-      preset: 'gallery_unsigned',
-      folder: 'danielecamiz/gallery'
-    });
-    if (url) urls.push(url);
+  if (!window.CloudinaryManager) {
+    alert('❌ CloudinaryManager non disponibile');
+    return;
   }
 
-  if (urls.length > 0) {
+  window.CloudinaryManager.showImageDialog((result) => {
     const currentGallery = JSON.parse(document.getElementById('gallery_images')?.value || '[]');
-    const updatedGallery = [...currentGallery, ...urls];
+    const updatedGallery = [...currentGallery, result.url];
     document.getElementById('gallery_images').value = JSON.stringify(updatedGallery);
     updateGalleryPreview(updatedGallery);
-  }
+  }, {
+    preset: 'gallery_unsigned',
+    folder: 'danielecamiz/news'
+  });
 }
 
 async function uploadToCloudinary(file, options) {

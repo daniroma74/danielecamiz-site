@@ -1,11 +1,12 @@
 // concerts-admin/routes/admin.js
 import { Router } from 'express';
+import { ensureAuthenticated } from '../middleware/hybridAuth.js';
 import ConcertsController from '../controllers/concertsController.js';
 const router = Router();
 const concertsController = new ConcertsController();
 
-// Note: ensureAuthenticated is applied at server.js level for /admin routes
-// No need to import or reapply it here
+// Apply authentication to all routes
+router.use(ensureAuthenticated);
 
 router.get('/', (req, res) => res.redirect('/admin/dashboard'));
 router.get('/dashboard', (req, res, next) => concertsController.renderDashboard(req, res, next));
