@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/gallery-admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+
+        <!-- Guida introduttiva (mostra solo se non ci sono collezioni) -->
+        <% if (stats.collections === 0) { %>
+        <div class="welcome-banner">
+          <div class="welcome-icon">👋</div>
+          <div class="welcome-content">
+            <h2>Benvenuto in Gallery Admin!</h2>
+            <p>Gestisci facilmente foto, video e audio del tuo portfolio artistico. Ecco come iniziare:</p>
+            <ol class="welcome-steps">
+              <li><strong>Crea una collezione</strong> - Organizza i tuoi contenuti per temi (concerti, foto ufficiali, prove, eventi speciali)</li>
+              <li><strong>Carica i media</strong> - Aggiungi foto, video YouTube o audio Bandcamp alla collezione</li>
+              <li><strong>Pubblica</strong> - Quando sei pronto, pubblica la collezione sul sito pubblico</li>
+            </ol>
+            <a href="/gallery/collections/new" class="btn btn-primary btn-lg">
+              <i class="icon">➕</i> Crea la tua prima collezione
+            </a>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>📷 Foto</h3>
+            <p class="stat-number"><%= stats.photos %></p>
+          </div>
+          <div class="stat-card">
+            <h3>🎬 Video</h3>
+            <p class="stat-number"><%= stats.videos %></p>
+          </div>
+          <div class="stat-card">
+            <h3>🎵 Audio</h3>
+            <p class="stat-number"><%= stats.audios %></p>
+          </div>
+          <div class="stat-card">
+            <h3>📚 Collezioni</h3>
+            <p class="stat-number"><%= stats.collections %></p>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="margin-top: 20px;">
+          <div class="stat-card">
+            <h4>Storage Cloudinary</h4>
+            <p class="text-sm"><%= (stats.cloudinary.total_storage_bytes / 1024 / 1024 / 1024).toFixed(2) %> GB</p>
+          </div>
+        </div>
+
+        <!-- Spiegazione del sistema (per chi ha già collezioni) -->
+        <% if (stats.collections > 0) { %>
+        <div class="info-box">
+          <div class="info-box-header">
+            <i class="icon">💡</i>
+            <h3>Come funziona Gallery Admin</h3>
+          </div>
+          <div class="info-box-content">
+            <div class="info-grid">
+              <div class="info-item">
+                <strong>📚 Collezioni</strong>
+                <p>Raccogli media per temi (concerti, foto ufficiali, eventi). Ogni collezione ha titolo IT/EN e può contenere foto, video e audio.</p>
+              </div>
+              <div class="info-item">
+                <strong>📷 Foto</strong>
+                <p>Carica immagini su Cloudinary. Puoi aggiungere caption IT/EN, crediti fotografo e assegnarle a collezioni.</p>
+              </div>
+              <div class="info-item">
+                <strong>🎬 Video</strong>
+                <p>Aggiungi video da YouTube. Inserisci l'URL del video e sarà embedded automaticamente nella galleria.</p>
+              </div>
+              <div class="info-item">
+                <strong>🎵 Audio</strong>
+                <p>Aggiungi tracce audio da Bandcamp. Inserisci l'URL Bandcamp per l'embed player.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="recent-section">
+          <h2>Collezioni Recenti</h2>
+          <% if (recentCollections && recentCollections.length > 0) { %>
+            <div class="collections-list">
+              <% recentCollections.forEach(col => { %>
+                <div class="collection-item">
+                  <a href="/gallery/collections/<%= col.id %>">
+                    <strong><%= col.title_it %></strong>
+                    <span class="badge badge-<%= col.type %>"><%= col.type %></span>
+                    <span><%= col.is_published ? '✅ Pubblicata' : '⚠️ Bozza' %></span>
+                  </a>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <p>Nessuna collezione creata. <a href="/gallery/collections/new" class="btn btn-primary">Crea prima collezione</a></p>
+          <% } %>
+        </div>
+
+        <div class="quick-links">
+          <h2>Azioni Rapide</h2>
+          <div class="link-grid">
+            <a href="/gallery/collections/new" class="quick-link-card">
+              <span class="icon">➕</span>
+              <span>Nuova Collezione</span>
+            </a>
+            <a href="/gallery/photos" class="quick-link-card">
+              <span class="icon">📷</span>
+              <span>Carica Foto</span>
+            </a>
+            <a href="/gallery/videos" class="quick-link-card">
+              <span class="icon">🎬</span>
+              <span>Gestisci Video</span>
+            </a>
+            <a href="/gallery/audios" class="quick-link-card">
+              <span class="icon">🎵</span>
+              <span>Gestisci Audio</span>
+            </a>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/gallery-admin.js"></script>
+</body>
+</html>

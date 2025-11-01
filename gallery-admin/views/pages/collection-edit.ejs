@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/gallery-admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+        <div class="content-header">
+          <h1><%= isNew ? 'Nuova Collezione' : 'Modifica Collezione' %></h1>
+          <div class="header-actions">
+            <a href="/gallery/collections" class="btn btn-outline">Annulla</a>
+            <button id="save-btn" class="btn btn-primary">Salva</button>
+          </div>
+        </div>
+
+        <form id="collection-form" class="edit-form">
+          <input type="hidden" id="collection-id" value="<%= collection ? collection.id : '' %>">
+
+          <div class="form-section">
+            <h2>Informazioni Base</h2>
+
+            <div class="form-group">
+              <label for="slug">Slug URL *</label>
+              <input type="text" id="slug" name="slug" required
+                     value="<%= collection ? collection.slug : '' %>"
+                     placeholder="mia-collezione">
+              <small>URL univoco per la collezione (es: mia-collezione)</small>
+            </div>
+
+            <div class="form-group">
+              <label for="type">Tipo *</label>
+              <select id="type" name="type" required>
+                <option value="photo" <%= collection && collection.type === 'photo' ? 'selected' : '' %>>Foto</option>
+                <option value="video" <%= collection && collection.type === 'video' ? 'selected' : '' %>>Video</option>
+                <option value="audio" <%= collection && collection.type === 'audio' ? 'selected' : '' %>>Audio</option>
+                <option value="mixed" <%= collection && collection.type === 'mixed' ? 'selected' : '' %>>Misto</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="title_it">Titolo IT *</label>
+                <input type="text" id="title_it" name="title_it" required
+                       value="<%= collection ? collection.title_it : '' %>">
+              </div>
+              <div class="form-group">
+                <label for="title_en">Titolo EN</label>
+                <input type="text" id="title_en" name="title_en"
+                       value="<%= collection ? collection.title_en : '' %>">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="description_it">Descrizione IT</label>
+                <textarea id="description_it" name="description_it" rows="4"><%= collection ? collection.description_it : '' %></textarea>
+              </div>
+              <div class="form-group">
+                <label for="description_en">Descrizione EN</label>
+                <textarea id="description_en" name="description_en" rows="4"><%= collection ? collection.description_en : '' %></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Immagine di Copertina</h2>
+
+            <div class="cover-preview">
+              <% if (collection && collection.cover_cloudinary_id) { %>
+                <img id="cover-img" src="https://res.cloudinary.com/<%= process.env.CLOUDINARY_CLOUD_NAME %>/image/upload/c_fill,w_600,h_400/<%= collection.cover_cloudinary_id %>" alt="Cover">
+              <% } else { %>
+                <div id="cover-placeholder" class="no-cover-preview">
+                  <span class="icon-large">📷</span>
+                  <p>Nessuna immagine di copertina</p>
+                </div>
+              <% } %>
+            </div>
+
+            <input type="hidden" id="cover_cloudinary_id" name="cover_cloudinary_id"
+                   value="<%= collection ? collection.cover_cloudinary_id : '' %>">
+
+            <div class="form-group">
+              <button type="button" id="upload-cover-btn" class="btn btn-outline">
+                Carica Copertina da Cloudinary
+              </button>
+              <% if (collection && collection.cover_cloudinary_id) { %>
+                <button type="button" id="remove-cover-btn" class="btn btn-sm btn-danger">
+                  Rimuovi Copertina
+                </button>
+              <% } %>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Impostazioni</h2>
+
+            <div class="form-group">
+              <label for="display_order">Ordine di visualizzazione</label>
+              <input type="number" id="display_order" name="display_order"
+                     value="<%= collection ? collection.display_order : 0 %>" min="0">
+              <small>Numero più basso = posizione più alta</small>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="is_published" name="is_published"
+                       <%= collection && collection.is_published ? 'checked' : '' %>>
+                Pubblicata
+              </label>
+              <small>La collezione sarà visibile sul sito pubblico</small>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="is_featured" name="is_featured"
+                       <%= collection && collection.is_featured ? 'checked' : '' %>>
+                In evidenza
+              </label>
+              <small>La collezione apparirà nella sezione in evidenza</small>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/gallery-admin.js"></script>
+  <script>
+    const isNew = <%= isNew ? 'true' : 'false' %>;
+    const collectionId = document.getElementById('collection-id').value;
+
+    // Save collection
+    document.getElementById('save-btn').addEventListener('click', async function() {
+      const formData = {
+        slug: document.getElementById('slug').value,
+        type: document.getElementById('type').value,
+        title_it: document.getElementById('title_it').value,
+        title_en: document.getElementById('title_en').value,
+        description_it: document.getElementById('description_it').value,
+        description_en: document.getElementById('description_en').value,
+        cover_cloudinary_id: document.getElementById('cover_cloudinary_id').value || null,
+        cover_local_path: null,
+        is_published: document.getElementById('is_published').checked,
+        is_featured: document.getElementById('is_featured').checked,
+        display_order: parseInt(document.getElementById('display_order').value) || 0
+      };
+
+      try {
+        const url = isNew ? '/gallery/api/collections' : `/gallery/api/collections/${collectionId}`;
+        const method = isNew ? 'POST' : 'PUT';
+
+        const response = await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (isNew) {
+            window.location.href = `/gallery/collections/${result.id}`;
+          } else {
+            window.location.href = `/gallery/collections/${collectionId}`;
+          }
+        } else {
+          alert('Errore durante il salvataggio');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Errore durante il salvataggio');
+      }
+    });
+
+    // Upload cover (placeholder for Cloudinary integration)
+    document.getElementById('upload-cover-btn').addEventListener('click', function() {
+      alert('Integrazione Cloudinary da implementare');
+      // TODO: Implement Cloudinary upload modal
+    });
+
+    // Remove cover
+    const removeCoverBtn = document.getElementById('remove-cover-btn');
+    if (removeCoverBtn) {
+      removeCoverBtn.addEventListener('click', function() {
+        document.getElementById('cover_cloudinary_id').value = '';
+        const img = document.getElementById('cover-img');
+        if (img) {
+          img.parentElement.innerHTML = `
+            <div id="cover-placeholder" class="no-cover-preview">
+              <span class="icon-large">📷</span>
+              <p>Nessuna immagine di copertina</p>
+            </div>
+          `;
+        }
+        this.remove();
+      });
+    }
+  </script>
+</body>
+</html>

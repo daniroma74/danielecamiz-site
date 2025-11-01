@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/gallery-admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+        <div class="content-header">
+          <div>
+            <h1><%= collection.title_it %></h1>
+            <div class="collection-meta">
+              <span class="badge badge-<%= collection.type %>"><%= collection.type %></span>
+              <span class="badge"><%= collection.is_published ? '✅ Pubblicata' : '⚠️ Bozza' %></span>
+              <% if (collection.is_featured) { %>
+                <span class="badge badge-featured">In evidenza</span>
+              <% } %>
+            </div>
+          </div>
+          <div class="header-actions">
+            <a href="/gallery/collections" class="btn btn-outline">Indietro</a>
+            <a href="/gallery/collections/<%= collection.id %>/edit" class="btn btn-outline">Modifica Collezione</a>
+            <button id="add-item-btn" class="btn btn-primary">Aggiungi Elemento</button>
+          </div>
+        </div>
+
+        <% if (collection.description_it) { %>
+          <div class="collection-description">
+            <p><strong>IT:</strong> <%= collection.description_it %></p>
+            <% if (collection.description_en) { %>
+              <p><strong>EN:</strong> <%= collection.description_en %></p>
+            <% } %>
+          </div>
+        <% } %>
+
+        <div class="items-section">
+          <h2>Elementi (<%= items.length %>)</h2>
+
+          <% if (items && items.length > 0) { %>
+            <div class="items-grid">
+              <% items.forEach(item => { %>
+                <div class="item-card" data-id="<%= item.id %>">
+                  <div class="item-preview">
+                    <% if (item.item_type === 'photo' && item.cloudinary_id) { %>
+                      <img src="https://res.cloudinary.com/<%= process.env.CLOUDINARY_CLOUD_NAME %>/image/upload/c_fill,w_300,h_300/<%= item.cloudinary_id %>"
+                           alt="<%= item.alt_it || item.title_it %>">
+                    <% } else if (item.item_type === 'video' && item.youtube_id) { %>
+                      <div class="video-preview">
+                        <img src="https://img.youtube.com/vi/<%= item.youtube_id %>/mqdefault.jpg" alt="<%= item.title_it %>">
+                        <span class="play-icon">▶️</span>
+                      </div>
+                    <% } else if (item.item_type === 'audio') { %>
+                      <div class="audio-preview">
+                        <span class="icon-large">🎵</span>
+                        <% if (item.duration) { %>
+                          <span class="duration"><%= Math.floor(item.duration / 60) %>:<%= String(item.duration % 60).padStart(2, '0') %></span>
+                        <% } %>
+                      </div>
+                    <% } else { %>
+                      <div class="no-preview">
+                        <span class="icon-large">📄</span>
+                      </div>
+                    <% } %>
+
+                    <div class="item-badges">
+                      <span class="badge badge-<%= item.item_type %>"><%= item.item_type %></span>
+                      <% if (!item.is_published) { %>
+                        <span class="badge">Bozza</span>
+                      <% } %>
+                      <% if (item.is_spotlight) { %>
+                        <span class="badge badge-featured">Spotlight</span>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <div class="item-info">
+                    <h4><%= item.title_it || 'Senza titolo' %></h4>
+                    <% if (item.title_en) { %>
+                      <p class="subtitle"><%= item.title_en %></p>
+                    <% } %>
+                    <% if (item.credits) { %>
+                      <p class="credits"><small><%= item.credits %></small></p>
+                    <% } %>
+                  </div>
+
+                  <div class="item-actions">
+                    <button class="btn btn-sm" onclick="editItem(<%= item.id %>, '<%= item.item_type %>')">Modifica</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteItem(<%= item.id %>, '<%= item.item_type %>')">Elimina</button>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="empty-state">
+              <span class="icon-large">
+                <% if (collection.type === 'photo') { %>📷
+                <% } else if (collection.type === 'video') { %>🎬
+                <% } else if (collection.type === 'audio') { %>🎵
+                <% } else { %>📚<% } %>
+              </span>
+              <h3>Nessun elemento in questa collezione</h3>
+              <p>Aggiungi foto, video o audio a questa collezione</p>
+              <button id="add-first-item-btn" class="btn btn-primary">Aggiungi Primo Elemento</button>
+            </div>
+          <% } %>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const collectionId = <%= collection.id %>;
+    const collectionType = '<%= collection.type %>';
+
+    // Add item button
+    document.getElementById('add-item-btn')?.addEventListener('click', function() {
+      showAddItemModal();
+    });
+
+    document.getElementById('add-first-item-btn')?.addEventListener('click', function() {
+      showAddItemModal();
+    });
+
+    function showAddItemModal() {
+      // Redirect to appropriate management page based on collection type
+      if (collectionType === 'photo') {
+        window.location.href = `/gallery/photos?collection=${collectionId}`;
+      } else if (collectionType === 'video') {
+        window.location.href = `/gallery/videos?collection=${collectionId}`;
+      } else if (collectionType === 'audio') {
+        window.location.href = `/gallery/audios?collection=${collectionId}`;
+      } else {
+        // Mixed type - show selection
+        const choice = confirm('Aggiungi una FOTO? (Annulla per Video/Audio)');
+        if (choice) {
+          window.location.href = `/gallery/photos?collection=${collectionId}`;
+        } else {
+          alert('Vai alla sezione Video o Audio per aggiungere elementi');
+        }
+      }
+    }
+
+    function editItem(id, type) {
+      // Redirect to appropriate edit page
+      if (type === 'photo') {
+        window.location.href = `/gallery/photos?edit=${id}`;
+      } else if (type === 'video') {
+        window.location.href = `/gallery/videos?edit=${id}`;
+      } else if (type === 'audio') {
+        window.location.href = `/gallery/audios?edit=${id}`;
+      }
+    }
+
+    async function deleteItem(id, type) {
+      if (!confirm('Sei sicuro di voler eliminare questo elemento?')) return;
+
+      try {
+        const response = await fetch(`/gallery/api/${type}s/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          alert('Errore durante l\'eliminazione');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Errore durante l\'eliminazione');
+      }
+    }
+  </script>
+</body>
+</html>

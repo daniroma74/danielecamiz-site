@@ -1,0 +1,32 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Gallery Admin</h2>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="/gallery" class="nav-item <%= currentPath === '/gallery' || currentPath === '/' ? 'active' : '' %>">
+      <span class="icon">📊</span>
+      <span>Dashboard</span>
+    </a>
+    <a href="/gallery/collections" class="nav-item <%= currentPath.startsWith('/gallery/collections') ? 'active' : '' %>">
+      <span class="icon">📚</span>
+      <span>Collezioni</span>
+    </a>
+    <a href="/gallery/photos" class="nav-item <%= currentPath.startsWith('/gallery/photos') ? 'active' : '' %>">
+      <span class="icon">📷</span>
+      <span>Foto</span>
+    </a>
+    <a href="/gallery/videos" class="nav-item <%= currentPath.startsWith('/gallery/videos') ? 'active' : '' %>">
+      <span class="icon">🎬</span>
+      <span>Video</span>
+    </a>
+    <a href="/gallery/audios" class="nav-item <%= currentPath.startsWith('/gallery/audios') ? 'active' : '' %>">
+      <span class="icon">🎵</span>
+      <span>Audio</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="https://staging.danielecamiz.com/gallery" target="_blank" class="btn btn-sm btn-outline">
+      Staging Gallery
+    </a>
+  </div>
+</aside>

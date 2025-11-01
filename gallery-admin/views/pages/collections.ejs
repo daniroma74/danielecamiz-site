@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/gallery-admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('../partials/sidebar') %>
+    <div class="main-content">
+      <%- include('../partials/header') %>
+      <main class="content-area">
+
+        <!-- Help text -->
+        <div class="help-banner">
+          <div class="help-icon">📚</div>
+          <div class="help-content">
+            <strong>Le collezioni sono raccolte tematiche di media.</strong>
+            <p>Organizza foto, video e audio per concerti, eventi, portfolio ufficiale o prove. Ogni collezione può essere pubblicata o tenuta in bozza.</p>
+          </div>
+        </div>
+
+        <div class="content-header">
+          <h1>Collezioni</h1>
+          <div class="header-actions">
+            <select id="type-filter" class="filter-select">
+              <option value="">Tutti i tipi</option>
+              <option value="photo" <%= selectedType === 'photo' ? 'selected' : '' %>>Foto</option>
+              <option value="video" <%= selectedType === 'video' ? 'selected' : '' %>>Video</option>
+              <option value="audio" <%= selectedType === 'audio' ? 'selected' : '' %>>Audio</option>
+              <option value="mixed" <%= selectedType === 'mixed' ? 'selected' : '' %>>Misto</option>
+            </select>
+            <a href="/gallery/collections/new" class="btn btn-primary">Nuova Collezione</a>
+          </div>
+        </div>
+
+        <% if (collections && collections.length > 0) { %>
+          <div class="collections-grid">
+            <% collections.forEach(collection => { %>
+              <div class="collection-card" data-id="<%= collection.id %>">
+                <div class="collection-cover">
+                  <% if (collection.cover_cloudinary_id) { %>
+                    <img src="https://res.cloudinary.com/<%= process.env.CLOUDINARY_CLOUD_NAME %>/image/upload/c_fill,w_400,h_300/<%= collection.cover_cloudinary_id %>" alt="<%= collection.title_it %>">
+                  <% } else { %>
+                    <div class="no-cover">
+                      <span class="icon-large">
+                        <% if (collection.type === 'photo') { %>📷
+                        <% } else if (collection.type === 'video') { %>🎬
+                        <% } else if (collection.type === 'audio') { %>🎵
+                        <% } else { %>📚<% } %>
+                      </span>
+                    </div>
+                  <% } %>
+                  <div class="collection-badges">
+                    <span class="badge badge-<%= collection.type %>"><%= collection.type %></span>
+                    <% if (collection.is_featured) { %>
+                      <span class="badge badge-featured">In evidenza</span>
+                    <% } %>
+                  </div>
+                </div>
+
+                <div class="collection-info">
+                  <h3><%= collection.title_it %></h3>
+                  <% if (collection.title_en) { %>
+                    <p class="subtitle"><%= collection.title_en %></p>
+                  <% } %>
+                  <div class="collection-meta">
+                    <span class="meta-item">
+                      <%= collection.items_count || 0 %> elementi
+                    </span>
+                    <span class="meta-item">
+                      <%= collection.is_published ? '✅ Pubblicata' : '⚠️ Bozza' %>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="collection-actions">
+                  <a href="/gallery/collections/<%= collection.id %>" class="btn btn-sm">Visualizza</a>
+                  <a href="/gallery/collections/<%= collection.id %>/edit" class="btn btn-sm btn-outline">Modifica</a>
+                  <button class="btn btn-sm btn-danger" onclick="deleteCollection(<%= collection.id %>)">Elimina</button>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <span class="icon-large">📚</span>
+            <h2>Nessuna collezione trovata</h2>
+            <p>Crea la tua prima collezione per organizzare foto, video e audio</p>
+            <a href="/gallery/collections/new" class="btn btn-primary">Crea prima collezione</a>
+          </div>
+        <% } %>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Filter collections by type
+    document.getElementById('type-filter').addEventListener('change', function() {
+      const type = this.value;
+      const url = type ? `/gallery/collections?type=${type}` : '/gallery/collections';
+      window.location.href = url;
+    });
+
+    // Delete collection
+    async function deleteCollection(id) {
+      if (!confirm('Sei sicuro di voler eliminare questa collezione?')) return;
+
+      try {
+        const response = await fetch(`/gallery/api/collections/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          alert('Errore durante l\'eliminazione');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Errore durante l\'eliminazione');
+      }
+    }
+  </script>
+</body>
+</html>
