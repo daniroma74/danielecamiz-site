@@ -218,7 +218,13 @@ app.use(async (req, res, next) => {
       try {
         const bundle = i18next.getResourceBundle(lang, ns);
         if (bundle && typeof bundle === 'object') {
-          labels[ns] = bundle;
+          // Unwrap if first key equals namespace (avoid double nesting)
+          const keys = Object.keys(bundle);
+          if (keys.length === 1 && keys[0] === ns) {
+            labels[ns] = bundle[ns];
+          } else {
+            labels[ns] = bundle;
+          }
         }
       } catch {}
     }
