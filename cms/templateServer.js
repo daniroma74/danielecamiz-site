@@ -117,6 +117,7 @@ app.use(expressLayouts);
 app.set('layout', 'layouts/base-frontend');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.set('view cache', false); // Disable EJS caching for development
 // ⛔ niente override layout per /contact
 
 /* Parsers & session */
