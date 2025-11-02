@@ -22,7 +22,7 @@
         // Update grid classes
         grids.forEach(grid => {
           grid.classList.remove('view-grid', 'view-list', 'view-timeline');
-          grid.classList.add(\`view-\${viewMode}\`);
+          grid.classList.add(`view-${viewMode}`);
         });
 
         // Save preference
@@ -38,7 +38,7 @@
     try {
       const savedView = localStorage.getItem('repertoire-view-mode');
       if (savedView) {
-        const targetBtn = switcher.querySelector(\`[data-view="\${savedView}"]\`);
+        const targetBtn = switcher.querySelector(`[data-view="${savedView}"]`);
         if (targetBtn) targetBtn.click();
       }
     } catch (e) {
@@ -61,7 +61,7 @@
 
         // Show corresponding section
         sections.forEach(section => {
-          if (section.id === \`\${filter}View\`) {
+          if (section.id === `${filter}View`) {
             section.classList.add('active');
           } else {
             section.classList.remove('active');
@@ -153,8 +153,8 @@
         const count = visibleCards.length;
         const lang = document.documentElement.lang || 'it';
         const text = lang === 'en'
-          ? \`\${count} work\${count !== 1 ? 's' : ''} shown\`
-          : \`\${count} bran\${count !== 1 ? 'i' : 'o'} mostrat\${count !== 1 ? 'i' : 'o'}\`;
+          ? `${count} work${count !== 1 ? 's' : ''} shown`
+          : `${count} bran${count !== 1 ? 'i' : 'o'} mostrat${count !== 1 ? 'i' : 'o'}`;
         subtitle.textContent = text;
       }
     });
