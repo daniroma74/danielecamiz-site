@@ -8,7 +8,12 @@ const composerName = w.composer_name || w.composer || '';
 const categoryName = w.category_name || w.category || '';
 const hasMedia = !!(w.media_video || w.media_audio);
 %>
-<article class="work-card" data-composer="<%= composerName %>" data-category="<%= categoryName %>">
+<article class="work-card"
+         data-composer="<%= composerName %>"
+         data-category="<%= categoryName %>"
+         data-composition-year="<%= w.year || '' %>"
+         data-first-performance="<%= w.first_performance_date || '' %>"
+         data-last-performance="<%= w.last_performance_date || '' %>">
   <div class="work-card__header">
     <h3 class="work-card__title"><%= w.title || 'Untitled' %></h3>
     <% if (w.subtitle) { %>

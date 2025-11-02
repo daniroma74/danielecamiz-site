@@ -92,6 +92,28 @@ const _t = (k, def='') => { try { const v=(typeof t==='function'?t(k):''); retur
         </button>
       </div>
 
+      <!-- Timeline Sort Options (visible only in timeline view) -->
+      <div class="timeline-sort-options" style="display: none;">
+        <label class="timeline-sort-label">
+          <i class="fas fa-sort"></i>
+          <span><%= L.timeline_sort || 'Ordina per' %>:</span>
+        </label>
+        <div class="timeline-sort-buttons">
+          <button class="timeline-sort-btn active" data-sort="composition">
+            <i class="fas fa-feather"></i>
+            <span><%= L.composition_year || 'Anno composizione' %></span>
+          </button>
+          <button class="timeline-sort-btn" data-sort="first">
+            <i class="fas fa-play"></i>
+            <span><%= L.first_performance || 'Prima esecuzione' %></span>
+          </button>
+          <button class="timeline-sort-btn" data-sort="last">
+            <i class="fas fa-clock"></i>
+            <span><%= L.last_performance || 'Ultima esecuzione' %></span>
+          </button>
+        </div>
+      </div>
+
       <div class="repertoire-search">
         <i class="fas fa-search"></i>
         <input type="text"

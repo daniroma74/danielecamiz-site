@@ -6,6 +6,7 @@
   // View Mode Switching
   function initViewModeSwitcher() {
     const switcher = document.querySelector('.view-mode-switcher');
+    const timelineSortOptions = document.querySelector('.timeline-sort-options');
     if (!switcher) return;
 
     const buttons = switcher.querySelectorAll('.view-mode-btn');
@@ -25,11 +26,24 @@
           grid.classList.add(`view-${viewMode}`);
         });
 
+        // Show/hide timeline sort options
+        if (timelineSortOptions) {
+          timelineSortOptions.style.display = viewMode === 'timeline' ? 'flex' : 'none';
+        }
+
         // Save preference
         try {
           localStorage.setItem('repertoire-view-mode', viewMode);
         } catch (e) {
           console.warn('Could not save view mode preference');
+        }
+
+        // Apply sort if timeline view
+        if (viewMode === 'timeline') {
+          const activeSort = document.querySelector('.timeline-sort-btn.active');
+          if (activeSort) {
+            sortTimeline(activeSort.dataset.sort);
+          }
         }
       });
     });
@@ -160,12 +174,86 @@
     });
   }
 
+  // Sort timeline by different criteria
+  function sortTimeline(sortBy) {
+    const grids = document.querySelectorAll('.works-grid.view-timeline');
+
+    grids.forEach(grid => {
+      const cards = Array.from(grid.querySelectorAll('.work-card'));
+
+      cards.sort((a, b) => {
+        let aValue, bValue;
+
+        if (sortBy === 'composition') {
+          aValue = parseInt(a.dataset.compositionYear) || 0;
+          bValue = parseInt(b.dataset.compositionYear) || 0;
+        } else if (sortBy === 'first') {
+          aValue = a.dataset.firstPerformance || '';
+          bValue = b.dataset.firstPerformance || '';
+        } else if (sortBy === 'last') {
+          aValue = a.dataset.lastPerformance || '';
+          bValue = b.dataset.lastPerformance || '';
+        }
+
+        // Sort ascending (oldest first for timeline)
+        if (sortBy === 'composition') {
+          return aValue - bValue;
+        } else {
+          // For dates, compare as strings (ISO format)
+          if (!aValue) return 1;  // Put empty dates at end
+          if (!bValue) return -1;
+          return aValue.localeCompare(bValue);
+        }
+      });
+
+      // Re-append cards in sorted order
+      cards.forEach(card => grid.appendChild(card));
+    });
+  }
+
+  // Timeline sort buttons
+  function initTimelineSortButtons() {
+    const sortButtons = document.querySelectorAll('.timeline-sort-btn');
+
+    sortButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sortBy = btn.dataset.sort;
+
+        // Update button states
+        sortButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Apply sort
+        sortTimeline(sortBy);
+
+        // Save preference
+        try {
+          localStorage.setItem('repertoire-timeline-sort', sortBy);
+        } catch (e) {
+          console.warn('Could not save timeline sort preference');
+        }
+      });
+    });
+
+    // Restore saved preference
+    try {
+      const savedSort = localStorage.getItem('repertoire-timeline-sort');
+      if (savedSort) {
+        const targetBtn = document.querySelector(`.timeline-sort-btn[data-sort="${savedSort}"]`);
+        if (targetBtn) targetBtn.click();
+      }
+    } catch (e) {
+      console.warn('Could not restore timeline sort preference');
+    }
+  }
+
   // Initialize all features
   function init() {
     initViewModeSwitcher();
     initFilterTabs();
     initExpandableCards();
     initSearch();
+    initTimelineSortButtons();
 
     console.log('[Repertoire] Initialized modern repertoire page');
   }

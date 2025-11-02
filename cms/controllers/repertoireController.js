@@ -138,7 +138,15 @@ export async function getRepertoirePage(req, res) {
     const works = await qAll(db, `
       SELECT w.*,
              c.full_name AS composer_name,
-             ${catLangLabel === 'id' ? 'cat.id' : `cat.${catLangLabel}`} AS category_name
+             ${catLangLabel === 'id' ? 'cat.id' : `cat.${catLangLabel}`} AS category_name,
+             (SELECT MIN(co.date)
+              FROM concert_program cp
+              JOIN concerts co ON cp.concert_id = co.id
+              WHERE cp.work_id = w.id) AS first_performance_date,
+             (SELECT MAX(co.date)
+              FROM concert_program cp
+              JOIN concerts co ON cp.concert_id = co.id
+              WHERE cp.work_id = w.id) AS last_performance_date
       FROM works w
       JOIN composers c         ON w.composer_id = c.id
       LEFT JOIN categories cat ON w.category_id = cat.id
