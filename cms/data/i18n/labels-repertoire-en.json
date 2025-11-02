@@ -1,12 +1,43 @@
 {
-    "repertoire": {
-      "title": "Repertoire",
-      "claim": "These are the pieces I have conducted at least once in concert",
-      "category_simphony": "Symphonies",
-      "category_ouverture": "Overtures and Overture-Fantasias",
-      "category_concert": "Concertos for Solo Instrument and Orchestra",
-      "category_vocal": "Vocal Music and Dramatic Scenes",
-      "category_suite": "Orchestral Music – Suites and Dances",
-      "no_repertoire": "No repertoire available."
-    }
+  "repertoire": {
+    "title": "Repertoire",
+    "claim": "These are the works I have conducted at least once in concert",
+    "all": "All",
+    "by_composer": "By Composer",
+    "by_genre": "By Genre",
+    "frequently_performed": "Most Performed",
+    "coming_soon": "Coming Soon",
+    "search_placeholder": "Search work or composer...",
+    "quick_search": "Quick search...",
+    "view_grid": "Grid",
+    "view_list": "List",
+    "view_timeline": "Timeline",
+    "all_works": "Complete Repertoire",
+    "composers_title": "Composers",
+    "genres_title": "Musical Genres",
+    "frequently_performed_title": "Most Performed Works",
+    "frequently_performed_desc": "My main repertoire",
+    "coming_soon_title": "Upcoming Repertoire",
+    "coming_soon_desc": "Works I am currently studying",
+    "total_works": "Works",
+    "composers": "Composers",
+    "genres": "Genres",
+    "view_works": "View works",
+    "no_frequent": "No work marked as frequently performed",
+    "no_coming": "No work currently in study",
+    "categories": {
+      "symphonies": "Symphonies",
+      "ouverture": "Overtures and Fantasy Overtures",
+      "concert": "Concertos for Solo Instrument and Orchestra",
+      "vocal": "Vocal Music and Dramatic Scenes",
+      "suite": "Orchestral Music – Suites and Dances"
+    },
+    "category_symphonies": "Symphonies",
+    "category_simphony": "Symphonies",
+    "category_ouverture": "Overtures and Fantasy Overtures",
+    "category_concert": "Concertos for Solo Instrument and Orchestra",
+    "category_vocal": "Vocal Music and Dramatic Scenes",
+    "category_suite": "Orchestral Music – Suites and Dances",
+    "no_repertoire": "No repertoire available."
   }
+}
