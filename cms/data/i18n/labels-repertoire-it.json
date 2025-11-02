@@ -3,6 +3,34 @@
     "title": "Repertorio",
     "claim": "Questi sono i brani che ho diretto almeno una volta in concerto",
 
+    "all": "Tutto",
+    "by_composer": "Per Compositore",
+    "by_genre": "Per Genere",
+    "frequently_performed": "+ Eseguiti",
+    "coming_soon": "In Arrivo",
+    "search_placeholder": "Cerca brano o compositore...",
+    "quick_search": "Ricerca rapida...",
+
+    "view_grid": "Griglia",
+    "view_list": "Lista",
+    "view_timeline": "Timeline",
+
+    "all_works": "Tutto il Repertorio",
+    "composers_title": "Compositori",
+    "genres_title": "Generi Musicali",
+    "frequently_performed_title": "Brani Più Eseguiti",
+    "frequently_performed_desc": "Il mio repertorio principale",
+    "coming_soon_title": "Repertorio in Arrivo",
+    "coming_soon_desc": "Brani che sto attualmente studiando",
+
+    "total_works": "Brani",
+    "composers": "Compositori",
+    "genres": "Generi",
+    "view_works": "Visualizza brani",
+
+    "no_frequent": "Nessun brano contrassegnato come frequentemente eseguito",
+    "no_coming": "Nessun brano in studio al momento",
+
     "categories": {
       "symphonies": "Sinfonie",
       "ouverture": "Ouverture e Ouverture-Fantasia",
