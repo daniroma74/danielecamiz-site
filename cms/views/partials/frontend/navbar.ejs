@@ -20,7 +20,15 @@
       <% const items = [
            { path: '/bio',        key: 'navbar.nav_bio' },
            { path: '/concerts',   key: 'navbar.nav_concerts' },
-           { path: '/gallery',    key: 'navbar.nav_gallery' },
+           {
+             path: '/gallery',
+             key: 'navbar.nav_gallery',
+             dropdown: [
+               { path: '/gallery#category_concert', label: 'Concerto' },
+               { path: '/gallery#category_official', label: 'Foto ufficiali' },
+               { path: '/gallery#category_rehearsal', label: 'In prova' }
+             ]
+           },
            { path: '/press',      key: 'navbar.nav_press' },
            { path: '/video',      key: 'navbar.nav_video' },
            { path: '/repertoire', key: 'navbar.nav_repertoire' },
@@ -29,14 +37,43 @@
          ];
       %>
       <% items.forEach(item => { %>
-        <li role="none">
-          <a href="<%= item.path %>"
-             role="menuitem"
-             tabindex="-1"
-             class="nav-link"
-             <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>>
-            <%= t(item.key) %>
-          </a>
+        <li role="none" <%= item.dropdown ? 'class="nav-item-dropdown"' : '' %>>
+          <% if (item.dropdown) { %>
+            <button class="nav-link nav-dropdown-toggle"
+                    role="menuitem"
+                    tabindex="-1"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+              <%= t(item.key) %>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <ul class="nav-dropdown-menu" role="menu">
+              <li role="none">
+                <a href="<%= item.path %>"
+                   role="menuitem"
+                   class="nav-dropdown-item">
+                  <%= t(item.key + '_all') || 'Tutte le gallerie' %>
+                </a>
+              </li>
+              <% item.dropdown.forEach(sub => { %>
+                <li role="none">
+                  <a href="<%= sub.path %>"
+                     role="menuitem"
+                     class="nav-dropdown-item">
+                    <%= sub.label %>
+                  </a>
+                </li>
+              <% }) %>
+            </ul>
+          <% } else { %>
+            <a href="<%= item.path %>"
+               role="menuitem"
+               tabindex="-1"
+               class="nav-link"
+               <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>>
+              <%= t(item.key) %>
+            </a>
+          <% } %>
         </li>
       <% }) %>
     </ul>
