@@ -171,10 +171,7 @@ export async function getRepertoirePage(req, res) {
       };
     }).filter(g => g.count > 0);
 
-    const view = 'pages/frontend/repertoire';
-    const data = {
-      layout: 'layouts/base-frontend',
-      lang,
+    return res.renderPage('pages/frontend/repertoire', {
       title: lang === 'it' ? 'Repertorio' : 'Repertoire',
       description: lang === 'it'
         ? 'Esplora il repertorio completo di Daniele Camiz'
@@ -198,17 +195,6 @@ export async function getRepertoirePage(req, res) {
         '/css/pages/repertoire/repertoire-responsive.css',
       ],
       pageScripts: ['/js/modules/repertoire/repertoire.js'],
-    };
-
-    // render con callback per mostrare errori EJS in chiaro
-    return res.render(view, data, (err, html) => {
-      if (err) {
-        console.error('[Repertoire view error]', err);
-        return res
-          .status(500)
-          .send(`<pre style="white-space:pre-wrap;font-family:monospace">${esc(err.stack || err.message || err)}</pre>`);
-      }
-      return res.send(html);
     });
 
   } catch (error) {
