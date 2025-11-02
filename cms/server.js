@@ -161,10 +161,12 @@ app.use((req, res, next) => {
 });
 app.use(middleware.handle(i18next));
 app.use((req, res, next) => {
-  const i18nT = req.t;
   const rawLang = req.query.lng || req.language || 'it';
-  res.locals.lang = (rawLang === 'en' || rawLang === 'it') ? rawLang : 'it';
+  const lang = (rawLang === 'en' || rawLang === 'it') ? rawLang : 'it';
+  res.locals.lang = lang;
+
   res.locals.t = (key, def = '') => {
+    // Navigate through res.locals.labels first
     try {
       const labels = res.locals.labels;
       const parts = String(key || '').split('.');
@@ -177,10 +179,7 @@ app.use((req, res, next) => {
         return cur;
       }
     } catch {}
-    try {
-      const v = (typeof i18nT === 'function') ? i18nT(key) : '';
-      if (v && v !== key && String(v).trim() !== '') return v;
-    } catch {}
+
     return def || key;
   };
   next();
