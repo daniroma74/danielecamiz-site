@@ -1,31 +1,105 @@
-/* ==========================================================================
-   Home – Bandcamp embed section
-   ========================================================================== */
+/* ===== BANDCAMP SECTION - Modern & Elegant ===== */
 
-   #bandcamp_section {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: var(--section-padding);
+#bandcamp_section {
+  max-width: var(--max-width, 1400px);
+  margin: 0 auto;
+  padding: clamp(3rem, 5vw, 5rem) clamp(1rem, 3vw, 2rem);
+  background: linear-gradient(180deg, #0f0f0f 0%, #181818 100%);
+  position: relative;
+  text-align: center;
+}
+
+/* Subtle background glow */
+#bandcamp_section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+#bandcamp_section .bandcamp-embed {
+  position: relative;
+  z-index: 1;
+}
+
+#bandcamp_section .bandcamp-embed__inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Modern container with glassmorphism */
+  background: linear-gradient(135deg, rgba(25, 25, 25, 0.95) 0%, rgba(35, 35, 35, 0.9) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 20px;
+  padding: 2rem;
+
+  /* Enhanced shadows */
+  box-shadow:
+    0 6px 32px rgba(0, 0, 0, 0.4),
+    0 2px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  max-width: 800px;
+  margin: 0 auto;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+#bandcamp_section .bandcamp-embed__inner:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.5),
+    0 4px 20px rgba(212, 175, 55, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+#bandcamp_section iframe {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Placeholder quando marketing non consentito */
+#bandcamp_section .consent-placeholder {
+  text-align: center;
+  padding: 3rem 2rem;
+  margin: 2rem auto;
+  max-width: 600px;
+
+  /* Glassmorphism */
+  background: linear-gradient(135deg, rgba(25, 25, 25, 0.92) 0%, rgba(30, 30, 30, 0.88) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 18px;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+#bandcamp_section .consent-placeholder .bc-placeholder-text {
+  color: rgba(231, 219, 182, 0.9);
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  #bandcamp_section {
+    padding: 2.5rem 1rem;
   }
-  
+
   #bandcamp_section .bandcamp-embed__inner {
-    display: flex;
-    justify-content: center;
+    padding: 1.5rem 1rem;
   }
-  
-  #bandcamp_section iframe {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  /* placeholder quando marketing non consentito */
+
   #bandcamp_section .consent-placeholder {
-    text-align: center;
-    margin: 1rem 0 0;
-    color: #e7dbb6;
+    padding: 2rem 1.5rem;
   }
-  
-  @media (max-width: 640px) {
-    #bandcamp_section { padding: 2rem 1rem; }
-  }
+}
   

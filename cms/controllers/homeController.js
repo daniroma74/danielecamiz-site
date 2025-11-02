@@ -29,15 +29,20 @@ function formatDateISO(dateStr, lang = 'it') {
 }
 
 async function buildPosterUrl(row) {
-  const isFuture = true;
-  const url = await mediaResolver.resolvePosterUrlAsync({
-    poster_media_id: row.poster_media_id,
-    poster_canonical_url: row.poster_canonical_url,
-    poster_cloudinary_id: row.poster_cloudinary_id,
-    poster_local_filename: row.poster_local_filename,
-    is_future: isFuture
-  }, { quality: 'auto', format: 'auto' });
-  return url || '';
+  // Priorità: vertical > horizontal > legacy cloudinary > local
+  if (row.poster_vertical_cloudinary) {
+    return `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_limit,w_800,q_auto/${row.poster_vertical_cloudinary}`;
+  }
+  if (row.poster_horizontal_cloudinary) {
+    return `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_limit,w_800,q_auto/${row.poster_horizontal_cloudinary}`;
+  }
+  if (row.poster_cloudinary_id) {
+    return `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_limit,w_800,q_auto/${row.poster_cloudinary_id}`;
+  }
+  if (row.poster_local_filename) {
+    return `/uploads/posters/${row.poster_local_filename}`;
+  }
+  return '';
 }
 
 /* ------------------------------- DB helpers ------------------------------- */
@@ -63,10 +68,14 @@ function dbAll(db, sql, params = []) {
 /* ------------------------------- Data loaders ----------------------------- */
 async function getUpcomingConcerts(db, lang = 'it', limit = 3) {
   const todayISO = new Date().toISOString().slice(0, 10);
+  console.log('[getUpcomingConcerts] todayISO:', todayISO, 'limit:', limit);
+
   const rows = await dbAll(
     db,
-    `SELECT id, title, date, location, poster_cloudinary_id, poster_local_filename,
-            poster_media_id, poster_canonical_url
+    `SELECT id, title, date, location, slug,
+            poster_vertical_cloudinary, poster_horizontal_cloudinary,
+            poster_cloudinary_id, poster_local_filename,
+            description_short, program_notes
        FROM concerts
       WHERE date >= ?
    ORDER BY date ASC
@@ -74,8 +83,14 @@ async function getUpcomingConcerts(db, lang = 'it', limit = 3) {
     [todayISO, limit]
   );
 
+  console.log('[getUpcomingConcerts] rows returned:', rows ? rows.length : 0);
+  if (rows && rows.length > 0) {
+    console.log('[getUpcomingConcerts] first concert:', rows[0].title, rows[0].date);
+  }
+
   const mapped = await Promise.all((rows || []).map(async r => ({
     id: r.id,
+    slug: r.slug,
     title: r.title,
     date: formatDateISO(r.date, lang),
     place: r.location || '',
@@ -84,10 +99,11 @@ async function getUpcomingConcerts(db, lang = 'it', limit = 3) {
     orchestra: '',
     conductor: '',
     soloists: '',
-    program: '',
-    notes: ''
+    program: r.program_notes || '',
+    notes: r.description_short || ''
   })));
 
+  console.log('[getUpcomingConcerts] mapped concerts:', mapped.length);
   return mapped;
 }
 

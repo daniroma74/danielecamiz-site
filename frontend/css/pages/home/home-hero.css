@@ -1,104 +1,213 @@
-#hero_section{
-  position:relative;
-  width:100%;
-  /* riempi tra navbar fissa e footer fisso, anche su mobile con safe areas */
-  min-height:calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)));
-  overflow:hidden;
-  background:#000;
-  margin:0;
-  /* scala tipografica proporzionata alla larghezza (no salti) */
-  --hero-name-size: clamp(2.2rem, 6vw, 4.2rem);
-  --hero-role-size: clamp(1.0rem, 2.6vw, 1.5rem);
-  --hero-claim-size: clamp(1.0rem, 2.4vw, 1.35rem);
+/* ===== HERO SECTION ENHANCED - Modern & Professional ===== */
+
+#hero_section {
+  position: relative;
+  width: 100%;
+  min-height: calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)));
+  overflow: hidden;
+  background: #000;
+  margin: 0;
+
+  /* Scale tipografica */
+  --hero-name-size: clamp(2.4rem, 6.5vw, 4.8rem);
+  --hero-role-size: clamp(1.05rem, 2.8vw, 1.65rem);
+  --hero-claim-size: clamp(1.05rem, 2.6vw, 1.45rem);
 }
 
-#hero_img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;         /* nessuna deformazione */
-  object-position:50% 20%;  /* base */
-  transform:none;
-  transform-origin:center center;
-  z-index:1;
-  user-select:none;
-  pointer-events:none;
+/* Immagine con parallax effect */
+#hero_img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  z-index: 1;
+  user-select: none;
+  pointer-events: none;
+
+  /* Effetto zoom subtle al caricamento */
+  animation: hero-zoom-in 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+
+  /* Parallax sarà gestito con JS ma prepariamo il transform */
+  will-change: transform;
+  transition: transform 0.1s linear;
 }
 
-#hero_box{
-  position:absolute;
-  left:50%;
-  top:60%;
-  transform:translate(-50%, -50%); /* centrato */
-  max-width:620px;
-  width:min(90vw, 620px);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:.8em;
-  z-index:2;
-  color:#fff;
-  text-align:center;
-  pointer-events:auto;
+@keyframes hero-zoom-in {
+  0% {
+    transform: scale(1.08);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-#hero_name{
-  font-family:'Cormorant Garamond', serif;
-  font-size:var(--hero-name-size);
-  letter-spacing:.10em;
-  font-weight:700;
-  margin:0;
-  text-shadow:0 4px 36px #000a, 0 2px 2px #0008;
+/* Overlay gradient per migliorare leggibilità */
+#hero_section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.4) 40%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
 }
 
-#hero_role{
-  font-family:'Montserrat', sans-serif;
-  text-transform:uppercase;
-  letter-spacing:.19em;
-  margin:.1em 0 0 0;
-  font-size:var(--hero-role-size);
-  font-weight:400;
-  line-height:1.15;
-  opacity:.98;
-  text-shadow:0 2px 14px #000c;
+/* Contenitore testi */
+#hero_box {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+  max-width: 680px;
+  width: min(92vw, 680px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9em;
+  z-index: 2;
+  color: #fff;
+  text-align: center;
+  pointer-events: auto;
+
+  /* Animazioni fade-in staggered */
+  opacity: 0;
+  animation: hero-fade-up 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
 }
 
-#hero_claim{
-  font-family:'Cormorant Garamond', serif;
-  font-style:italic;
-  font-weight:600;
-  color:var(--accent-color);
-  font-size:var(--hero-claim-size);
-  margin-top:1.2em;
-  letter-spacing:.11em;
-  opacity:.90;
-  text-shadow:0 2px 14px #000c;
+@keyframes hero-fade-up {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
-/* Verticale (telefoni in piedi): leggera riduzione dell'altezza utile */
-@media (max-aspect-ratio: 3/4){
-  #hero_section{ min-height: calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)) - 6vh); }
-  #hero_img{ object-position: 50% 18%; }
+/* Nome - effetto lusso */
+#hero_name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: var(--hero-name-size);
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.15;
+
+  /* Text shadow multilivello per depth */
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.6),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+
+  /* Animazione ritardata */
+  opacity: 0;
+  animation: hero-text-reveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
 }
 
-@media (max-aspect-ratio: 2/3){
-  #hero_section{ min-height: calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)) - 10vh); }
-  #hero_img{ object-position: 50% 20%; }
+/* Ruolo - uppercase elegante */
+#hero_role {
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  margin: 0.15em 0 0 0;
+  font-size: var(--hero-role-size);
+  font-weight: 300;
+  line-height: 1.2;
+  opacity: 0;
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.8),
+    0 4px 16px rgba(0, 0, 0, 0.5);
+
+  animation: hero-text-reveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
 }
 
-/* Wide desktop: centratura naturale */
-@media (min-aspect-ratio:16/9){
-  #hero_img{ object-position:50% 50%; }
+/* Claim - accent color con glow */
+#hero_claim {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--accent-color);
+  font-size: var(--hero-claim-size);
+  margin-top: 1.4em;
+  letter-spacing: 0.13em;
+  opacity: 0;
+
+  /* Glow effect dorato */
+  text-shadow:
+    0 0 10px rgba(212, 175, 55, 0.5),
+    0 2px 14px rgba(0, 0, 0, 0.8),
+    0 4px 24px rgba(0, 0, 0, 0.5);
+
+  animation: hero-text-reveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.9s forwards;
 }
 
-/* Landscape: abbassa leggermente il blocco testi e stringi un po' la larghezza */
-@media (orientation: landscape){
-  #hero_box{ transform: translate(-50%, -40%); width: min(82vw, 600px); }
+@keyframes hero-text-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Landscape a bassa altezza (smartphone ruotati): framing perfetto 50% 25% e blocco un filo più basso */
-@media (orientation: landscape) and (max-height: 480px){
-  #hero_img{ object-position: 50% 25%; }
-  #hero_box{ transform: translate(-50%, -10%); }
+/* ===== RESPONSIVE ===== */
+
+/* Telefoni verticali */
+@media (max-aspect-ratio: 3/4) {
+  #hero_section {
+    min-height: calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)) - 6vh);
+  }
+  #hero_img { object-position: 50% 18%; }
+  #hero_box { gap: 0.7em; }
+}
+
+@media (max-aspect-ratio: 2/3) {
+  #hero_section {
+    min-height: calc(100dvh - max(var(--navbar-h), env(safe-area-inset-top)) - max(var(--footer-h), env(safe-area-inset-bottom)) - 10vh);
+  }
+  #hero_img { object-position: 50% 20%; }
+}
+
+/* Wide desktop */
+@media (min-aspect-ratio: 16/9) {
+  #hero_img { object-position: 50% 50%; }
+}
+
+/* Landscape */
+@media (orientation: landscape) {
+  #hero_box {
+    transform: translate(-50%, -40%);
+    width: min(85vw, 640px);
+  }
+}
+
+/* Landscape bassa altezza */
+@media (orientation: landscape) and (max-height: 480px) {
+  #hero_img { object-position: 50% 25%; }
+  #hero_box { transform: translate(-50%, -10%); }
+}
+
+/* Mobile touch: riduci animazioni per performance */
+@media (prefers-reduced-motion: reduce) {
+  #hero_img,
+  #hero_box,
+  #hero_name,
+  #hero_role,
+  #hero_claim {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

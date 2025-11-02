@@ -1,91 +1,78 @@
-<!-- frontend/views/partials/work-card.ejs -->
-<div class="work-card" 
-     data-composer="<%= work.composer_name %>"
-     data-category="<%= work.category_slug || '' %>"
-     data-title="<%= work.title %>">
-  
-  <div class="work-card-header">
-    <div class="work-composer">
-      <%= work.composer_name %>
-    </div>
-    <div class="work-badges">
-      <% if (work.execution_count > 0) { %>
-        <span class="work-badge badge-executions" title="<%= work.execution_count %> esecuzioni">
-          <i class="fas fa-calendar-check"></i> <%= work.execution_count %>
-        </span>
-      <% } %>
-      <% if (work.movements && work.movements.length > 0) { %>
-        <span class="work-badge badge-movements" title="<%= work.movements.length %> movimenti">
-          <i class="fas fa-list-ol"></i> <%= work.movements.length %>
-        </span>
-      <% } %>
-    </div>
+<%
+/* Partial: work-card.ejs
+   Props richiesti: work
+   Rendering: card moderna per brano musicale con compositore, categoria, media
+*/
+const w = work || {};
+const composerName = w.composer_name || w.composer || '';
+const categoryName = w.category_name || w.category || '';
+const hasMedia = !!(w.media_video || w.media_audio);
+%>
+<article class="work-card" data-composer="<%= composerName %>" data-category="<%= categoryName %>">
+  <div class="work-card__header">
+    <h3 class="work-card__title"><%= w.title || 'Untitled' %></h3>
+    <% if (w.subtitle) { %>
+      <p class="work-card__subtitle"><%= w.subtitle %></p>
+    <% } %>
   </div>
-  
-  <h3 class="work-title"><%= work.title %></h3>
-  
-  <% if (work.catalogue || work.key || work.year) { %>
-    <div class="work-meta">
-      <% if (work.catalogue) { %>
-        <span class="work-catalogue"><%= work.catalogue %></span>
-      <% } %>
-      <% if (work.key) { %>
-        <span class="work-key"><%= work.key %></span>
-      <% } %>
-      <% if (work.year) { %>
-        <span class="work-year">(<%= work.year %>)</span>
-      <% } %>
-    </div>
-  <% } %>
-  
-  <% if (work.category_label) { %>
-    <div class="work-category">
-      <i class="fas fa-tag"></i>
-      <span><%= work.category_label %></span>
-    </div>
-  <% } %>
-  
-  <!-- Movimenti -->
-  <% if (work.movements && work.movements.length > 0) { %>
-    <div class="work-movements">
-      <button class="movements-toggle" data-work-id="<%= work.id %>">
-        <i class="fas fa-chevron-down"></i>
-        <span>Movimenti (<%= work.movements.length %>)</span>
-      </button>
-      <div class="movements-list" style="display: none;">
-        <% work.movements.forEach((mov, idx) => { %>
-          <div class="movement">
-            <span class="movement-number"><%= idx + 1 %>.</span>
-            <div class="movement-info">
-              <strong><%= mov.title %></strong>
-              <% if (mov.tempo) { %>
-                <em><%= mov.tempo %></em>
-              <% } %>
-              <% if (mov.duration_minutes) { %>
-                <span class="movement-duration">
-                  <i class="far fa-clock"></i> <%= mov.duration_minutes %> min
-                </span>
-              <% } %>
-            </div>
-          </div>
-        <% }) %>
+
+  <div class="work-card__meta">
+    <% if (composerName) { %>
+      <div class="work-card__meta-item work-card__composer">
+        <i class="fas fa-user-tie"></i>
+        <span><%= composerName %></span>
       </div>
-    </div>
-  <% } %>
-  
-  <!-- Media Links -->
-  <% if (work.media_video || work.media_audio) { %>
-    <div class="work-media">
-      <% if (work.media_video) { %>
-        <a href="<%= work.media_video %>" target="_blank" class="media-link">
-          <i class="fab fa-youtube"></i> Video
+    <% } %>
+
+    <% if (categoryName) { %>
+      <div class="work-card__meta-item work-card__category">
+        <i class="fas fa-folder"></i>
+        <span><%= categoryName %></span>
+      </div>
+    <% } %>
+
+    <% if (w.catalogue) { %>
+      <div class="work-card__meta-item work-card__catalogue">
+        <i class="fas fa-barcode"></i>
+        <span><%= w.catalogue %></span>
+      </div>
+    <% } %>
+
+    <% if (w.work_key) { %>
+      <div class="work-card__meta-item work-card__key">
+        <i class="fas fa-music"></i>
+        <span><%= w.work_key %></span>
+      </div>
+    <% } %>
+
+    <% if (w.year) { %>
+      <div class="work-card__meta-item work-card__year">
+        <i class="fas fa-calendar"></i>
+        <span><%= w.year %></span>
+      </div>
+    <% } %>
+  </div>
+
+  <% if (hasMedia) { %>
+    <div class="work-card__media">
+      <% if (w.media_video) { %>
+        <a href="<%= w.media_video %>" target="_blank" rel="noopener noreferrer" class="work-card__media-link work-card__media-link--video">
+          <i class="fab fa-youtube"></i>
+          <span><%= (lang === 'en') ? 'Video' : 'Video' %></span>
         </a>
       <% } %>
-      <% if (work.media_audio) { %>
-        <a href="<%= work.media_audio %>" target="_blank" class="media-link">
-          <i class="fas fa-volume-up"></i> Audio
+      <% if (w.media_audio) { %>
+        <a href="<%= w.media_audio %>" target="_blank" rel="noopener noreferrer" class="work-card__media-link work-card__media-link--audio">
+          <i class="fas fa-headphones"></i>
+          <span><%= (lang === 'en') ? 'Audio' : 'Audio' %></span>
         </a>
       <% } %>
     </div>
   <% } %>
-</div>
+
+  <% if (w.notes_it || w.notes_en) { %>
+    <div class="work-card__notes">
+      <%= (lang === 'en' && w.notes_en) ? w.notes_en : (w.notes_it || '') %>
+    </div>
+  <% } %>
+</article>

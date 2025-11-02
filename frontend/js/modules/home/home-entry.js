@@ -7,6 +7,7 @@ import { initHomeNews } from './home-news.js';
 import { initHomeVideos } from './home-video.js';
 import { initHomeConcerts } from './home-concerts.js';
 import { initHomeContact } from './home-contact.js';
+import './home-hero-parallax.js'; // Parallax effect (self-initializing)
 
 function safeCall(fn, ...args) {
   try {

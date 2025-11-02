@@ -194,6 +194,7 @@ export async function getRepertoirePage(req, res) {
       comingSoon: upcomingWorks,
       pageStyles: [
         '/css/pages/repertoire/repertoire-base.css',
+        '/css/pages/repertoire/repertoire-modern.css',
         '/css/pages/repertoire/repertoire-responsive.css',
       ],
       pageScripts: ['/js/modules/repertoire/repertoire.js'],

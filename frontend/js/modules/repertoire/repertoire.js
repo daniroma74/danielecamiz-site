@@ -1,217 +1,176 @@
-// frontend/js/modules/repertoire/repertoire.js
+// repertoire.js - Modern repertoire page interactions
 
 (function() {
   'use strict';
 
-  // State
-  let currentCategory = null;
-  let currentComposer = null;
-  let allWorks = [];
-  let categories = [];
-  let composers = [];
+  // View Mode Switching
+  function initViewModeSwitcher() {
+    const switcher = document.querySelector('.view-mode-switcher');
+    if (!switcher) return;
 
-  // Inizializzazione
-  function init() {
-    console.log('[Repertoire] Initializing...');
-    
-    collectData();
-    setupTabs();
-    setupComposerPills();
-    setupMovementsToggles();
-    
-    // Attiva prima categoria
-    const firstTab = document.querySelector('.repertoire-tabs .tab');
-    if (firstTab) {
-      firstTab.click();
-    }
-    
-    console.log('[Repertoire] Initialized');
-  }
+    const buttons = switcher.querySelectorAll('.view-mode-btn');
+    const grids = document.querySelectorAll('.works-grid');
 
-  // Raccoglie dati dalla pagina
-  function collectData() {
-    // Raccogli tutte le works cards
-    const workCards = document.querySelectorAll('.work-card');
-    workCards.forEach(card => {
-      const composer = card.dataset.composer;
-      const category = card.dataset.category;
-      
-      if (composer && !composers.includes(composer)) {
-        composers.push(composer);
-      }
-      
-      if (category && !categories.includes(category)) {
-        categories.push(category);
-      }
-      
-      allWorks.push({
-        element: card,
-        composer,
-        category
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const viewMode = btn.dataset.view;
+
+        // Update button states
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update grid classes
+        grids.forEach(grid => {
+          grid.classList.remove('view-grid', 'view-list', 'view-timeline');
+          grid.classList.add(\`view-\${viewMode}\`);
+        });
+
+        // Save preference
+        try {
+          localStorage.setItem('repertoire-view-mode', viewMode);
+        } catch (e) {
+          console.warn('Could not save view mode preference');
+        }
       });
     });
-    
-    console.log(`[Repertoire] Found ${allWorks.length} works, ${composers.length} composers, ${categories.length} categories`);
+
+    // Restore saved preference
+    try {
+      const savedView = localStorage.getItem('repertoire-view-mode');
+      if (savedView) {
+        const targetBtn = switcher.querySelector(\`[data-view="\${savedView}"]\`);
+        if (targetBtn) targetBtn.click();
+      }
+    } catch (e) {
+      console.warn('Could not restore view mode preference');
+    }
   }
 
-  // Setup tabs categorie
-  function setupTabs() {
-    const tabs = document.querySelectorAll('.repertoire-tabs .tab');
-    
+  // Filter Tabs
+  function initFilterTabs() {
+    const tabs = document.querySelectorAll('.filter-tab');
+    const sections = document.querySelectorAll('.repertoire-section');
+
     tabs.forEach(tab => {
-      tab.addEventListener('click', function() {
-        const category = this.dataset.category;
-        activateTab(category);
+      tab.addEventListener('click', () => {
+        const filter = tab.dataset.filter;
+
+        // Update tab states
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Show corresponding section
+        sections.forEach(section => {
+          if (section.id === \`\${filter}View\`) {
+            section.classList.add('active');
+          } else {
+            section.classList.remove('active');
+          }
+        });
       });
     });
   }
 
-  // Attiva tab
-  function activateTab(category) {
-    currentCategory = category;
-    currentComposer = null; // Reset compositore
-    
-    // Aggiorna UI tabs
-    document.querySelectorAll('.repertoire-tabs .tab').forEach(tab => {
-      tab.classList.toggle('is-active', tab.dataset.category === category);
-      tab.setAttribute('aria-selected', tab.dataset.category === category ? 'true' : 'false');
-    });
-    
-    // Mostra/nascondi pannelli
-    document.querySelectorAll('.repertoire-category').forEach(panel => {
-      const isActive = panel.dataset.category === category;
-      panel.setAttribute('aria-hidden', !isActive);
-      panel.style.display = isActive ? 'block' : 'none';
-    });
-    
-    // Aggiorna composer pills per questa categoria
-    updateComposerPills();
-    
-    // Filtra works
-    filterWorks();
-    
-    console.log(`[Repertoire] Activated category: ${category}`);
-  }
+  // Composer/Genre Expand
+  function initExpandableCards() {
+    const expandButtons = document.querySelectorAll('.composer-expand-btn, .genre-expand-btn');
 
-  // Setup composer pills
-  function setupComposerPills() {
-    const pillsContainer = document.getElementById('composer_pills');
-    if (!pillsContainer) return;
-    
-    // Pills saranno popolate quando si cambia categoria
-  }
+    expandButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const card = this.closest('.composer-card, .genre-card');
+        if (!card) return;
 
-  // Aggiorna composer pills per categoria corrente
-  function updateComposerPills() {
-    const pillsContainer = document.getElementById('composer_pills');
-    if (!pillsContainer) return;
-    
-    // Trova compositori per categoria corrente
-    const categoryComposers = new Set();
-    allWorks.forEach(work => {
-      if (work.category === currentCategory && work.composer) {
-        categoryComposers.add(work.composer);
-      }
-    });
-    
-    if (categoryComposers.size === 0) {
-      pillsContainer.style.display = 'none';
-      return;
-    }
-    
-    pillsContainer.style.display = 'flex';
-    pillsContainer.innerHTML = '';
-    
-    // Pill "Tutti"
-    const allPill = document.createElement('button');
-    allPill.className = 'composer-pill is-active';
-    allPill.textContent = 'Tutti i compositori';
-    allPill.addEventListener('click', () => selectComposer(null));
-    pillsContainer.appendChild(allPill);
-    
-    // Pills compositori
-    Array.from(categoryComposers).sort().forEach(composer => {
-      const pill = document.createElement('button');
-      pill.className = 'composer-pill';
-      pill.textContent = composer;
-      pill.addEventListener('click', () => selectComposer(composer));
-      pillsContainer.appendChild(pill);
-    });
-  }
+        const worksContainer = card.querySelector('.composer-works, .genre-works');
+        if (!worksContainer) return;
 
-  // Seleziona compositore
-  function selectComposer(composer) {
-    currentComposer = composer;
-    
-    // Aggiorna UI pills
-    document.querySelectorAll('.composer-pill').forEach(pill => {
-      const isAll = pill.textContent === 'Tutti i compositori';
-      const isActive = (composer === null && isAll) || pill.textContent === composer;
-      pill.classList.toggle('is-active', isActive);
-    });
-    
-    // Filtra works
-    filterWorks();
-    
-    console.log(`[Repertoire] Selected composer: ${composer || 'all'}`);
-  }
+        const isExpanded = worksContainer.style.display !== 'none';
+        worksContainer.style.display = isExpanded ? 'none' : 'block';
 
-  // Filtra works
-  function filterWorks() {
-    allWorks.forEach(work => {
-      const matchCategory = work.category === currentCategory;
-      const matchComposer = currentComposer === null || work.composer === currentComposer;
-      
-      const shouldShow = matchCategory && matchComposer;
-      work.element.style.display = shouldShow ? '' : 'none';
-    });
-  }
+        // Update icon
+        const icon = this.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fa-chevron-down');
+          icon.classList.toggle('fa-chevron-up');
+        }
 
-  // Setup toggles movimenti
-  function setupMovementsToggles() {
-    const toggles = document.querySelectorAll('.movements-toggle');
-    
-    toggles.forEach(toggle => {
-      toggle.addEventListener('click', function() {
-        const list = this.nextElementSibling;
-        if (!list || !list.classList.contains('movements-list')) return;
-        
-        const isVisible = list.classList.contains('is-visible');
-        
-        if (isVisible) {
-          list.classList.remove('is-visible');
-          this.classList.remove('active');
-        } else {
-          list.classList.add('is-visible');
-          this.classList.add('active');
+        // Update text
+        const span = this.querySelector('span');
+        if (span) {
+          span.textContent = isExpanded
+            ? (document.documentElement.lang === 'en' ? 'View works' : 'Visualizza brani')
+            : (document.documentElement.lang === 'en' ? 'Hide works' : 'Nascondi brani');
         }
       });
     });
   }
 
-  // Espandi tutti i movimenti (utility pubblica)
-  window.expandAllMovements = function() {
-    document.querySelectorAll('.movements-toggle').forEach(toggle => {
-      const list = toggle.nextElementSibling;
-      if (list) {
-        list.classList.add('is-visible');
-        toggle.classList.add('active');
+  // Search functionality
+  function initSearch() {
+    const searchInputs = [
+      document.getElementById('repertoireSearch'),
+      document.getElementById('repertoireQuickSearch')
+    ];
+
+    searchInputs.forEach(input => {
+      if (!input) return;
+
+      input.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+
+        // Share search value between inputs
+        searchInputs.forEach(i => {
+          if (i && i !== this) i.value = this.value;
+        });
+
+        // Filter work cards
+        const workCards = document.querySelectorAll('.work-card');
+
+        workCards.forEach(card => {
+          const title = (card.querySelector('.work-card__title')?.textContent || '').toLowerCase();
+          const composer = (card.dataset.composer || '').toLowerCase();
+          const category = (card.dataset.category || '').toLowerCase();
+
+          const matches = !query || title.includes(query) || composer.includes(query) || category.includes(query);
+
+          card.style.display = matches ? '' : 'none';
+        });
+
+        // Update counts
+        updateVisibleCounts();
+      });
+    });
+  }
+
+  // Update section counts based on visible items
+  function updateVisibleCounts() {
+    const sections = document.querySelectorAll('.repertoire-section');
+
+    sections.forEach(section => {
+      const visibleCards = section.querySelectorAll('.work-card:not([style*="display: none"])');
+      const subtitle = section.querySelector('.section-subtitle');
+
+      if (subtitle) {
+        const count = visibleCards.length;
+        const lang = document.documentElement.lang || 'it';
+        const text = lang === 'en'
+          ? \`\${count} work\${count !== 1 ? 's' : ''} shown\`
+          : \`\${count} bran\${count !== 1 ? 'i' : 'o'} mostrat\${count !== 1 ? 'i' : 'o'}\`;
+        subtitle.textContent = text;
       }
     });
-  };
+  }
 
-  // Collassa tutti i movimenti (utility pubblica)
-  window.collapseAllMovements = function() {
-    document.querySelectorAll('.movements-toggle').forEach(toggle => {
-      const list = toggle.nextElementSibling;
-      if (list) {
-        list.classList.remove('is-visible');
-        toggle.classList.remove('active');
-      }
-    });
-  };
+  // Initialize all features
+  function init() {
+    initViewModeSwitcher();
+    initFilterTabs();
+    initExpandableCards();
+    initSearch();
 
-  // Avvio
+    console.log('[Repertoire] Initialized modern repertoire page');
+  }
+
+  // Run on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

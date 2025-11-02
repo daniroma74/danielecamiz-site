@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Video thumbnails component (standard)
+   Video thumbnails component (Modern & Professional)
    Convenzioni: id_snake_case, classi kebab-case
    - Griglia: .video-grid
    - Card: .video-item
@@ -7,72 +7,133 @@
    - Titolo sotto: .video-title
    ========================================================================== */
 
-   .video-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.2rem;
-    justify-content: center;
-    align-items: stretch;
-  }
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1.5rem, 3vw, 2rem);
+  justify-items: center;
+  align-items: stretch;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 2vw, 1.5rem);
+}
+
+/* Card generica con glassmorphism */
+.video-item {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+
+/* Link immagine con effetti moderni */
+.video-thumb {
+  position: relative;
+  display: block;
+  overflow: hidden;
+
+  /* Glassmorphism background */
+  background: linear-gradient(135deg, rgba(25, 25, 25, 0.95) 0%, rgba(35, 35, 35, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* Gold accent border */
+  border: 2px solid rgba(212, 175, 55, 0.25);
+  border-radius: 16px;
+
+  /* Multi-layer shadows */
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 2px 10px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Play button overlay */
+.video-thumb::before {
+  content: '▶';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow:
+    0 2px 20px rgba(0, 0, 0, 0.8),
+    0 0 30px rgba(212, 175, 55, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.video-thumb:hover {
+  transform: translateY(-6px) scale(1.03);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 4px 20px rgba(212, 175, 55, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.video-thumb:hover::before {
+  opacity: 1;
+}
   
-  /* Card generica */
-  .video-item {
-    width: 260px;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    text-align: left;
-  }
-  
-  /* Link immagine */
-  .video-thumb {
-    position: relative;
-    display: block;
-    background: #181818;
-    border: 2px solid var(--accent-color, #cba135);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 16px #0005;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .video-thumb:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 10px 34px rgba(230,200,50,0.13);
-  }
-  
-  /* Immagine */
-  .youtube-thumbnail {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  
-  /* Titolo SOTTO alla miniatura */
-  .video-title {
-    margin: 0.55rem 0 0;
-    padding: 0 0.2rem;
-    font-family: var(--font-ui, Montserrat, Arial, sans-serif);
-    font-weight: 600;
-    font-size: 0.95rem;            /* più piccolo e discreto */
-    line-height: 1.25;
-    color: var(--accent-color, #cba135);
-    text-align: left;
-  
-    /* 2 righe max, ellissi */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;         /* Standard property */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    word-break: break-word;
-  }
-  .video-title a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .video-title a:hover {
-    text-decoration: underline;
-  }
+/* Immagine con zoom hover */
+.youtube-thumbnail {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.4s ease, filter 0.3s ease;
+  filter: brightness(0.9);
+}
+
+.video-thumb:hover .youtube-thumbnail {
+  transform: scale(1.08);
+  filter: brightness(1);
+}
+
+/* Titolo SOTTO alla miniatura */
+.video-title {
+  margin: 0.75rem 0 0;
+  padding: 0 0.3rem;
+  font-family: var(--font-ui, Montserrat, Arial, sans-serif);
+  font-weight: 600;
+  font-size: clamp(0.92rem, 1.8vw, 1rem);
+  line-height: 1.35;
+  color: var(--accent-color, #cba135);
+  text-align: left;
+
+  /* Subtle glow */
+  text-shadow: 0 2px 8px rgba(212, 175, 55, 0.1);
+
+  /* 2 righe max, ellissi */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+
+  transition: text-shadow 0.3s ease;
+}
+
+.video-item:hover .video-title {
+  text-shadow: 0 2px 12px rgba(212, 175, 55, 0.2);
+}
+
+.video-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.video-title a:hover {
+  text-decoration: underline;
+}
   
   /* Variante EMBED (riutilizzabile per /video) */
   .video-card {

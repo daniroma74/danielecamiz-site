@@ -56,14 +56,42 @@
             <span><%= t('repertoire.coming_soon') || 'In Arrivo' %></span>
           </button>
         </div>
-        
+
         <div class="search-container">
           <i class="fas fa-search"></i>
-          <input type="text" 
-                 id="repertoireSearch" 
-                 class="search-input" 
+          <input type="text"
+                 id="repertoireSearch"
+                 class="search-input"
                  placeholder="<%= t('repertoire.search_placeholder') || 'Cerca brano o compositore...' %>">
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- View Mode Controls -->
+  <section class="repertoire-controls">
+    <div class="container">
+      <div class="view-mode-switcher">
+        <button class="view-mode-btn active" data-view="grid">
+          <i class="fas fa-th"></i>
+          <span><%= t('repertoire.view_grid') || 'Griglia' %></span>
+        </button>
+        <button class="view-mode-btn" data-view="list">
+          <i class="fas fa-list"></i>
+          <span><%= t('repertoire.view_list') || 'Lista' %></span>
+        </button>
+        <button class="view-mode-btn" data-view="timeline">
+          <i class="fas fa-stream"></i>
+          <span><%= t('repertoire.view_timeline') || 'Timeline' %></span>
+        </button>
+      </div>
+
+      <div class="repertoire-search">
+        <i class="fas fa-search"></i>
+        <input type="text"
+               id="repertoireQuickSearch"
+               class="search-input"
+               placeholder="<%= t('repertoire.quick_search') || 'Ricerca rapida...' %>">
       </div>
     </div>
   </section>
