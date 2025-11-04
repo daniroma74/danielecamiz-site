@@ -1,9 +1,13 @@
 import express from 'express';
-import { getGalleryPage } from '../controllers/galleryController.js';
+import { getGalleryPage, getGalleryPhotosPage, getGalleryVideosPage } from '../controllers/galleryController.js';
 
 const router = express.Router();
 
-// Gallery page (SSR from i18n JSON)
+// Subgalleries (must be before root)
+router.get('/photos', getGalleryPhotosPage);
+router.get('/videos', getGalleryVideosPage);
+
+// Gallery home (overview of all galleries)
 router.get('/', getGalleryPage);
 
 export default router;

@@ -132,6 +132,8 @@
     </div>
   </div>
 
+  <!-- Cloudinary Manager -->
+  <script src="/shared/cloudinary-manager/client.js"></script>
   <script src="/static/js/gallery-admin.js"></script>
   <script>
     const isNew = <%= isNew ? 'true' : 'false' %>;
@@ -179,10 +181,53 @@
       }
     });
 
-    // Upload cover (placeholder for Cloudinary integration)
+    // Upload cover - usa CloudinaryManager
     document.getElementById('upload-cover-btn').addEventListener('click', function() {
-      alert('Integrazione Cloudinary da implementare');
-      // TODO: Implement Cloudinary upload modal
+      CloudinaryManager.showImageDialog((result) => {
+        if (!result || !result.publicId) {
+          console.error('No image selected');
+          return;
+        }
+
+        // Update hidden field
+        document.getElementById('cover_cloudinary_id').value = result.publicId;
+
+        // Update preview
+        const coverPreview = document.querySelector('.cover-preview');
+        if (coverPreview) {
+          coverPreview.innerHTML = `
+            <img id="cover-img" src="${result.url}" alt="Cover" style="max-width: 100%; border-radius: 8px;">
+          `;
+        }
+
+        // Show remove button if not present
+        if (!document.getElementById('remove-cover-btn')) {
+          const uploadBtn = document.getElementById('upload-cover-btn');
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.id = 'remove-cover-btn';
+          removeBtn.className = 'btn btn-sm btn-danger';
+          removeBtn.textContent = 'Rimuovi Copertina';
+          removeBtn.addEventListener('click', function() {
+            document.getElementById('cover_cloudinary_id').value = '';
+            coverPreview.innerHTML = `
+              <div id="cover-placeholder" class="no-cover-preview">
+                <span class="icon-large">📷</span>
+                <p>Nessuna immagine di copertina</p>
+              </div>
+            `;
+            this.remove();
+          });
+          uploadBtn.parentElement.appendChild(removeBtn);
+        }
+
+        if (typeof showNotification === 'function') {
+          showNotification('Copertina selezionata', 'success');
+        }
+      }, {
+        folder: 'danielecamiz/gallery',
+        preset: 'gallery_unsigned'
+      });
     });
 
     // Remove cover

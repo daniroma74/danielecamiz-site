@@ -254,6 +254,8 @@
     </div>
   </div>
 
+  <!-- Cloudinary Manager -->
+  <script src="/shared/cloudinary-manager/client.js"></script>
   <script src="/static/js/gallery-admin.js"></script>
   <script>
     let selectedPhotos = [];
@@ -281,11 +283,121 @@
       document.getElementById('photo-metadata-form').style.display = 'none';
     }
 
-    // Cloudinary upload button (placeholder)
+    // Cloudinary upload button - usa CloudinaryManager
     document.getElementById('cloudinary-upload-btn').addEventListener('click', function() {
-      alert('Integrazione Cloudinary Widget da implementare\n\nQuando implementato, permetterà di:\n- Caricare nuove foto\n- Selezionare dalla libreria\n- Upload multipli\n- Drag & drop');
-      // TODO: Implement Cloudinary Upload Widget
-      // cloudinary.openUploadWidget({ ... }, (error, result) => { ... });
+      // Use CloudinaryManager from shared/cloudinary-manager/client.js
+      CloudinaryManager.showImageDialog((result) => {
+        if (!result || !result.publicId) {
+          console.error('No image selected');
+          return;
+        }
+
+        // Add photo to selection
+        selectedPhotos.push({
+          publicId: result.publicId,
+          url: result.url,
+          width: result.width || 0,
+          height: result.height || 0,
+          bytes: result.bytes || 0,
+          format: result.format || '',
+          thumbnail: result.url
+        });
+
+        // Show selected photos section
+        document.getElementById('selected-photos').style.display = 'block';
+        document.getElementById('photo-metadata-form').style.display = 'block';
+        document.getElementById('save-photos-btn').style.display = 'block';
+
+        // Update selected photos list
+        const listHtml = selectedPhotos.map((photo, index) => `
+          <div class="selected-photo-item" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; padding: 0.5rem; background: #f5f5f5; border-radius: 4px;">
+            <img src="${photo.thumbnail || photo.url}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+            <div style="flex: 1;">
+              <strong>${photo.publicId.split('/').pop()}</strong><br>
+              <small>${(photo.width && photo.height) ? photo.width + ' × ' + photo.height + 'px' : 'Dimensioni sconosciute'}</small>
+            </div>
+            <button onclick="removeSelectedPhoto(${index})" class="btn btn-sm btn-danger">Rimuovi</button>
+          </div>
+        `).join('');
+
+        document.getElementById('selected-photos-list').innerHTML = listHtml;
+      }, {
+        folder: 'danielecamiz/gallery',
+        preset: 'gallery_unsigned'
+      });
+    });
+
+    // Remove photo from selection
+    function removeSelectedPhoto(index) {
+      selectedPhotos.splice(index, 1);
+
+      if (selectedPhotos.length === 0) {
+        document.getElementById('selected-photos').style.display = 'none';
+        document.getElementById('photo-metadata-form').style.display = 'none';
+        document.getElementById('save-photos-btn').style.display = 'none';
+      } else {
+        // Update list
+        const listHtml = selectedPhotos.map((photo, idx) => `
+          <div class="selected-photo-item" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; padding: 0.5rem; background: #f5f5f5; border-radius: 4px;">
+            <img src="${photo.thumbnail || photo.url}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+            <div style="flex: 1;">
+              <strong>${photo.publicId.split('/').pop()}</strong><br>
+              <small>${photo.width} × ${photo.height}px</small>
+            </div>
+            <button onclick="removeSelectedPhoto(${idx})" class="btn btn-sm btn-danger">Rimuovi</button>
+          </div>
+        `).join('');
+
+        document.getElementById('selected-photos-list').innerHTML = listHtml;
+      }
+    }
+
+    // Save selected photos
+    document.getElementById('save-photos-btn').addEventListener('click', async function() {
+      const collection_id = document.getElementById('photo-collection').value || null;
+      const metadata = {
+        title_it: document.getElementById('photo-title-it').value,
+        title_en: document.getElementById('photo-title-en').value,
+        description_it: document.getElementById('photo-description-it').value,
+        description_en: document.getElementById('photo-description-en').value,
+        alt_it: document.getElementById('photo-alt-it').value,
+        alt_en: document.getElementById('photo-alt-en').value,
+        credits: document.getElementById('photo-credits').value,
+        taken_date: document.getElementById('photo-taken-date').value,
+        is_published: document.getElementById('photo-is-published').checked
+      };
+
+      try {
+        // Save each photo
+        for (const photo of selectedPhotos) {
+          const photoData = {
+            collection_id,
+            cloudinary_id: photo.publicId,
+            cloudinary_folder: photo.publicId.split('/').slice(0, -1).join('/'),
+            width: photo.width,
+            height: photo.height,
+            file_size: photo.bytes,
+            file_format: photo.format,
+            ...metadata
+          };
+
+          const response = await fetch('/gallery/api/photos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(photoData)
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to save photo');
+          }
+        }
+
+        // Success! Reload page
+        window.location.reload();
+      } catch (error) {
+        console.error('Error saving photos:', error);
+        alert('Errore durante il salvataggio delle foto');
+      }
     });
 
     // Delete photo

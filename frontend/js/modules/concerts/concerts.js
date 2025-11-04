@@ -1,4 +1,4 @@
-// Concerts page glue module (slim)
++// Concerts page glue module (slim)
 // - Manages <details> labels (Mostra di più / Mostra di meno)
 // - Intercepts <summary> clicks and delegates to window.openConcertLightbox(payload)
 // The lightbox engine lives in /frontend/js/concerts-lightbox.js

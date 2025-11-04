@@ -55,14 +55,18 @@
           <div class="upcoming-table" role="list">
             <% upcomingConcerts.forEach(c => {
                  const poster = c.poster || c.locandina || '';
+                 const hasLandingPage = c.booking_enabled && c.slug;
+                 const landingUrl = hasLandingPage ? `https://${c.slug}.danielecamiz.com` : null;
                  const payload = JSON.stringify({
                    title: c.title, program: c.program, date: c.date, location: c.location,
                    orchestra: c.orchestra, conductor: c.conductor, soloists: c.soloists,
-                   notes: c.notes, poster: poster, youtube: c.youtube
+                   notes: c.notes, poster: poster, poster_horizontal: c.poster_horizontal_url || '', youtube: c.youtube,
+                   slug: c.slug, booking_enabled: c.booking_enabled
                  });
                  const dateObj = parseISO(c.date);
                  const month  = dateObj ? dateObj.toLocaleString(lang==='en'?'en-GB':'it-IT', { month:'long' }) : '';
                  const day    = dateObj ? String(dateObj.getDate()).padStart(2,'0') : '';
+                 const txtBook = lang==='en' ? 'Book Now' : 'Prenota';
             %>
               <article class="up-row" role="listitem">
                 <div class="up-date">
@@ -75,8 +79,14 @@
                   <% if (c.orchestra) { %><div class="up-line"><%= c.orchestra %></div><% } %>
                 </div>
                 <div class="up-cta">
-                  <button class="btn btn-secondary" type="button"
-                          onclick='openConcertLightbox(<%- payload %>)'><%= txtDetails %></button>
+                  <% if (hasLandingPage) { %>
+                    <button class="btn btn-secondary" type="button"
+                            onclick='openConcertPreview(<%- payload %>, "<%= landingUrl %>")'><%= txtDetails %></button>
+                    <a href="<%= landingUrl %>" class="btn btn-primary" style="margin-left: 0.5rem;"><%= txtBook %></a>
+                  <% } else { %>
+                    <button class="btn btn-secondary" type="button"
+                            onclick='openConcertLightbox(<%- payload %>)'><%= txtDetails %></button>
+                  <% } %>
                 </div>
               </article>
             <% }) %>
@@ -105,7 +115,7 @@
             <div class="year-content" id="year_<%= g.year %>" role="tabpanel"
                  aria-labelledby="pill_<%= g.year %>" hidden>
               <ul class="concerts-year-list">
-                <% g.concerts.forEach((c) => {
+                <% g.concerts.forEach((c, idx) => {
                      const poster = c.poster || c.locandina || '';
                      const payload = JSON.stringify({
                        title:c.title, program:c.program, date:c.date,
@@ -113,7 +123,7 @@
                        soloists:c.soloists, notes:c.notes, poster:poster, youtube:c.youtube
                      });
                 %>
-                  <li class="concert-item" role="listitem">
+                  <li class="concert-item" role="listitem" style="--item-index: <%= idx %>">
                     <div class="concert-block">
                       <% if (poster) { %>
                         <a class="concert-thumb-link"
@@ -173,8 +183,15 @@
     <div class="concert-lightbox-content">
       <button class="concert-lightbox-close" aria-label="Close" onclick="closeConcertLightbox()">×</button>
       <div class="concert-lightbox-body">
-        <div class="concert-lightbox-img"><img id="concert_poster" alt="Concert poster" /></div>
-        <div id="concert_details" class="concert-lightbox-info" tabindex="0"></div>
+        <!-- Iframe per LP (nascosto di default) -->
+        <div id="concert_iframe_container" class="concert-lightbox-iframe" style="display: none;">
+          <iframe id="concert_iframe" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <!-- Poster + dettagli (layout originale) -->
+        <div id="concert_poster_container" class="concert-lightbox-poster-view">
+          <div class="concert-lightbox-img"><img id="concert_poster" alt="Concert poster" /></div>
+          <div id="concert_details" class="concert-lightbox-info" tabindex="0"></div>
+        </div>
       </div>
     </div>
   </div>

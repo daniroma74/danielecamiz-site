@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import mediaRepo, { resolveUrl as resolveAssetUrl, imgSrcById, buildTransform } from '../models/mediaRepo.js';
+import { buildCloudinaryUrl } from '../../shared/cloudinary-manager/config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -16,13 +17,22 @@ function toPosix(p) { return String(p || '').split(path.sep).join(path.posix.sep
 function stripLeadingSlash(p) { return String(p || '').replace(/^\/+/, ''); }
 function isHttp(url) { return typeof url === 'string' && /^https?:\/\//i.test(url); }
 
-// ================= Cloudinary helpers (delegates to mediaRepo) =================
+// ================= Cloudinary helpers (delegates to shared config) =================
 // Build Cloudinary URL from public_id with optional transforms
 export function cloudinaryUrlFromId(publicId, opts = {}) {
   if (!publicId) return null;
-  // Delegate to mediaRepo semantics using a pseudo-asset
-  const pseudo = { storage: 'cloudinary', cloudinary_id: publicId };
-  return resolveAssetUrl(pseudo, opts);
+
+  // Build transformation string
+  const transforms = [];
+  if (opts.width) transforms.push(`w_${opts.width}`);
+  if (opts.height) transforms.push(`h_${opts.height}`);
+  if (opts.crop) transforms.push(`c_${opts.crop}`);
+  if (opts.quality) transforms.push(`q_${opts.quality}`);
+  if (opts.gravity) transforms.push(`g_${opts.gravity}`);
+  if (opts.format) transforms.push(`f_${opts.format}`);
+
+  const transformation = transforms.length > 0 ? transforms.join(',') : '';
+  return buildCloudinaryUrl(publicId, transformation);
 }
 
 // ============== Posters resolver (concerts) ==============

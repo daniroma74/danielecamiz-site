@@ -1,0 +1,55 @@
+<%
+  const _collections = Array.isArray(collections) ? collections : [];
+%>
+
+<section id="gallery-collections" class="gallery-page">
+  <div class="gallery-header">
+    <a href="/gallery" class="gallery-back-link">
+      <i class="fas fa-arrow-left"></i>
+      <span><%= lang === 'en' ? 'Back to Gallery' : 'Torna alla Galleria' %></span>
+    </a>
+    <h1 class="gallery-header__title"><%= typeLabel %></h1>
+    <% if (description) { %>
+      <p class="gallery-header__description"><%= description %></p>
+    <% } %>
+  </div>
+
+  <% if (!_collections.length) { %>
+    <div class="gallery-empty">
+      <i class="fas fa-folder-open"></i>
+      <p><%= lang === 'en' ? 'No collections available yet' : 'Nessuna collezione disponibile' %></p>
+    </div>
+  <% } else { %>
+    <div class="collections-grid">
+      <% _collections.forEach(collection => { %>
+        <article class="collection-card <%= collection.is_featured ? 'collection-card--featured' : '' %>">
+          <a href="<%= collection.url %>" class="collection-card__link">
+            <div class="collection-card__image">
+              <img src="<%= collection.cover_url %>"
+                   alt="<%= collection.title %>"
+                   loading="lazy">
+              <% if (collection.is_featured) { %>
+                <span class="collection-card__badge">
+                  <i class="fas fa-star"></i>
+                  <%= lang === 'en' ? 'Featured' : 'In evidenza' %>
+                </span>
+              <% } %>
+              <% if (collection.item_count > 0) { %>
+                <span class="collection-card__count">
+                  <%= collection.item_count %>
+                  <i class="fas <%= type === 'photos' ? 'fa-images' : type === 'videos' ? 'fa-video' : 'fa-music' %>"></i>
+                </span>
+              <% } %>
+            </div>
+            <div class="collection-card__content">
+              <h3 class="collection-card__title"><%= collection.title %></h3>
+              <% if (collection.description) { %>
+                <p class="collection-card__description"><%= collection.description %></p>
+              <% } %>
+            </div>
+          </a>
+        </article>
+      <% }) %>
+    </div>
+  <% } %>
+</section>

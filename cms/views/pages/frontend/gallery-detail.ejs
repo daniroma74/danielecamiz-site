@@ -1,0 +1,185 @@
+<%
+  const _items = Array.isArray(items) ? items : [];
+  const photoItems = _items.filter(i => i.item_type === 'photo');
+  const videoItems = _items.filter(i => i.item_type === 'video');
+  const audioItems = _items.filter(i => i.item_type === 'audio');
+%>
+
+<section id="gallery-detail" class="gallery-page">
+  <div class="gallery-header">
+    <a href="<%= backUrl %>" class="gallery-back-link">
+      <i class="fas fa-arrow-left"></i>
+      <span><%= lang === 'en' ? 'Back' : 'Indietro' %></span>
+    </a>
+    <h1 class="gallery-header__title"><%= collection.title %></h1>
+    <% if (collection.description) { %>
+      <p class="gallery-header__description"><%= collection.description %></p>
+    <% } %>
+  </div>
+
+  <% if (!_items.length) { %>
+    <div class="gallery-empty">
+      <i class="fas fa-images"></i>
+      <p><%= lang === 'en' ? 'No items in this collection yet' : 'Nessun elemento in questa collezione' %></p>
+    </div>
+  <% } %>
+
+  <!-- PHOTO GRID -->
+  <% if (photoItems.length) { %>
+    <div class="gallery-items gallery-items--photos">
+      <% photoItems.forEach((item, idx) => { %>
+        <div class="gallery-item gallery-item--photo"
+             data-index="<%= idx %>"
+             data-full="<%= item.media?.full || '' %>"
+             data-title="<%= item.title || '' %>"
+             data-description="<%= item.description || '' %>"
+             onclick="openLightbox(<%= idx %>)">
+          <img src="<%= item.media?.thumbnail || '' %>"
+               alt="<%= item.alt || item.title || '' %>"
+               loading="lazy">
+          <% if (item.title) { %>
+            <div class="gallery-item__overlay">
+              <h4><%= item.title %></h4>
+              <% if (item.credits) { %>
+                <p class="gallery-item__credits"><%= item.credits %></p>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+      <button class="lightbox__close" onclick="closeLightbox()" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+      <button class="lightbox__prev" onclick="event.stopPropagation(); prevPhoto()" aria-label="Previous">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="lightbox__next" onclick="event.stopPropagation(); nextPhoto()" aria-label="Next">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <div class="lightbox__content" onclick="event.stopPropagation()">
+        <img id="lightbox-img" src="" alt="">
+        <div id="lightbox-info" class="lightbox__info">
+          <h3 id="lightbox-title"></h3>
+          <p id="lightbox-description"></p>
+        </div>
+      </div>
+      <div class="lightbox__counter">
+        <span id="lightbox-current">1</span> / <span id="lightbox-total"><%= photoItems.length %></span>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- VIDEO GRID -->
+  <% if (videoItems.length) { %>
+    <div class="gallery-items gallery-items--videos">
+      <% videoItems.forEach(item => { %>
+        <div class="gallery-item gallery-item--video">
+          <div class="video-embed">
+            <% if (item.media?.embed) { %>
+              <iframe src="<%= item.media.embed %>"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen></iframe>
+            <% } %>
+          </div>
+          <% if (item.title || item.description) { %>
+            <div class="gallery-item__info">
+              <% if (item.title) { %>
+                <h4><%= item.title %></h4>
+              <% } %>
+              <% if (item.description) { %>
+                <p><%= item.description %></p>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <!-- AUDIO GRID -->
+  <% if (audioItems.length) { %>
+    <div class="gallery-items gallery-items--audio">
+      <% audioItems.forEach(item => { %>
+        <div class="gallery-item gallery-item--audio">
+          <% if (item.media?.embed) { %>
+            <div class="audio-embed">
+              <%- item.media.embed %>
+            </div>
+          <% } else if (item.media?.url) { %>
+            <a href="<%= item.media.url %>" target="_blank" rel="noopener noreferrer" class="audio-link">
+              <i class="fab fa-bandcamp"></i>
+              <span><%= item.title || 'Listen on Bandcamp' %></span>
+            </a>
+          <% } %>
+          <% if (item.title || item.description) { %>
+            <div class="gallery-item__info">
+              <% if (item.title) { %>
+                <h4><%= item.title %></h4>
+              <% } %>
+              <% if (item.description) { %>
+                <p><%= item.description %></p>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<% if (photoItems.length) { %>
+<script>
+  let currentIndex = 0;
+  const photos = <%- JSON.stringify(photoItems.map(p => ({
+    full: p.media?.full || '',
+    title: p.title || '',
+    description: p.description || ''
+  }))) %>;
+
+  function openLightbox(index) {
+    currentIndex = index;
+    updateLightbox();
+    document.getElementById('lightbox').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function prevPhoto() {
+    currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+    updateLightbox();
+  }
+
+  function nextPhoto() {
+    currentIndex = (currentIndex + 1) % photos.length;
+    updateLightbox();
+  }
+
+  function updateLightbox() {
+    const photo = photos[currentIndex];
+    document.getElementById('lightbox-img').src = photo.full;
+    document.getElementById('lightbox-img').alt = photo.title;
+    document.getElementById('lightbox-title').textContent = photo.title;
+    document.getElementById('lightbox-description').textContent = photo.description;
+    document.getElementById('lightbox-current').textContent = currentIndex + 1;
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox.classList.contains('active')) {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prevPhoto();
+      if (e.key === 'ArrowRight') nextPhoto();
+    }
+  });
+</script>
+<% } %>

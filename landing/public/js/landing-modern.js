@@ -3,27 +3,37 @@
 // Countdown timer
 if (window.EVENT_DATA && document.getElementById('countdown')) {
   const eventDateTime = new Date(`${window.EVENT_DATA.date}T${window.EVENT_DATA.time}:00`);
-  
+  let countdownInterval;
+
   function updateCountdown() {
     const now = new Date();
     const diff = eventDateTime - now;
-    
+
     if (diff <= 0) {
-      document.getElementById('countdown').innerHTML = '<p class="countdown-ended">L\'evento è iniziato!</p>';
+      document.getElementById('countdown').innerHTML = '<p class="countdown-ended">L\'evento è terminato!</p>';
+      // Stop the interval to prevent further updates
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
       return;
     }
-    
+
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    
-    document.getElementById('days').textContent = days;
-    document.getElementById('hours').textContent = hours;
-    document.getElementById('minutes').textContent = minutes;
+
+    // Ensure we have the DOM elements before updating
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+
+    if (daysEl) daysEl.textContent = days;
+    if (hoursEl) hoursEl.textContent = hours;
+    if (minutesEl) minutesEl.textContent = minutes;
   }
-  
+
   updateCountdown();
-  setInterval(updateCountdown, 60000);
+  countdownInterval = setInterval(updateCountdown, 60000);
 }
 
 // Booking form

@@ -2,8 +2,9 @@
 
 // mediaRepo.js – central media URL resolver
 import { getDb as getMainDb } from '../utils/sqliteMain.js';
+import { CLOUDINARY_CONFIG } from '../../shared/cloudinary-manager/config.js';
 
-const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || '';
+const CLOUD_NAME = CLOUDINARY_CONFIG.cloud_name || process.env.CLOUDINARY_CLOUD_NAME || '';
 const CLOUD_BASE = CLOUD_NAME ? `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/` : '';
 const UPLOADS_BASE = '/uploads/';
 

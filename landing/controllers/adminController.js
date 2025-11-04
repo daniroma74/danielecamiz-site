@@ -6,11 +6,12 @@ export async function renderDashboard(req, res) {
     const db = req.app.locals.db;
     
     const events = await queryDB(db, `
-      SELECT c.*, 
+      SELECT c.*,
              (SELECT COUNT(*) FROM bookings WHERE event_id = c.id AND status = 'confirmed') as booking_count,
              (SELECT SUM(seats) FROM bookings WHERE event_id = c.id AND status = 'confirmed') as total_seats
       FROM concerts c
       WHERE c.is_future = 1
+        AND date(c.date) >= date('now')
       ORDER BY c.date ASC
     `);
     

@@ -24,20 +24,19 @@
              path: '/gallery',
              key: 'navbar.nav_gallery',
              dropdown: [
-               { path: '/gallery#category_concert', label: 'Concerto' },
-               { path: '/gallery#category_official', label: 'Foto ufficiali' },
-               { path: '/gallery#category_rehearsal', label: 'In prova' }
+               { path: '/gallery/photos', key: 'navbar.nav_gallery_photos' },
+               { path: '/gallery/videos', key: 'navbar.nav_gallery_videos' },
+               { path: '/gallery/audio', key: 'navbar.nav_gallery_audio' }
              ]
            },
            { path: '/press',      key: 'navbar.nav_press' },
-           { path: '/video',      key: 'navbar.nav_video' },
            { path: '/repertoire', key: 'navbar.nav_repertoire' },
            { path: 'https://contact.danielecamiz.com', key: 'navbar.nav_contact', external: true },
            { path: '/news',       key: 'navbar.nav_news' }
          ];
       %>
       <% items.forEach(item => { %>
-        <li role="none" <%= item.dropdown ? 'class="nav-item-dropdown"' : '' %>>
+        <li role="none"<% if (item.dropdown) { %> class="nav-item-dropdown"<% } %>>
           <% if (item.dropdown) { %>
             <button class="nav-link nav-dropdown-toggle"
                     role="menuitem"
@@ -60,7 +59,7 @@
                   <a href="<%= sub.path %>"
                      role="menuitem"
                      class="nav-dropdown-item">
-                    <%= sub.label %>
+                    <%= sub.key ? t(sub.key) : sub.label %>
                   </a>
                 </li>
               <% }) %>

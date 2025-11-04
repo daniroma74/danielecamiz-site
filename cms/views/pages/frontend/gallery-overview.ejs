@@ -1,0 +1,30 @@
+<%
+  const _sections = Array.isArray(sections) ? sections : [];
+%>
+
+<section id="gallery-overview" class="gallery-page">
+  <div class="gallery-hero">
+    <h1 class="gallery-hero__title"><%= title %></h1>
+    <p class="gallery-hero__description"><%= description %></p>
+  </div>
+
+  <div class="gallery-sections">
+    <% _sections.forEach(section => { %>
+      <a href="<%= section.url %>" class="gallery-section-card" data-type="<%= section.type %>">
+        <div class="gallery-section-card__icon">
+          <i class="fas <%= section.icon %>"></i>
+        </div>
+        <div class="gallery-section-card__content">
+          <h2 class="gallery-section-card__title"><%= section.title %></h2>
+          <p class="gallery-section-card__description"><%= section.description %></p>
+        </div>
+        <% if (section.count > 0) { %>
+          <div class="gallery-section-card__count"><%= section.count %></div>
+        <% } %>
+        <div class="gallery-section-card__arrow">
+          <i class="fas fa-arrow-right"></i>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</section>

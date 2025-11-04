@@ -1,0 +1,543 @@
+/* ========================================
+   CONCERTS MODERN DESIGN 2025
+   - Mantiene hero, header, claim
+   - Cards moderne per upcoming
+   - Timeline elegante per past
+   ======================================== */
+
+:root {
+  --concerts-accent: #d4af37;
+  --concerts-accent-light: #ffefbb;
+  --concerts-bg-card: #121212;
+  --concerts-bg-card-hover: #1a1a1a;
+  --concerts-border: #222;
+  --concerts-border-hover: #333;
+  --concerts-shadow: rgba(0, 0, 0, 0.4);
+  --concerts-shadow-hover: rgba(212, 175, 55, 0.15);
+}
+
+/* ========== UPCOMING CONCERTS (Modern Cards) ========== */
+
+.upcoming-table {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.up-row {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--concerts-bg-card);
+  border: 1px solid var(--concerts-border);
+  border-left: 4px solid var(--concerts-accent);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.up-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.03) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.up-row:hover {
+  background: var(--concerts-bg-card-hover);
+  border-color: var(--concerts-border-hover);
+  box-shadow:
+    0 8px 24px var(--concerts-shadow),
+    0 0 0 1px rgba(212, 175, 55, 0.1);
+  transform: translateY(-2px);
+}
+
+.up-row:hover::before {
+  opacity: 1;
+}
+
+/* Date Badge */
+.up-date {
+  text-align: center;
+  padding: 0.75rem 1rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.up-row:hover .up-date {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
+}
+
+.up-month {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--concerts-accent);
+  margin-bottom: 0.25rem;
+}
+
+.up-day {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--concerts-accent-light);
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Content */
+.up-main {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.up-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.up-place {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+}
+
+.up-place::before {
+  content: '📍';
+  font-size: 0.85rem;
+}
+
+.up-line {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* CTA Button */
+.up-cta {
+  position: relative;
+  z-index: 1;
+}
+
+.up-cta .btn {
+  white-space: nowrap;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #d4af37 0%, #f2d675 100%);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.up-cta .btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 20px rgba(212, 175, 55, 0.35),
+    0 0 0 2px rgba(212, 175, 55, 0.2);
+  background: linear-gradient(135deg, #f2d675 0%, #d4af37 100%);
+}
+
+.up-cta .btn:active {
+  transform: translateY(0);
+}
+
+/* ========== PAST CONCERTS (Year Pills) ========== */
+
+.year-pills {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.year-pill {
+  display: inline-block;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid #303030;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #161616 0%, #1a1a1a 100%);
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.year-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.year-pill:hover {
+  background: linear-gradient(135deg, #1c1c1c 0%, #222 100%);
+  border-color: #404040;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.year-pill:hover::before {
+  opacity: 1;
+}
+
+.year-pill.active {
+  background: linear-gradient(135deg, #222 0%, #2a2a2a 100%);
+  border-color: var(--concerts-accent);
+  color: var(--concerts-accent-light);
+  box-shadow:
+    0 6px 20px rgba(212, 175, 55, 0.25),
+    0 0 0 1px rgba(212, 175, 55, 0.2) inset;
+  transform: translateY(0);
+}
+
+.year-pill.active::before {
+  opacity: 1;
+  background: linear-gradient(135deg,
+    rgba(212, 175, 55, 0.08) 0%,
+    rgba(212, 175, 55, 0.03) 100%);
+}
+
+/* ========== CONCERT CARDS (Archive) ========== */
+
+.concerts-year-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.concert-item {
+  animation: fadeInUp 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.concert-block {
+  display: flex;
+  gap: 1.5rem;
+  background: var(--concerts-bg-card);
+  border: 1px solid var(--concerts-border);
+  border-left: 4px solid var(--concerts-accent);
+  border-radius: 14px;
+  padding: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.concert-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.02) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.concert-block:hover {
+  background: var(--concerts-bg-card-hover);
+  border-color: var(--concerts-border-hover);
+  box-shadow: 0 6px 20px var(--concerts-shadow);
+  transform: translateX(4px);
+}
+
+.concert-block:hover::before {
+  opacity: 1;
+}
+
+/* Poster Thumbnail */
+.concert-thumb-link {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.concert-poster {
+  width: 130px;
+  max-height: 190px;
+  height: auto;
+  object-fit: contain;
+  background: #222;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.concert-block:hover .concert-poster {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Concert Info */
+.concert-info {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.concert-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.concert-date,
+.concert-place {
+  margin: 0.25rem 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+.concert-date::before {
+  content: '📅 ';
+  opacity: 0.7;
+  margin-right: 0.25rem;
+}
+
+.concert-place::before {
+  content: '📍 ';
+  opacity: 0.7;
+  margin-right: 0.25rem;
+}
+
+/* Details (Expandable) */
+.concert-details {
+  margin-top: 0.75rem;
+}
+
+.details-summary {
+  cursor: pointer;
+  color: var(--concerts-accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.details-summary:hover {
+  color: var(--concerts-accent-light);
+}
+
+.details-summary::marker {
+  color: var(--concerts-accent);
+}
+
+.concert-extra {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.concert-program {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border-left: 3px solid rgba(212, 175, 55, 0.3);
+}
+
+.concert-program pre {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.concert-facts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.concert-facts li {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.concert-facts strong {
+  color: var(--concerts-accent);
+  font-weight: 600;
+}
+
+/* Actions */
+.concert-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.concert-actions .btn {
+  padding: 0.5rem 1rem;
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--concerts-accent-light);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.concert-actions .btn:hover {
+  background: rgba(212, 175, 55, 0.25);
+  border-color: var(--concerts-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.05rem;
+  font-style: italic;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 980px) {
+  .up-row {
+    grid-template-columns: 110px 1fr;
+    gap: 1rem;
+  }
+
+  .up-cta {
+    grid-column: 1 / -1;
+    justify-self: end;
+    margin-top: 0.5rem;
+  }
+
+  .up-day {
+    font-size: 1.75rem;
+  }
+
+  .concert-block {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .concert-poster {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .up-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .up-date {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.75rem;
+  }
+
+  .up-month {
+    font-size: 0.95rem;
+  }
+
+  .up-day {
+    font-size: 1.5rem;
+  }
+
+  .year-pills {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+
+  .year-pill {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* ========== ANIMATIONS ========== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .concert-item {
+    animation-delay: calc(var(--item-index, 0) * 0.05s);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .concert-item {
+    opacity: 1;
+    animation: none;
+  }
+}

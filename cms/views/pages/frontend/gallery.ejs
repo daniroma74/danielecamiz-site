@@ -1,21 +1,53 @@
 <%-
   // Attesi:
-  //   claimHTML: string
-  //   categories: [{ categoryKey, folder, title, cover, photos:[{src, alt, description}] }]
+  //   isOverview: boolean - true se overview, false se subcategory
+  //   subcategories: [{ id, title, description, url, icon, count }] (per overview)
+  //   claimHTML: string (per photos)
+  //   categories: [{ categoryKey, folder, title, cover, photos:[{src, alt, description}] }] (per photos)
   //   t(), lang in res.locals
 -%>
 <%
-  const list = Array.isArray(categories) ? categories : [];
+  const isOverviewMode = typeof isOverview !== 'undefined' ? isOverview : false;
+  const subcats = (typeof subcategories !== 'undefined' && Array.isArray(subcategories)) ? subcategories : [];
+  const list = (typeof categories !== 'undefined' && Array.isArray(categories)) ? categories : [];
   const _t = (k, def='') => { try { const v=(typeof t==='function'?t(k):''); return (v && v!==k) ? v : def; } catch { return def; } };
 %>
 
 <section id="gallery">
-  <h1 id="gallery_title"><%= _t('gallery.title', lang==='en' ? 'Photo gallery' : 'Galleria fotografica') %></h1>
-  <p id="gallery_claim" class="claim-text"><%- claimHTML || '' %></p>
+  <% if (isOverviewMode) { %>
+    <!-- OVERVIEW MODE: Show subcategory cards -->
+    <h1 id="gallery_title"><%= (lang==='en' ? 'Gallery' : 'Galleria') %></h1>
+    <p id="gallery_claim" class="claim-text"><%= description || '' %></p>
 
-  <% if (!list.length) { %>
-    <p class="empty-state"><%= lang==='en' ? 'No photos available.' : 'Nessuna foto disponibile.' %></p>
-  <% } %>
+    <% if (!subcats.length) { %>
+      <p class="empty-state"><%= lang==='en' ? 'No galleries available.' : 'Nessuna galleria disponibile.' %></p>
+    <% } %>
+
+    <% if (subcats.length) { %>
+      <div class="gallery-subcategories">
+        <% subcats.forEach((sub) => { %>
+          <a class="subcategory-card" href="<%= sub.url %>">
+            <div class="subcategory-icon">
+              <i class="fas <%= sub.icon %>"></i>
+            </div>
+            <h2 class="subcategory-title"><%= sub.title %></h2>
+            <p class="subcategory-description"><%= sub.description %></p>
+            <% if (sub.count > 0) { %>
+              <span class="subcategory-count"><%= sub.count %></span>
+            <% } %>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+
+  <% } else { %>
+    <!-- PHOTO GALLERY MODE: Show photo categories -->
+    <h1 id="gallery_title"><%= title || _t('gallery.title', lang==='en' ? 'Photo gallery' : 'Galleria fotografica') %></h1>
+    <p id="gallery_claim" class="claim-text"><%- claimHTML || '' %></p>
+
+    <% if (!list.length) { %>
+      <p class="empty-state"><%= lang==='en' ? 'No photos available.' : 'Nessuna foto disponibile.' %></p>
+    <% } %>
 
   <% if (list.length) { %>
     <div class="gallery-covers">
@@ -70,14 +102,17 @@
     </section>
   <% }) %>
 
-  <!-- LIGHTBOX -->
-  <div id="lightbox" role="dialog" aria-modal="true" tabindex="-1" aria-label="Image viewer">
-    <span class="lightbox-close" aria-label="Close" onclick="closeGallery()">×</span>
-    <div class="lightbox-image-wrapper">
-      <span class="lightbox-arrow left" onclick="prevGallery()" aria-label="Previous">‹</span>
-      <img id="lightbox_img" alt="" />
-      <span class="lightbox-arrow right" onclick="nextGallery()" aria-label="Next">›</span>
-      <div class="lightbox-counter" id="lightbox_counter"></div>
+  <!-- LIGHTBOX (only for photo mode) -->
+  <% if (!isOverviewMode) { %>
+    <div id="lightbox" role="dialog" aria-modal="true" tabindex="-1" aria-label="Image viewer">
+      <span class="lightbox-close" aria-label="Close" onclick="closeGallery()">×</span>
+      <div class="lightbox-image-wrapper">
+        <span class="lightbox-arrow left" onclick="prevGallery()" aria-label="Previous">‹</span>
+        <img id="lightbox_img" alt="" />
+        <span class="lightbox-arrow right" onclick="nextGallery()" aria-label="Next">›</span>
+        <div class="lightbox-counter" id="lightbox_counter"></div>
+      </div>
     </div>
-  </div>
+  <% } %>
+  <% } /* end else (photo mode) */ %>
 </section>

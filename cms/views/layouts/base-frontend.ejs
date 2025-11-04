@@ -108,9 +108,9 @@
     %>
 
     <!-- JS GLOBALI -->
-    <script src="/js/navbar.js" defer></script>
-    <script src="/js/modules/navbar/navbar-dropdown.js" defer></script>
-    <script src="/js/cookie-consent.js" defer></script>
+    <script src="/js/navbar.js?v=<%= Date.now() %>" defer></script>
+    <script src="/js/modules/navbar/navbar-dropdown.js?v=<%= Date.now() %>" defer></script>
+    <script src="/js/cookie-consent.js?v=<%= Date.now() %>" defer></script>
 
     <!-- JS PER-PAGINA (opzionali, dal controller) -->
     <% (pageScripts || []).forEach(src => {

@@ -1,6 +1,6 @@
 // cms/controllers/concertsController.js
 import dbMain from '../utils/sqliteMain.js';
-import { resolvePosterUrlAsync, safeBoolean } from '../utils/mediaResolver.js';
+import { safeBoolean } from '../utils/mediaResolver.js';
 import { listPageCss, havePageJs } from '../utils/assetHelpers.js';
 import path from 'path';
 import fs from 'fs/promises';
@@ -92,16 +92,22 @@ async function loadConcertLabels(lang) {
 async function normalizeConcertRowAsync(row) {
   const isFuture = safeBoolean(row.is_future);
 
-  // Poster (centralized resolver → rewrite → legacy fallback)
-  let poster_url = await resolvePosterUrlAsync({
-    poster_media_id: row.poster_media_id,
-    poster_canonical_url: row.poster_canonical_url,
-    poster_cloudinary_id: row.poster_cloudinary_id,
-    poster_local_filename: row.poster_local_filename,
-    is_future: isFuture
-  }, { quality: 'auto', format: 'auto' });
+  // Poster: build Cloudinary URL directly like admin panels do (simpler, more reliable)
+  let poster_url = null;
 
-  poster_url = rewriteToUploads(poster_url);
+  if (row.poster_vertical_cloudinary && row.poster_vertical_cloudinary.trim() !== '') {
+    // Direct Cloudinary URL construction (same as concerts-admin)
+    poster_url = `https://res.cloudinary.com/dnwhnz2xy/image/upload/q_auto,f_auto/${row.poster_vertical_cloudinary}`;
+  } else if (row.poster_cloudinary_id && row.poster_cloudinary_id.trim() !== '') {
+    // Fallback to old field
+    poster_url = `https://res.cloudinary.com/dnwhnz2xy/image/upload/q_auto,f_auto/${row.poster_cloudinary_id}`;
+  }
+
+  // rewriteToUploads only if not already an HTTP URL
+  if (poster_url && !/^https?:\/\//i.test(poster_url)) {
+    poster_url = rewriteToUploads(poster_url);
+  }
+
   if (!poster_url && row.poster_local_filename) {
     poster_url = normalizeLegacyPoster(row.poster_local_filename, isFuture);
   }
@@ -118,10 +124,12 @@ async function normalizeConcertRowAsync(row) {
   return {
     id: row.id,
     title: row.title || null,
+    slug: row.slug || null,
     date: row.date,
     year: String(row.date || '').slice(0, 4),
     location: row.location || null,
     is_future: isFuture,
+    booking_enabled: safeBoolean(row.booking_enabled),
     // dettagli normalizzati (placeholder, verranno arricchiti più sotto)
     program: program_raw || null,
     program_notes: row.program_notes || null,
@@ -132,7 +140,9 @@ async function normalizeConcertRowAsync(row) {
     youtube: row.youtube || null,
     // poster
     poster_local_filename: row.poster_local_filename || null,
-    poster_url
+    poster_url,
+    poster_horizontal_url: (row.poster_horizontal_cloudinary && row.poster_horizontal_cloudinary.trim() !== '') ?
+      `https://res.cloudinary.com/dnwhnz2xy/image/upload/q_auto,f_auto/${row.poster_horizontal_cloudinary}` : null
   };
 }
 
@@ -262,12 +272,12 @@ async function fetchPrograms(ids) {
         (err, r) => (err ? reject(err) : resolve(r))
       );
     });
-    // Tolleranza su nomi colonne: composer_name|composer, work_title|title, position
+    // Tolleranza su nomi colonne: composer_full_name|composer_name|composer, work_title|title, position
     for (const r of rows) {
       const cid = r.concert_id;
-      const comp = firstText(r.composer_name, r.composer);
+      const comp = firstText(r.composer_full_name, r.composer_name, r.composer);
       const work = firstText(r.work_title, r.title, r.work);
-      const cat  = firstText(r.work_catalog, r.catalog, r.catno);
+      const cat  = firstText(r.work_catalogue, r.work_catalog, r.catalog, r.catno);
       const pos  = Number(r.position || r.pos || r.order || 0) || 0;
 
       const line = joinNonEmpty([comp, work + (cat ? ` (${cat})` : '')], ' — ');

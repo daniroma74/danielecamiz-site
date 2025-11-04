@@ -35,7 +35,7 @@ import homeRoutes        from './routes/homeRoutes.js';
 import bioRoutes         from './routes/bioRoutes.js';
 import concertsRoutes    from './routes/concertsRoutes.js';
 // ⛔ contactRoutes rimosso
-import galleryRoutes     from './routes/galleryRoutes.js';
+import galleryRoutes     from './routes/galleryRoutesNew.js';
 import newsRoutes        from './routes/newsRoutes.js';
 import pressRoutes       from './routes/pressRoutes.js';
 import privacyRoutes     from './routes/privacyRoutes.js';

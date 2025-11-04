@@ -26,7 +26,12 @@
     var facts = [];
     if (c.orchestra) facts.push('<li><strong>'+esc(t('Orchestra','Orchestra'))+':</strong> '+esc(c.orchestra)+'</li>');
     if (c.conductor) facts.push('<li><strong>'+esc(t('Direttore','Conductor'))+':</strong> '+esc(c.conductor)+'</li>');
-    if (c.soloists) facts.push('<li><strong>'+esc(t('Solista','Soloists'))+':</strong> '+esc(c.soloists)+'</li>');
+    if (c.soloists) {
+      // Pluralizza: cerca separatori comuni (·, •, -, virgola, "e", "and")
+      var isSingle = !/[·•\-,]|\s(e|and)\s/i.test(c.soloists);
+      var label = isSingle ? t('Solista','Soloist') : t('Solisti','Soloists');
+      facts.push('<li><strong>'+esc(label)+':</strong> '+esc(c.soloists)+'</li>');
+    }
     if (facts.length) parts.push('<ul style="margin:.25rem 0 1rem 1.1rem;line-height:1.5;">'+facts.join('')+'</ul>');
     var pg = programToList(c.program);
     if (pg.length) {
@@ -79,6 +84,12 @@
 
     posterEl.src = c.poster || c.locandina || '';
     posterEl.alt = c.title ? ('Poster – '+c.title) : 'Concert poster';
+
+    // Reset stili (potrebbero essere stati impostati da openPreview)
+    posterEl.style.maxWidth = '';
+    posterEl.style.maxHeight = '';
+    posterEl.style.width = '';
+
     detailsEl.innerHTML = buildDetailsHTML(c);
 
     overlay.classList.add('show');
@@ -91,11 +102,29 @@
 
   function close(){
     if(!overlay) return;
-    overlay.classList.remove('show');
+    overlay.classList.remove('show', 'iframe-mode');
     overlay.setAttribute('hidden','');
     document.body.style.overflow = '';
+
+    // Reset poster view
     if (posterEl) posterEl.src = '';
     if (detailsEl) detailsEl.innerHTML = '';
+
+    // Reset iframe view
+    var iframeContainer = $('concert_iframe_container');
+    var posterContainer = $('concert_poster_container');
+    var iframe = $('concert_iframe');
+
+    if (iframeContainer) iframeContainer.style.display = 'none';
+    if (posterContainer) posterContainer.style.display = '';
+    if (iframe) iframe.src = '';
+
+    // Rimuovi pulsante prenota dall'iframe container
+    if (iframeContainer) {
+      var bookBtn = iframeContainer.querySelector('.lp-book-btn');
+      if (bookBtn) bookBtn.remove();
+    }
+
     if (lastActive && typeof lastActive.focus === 'function') { try { lastActive.focus(); } catch {} }
   }
 
@@ -165,7 +194,52 @@
     open(payload);
   }, { capture: true });
 
+  // Anteprima per concerti futuri con landing page (mostra LP vera in iframe)
+  function openPreview(payload, landingUrl){
+    var c = parsePayload(payload);
+    if(!c) return;
+    if(!landingUrl) { open(payload); return; } // Fallback a lightbox normale
+    if(!ensureRefs()) return;
+
+    var iframeContainer = $('concert_iframe_container');
+    var posterContainer = $('concert_poster_container');
+    var iframe = $('concert_iframe');
+
+    if (!iframeContainer || !posterContainer || !iframe) {
+      open(payload); // Fallback se elementi mancano
+      return;
+    }
+
+    // Mostra iframe, nascondi poster
+    posterContainer.style.display = 'none';
+    iframeContainer.style.display = 'block';
+
+    // Carica la landing page nell'iframe
+    iframe.src = landingUrl;
+
+    // Aggiungi pulsante "Prenota" sopra l'iframe
+    var bookBtn = '<div style="text-align:center;padding:1rem;background:rgba(0,0,0,0.8);border-bottom:2px solid var(--concerts-accent,#d4af37);">' +
+      '<a class="btn btn-primary" href="'+esc(landingUrl)+'" target="_blank" rel="noopener" style="font-size:1.1em;padding:.75rem 2rem;">'+esc(t('Prenota su Landing Page','Book on Landing Page'))+'</a>' +
+      '</div>';
+
+    // Inserisci il pulsante prima dell'iframe se non c'è già
+    if (!iframeContainer.querySelector('.lp-book-btn')) {
+      var div = document.createElement('div');
+      div.className = 'lp-book-btn';
+      div.innerHTML = bookBtn;
+      iframeContainer.insertBefore(div, iframe);
+    }
+
+    overlay.classList.add('show', 'iframe-mode');
+    overlay.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+
+    lastActive = document.activeElement;
+    try { (overlay.querySelector('.concert-lightbox-close')||overlay).focus(); } catch {}
+  }
+
   // API globali già usate nella view
   window.openConcertLightbox = open;
+  window.openConcertPreview = openPreview;
   window.closeConcertLightbox = close;
 })();
