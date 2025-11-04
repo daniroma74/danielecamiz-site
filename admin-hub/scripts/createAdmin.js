@@ -75,7 +75,7 @@ Questo script ti guiderà nella creazione dell'utente amministratore principale.
     try {
         // Verifica se esiste già un admin
         const existingAdmin = await get(
-            "SELECT COUNT(*) as count FROM users WHERE role = 'admin'"
+            "SELECT COUNT(*) as count FROM hub_users WHERE role = 'admin'"
         );
         
         if (existingAdmin.count > 0) {
@@ -106,7 +106,7 @@ Questo script ti guiderà nella creazione dell'utente amministratore principale.
             
             // Verifica unicità
             const existing = await get(
-                'SELECT id FROM users WHERE username = ?',
+                'SELECT id FROM hub_users WHERE username = ?',
                 [username]
             );
             
@@ -129,7 +129,7 @@ Questo script ti guiderà nella creazione dell'utente amministratore principale.
             
             // Verifica unicità email
             const existingEmail = await get(
-                'SELECT id FROM users WHERE email = ?',
+                'SELECT id FROM hub_users WHERE email = ?',
                 [email]
             );
             
@@ -285,7 +285,7 @@ Questo script ti guiderà nella creazione dell'utente amministratore principale.
         
         // Crea utente nel database
         const result = await run(
-            `INSERT INTO users (
+            `INSERT INTO hub_users (
                 username, email, password_hash, role, permissions,
                 two_factor_enabled, two_factor_secret, active
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
