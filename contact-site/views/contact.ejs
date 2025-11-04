@@ -5,247 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= data.pageTitle %></title>
   <meta name="description" content="<%= data.description %>">
-  
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/img/icons/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/img/icons/favicon-16.png" sizes="16x16">
-  
+
   <!-- Open Graph -->
   <meta property="og:title" content="<%= data.pageTitle %>">
   <meta property="og:description" content="<%= data.description %>">
   <meta property="og:image" content="<%= data.avatar %>">
-  
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    :root {
-      --bg-primary: #0a0a0a;
-      --bg-card: #242424;
-      --text-primary: #f5f5f5;
-      --text-secondary: #b0b0b0;
-      --accent-gold: #d4af37;
-      --border-color: #333;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-    
-    .linktree-container {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-    }
-    
-    .lang-toggle {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-    }
-    
-    .lang-switch {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      background: var(--bg-card);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 50%;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.875rem;
-      transition: all 0.3s;
-    }
-    
-    .lang-switch:hover {
-      background: var(--accent-gold);
-      color: var(--bg-primary);
-    }
-    
-    .linktree-header {
-      text-align: center;
-      margin-bottom: 3rem;
-      padding-top: 3rem;
-    }
-    
-    .avatar-wrapper {
-      margin-bottom: 1.5rem;
-      display: inline-block;
-      position: relative;
-    }
-    
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      border: 3px solid var(--accent-gold);
-    }
-    
-    .name {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, var(--accent-gold), #e6c757);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    .role {
-      font-size: 1.125rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-    }
-    
-    .bio {
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    
-    .link-section {
-      margin-bottom: 2rem;
-    }
-    
-    .section-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--accent-gold);
-      margin-bottom: 1.5rem;
-      text-align: center;
-      position: relative;
-      padding-bottom: 0.5rem;
-    }
-    
-    .section-title::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 2px;
-      background: var(--accent-gold);
-      border-radius: 999px;
-    }
-    
-    .links-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .highlight-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-decoration: none;
-      color: var(--text-primary);
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    
-    .highlight-card:hover {
-      background: #2a2a2a;
-      transform: translateY(-2px);
-      border-color: var(--accent-gold);
-    }
-    
-    .links-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    
-    .link-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
-      text-decoration: none;
-      color: var(--text-primary);
-      font-size: 1rem;
-      font-weight: 500;
-      transition: all 0.3s;
-    }
-    
-    .link-button:hover {
-      background: #2a2a2a;
-      transform: translateY(-2px);
-      border-color: var(--accent-gold);
-    }
-    
-    .contact-button {
-      border-color: rgba(212, 175, 55, 0.3);
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), transparent);
-    }
-    
-    .contact-button:hover {
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
-      border-color: var(--accent-gold);
-    }
-    
-    .link-icon {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-      filter: brightness(0) invert(1);
-    }
-    
-    .link-button:hover .link-icon {
-      filter: brightness(0) saturate(100%) invert(71%) sepia(61%) saturate(464%) hue-rotate(5deg) brightness(102%) contrast(90%);
-    }
-    
-    .linktree-footer {
-      text-align: center;
-      padding-top: 2rem;
-      margin-top: 2rem;
-      border-top: 1px solid rgba(51, 51, 51, 0.5);
-    }
-    
-    .footer-text {
-      color: #808080;
-      font-size: 0.875rem;
-    }
-    
-    @media (max-width: 768px) {
-      .linktree-container { padding: 1.5rem 0.5rem; }
-      .name { font-size: 1.75rem; }
-      .role { font-size: 1rem; }
-      .avatar { width: 100px; height: 100px; }
-      .links-grid { grid-template-columns: 1fr; }
-      .link-button { padding: 0.875rem 1.25rem; }
-    }
-  </style>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-  <div class="linktree-container">
+  <div class="container">
     <!-- Language Toggle -->
-    <div class="lang-toggle">
-      <a href="/set-language/<%= data.langToggle.other %>" class="lang-switch">
+    <div class="language-toggle">
+      <a href="/set-language/<%= data.langToggle.other %>">
         <%= data.langToggle.label %>
       </a>
     </div>
-    
+
     <!-- Header -->
-    <header class="linktree-header">
-      <div class="avatar-wrapper">
+    <header class="header">
+      <div class="avatar-container">
         <img src="<%= data.avatar %>" alt="<%= data.name %>" class="avatar">
       </div>
       <h1 class="name"><%= data.name %></h1>
@@ -256,91 +40,210 @@
         <p class="bio"><%= data.bio %></p>
       <% } %>
     </header>
-    
+
     <!-- Highlights Section -->
     <% if (data.highlights && data.highlights.length > 0) { %>
-      <section class="link-section highlights-section">
-        <h2 class="section-title"><%= data.highlightsTitle %></h2>
-        <div class="links-grid">
+      <section class="section">
+        <h2 class="section-title"><%= data.highlightTitle || data.highlightsTitle %></h2>
+        <div class="highlights-grid">
           <% data.highlights.forEach(link => { %>
-            <a href="<%= link.url %>" 
-               class="highlight-card" 
-               target="<%= link.target %>"
-               rel="noopener noreferrer">
+            <a href="<%= link.url %>"
+               class="highlight-card"
+               target="<%= link.target || '_blank' %>"
+               rel="noopener noreferrer"
+               data-category="highlight"
+               data-label="<%= link.text %>">
               <% if (link.icon) { %>
                 <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
               <% } %>
               <span class="link-text"><%= link.text %></span>
+              <% if (link.badge) { %>
+                <span class="link-badge" style="background: <%= link.badgeColor || '#FFD700' %>"><%= link.badge %></span>
+              <% } %>
             </a>
           <% }); %>
         </div>
       </section>
     <% } %>
-    
+
     <!-- Social Links -->
     <% if (data.socialLinks && data.socialLinks.length > 0) { %>
-      <section class="link-section social-section">
+      <section class="section">
         <h2 class="section-title"><%= data.socialTitle %></h2>
-        <div class="links-list">
+        <div class="links-container">
           <% data.socialLinks.forEach(link => { %>
-            <a href="<%= link.url %>" 
-               class="link-button social-button" 
-               target="<%= link.target %>"
-               rel="noopener noreferrer">
+            <a href="<%= link.url %>"
+               class="link-item"
+               target="<%= link.target || '_blank' %>"
+               rel="noopener noreferrer"
+               data-category="social"
+               data-label="<%= link.text %>">
               <% if (link.icon) { %>
                 <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
               <% } %>
               <span class="link-text"><%= link.text %></span>
+              <% if (link.badge) { %>
+                <span class="link-badge" style="background: <%= link.badgeColor || '#FFD700' %>"><%= link.badge %></span>
+              <% } %>
             </a>
           <% }); %>
         </div>
       </section>
     <% } %>
-    
+
     <!-- Contact Links -->
     <% if (data.contactLinks && data.contactLinks.length > 0) { %>
-      <section class="link-section contact-section">
+      <section class="section">
         <h2 class="section-title"><%= data.contactTitle %></h2>
-        <div class="links-list">
+        <div class="links-container">
           <% data.contactLinks.forEach(link => { %>
-            <a href="<%= link.url %>" 
-               class="link-button contact-button" 
-               target="<%= link.target %>"
-               rel="noopener noreferrer">
+            <%
+              const isEmail = link.url.startsWith('mailto:');
+              const isCopyable = isEmail || link.url.startsWith('tel:');
+              const copyValue = isEmail ? link.url.replace('mailto:', '') : (link.url.startsWith('tel:') ? link.url.replace('tel:', '') : null);
+            %>
+            <a href="<%= link.url %>"
+               class="link-item <%= isCopyable ? 'copyable-link' : '' %>"
+               target="<%= link.target || '_blank' %>"
+               rel="noopener noreferrer"
+               data-category="contact"
+               data-label="<%= link.text %>"
+               <% if (copyValue) { %>data-copy="<%= copyValue %>"<% } %>>
               <% if (link.icon) { %>
                 <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
               <% } %>
               <span class="link-text"><%= link.text %></span>
+              <% if (link.badge) { %>
+                <span class="link-badge" style="background: <%= link.badgeColor || '#FFD700' %>"><%= link.badge %></span>
+              <% } %>
             </a>
           <% }); %>
         </div>
       </section>
     <% } %>
-    
+
     <!-- Extra Links -->
     <% if (data.extraLinks && data.extraLinks.length > 0) { %>
-      <section class="link-section extra-section">
+      <section class="section">
         <h2 class="section-title"><%= data.extraTitle %></h2>
-        <div class="links-list">
+        <div class="links-container">
           <% data.extraLinks.forEach(link => { %>
-            <a href="<%= link.url %>" 
-               class="link-button extra-button" 
-               target="<%= link.target %>"
-               rel="noopener noreferrer">
+            <a href="<%= link.url %>"
+               class="link-item"
+               target="<%= link.target || '_blank' %>"
+               rel="noopener noreferrer"
+               data-category="extra"
+               data-label="<%= link.text %>">
               <% if (link.icon) { %>
                 <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
               <% } %>
               <span class="link-text"><%= link.text %></span>
+              <% if (link.badge) { %>
+                <span class="link-badge" style="background: <%= link.badgeColor || '#FFD700' %>"><%= link.badge %></span>
+              <% } %>
             </a>
           <% }); %>
         </div>
       </section>
     <% } %>
-    
+
     <!-- Footer -->
-    <footer class="linktree-footer">
-      <p class="footer-text"><%= data.footerText %></p>
+    <footer class="footer">
+      <p><%= data.footerText %></p>
     </footer>
   </div>
+
+  <!-- Copy Feedback Toast -->
+  <div id="copyFeedback" class="copy-feedback"></div>
+
+  <!-- Analytics & Interactivity -->
+  <script>
+    (function() {
+      'use strict';
+
+      const HUB_ANALYTICS_URL = '<%= hubAnalyticsUrl %>';
+
+      // Analytics tracking
+      function trackEvent(type, category, label, value = 1) {
+        if (!HUB_ANALYTICS_URL) return;
+
+        fetch(HUB_ANALYTICS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            module: 'contact-site',
+            type: type,
+            category: category,
+            label: label,
+            value: value
+          })
+        }).catch(() => {}); // Silent fail
+      }
+
+      // Track page view on load
+      trackEvent('page_view', 'contact', 'landing');
+
+      // Track link clicks
+      document.addEventListener('DOMContentLoaded', function() {
+        // Track all link clicks
+        document.querySelectorAll('.link-item, .highlight-card').forEach(function(link) {
+          link.addEventListener('click', function() {
+            const category = link.dataset.category || 'unknown';
+            const label = link.dataset.label || link.href;
+            trackEvent('link_click', category, label);
+          });
+        });
+
+        // Copy to clipboard functionality
+        const copyableLinks = document.querySelectorAll('.copyable-link');
+        copyableLinks.forEach(function(link) {
+          link.addEventListener('click', function(e) {
+            const copyValue = link.dataset.copy;
+            if (!copyValue) return;
+
+            // Only handle copy if it's a mailto: or tel: link
+            if (link.href.startsWith('mailto:') || link.href.startsWith('tel:')) {
+              e.preventDefault();
+
+              // Copy to clipboard
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(copyValue)
+                  .then(function() {
+                    showCopyFeedback('<%= lang === "it" ? "Copiato!" : "Copied!" %>');
+                    trackEvent('copy', 'contact', copyValue);
+                  })
+                  .catch(function() {
+                    // Fallback: still open the link
+                    window.location.href = link.href;
+                  });
+              } else {
+                // Fallback for older browsers
+                window.location.href = link.href;
+              }
+            }
+          });
+        });
+
+        // Show copy feedback
+        function showCopyFeedback(message) {
+          const feedback = document.getElementById('copyFeedback');
+          feedback.textContent = message;
+          feedback.classList.add('show');
+
+          setTimeout(function() {
+            feedback.classList.remove('show');
+          }, 3000);
+        }
+
+        // Track language toggle
+        const langToggle = document.querySelector('.language-toggle a');
+        if (langToggle) {
+          langToggle.addEventListener('click', function() {
+            trackEvent('language_change', 'ui', langToggle.textContent.trim());
+          });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

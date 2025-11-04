@@ -1,10 +1,13 @@
 // contact-site/server.js
+// Refactored with DB integration + analytics tracking
+
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
+import Database from 'better-sqlite3';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -12,19 +15,29 @@ const __dirname  = path.dirname(__filename);
 const app  = express();
 const PORT = process.env.PORT || 4003;
 const isProd = process.env.NODE_ENV === 'production';
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, '..', 'cms', 'db', 'main.sqlite');
+const HUB_ANALYTICS_URL = process.env.HUB_ANALYTICS_URL || 'http://localhost:3100/api/analytics/track';
+
+// Database connection
+let db;
+try {
+  db = new Database(DB_PATH, { readonly: true });
+  db.pragma('journal_mode = WAL');
+  console.log(`✅ Database connected: ${DB_PATH}`);
+} catch (error) {
+  console.error('⚠️  Database connection failed, will use JSON fallback:', error.message);
+}
 
 app.set('trust proxy', true);
-
-// View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Middlewares base
 app.disable('x-powered-by');
+
 app.use(compression());
 app.use(cookieParser());
+app.use(express.json());
 
-// Headers sicurezza minimi
+// Security headers
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -34,197 +47,204 @@ app.use((req, res, next) => {
 
 // Static assets
 app.use('/css', express.static(path.join(__dirname, 'public', 'css'), {
-  maxAge: isProd ? '1h' : 0,
-  etag: true,
-  setHeaders: (res) => {
-    res.setHeader('Content-Type', 'text/css; charset=UTF-8');
-    res.setHeader('Cache-Control', isProd ? 'public, max-age=3600' : 'no-cache');
-  }
+  maxAge: isProd ? '1h' : 0, etag: true
 }));
 
 app.use('/js', express.static(path.join(__dirname, 'public', 'js'), {
-  maxAge: isProd ? '1h' : 0,
-  etag: true,
-  setHeaders: (res) => {
-    res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
-    res.setHeader('Cache-Control', isProd ? 'public, max-age=3600' : 'no-cache');
-  }
+  maxAge: isProd ? '1h' : 0, etag: true
 }));
 
 app.use('/img', express.static(path.join(__dirname, 'public', 'img'), {
-  maxAge: isProd ? '30d' : 0,
-  etag: true
+  maxAge: isProd ? '30d' : 0, etag: true
 }));
 
-// Root static (favicon, robots, ecc.)
-app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: isProd ? '1d' : 0,
-  etag: true
-}));
+// ============================================
+// DATA LOADING (DB + JSON FALLBACK)
+// ============================================
 
-// Debug logging
-if (!isProd) {
-  app.use((req, res, next) => {
-    console.log(`${req.method} ${req.originalUrl} - host:${req.get('host')}`);
-    next();
-  });
-}
+// Load data from database
+async function loadDataFromDB(lang) {
+  if (!db) return null;
 
-/* ---------- helpers dati ---------- */
-
-async function readJsonSafe(absPath) {
   try {
-    return JSON.parse(await fs.readFile(absPath, 'utf8'));
-  } catch {
+    // Get settings
+    const settings = db.prepare('SELECT * FROM contact_settings WHERE id = 1').get();
+    if (!settings) return null;
+
+    // Get sections
+    const sections = db.prepare(`
+      SELECT * FROM contact_sections
+      WHERE visible = 1
+      ORDER BY order_index
+    `).all();
+
+    // Get active links (respects scheduling + visibility)
+    const links = db.prepare(`
+      SELECT * FROM view_active_contact_links
+      ORDER BY category, order_index
+    `).all();
+
+    // Group links by category
+    const linksByCategory = {};
+    links.forEach(link => {
+      if (!linksByCategory[link.category]) {
+        linksByCategory[link.category] = [];
+      }
+      linksByCategory[link.category].push({
+        text: lang === 'en' ? link.title_en : link.title_it,
+        url: link.url,
+        icon: link.icon,
+        target: link.target,
+        badge: link.badge_text,
+        badgeColor: link.badge_color
+      });
+    });
+
+    // Build data object
+    const data = {
+      name: settings.name,
+      role: lang === 'en' ? settings.role_en : settings.role_it,
+      bio: lang === 'en' ? settings.bio_en : settings.bio_it,
+      avatar: settings.avatar_url,
+      footerText: lang === 'en' ? settings.footer_text_en : settings.footer_text_it,
+      pageTitle: `Links - ${settings.name}`,
+      description: lang === 'en'
+        ? 'All my links in one place - Contacts, social media, projects and news'
+        : 'Tutti i miei link in un unico posto - Contatti, social, progetti e news'
+    };
+
+    // Add sections and links
+    sections.forEach(section => {
+      const categoryId = section.id;
+      const titleKey = `${categoryId}Title`;
+      const linksKey = categoryId === 'highlight' ? 'highlights' : `${categoryId}Links`;
+
+      data[titleKey] = lang === 'en' ? section.title_en : section.title_it;
+      data[linksKey] = linksByCategory[categoryId] || [];
+    });
+
+    return data;
+  } catch (error) {
+    console.error('Error loading data from DB:', error);
     return null;
   }
 }
 
-async function loadContactData(lang = 'it') {
-  const filename = `contact-${lang}.json`;
-  const primary  = path.join(__dirname, 'content', filename);
-  const fallback = path.join(__dirname, 'content', 'contact-it.json');
-  return (await readJsonSafe(primary)) || (await readJsonSafe(fallback)) || {};
+// Load data from JSON (fallback)
+async function loadDataFromJSON(lang) {
+  try {
+    const filename = `contact-${lang}.json`;
+    const filepath = path.join(__dirname, 'content', filename);
+    const content = await fs.readFile(filepath, 'utf-8');
+    return JSON.parse(content);
+  } catch (error) {
+    console.error(`Error loading JSON (${lang}):`, error.message);
+    return null;
+  }
 }
 
-function pickLang(req) {
-  // Priorità: forced param (se presente), path /?lng=, cookie, default
-  if (req.__forcedLang === 'it' || req.__forcedLang === 'en') return req.__forcedLang;
+// Main data loader (DB first, then JSON fallback)
+async function loadContactData(lang) {
+  // Try DB first
+  const dbData = await loadDataFromDB(lang);
+  if (dbData) {
+    console.log(`✅ Data loaded from DB (${lang})`);
+    return dbData;
+  }
 
+  // Fallback to JSON
+  console.log(`⚠️  Falling back to JSON (${lang})`);
+  const jsonData = await loadDataFromJSON(lang);
+  return jsonData || {};
+}
+
+// ============================================
+// LANGUAGE DETECTION
+// ============================================
+
+function pickLang(req) {
+  if (req.__forcedLang === 'it' || req.__forcedLang === 'en') return req.__forcedLang;
   const q = req.query?.lng;
   if (q === 'it' || q === 'en') return q;
-
   const c = req.cookies?.i18next;
   if (c === 'it' || c === 'en') return c;
-
   return 'it';
 }
 
-function normalizeUrl(url = '') {
-  const s = String(url || '').trim();
-  if (!s) return '';
-  if (/^(https?:)?\/\//i.test(s)) return s.startsWith('//') ? `https:${s}` : s;
-  if (/^(mailto:|tel:)/i.test(s)) return s;
-  return s.startsWith('/') ? s : '/' + s;
-}
+// ============================================
+// ROUTES
+// ============================================
 
-function normalizeLinks(list) {
-  if (!Array.isArray(list)) return [];
-  return list
-    .filter(x => x && (x.url || x.text))
-    .map(x => ({
-      text:   x.text || '',
-      url:    normalizeUrl(x.url || ''),
-      icon:   x.icon || '',
-      target: x.target || '_blank'
-    }));
-}
-
-function prepareContactData(raw = {}, lang = 'it') {
-  return {
-    // Base
-    avatar: raw.avatar || '/img/daniele-camiz-foto-profilo.png',
-    name: raw.name || 'Daniele Camiz',
-    role: raw.role || (lang === 'en'
-      ? 'Conductor & Creative Director'
-      : 'Direttore d’orchestra e Creative Director'),
-    bio: raw.bio || '',
-
-    // Sezioni
-    highlightsTitle: raw.highlightsTitle || (lang === 'en' ? 'Highlights' : 'In evidenza'),
-    highlights: normalizeLinks(raw.highlights || []),
-
-    socialTitle: raw.socialTitle || (lang === 'en' ? 'Follow me' : 'Seguimi'),
-    socialLinks: normalizeLinks(raw.socialLinks || []),
-
-    contactTitle: raw.contactTitle || (lang === 'en' ? 'Contact' : 'Contatti'),
-    contactLinks: normalizeLinks(raw.contactLinks || []),
-
-    extraTitle: raw.extraTitle || (lang === 'en' ? 'More links' : 'Altri link'),
-    extraLinks: normalizeLinks(raw.extraLinks || []),
-
-    // Meta
-    pageTitle: raw.pageTitle || (lang === 'en' ? 'Links - Daniele Camiz' : 'Link - Daniele Camiz'),
-    description: raw.description || (lang === 'en'
-      ? 'All my links in one place'
-      : 'Tutti i miei link in un unico posto'),
-
-    // Footer & lingua
-    footerText: raw.footerText || '© 2025 Daniele Camiz',
-    langToggle: {
-      current: lang,
-      other: lang === 'it' ? 'en' : 'it',
-      label: lang === 'it' ? 'EN' : 'IT'
-    }
-  };
-}
-
-/* ---------- handlers ---------- */
-
-async function renderContact(req, res, next) {
+// Main render function
+async function renderContact(req, res) {
   try {
     const lang = pickLang(req);
-    const raw  = await loadContactData(lang);
-    const data = prepareContactData(raw, lang);
+    const data = await loadContactData(lang);
 
-    // Memorizza lingua
+    // Set language cookie
     res.cookie('i18next', lang, {
-      maxAge: 31536000000,
+      maxAge: 31536000000, // 1 year
       httpOnly: false,
-      sameSite: 'Lax',
-      path: '/'
+      sameSite: 'lax'
     });
 
-    res.set('Content-Language', lang);
-    res.render('contact', { data, lang, layout: false });
-  } catch (err) {
-    console.error('Error rendering contact:', err);
-    next(err);
+    res.setHeader('Content-Language', lang);
+
+    // Language toggle
+    const otherLang = lang === 'it' ? 'en' : 'it';
+    data.langToggle = {
+      current: lang,
+      other: otherLang,
+      label: lang === 'it' ? 'EN' : 'IT'
+    };
+
+    res.render('contact', {
+      data,
+      lang,
+      layout: false,
+      hubAnalyticsUrl: HUB_ANALYTICS_URL
+    });
+  } catch (error) {
+    console.error('Render error:', error);
+    res.status(500).send('Error loading page');
   }
 }
 
-/* ---------- routes ---------- */
+// Routes
+app.get('/', (req, res) => renderContact(req, res));
 
-app.get('/_ping', (req, res) => res.type('text/plain').send('ok'));
+app.get('/it', (req, res) => {
+  req.__forcedLang = 'it';
+  renderContact(req, res);
+});
 
-app.get('/', renderContact);
-
-const withLang = (lang) => (req, res, next) => {
-  req.__forcedLang = lang;
-  renderContact(req, res, next);
-};
-
-app.get('/it', withLang('it'));
-app.get('/en', withLang('en'));
+app.get('/en', (req, res) => {
+  req.__forcedLang = 'en';
+  renderContact(req, res);
+});
 
 app.get('/set-language/:lang', (req, res) => {
-  const { lang } = req.params;
-  if (lang === 'it' || lang === 'en') {
-    res.cookie('i18next', lang, {
-      maxAge: 31536000000,
-      httpOnly: false,
-      sameSite: 'Lax',
-      path: '/'
-    });
-  }
-  const referer = req.get('referer');
-  // Se non ho referer, rimando alla home nella lingua scelta
-  res.redirect(302, referer || (lang === 'en' ? '/en' : '/it'));
+  const lang = req.params.lang === 'en' ? 'en' : 'it';
+  res.cookie('i18next', lang, {
+    maxAge: 31536000000,
+    httpOnly: false,
+    sameSite: 'lax'
+  });
+  res.redirect('/');
 });
 
-/* ---------- 404 & error ---------- */
+// Health check
+app.get('/_ping', (req, res) => res.send('ok'));
 
+// 404
 app.use((req, res) => {
-  res.status(404).type('text/plain').send('Page not found');
+  res.status(404).send('Page not found');
 });
 
-app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).type('text/plain').send('Internal Server Error');
-});
-
-/* ---------- start ---------- */
-
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`Contact-site listening on http://127.0.0.1:${PORT}`);
+// Start server
+app.listen(PORT, () => {
+  console.log(`✅ Contact Site running on http://localhost:${PORT}`);
+  console.log(`   Environment: ${isProd ? 'production' : 'development'}`);
+  console.log(`   Database: ${DB_PATH}`);
+  console.log(`   Analytics: ${HUB_ANALYTICS_URL}`);
 });
