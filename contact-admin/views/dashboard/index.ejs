@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/public/css/admin.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('../partials/nav') %>
+
+  <main class="container">
+    <header class="page-header">
+      <h1>Dashboard</h1>
+      <div class="header-actions">
+        <a href="<%= config.frontend.contactSiteUrl %>" target="_blank" class="btn btn-secondary">👁️ Preview Site</a>
+        <a href="/links/new" class="btn btn-primary">➕ New Link</a>
+      </div>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Links</h3>
+        <p class="stat-number"><%= totalLinks %></p>
+      </div>
+      <div class="stat-card">
+        <h3>Active Links</h3>
+        <p class="stat-number"><%= activeLinks %></p>
+      </div>
+      <div class="stat-card">
+        <h3>Sections</h3>
+        <p class="stat-number">4</p>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <section class="dashboard-card">
+        <h2>Links by Category</h2>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Total</th>
+              <th>Visible</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% linkStats.forEach(stat => { %>
+              <tr>
+                <td><%= stat.category %></td>
+                <td><%= stat.count %></td>
+                <td><%= stat.visible_count %></td>
+                <td>
+                  <a href="/links?category=<%= stat.category %>" class="btn-sm">Manage</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="dashboard-card">
+        <h2>Recent Links</h2>
+        <ul class="link-list">
+          <% recentLinks.forEach(link => { %>
+            <li>
+              <strong><%= link.title_it %></strong>
+              <span class="badge badge-<%= link.category %>"><%= link.category %></span>
+              <a href="/links/<%= link.id %>/edit" class="btn-sm">Edit</a>
+            </li>
+          <% }) %>
+        </ul>
+      </section>
+
+      <% if (scheduledLinks.length > 0) { %>
+        <section class="dashboard-card">
+          <h2>Scheduled Links</h2>
+          <ul class="link-list">
+            <% scheduledLinks.forEach(link => { %>
+              <li>
+                <strong><%= link.title_it %></strong>
+                <small>From <%= link.scheduled_start %></small>
+              </li>
+            <% }) %>
+          </ul>
+        </section>
+      <% } %>
+
+      <section class="dashboard-card">
+        <h2>Site Settings</h2>
+        <p><strong>Name:</strong> <%= settings.name %></p>
+        <p><strong>Role:</strong> <%= settings.role_it %></p>
+        <a href="/settings" class="btn btn-secondary">Edit Settings</a>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Links</title>
+  <link rel="stylesheet" href="/public/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/nav') %>
+  <main class="container">
+    <h1>Manage Links</h1>
+    <div class="filters">
+      <a href="/links?category=all" class="<%= currentCategory === 'all' ? 'active' : '' %>">All</a>
+      <% sections.forEach(section => { %>
+        <a href="/links?category=<%= section.id %>" class="<%= currentCategory === section.id ? 'active' : '' %>">
+          <%= section.title_it %>
+        </a>
+      <% }) %>
+    </div>
+    <a href="/links/new?category=<%= currentCategory %>" class="btn btn-primary">+ New Link</a>
+    <table class="data-table">
+      <thead>
+        <tr><th>Title</th><th>URL</th><th>Visible</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% links.forEach(link => { %>
+          <tr>
+            <td><%= link.title_it %></td>
+            <td><%= link.url %></td>
+            <td><%= link.visible ? '✅' : '❌' %></td>
+            <td>
+              <a href="/links/<%= link.id %>/edit">Edit</a>
+              <form method="POST" action="/links/<%= link.id %>/delete" style="display:inline">
+                <button onclick="return confirm('Delete?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

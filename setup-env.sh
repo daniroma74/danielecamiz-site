@@ -383,6 +383,48 @@ echo -e "${GREEN}✅ icnt-stagione/.env creato!${NC}"
 echo ""
 
 # =========================================
+# =========================================
+# CONTACT-ADMIN .env
+# =========================================
+echo -e "${BLUE}📝 Creazione contact-admin/.env...${NC}"
+
+CONTACT_SESSION_SECRET=$(generate_secret)
+
+cat > contact-admin/.env << EOF
+# =========================================
+# CONTACT-ADMIN ENVIRONMENT CONFIGURATION
+# Generato automaticamente il $(date +%Y-%m-%d)
+# =========================================
+
+# Authentication (BACKUP - Hub è primario)
+CONTACT_ADMIN_USER=${ADMIN_USERNAME}
+CONTACT_ADMIN_PASS=${ADMIN_PASSWORD}
+SESSION_SECRET=${CONTACT_SESSION_SECRET}
+
+# Server
+CONTACT_ADMIN_PORT=3014
+NODE_ENV=production
+
+# Database
+MAIN_SQLITE_PATH=../cms/db/main.sqlite
+
+# Admin Hub Integration
+ADMIN_HUB_URL=https://hub.danielecamiz.com
+JWT_SECRET=${JWT_SECRET}
+
+# Site URLs
+CONTACT_SITE_URL=https://contact.danielecamiz.com
+SITE_BASE_URL=https://staging.danielecamiz.com
+
+# Cloudinary (optional)
+# CLOUDINARY_CLOUD_NAME=
+# CLOUDINARY_API_KEY=
+# CLOUDINARY_API_SECRET=
+EOF
+
+echo -e "${GREEN}✅ contact-admin/.env creato!${NC}"
+echo ""
+
 # CONTACT-SITE .env
 # =========================================
 echo -e "${BLUE}📝 Creazione contact-site/.env...${NC}"
@@ -425,6 +467,7 @@ echo "   ✅ bio-admin/.env"
 echo "   ✅ press-admin/.env"
 echo "   ✅ gallery-admin/.env"
 echo "   ✅ icnt-stagione/.env"
+echo "   ✅ contact-admin/.env"
 echo "   ✅ contact-site/.env"
 echo ""
 echo -e "${BLUE}🔐 Credenziali configurate:${NC}"

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>Sections</title><link rel="stylesheet" href="/public/css/admin.css"></head>
+<body>
+  <%- include('../partials/nav') %>
+  <main class="container">
+    <h1>Sections</h1>
+    <table class="data-table">
+      <tr><th>ID</th><th>Title IT</th><th>Title EN</th><th>Visible</th></tr>
+      <% sections.forEach(s => { %>
+        <tr>
+          <td><%= s.id %></td>
+          <td><%= s.title_it %></td>
+          <td><%= s.title_en %></td>
+          <td><%= s.visible ? '✅' : '❌' %></td>
+        </tr>
+      <% }) %>
+    </table>
+  </main>
+</body>
+</html>
