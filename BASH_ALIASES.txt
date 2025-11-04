@@ -1,0 +1,27 @@
+# ========================================
+# ALIAS PER SESSIONI DANIELECAMIZ-SITE
+# ========================================
+#
+# Per installare questi alias sul SERVER:
+# 1. cat ~/danielecamiz-site/BASH_ALIASES.txt >> ~/.bash_aliases
+# 2. source ~/.bash_aliases
+#
+# Oppure copia manualmente queste righe in ~/.bash_aliases
+# ========================================
+
+# Alias per gestione sessioni
+alias start='cd ~/danielecamiz-site && ./start-session.sh'
+alias end='cd ~/danielecamiz-site && ./end-session.sh'
+
+# Alias utili per il progetto
+alias dc='cd ~/danielecamiz-site'
+alias dcs='cd ~/danielecamiz-site && git status'
+alias dcl='cd ~/danielecamiz-site && git log --oneline -10'
+alias dcp='cd ~/danielecamiz-site && git pull origin main'
+
+# Alias per PM2
+alias pm2s='pm2 status'
+alias pm2l='pm2 logs'
+alias pm2r='pm2 restart all'
+
+echo "✅ Alias danielecamiz-site caricati"
