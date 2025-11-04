@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 // === ENV Configuration ===
 const PORT = Number(process.env.PORT || 3026);
 const BASE_URL = (process.env.BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
-const DB_PATH = process.env.DB_PATH || '/home/daniele/danielecamiz-site/cms/db/main.sqlite';
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, '..', 'cms', 'db', 'main.sqlite');
 const SEASON_CODE = process.env.SEASON_CODE || '2025-26';
 const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID || '';
 const DETAIL_HOST_PATTERN = process.env.DETAIL_HOST_PATTERN || '{slug}.danielecamiz.com';

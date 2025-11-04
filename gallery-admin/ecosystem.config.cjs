@@ -9,7 +9,7 @@ module.exports = {
     max_memory_restart: '300M',
     env: {
       NODE_ENV: 'production',
-      GALLERY_ADMIN_PORT: 3012
+      GALLERY_ADMIN_PORT: 3013
     },
     error_file: './logs/error.log',
     out_file: './logs/out.log',

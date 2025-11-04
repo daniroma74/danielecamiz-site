@@ -13,9 +13,9 @@ module.exports = {
     env: {
       NODE_ENV: 'production',
       NEWSLETTER_PORT: 3006,
-      ADMIN_USERNAME: 'admin',
-      ADMIN_PASSWORD: 'DanieleCamiz2025!',
-      SESSION_SECRET: 'newsletter-admin-secret-production-2025'
+      ADMIN_USERNAME: process.env.ADMIN_USERNAME || 'admin',
+      ADMIN_PASSWORD: process.env.ADMIN_PASSWORD, // OBBLIGATORIO: definire in .env
+      SESSION_SECRET: process.env.SESSION_SECRET || 'newsletter-admin-secret-production-2025'
     },
     error_file: './logs/error.log',
     out_file: './logs/out.log',

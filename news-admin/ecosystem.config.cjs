@@ -26,10 +26,10 @@ module.exports = {
       NODE_ENV: 'production',
       PORT: 3005,
       
-      // Auth
-      NEWS_ADMIN_USER: 'admin',
-      NEWS_ADMIN_PASS: 'DanieleCamiz2025!',
-      SESSION_SECRET: cmsEnv.SESSION_SECRET || 'news-admin-secret',
+      // Auth - IMPORTARE DA .env PER SICUREZZA
+      NEWS_ADMIN_USER: process.env.NEWS_ADMIN_USER || 'admin',
+      NEWS_ADMIN_PASS: process.env.NEWS_ADMIN_PASS, // OBBLIGATORIO: definire in .env
+      SESSION_SECRET: cmsEnv.SESSION_SECRET || process.env.SESSION_SECRET,
       
       // Database
       MAIN_SQLITE_PATH: '../cms/db/main.sqlite',

@@ -8,9 +8,9 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 export const config = {
-  port: process.env.GALLERY_ADMIN_PORT || 3012,
+  port: process.env.GALLERY_ADMIN_PORT || 3013,
   host: process.env.GALLERY_ADMIN_HOST || 'localhost',
-  baseUrl: process.env.GALLERY_ADMIN_BASE_URL || 'http://localhost:3012',
+  baseUrl: process.env.GALLERY_ADMIN_BASE_URL || 'http://localhost:3013',
 
   db: {
     path: process.env.MAIN_SQLITE_PATH || path.join(__dirname, '..', '..', 'cms', 'db', 'main.sqlite')

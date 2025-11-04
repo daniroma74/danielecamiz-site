@@ -11,9 +11,9 @@ module.exports = {
     env: {
   NODE_ENV: 'production',
   PORT: 3004,  // ← Cambiato da 5001 a 3004
-  ADMIN_USERNAME: 'admin',
-  ADMIN_PASSWORD: 'Vyasaji74',
-  SESSION_SECRET: 'concerts-admin-secret-production-2025'
+  ADMIN_USERNAME: process.env.ADMIN_USERNAME || 'admin',
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD, // OBBLIGATORIO: definire in .env
+  SESSION_SECRET: process.env.SESSION_SECRET || 'concerts-admin-secret-production-2025'
 },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
