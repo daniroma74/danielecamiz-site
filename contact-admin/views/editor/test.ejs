@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Test - Contact Admin</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+            background: #f5f7fa;
+        }
+        .debug-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #0f0;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-panel">
+        <h1>🔍 Visual Editor - Debug Test</h1>
+
+        <h2>1. Data Check</h2>
+        <div id="data-check">Loading...</div>
+
+        <h2>2. Settings Data</h2>
+        <pre id="settings-data"></pre>
+
+        <h2>3. Links Data</h2>
+        <pre id="links-data"></pre>
+
+        <h2>4. Vue.js Check</h2>
+        <div id="vue-check">Loading...</div>
+
+        <h2>5. Sortable.js Check</h2>
+        <div id="sortable-check">Loading...</div>
+    </div>
+
+    <!-- Vue.js from CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Sortable.js -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <script>
+        // 1. Check data
+        try {
+            const settings = <%- JSON.stringify(settings) %>;
+            const links = <%- JSON.stringify(links) %>;
+
+            document.getElementById('data-check').innerHTML = '<span class="success">✓ Data loaded successfully</span>';
+            document.getElementById('settings-data').textContent = JSON.stringify(settings, null, 2);
+            document.getElementById('links-data').textContent = JSON.stringify(links, null, 2);
+        } catch (error) {
+            document.getElementById('data-check').innerHTML = '<span class="error">✗ Data Error: ' + error.message + '</span>';
+            console.error('Data error:', error);
+        }
+
+        // 2. Check Vue
+        setTimeout(() => {
+            if (typeof Vue !== 'undefined') {
+                document.getElementById('vue-check').innerHTML = '<span class="success">✓ Vue.js loaded (version: ' + Vue.version + ')</span>';
+            } else {
+                document.getElementById('vue-check').innerHTML = '<span class="error">✗ Vue.js NOT loaded</span>';
+            }
+        }, 1000);
+
+        // 3. Check Sortable
+        setTimeout(() => {
+            if (typeof Sortable !== 'undefined') {
+                document.getElementById('sortable-check').innerHTML = '<span class="success">✓ Sortable.js loaded</span>';
+            } else {
+                document.getElementById('sortable-check').innerHTML = '<span class="error">✗ Sortable.js NOT loaded</span>';
+            }
+        }, 1000);
+
+        // Log everything to console
+        console.log('=== DEBUG INFO ===');
+        console.log('Settings:', <%- JSON.stringify(settings) %>);
+        console.log('Links:', <%- JSON.stringify(links) %>);
+        console.log('Vue available:', typeof Vue !== 'undefined');
+        console.log('Sortable available:', typeof Sortable !== 'undefined');
+    </script>
+
+    <div class="debug-panel">
+        <h2>Next Steps:</h2>
+        <ul>
+            <li>If data is OK but Vue/Sortable NOT loaded → CSP issue</li>
+            <li>If data ERROR → Database/JSON issue</li>
+            <li>If everything OK → Problem in main visual.ejs</li>
+        </ul>
+        <a href="/editor/visual" style="padding: 0.5rem 1rem; background: #d4af37; color: white; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 1rem;">← Try Full Editor Again</a>
+    </div>
+</body>
+</html>
