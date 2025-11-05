@@ -556,6 +556,14 @@
             },
             mounted() {
                 this.initSortable();
+
+                // Listen for iframe ready signal
+                window.addEventListener('message', (event) => {
+                    if (event.data.type === 'PREVIEW_READY') {
+                        console.log('[Editor] Preview iframe is ready, sending initial data');
+                        this.updatePreview();
+                    }
+                });
             },
             methods: {
                 initSortable() {
@@ -609,29 +617,52 @@
                 },
                 async saveAll() {
                     try {
+                        console.log('[Editor] Saving all changes...');
                         this.showSaveStatus('saving');
 
                         // Save settings
-                        await fetch('/editor/settings', {
+                        console.log('[Editor] Saving settings:', this.settings);
+                        const settingsResp = await fetch('/editor/settings', {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(this.settings)
                         });
+                        const settingsData = await settingsResp.json();
+                        console.log('[Editor] Settings saved:', settingsData);
 
                         // Save each link
                         for (const link of this.links) {
                             if (link.id > 0) {
-                                await fetch(`/editor/link/${link.id}`, {
+                                console.log('[Editor] Updating link:', link.id);
+                                const linkResp = await fetch(`/editor/link/${link.id}`, {
                                     method: 'PUT',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(link)
                                 });
+                                const linkData = await linkResp.json();
+                                console.log('[Editor] Link updated:', linkData);
+                            } else {
+                                // New link (negative ID) - create it
+                                console.log('[Editor] Creating new link:', link);
+                                const newLinkResp = await fetch('/editor/link', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(link)
+                                });
+                                const newLinkData = await newLinkResp.json();
+                                console.log('[Editor] New link created:', newLinkData);
+
+                                // Update local link ID with real DB ID
+                                if (newLinkData.success && newLinkData.id) {
+                                    link.id = newLinkData.id;
+                                }
                             }
                         }
 
+                        console.log('[Editor] All changes saved successfully');
                         this.showSaveStatus('saved');
                     } catch (error) {
-                        console.error('Save all error:', error);
+                        console.error('[Editor] Save all error:', error);
                         this.showSaveStatus('error');
                     }
                 },
@@ -646,13 +677,18 @@
                 },
                 updatePreview() {
                     // Send updated data to preview iframe via postMessage
+                    console.log('[Editor] updatePreview called');
                     const iframe = this.$refs.previewFrame;
+                    console.log('[Editor] iframe:', iframe, 'contentWindow:', iframe?.contentWindow);
                     if (iframe && iframe.contentWindow) {
+                        console.log('[Editor] Sending UPDATE_PREVIEW message');
                         iframe.contentWindow.postMessage({
                             type: 'UPDATE_PREVIEW',
                             settings: this.settings,
                             links: this.links
                         }, '*');
+                    } else {
+                        console.warn('[Editor] iframe not ready yet');
                     }
                 },
                 addLink() {

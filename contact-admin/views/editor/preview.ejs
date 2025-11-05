@@ -145,7 +145,9 @@
 
         // Listen for updates from parent (visual editor)
         window.addEventListener('message', (event) => {
+            console.log('[Preview] Received message:', event.data);
             if (event.data.type === 'UPDATE_PREVIEW') {
+                console.log('[Preview] Updating with new data');
                 settings = event.data.settings;
                 links = event.data.links;
                 render();
@@ -153,7 +155,11 @@
         });
 
         // Initial render
+        console.log('[Preview] Initial render with', links.length, 'links');
         render();
+
+        // Notify parent that iframe is ready
+        window.parent.postMessage({ type: 'PREVIEW_READY' }, '*');
     </script>
 </body>
 </html>
