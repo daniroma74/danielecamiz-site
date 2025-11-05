@@ -20,9 +20,7 @@ router.get('/preview', async (req, res) => {
       role_en: '',
       bio_it: '',
       bio_en: '',
-      avatar_url: '',
-      background_color: '#ffffff',
-      text_color: '#000000'
+      avatar_url: ''
     };
 
     const links = db.prepare(`
@@ -51,9 +49,7 @@ router.get('/test', async (req, res) => {
       role_en: '',
       bio_it: '',
       bio_en: '',
-      avatar_url: '',
-      background_color: '#ffffff',
-      text_color: '#000000'
+      avatar_url: ''
     };
 
     const links = db.prepare(`
@@ -83,9 +79,7 @@ router.get('/visual', async (req, res) => {
       role_en: '',
       bio_it: '',
       bio_en: '',
-      avatar_url: '',
-      background_color: '#ffffff',
-      text_color: '#000000'
+      avatar_url: ''
     };
 
     const links = db.prepare(`
@@ -232,15 +226,12 @@ router.put('/settings', async (req, res) => {
       role_en,
       bio_it,
       bio_en,
-      avatar_url,
-      background_color,
-      text_color
+      avatar_url
     } = req.body;
 
     const stmt = db.prepare(`
       UPDATE contact_settings
-      SET name = ?, role_it = ?, role_en = ?, bio_it = ?, bio_en = ?,
-          avatar_url = ?, background_color = ?, text_color = ?
+      SET name = ?, role_it = ?, role_en = ?, bio_it = ?, bio_en = ?, avatar_url = ?
       WHERE id = 1
     `);
 
@@ -250,9 +241,7 @@ router.put('/settings', async (req, res) => {
       role_en || '',
       bio_it || '',
       bio_en || '',
-      avatar_url || '',
-      background_color || '#ffffff',
-      text_color || '#000000'
+      avatar_url || ''
     );
 
     console.log('[editorRoutes] Settings updated, changes:', result.changes);
