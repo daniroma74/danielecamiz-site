@@ -364,8 +364,9 @@ const logout = async (req, res) => {
             if (err) {
                 console.error('Errore distruzione sessione:', err);
             }
-            // Pulisci cookie
-            res.clearCookie('hub_session');
+            // Pulisci cookie con path corretto
+            res.clearCookie('hub_session', { path: '/' });
+            res.clearCookie('connect.sid', { path: '/' });
             res.redirect('/auth/login');
         });
         

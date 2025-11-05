@@ -215,11 +215,11 @@
 <body>
     <div class="container">
         <a href="/" class="back-button">
-            <span>ê</span> Torna al Dashboard
+            <span>&larr;</span> Torna al Dashboard
         </a>
 
         <div class="header-card">
-            <h1>= Sicurezza</h1>
+            <h1>Sicurezza</h1>
             <p>Gestisci la sicurezza del tuo account e l'autenticazione a due fattori</p>
         </div>
 
@@ -231,14 +231,14 @@
         <!-- 2FA Section -->
         <div class="security-card">
             <div class="security-card-header">
-                <h2>=· Autenticazione a Due Fattori (2FA)</h2>
+                <h2>Autenticazione a Due Fattori (2FA)</h2>
             </div>
             <div class="security-card-body">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <div>
                         <h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary);">Stato Attuale</h3>
                         <span class="status-badge <%= twoFactorEnabled ? 'status-enabled' : 'status-disabled' %>">
-                            <%= twoFactorEnabled ? ' Abilitato' : '† Disabilitato' %>
+                            <%= twoFactorEnabled ? 'Abilitato' : 'Disabilitato' %>
                         </span>
                     </div>
                     <% if (!twoFactorEnabled) { %>
@@ -253,8 +253,8 @@
                 </div>
 
                 <div class="info-box">
-                    <strong>Cos'Ë l'autenticazione a due fattori?</strong>
-                    <p>L'autenticazione a due fattori (2FA) aggiunge un ulteriore livello di sicurezza al tuo account. Dopo aver inserito la password, ti verr‡ richiesto di inserire un codice temporaneo generato da un'app di autenticazione sul tuo smartphone.</p>
+                    <strong>Cos'√® l'autenticazione a due fattori?</strong>
+                    <p>L'autenticazione a due fattori (2FA) aggiunge un ulteriore livello di sicurezza al tuo account. Dopo aver inserito la password, ti verr√† richiesto di inserire un codice temporaneo generato da un'app di autenticazione sul tuo smartphone.</p>
                     <p><strong>App consigliate:</strong> Google Authenticator, Microsoft Authenticator, Authy</p>
                 </div>
 
@@ -262,7 +262,7 @@
                 <div id="setup2FAForm" style="display: none; margin-top: 2rem;">
                     <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border);">
 
-                    <h3 style="margin: 0 0 1.5rem 0; color: var(--text-primary);">=Ò Configura 2FA</h3>
+                    <h3 style="margin: 0 0 1.5rem 0; color: var(--text-primary);">Configura 2FA</h3>
 
                     <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
                         <strong>Passaggio 1:</strong> Scansiona questo codice QR con la tua app di autenticazione
@@ -310,7 +310,7 @@
                 <div id="disable2FAForm" style="display: none; margin-top: 2rem;">
                     <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border);">
 
-                    <h3 style="margin: 0 0 1rem 0; color: var(--text-primary);">† Disabilita 2FA</h3>
+                    <h3 style="margin: 0 0 1rem 0; color: var(--text-primary);">Disabilita 2FA</h3>
 
                     <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
                         Per motivi di sicurezza, inserisci la tua password per disabilitare l'autenticazione a due fattori.
@@ -341,7 +341,7 @@
         <!-- Password Change Section -->
         <div class="security-card">
             <div class="security-card-header">
-                <h2>= Cambia Password</h2>
+                <h2>Cambia Password</h2>
             </div>
             <div class="security-card-body">
                 <form onsubmit="changePassword(event)">
@@ -394,10 +394,12 @@
         // Setup 2FA
         async function setup2FA() {
             try {
+                console.log('[2FA] Starting setup...');
                 const response = await fetch('/settings/security/2fa/setup', {
                     credentials: 'include'
                 });
                 const data = await response.json();
+                console.log('[2FA] Setup response:', data);
 
                 if (!data.success) {
                     throw new Error(data.message || 'Errore durante il setup');
@@ -412,6 +414,7 @@
                 document.getElementById('verificationCode').focus();
 
             } catch (error) {
+                console.error('[2FA] Setup error:', error);
                 showAlert('error', error.message);
             }
         }
@@ -441,7 +444,7 @@
                     throw new Error(data.message || 'Codice non valido');
                 }
 
-                showAlert('success', ' 2FA abilitato con successo! La pagina verr‡ ricaricata...');
+                showAlert('success', '2FA abilitato con successo! La pagina verr√† ricaricata...');
                 setTimeout(() => window.location.reload(), 2000);
 
             } catch (error) {
@@ -488,7 +491,7 @@
                     throw new Error(data.message || 'Password non valida');
                 }
 
-                showAlert('success', '2FA disabilitato. La pagina verr‡ ricaricata...');
+                showAlert('success', '2FA disabilitato. La pagina verr√† ricaricata...');
                 setTimeout(() => window.location.reload(), 2000);
 
             } catch (error) {
@@ -540,7 +543,7 @@
                     throw new Error(data.message || 'Errore cambio password');
                 }
 
-                showAlert('success', ' Password aggiornata con successo!');
+                showAlert('success', 'Password aggiornata con successo!');
                 event.target.reset();
 
             } catch (error) {
