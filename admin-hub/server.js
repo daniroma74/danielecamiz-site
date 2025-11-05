@@ -59,7 +59,8 @@ const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 const settingsRoutes = require('./routes/settingRoutes');
-const analyticsRoutes = require('./routes/analyticsRoutes');
+// TEMPORANEAMENTE COMMENTATO - DA FIXARE
+// const analyticsRoutes = require('./routes/analyticsRoutes');
 
 // Inizializza Express
 const app = express();
@@ -222,7 +223,8 @@ app.get('/', (req, res) => {
 app.use('/dashboard', authMiddleware, dashboardRoutes);
 app.use('/api', authMiddleware, apiLimiter, apiRoutes);
 app.use('/settings', authMiddleware, settingsRoutes);
-app.use('/api/analytics', analyticsRoutes); // Mix: /track pubblico, query protette
+// TEMPORANEAMENTE COMMENTATO - DA FIXARE
+// app.use('/api/analytics', analyticsRoutes); // Mix: /track pubblico, query protette
 
 // Health check endpoint
 app.get('/health', (req, res) => {
