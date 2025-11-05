@@ -82,6 +82,7 @@ app.use(helmet({
             defaultSrc: ["'self'"],
             styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            scriptSrcAttr: ["'unsafe-inline'"], // Permette onclick inline
             fontSrc: ["'self'", "fonts.gstatic.com"],
             imgSrc: ["'self'", "data:", "https:"],
             connectSrc: ["'self'"],
