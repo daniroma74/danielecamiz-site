@@ -96,8 +96,15 @@ export function handleLogout(req, res) {
     sessions.delete(sessionId);
   }
 
-  res.clearCookie('contact_session');
-  res.clearCookie('auth_token'); // Clear hub token too
+  // Clear all auth cookies with proper options
+  res.clearCookie('contact_session', { path: '/' });
+  res.clearCookie('auth_token', { path: '/' });
+
+  // Destroy session if exists
+  if (req.session) {
+    req.session.destroy();
+  }
+
   res.redirect('/login');
 }
 
