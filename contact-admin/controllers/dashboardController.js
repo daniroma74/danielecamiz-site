@@ -51,7 +51,8 @@ const showDashboard = async (req, res) => {
     });
   } catch (error) {
     console.error('Dashboard error:', error);
-    res.status(500).send('Error loading dashboard');
+    console.error('Error stack:', error.stack);
+    res.status(500).send(`Error loading dashboard: ${error.message}`);
   }
 };
 
