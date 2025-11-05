@@ -59,6 +59,7 @@
             align-items: center;
         }
 
+        .btn-security,
         .btn-logout {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -72,8 +73,10 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
         }
 
+        .btn-security:hover,
         .btn-logout:hover {
             background: white;
             color: var(--gold);
@@ -324,6 +327,9 @@
                 <p>Benvenuto, <strong><%= user.username %></strong> | Ultimo accesso: <%= lastLogin || 'N/D' %></p>
             </div>
             <div class="hub-header-actions">
+                <a href="/settings/security" class="btn-security">
+                    <span>🔒</span> Sicurezza
+                </a>
                 <button class="btn-logout" onclick="logout()">
                     <span>🚪</span> Logout
                 </button>

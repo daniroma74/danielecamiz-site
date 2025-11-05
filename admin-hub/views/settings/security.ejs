@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Sicurezza - Admin HUB' %></title>
+    <link rel="stylesheet" href="/shared/css/admin-base.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eaf0 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-card h1 {
+            margin: 0 0 0.5rem 0;
+            color: white;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-card p {
+            margin: 0;
+            opacity: 0.95;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-bottom: 1rem;
+        }
+
+        .back-button:hover {
+            background: white;
+            color: var(--gold);
+        }
+
+        .security-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .security-card-header {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .security-card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .security-card-body {
+            padding: 2rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-enabled {
+            background: rgba(39, 174, 96, 0.15);
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+
+        .status-disabled {
+            background: rgba(231, 76, 60, 0.15);
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        .qr-code-container {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg);
+            border-radius: var(--radius);
+            margin: 1.5rem 0;
+        }
+
+        .qr-code-container img {
+            max-width: 250px;
+            border: 4px solid white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .manual-entry {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px dashed var(--border);
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin: 1rem 0;
+            word-wrap: break-word;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-success {
+            background: rgba(39, 174, 96, 0.15);
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.15);
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        .alert-info {
+            background: rgba(52, 152, 219, 0.15);
+            color: var(--info);
+            border: 2px solid var(--info);
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--info);
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .info-box p {
+            margin: 0.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .info-box strong {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .security-card-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-button">
+            <span>ê</span> Torna al Dashboard
+        </a>
+
+        <div class="header-card">
+            <h1>= Sicurezza</h1>
+            <p>Gestisci la sicurezza del tuo account e l'autenticazione a due fattori</p>
+        </div>
+
+        <!-- Alerts -->
+        <div class="alert alert-success" id="successAlert"></div>
+        <div class="alert alert-error" id="errorAlert"></div>
+        <div class="alert alert-info" id="infoAlert"></div>
+
+        <!-- 2FA Section -->
+        <div class="security-card">
+            <div class="security-card-header">
+                <h2>=· Autenticazione a Due Fattori (2FA)</h2>
+            </div>
+            <div class="security-card-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary);">Stato Attuale</h3>
+                        <span class="status-badge <%= twoFactorEnabled ? 'status-enabled' : 'status-disabled' %>">
+                            <%= twoFactorEnabled ? ' Abilitato' : '† Disabilitato' %>
+                        </span>
+                    </div>
+                    <% if (!twoFactorEnabled) { %>
+                    <button class="btn btn-primary" onclick="setup2FA()">
+                        Abilita 2FA
+                    </button>
+                    <% } else { %>
+                    <button class="btn btn-danger" onclick="disable2FA()">
+                        Disabilita 2FA
+                    </button>
+                    <% } %>
+                </div>
+
+                <div class="info-box">
+                    <strong>Cos'Ë l'autenticazione a due fattori?</strong>
+                    <p>L'autenticazione a due fattori (2FA) aggiunge un ulteriore livello di sicurezza al tuo account. Dopo aver inserito la password, ti verr‡ richiesto di inserire un codice temporaneo generato da un'app di autenticazione sul tuo smartphone.</p>
+                    <p><strong>App consigliate:</strong> Google Authenticator, Microsoft Authenticator, Authy</p>
+                </div>
+
+                <!-- 2FA Setup Form (hidden by default) -->
+                <div id="setup2FAForm" style="display: none; margin-top: 2rem;">
+                    <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border);">
+
+                    <h3 style="margin: 0 0 1.5rem 0; color: var(--text-primary);">=Ò Configura 2FA</h3>
+
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        <strong>Passaggio 1:</strong> Scansiona questo codice QR con la tua app di autenticazione
+                    </p>
+
+                    <div class="qr-code-container" id="qrCodeContainer">
+                        <div class="spinner"></div>
+                        <p>Generazione QR Code...</p>
+                    </div>
+
+                    <p style="color: var(--text-secondary); margin-bottom: 0.5rem; text-align: center;">
+                        <strong>Oppure inserisci manualmente questo codice:</strong>
+                    </p>
+                    <div class="manual-entry" id="manualEntryCode">-</div>
+
+                    <p style="color: var(--text-secondary); margin: 1.5rem 0 0.5rem 0;">
+                        <strong>Passaggio 2:</strong> Inserisci il codice a 6 cifre generato dall'app
+                    </p>
+
+                    <form onsubmit="enable2FA(event)">
+                        <div class="form-group">
+                            <input type="text"
+                                   id="verificationCode"
+                                   name="code"
+                                   class="form-control"
+                                   placeholder="000000"
+                                   maxlength="6"
+                                   pattern="[0-9]{6}"
+                                   required
+                                   autofocus
+                                   style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="submit" class="btn btn-success" id="verifyBtn">
+                                Verifica e Abilita
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelSetup()">
+                                Annulla
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2FA Disable Form (hidden by default) -->
+                <div id="disable2FAForm" style="display: none; margin-top: 2rem;">
+                    <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border);">
+
+                    <h3 style="margin: 0 0 1rem 0; color: var(--text-primary);">† Disabilita 2FA</h3>
+
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Per motivi di sicurezza, inserisci la tua password per disabilitare l'autenticazione a due fattori.
+                    </p>
+
+                    <form onsubmit="confirmDisable2FA(event)">
+                        <div class="form-group">
+                            <label for="disablePassword">Password</label>
+                            <input type="password"
+                                   id="disablePassword"
+                                   name="password"
+                                   class="form-control"
+                                   required>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="submit" class="btn btn-danger" id="disableBtn">
+                                Conferma Disabilitazione
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelDisable()">
+                                Annulla
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Change Section -->
+        <div class="security-card">
+            <div class="security-card-header">
+                <h2>= Cambia Password</h2>
+            </div>
+            <div class="security-card-body">
+                <form onsubmit="changePassword(event)">
+                    <div class="form-group">
+                        <label for="currentPassword">Password Attuale</label>
+                        <input type="password"
+                               id="currentPassword"
+                               name="currentPassword"
+                               class="form-control"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Nuova Password</label>
+                        <input type="password"
+                               id="newPassword"
+                               name="newPassword"
+                               class="form-control"
+                               minlength="8"
+                               required>
+                        <small class="form-help">Minimo 8 caratteri</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Conferma Nuova Password</label>
+                        <input type="password"
+                               id="confirmPassword"
+                               name="confirmPassword"
+                               class="form-control"
+                               minlength="8"
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="passwordBtn">
+                        Cambia Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show alert
+        function showAlert(type, message) {
+            const alert = document.getElementById(type + 'Alert');
+            alert.textContent = message;
+            alert.classList.add('show');
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // Setup 2FA
+        async function setup2FA() {
+            try {
+                const response = await fetch('/settings/security/2fa/setup', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Errore durante il setup');
+                }
+
+                // Show QR code
+                document.getElementById('qrCodeContainer').innerHTML = `
+                    <img src="${data.qrCode}" alt="QR Code 2FA">
+                `;
+                document.getElementById('manualEntryCode').textContent = data.manualEntry;
+                document.getElementById('setup2FAForm').style.display = 'block';
+                document.getElementById('verificationCode').focus();
+
+            } catch (error) {
+                showAlert('error', error.message);
+            }
+        }
+
+        // Enable 2FA
+        async function enable2FA(event) {
+            event.preventDefault();
+            const btn = document.getElementById('verifyBtn');
+            const originalText = btn.textContent;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span> Verifica...';
+
+                const code = document.getElementById('verificationCode').value;
+
+                const response = await fetch('/settings/security/2fa/enable', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ code })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Codice non valido');
+                }
+
+                showAlert('success', ' 2FA abilitato con successo! La pagina verr‡ ricaricata...');
+                setTimeout(() => window.location.reload(), 2000);
+
+            } catch (error) {
+                showAlert('error', error.message);
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        // Cancel setup
+        function cancelSetup() {
+            document.getElementById('setup2FAForm').style.display = 'none';
+            document.getElementById('verificationCode').value = '';
+        }
+
+        // Disable 2FA
+        function disable2FA() {
+            document.getElementById('disable2FAForm').style.display = 'block';
+            document.getElementById('disablePassword').focus();
+        }
+
+        // Confirm disable 2FA
+        async function confirmDisable2FA(event) {
+            event.preventDefault();
+            const btn = document.getElementById('disableBtn');
+            const originalText = btn.textContent;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span> Disabilitazione...';
+
+                const password = document.getElementById('disablePassword').value;
+
+                const response = await fetch('/settings/security/2fa/disable', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Password non valida');
+                }
+
+                showAlert('success', '2FA disabilitato. La pagina verr‡ ricaricata...');
+                setTimeout(() => window.location.reload(), 2000);
+
+            } catch (error) {
+                showAlert('error', error.message);
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        // Cancel disable
+        function cancelDisable() {
+            document.getElementById('disable2FAForm').style.display = 'none';
+            document.getElementById('disablePassword').value = '';
+        }
+
+        // Change password
+        async function changePassword(event) {
+            event.preventDefault();
+            const btn = document.getElementById('passwordBtn');
+            const originalText = btn.textContent;
+
+            try {
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (newPassword !== confirmPassword) {
+                    throw new Error('Le password non corrispondono');
+                }
+
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span> Aggiornamento...';
+
+                const formData = {
+                    currentPassword: document.getElementById('currentPassword').value,
+                    newPassword,
+                    confirmPassword
+                };
+
+                const response = await fetch('/settings/security/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Errore cambio password');
+                }
+
+                showAlert('success', ' Password aggiornata con successo!');
+                event.target.reset();
+
+            } catch (error) {
+                showAlert('error', error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+    </script>
+</body>
+</html>
