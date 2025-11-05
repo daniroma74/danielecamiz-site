@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Debug - Admin HUB</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 2rem;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+        .test {
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 1px solid #0f0;
+        }
+        .pass { border-color: #0f0; background: #001100; }
+        .fail { border-color: #f00; background: #110000; color: #f00; }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0.5rem;
+        }
+        #log {
+            background: #000;
+            padding: 1rem;
+            border: 1px solid #0f0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Admin HUB - Test Debug</h1>
+
+    <div class="test">
+        <h2>Test 1: JavaScript Funziona</h2>
+        <button onclick="log('✅ JavaScript OK')">Clicca per testare</button>
+    </div>
+
+    <div class="test">
+        <h2>Test 2: Fetch API</h2>
+        <button onclick="testFetch()">Test Fetch a /health</button>
+    </div>
+
+    <div class="test">
+        <h2>Test 3: Logout</h2>
+        <button onclick="testLogout()">Test Logout (senza redirect)</button>
+    </div>
+
+    <div class="test">
+        <h2>Test 4: 2FA Setup</h2>
+        <button onclick="test2FASetup()">Test 2FA Setup</button>
+    </div>
+
+    <div class="test">
+        <h2>Test 5: Cookies</h2>
+        <button onclick="testCookies()">Mostra Cookies</button>
+    </div>
+
+    <h2>📋 Log:</h2>
+    <div id="log"></div>
+
+    <script>
+        function log(msg) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${msg}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        }
+
+        async function testFetch() {
+            log('🔄 Testing fetch to /health...');
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                log('✅ Fetch OK: ' + JSON.stringify(data));
+            } catch (error) {
+                log('❌ Fetch Error: ' + error.message);
+            }
+        }
+
+        async function testLogout() {
+            log('🔄 Testing logout endpoint...');
+            try {
+                const response = await fetch('/auth/logout', {
+                    method: 'GET',
+                    credentials: 'include',
+                    redirect: 'manual'
+                });
+                log('✅ Logout response status: ' + response.status);
+                log('Response type: ' + response.type);
+                if (response.status === 0) {
+                    log('⚠️ Redirect detected (questo è OK)');
+                }
+            } catch (error) {
+                log('❌ Logout Error: ' + error.message);
+            }
+        }
+
+        async function test2FASetup() {
+            log('🔄 Testing 2FA setup endpoint...');
+            try {
+                const response = await fetch('/settings/security/2fa/setup', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                log('✅ 2FA Setup response status: ' + response.status);
+                const data = await response.json();
+                log('2FA Setup data: ' + JSON.stringify(data).substring(0, 100) + '...');
+            } catch (error) {
+                log('❌ 2FA Setup Error: ' + error.message);
+            }
+        }
+
+        function testCookies() {
+            log('🍪 Cookies: ' + document.cookie);
+            log('Session storage: ' + JSON.stringify(sessionStorage));
+            log('Local storage: ' + JSON.stringify(localStorage));
+        }
+
+        // Auto-log on load
+        log('🚀 Page loaded');
+        log('Current URL: ' + window.location.href);
+        log('User Agent: ' + navigator.userAgent);
+    </script>
+</body>
+</html>
