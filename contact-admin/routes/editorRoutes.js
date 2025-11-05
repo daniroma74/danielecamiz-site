@@ -28,12 +28,12 @@ router.get('/visual', async (req, res) => {
 
     const links = db.prepare(`
       SELECT * FROM contact_links
-      ORDER BY display_order ASC, created_at DESC
+      ORDER BY order_index ASC, created_at DESC
     `).all() || [];
 
     const sections = db.prepare(`
       SELECT * FROM contact_sections
-      ORDER BY display_order ASC
+      ORDER BY order_index ASC
     `).all() || [];
 
     res.render('editor/visual', {
@@ -62,7 +62,7 @@ router.post('/reorder', async (req, res) => {
 
     // Update in transazione
     const updateStmt = db.prepare(
-      'UPDATE contact_links SET display_order = ? WHERE id = ?'
+      'UPDATE contact_links SET order_index = ? WHERE id = ?'
     );
 
     const transaction = db.transaction((items) => {
@@ -120,14 +120,14 @@ router.post('/link', async (req, res) => {
 
     // Get max order per category
     const maxOrder = db.prepare(
-      'SELECT MAX(display_order) as max FROM contact_links WHERE category = ?'
+      'SELECT MAX(order_index) as max FROM contact_links WHERE category = ?'
     ).get(category);
 
     const order = (maxOrder?.max || 0) + 1;
 
     const stmt = db.prepare(`
       INSERT INTO contact_links
-      (title_it, title_en, url, category, icon, display_order, visible)
+      (title_it, title_en, url, category, icon, order_index, visible)
       VALUES (?, ?, ?, ?, ?, ?, 1)
     `);
 

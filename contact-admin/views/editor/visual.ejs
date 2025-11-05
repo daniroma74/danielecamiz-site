@@ -599,7 +599,7 @@
                     // Update local data
                     newOrder.forEach(({ id, order }) => {
                         const link = this.links.find(l => l.id === id);
-                        if (link) link.display_order = order;
+                        if (link) link.order_index = order;
                     });
 
                     // Save to backend
@@ -665,7 +665,7 @@
                     // Preview updates automatically with v-model
                 },
                 addLink() {
-                    const maxOrder = Math.max(...this.links.map(l => l.display_order || 0), 0);
+                    const maxOrder = Math.max(...this.links.map(l => l.order_index || 0), 0);
                     this.links.push({
                         id: -Date.now(), // Temporary negative ID
                         title_it: 'Nuovo Link',
@@ -674,7 +674,7 @@
                         category: 'extra',
                         icon: '🔗',
                         visible: true,
-                        display_order: maxOrder + 1
+                        order_index: maxOrder + 1
                     });
                 },
                 async deleteLink(id) {
@@ -700,7 +700,7 @@
                 getLinksByCategory(category) {
                     return this.links
                         .filter(l => l.category === category)
-                        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+                        .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
                 },
                 getCategoryName(category) {
                     const names = {
