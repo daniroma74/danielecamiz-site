@@ -39,9 +39,7 @@ const showDashboard = async (req, res) => {
         const activities = await getRecentActivities(req.user.id);
 
         // Analytics summary (ultimi 7 giorni)
-        // TEMPORANEAMENTE DISABILITATO - DA FIXARE
-        // const analyticsData = await getAnalyticsSummary(7);
-        const analyticsData = null;
+        const analyticsData = await getAnalyticsSummary(7);
 
         // Formatta ultimo login
         const lastLogin = req.session.lastLogin
