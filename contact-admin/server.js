@@ -26,8 +26,9 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://unpkg.com"],
+      scriptSrcAttr: ["'unsafe-inline'"], // Permette onclick inline
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       connectSrc: ["'self'", config.hub.url]
@@ -63,6 +64,7 @@ const setupRoutes = async () => {
   const { default: linksRoutes } = await import('./routes/linksRoutes.js');
   const { default: sectionsRoutes } = await import('./routes/sectionsRoutes.js');
   const { default: toolsRoutes } = await import('./routes/toolsRoutes.js');
+  const { default: editorRoutes } = await import('./routes/editorRoutes.js');
 
   // Auth routes (like bio-admin)
   app.get('/login', (req, res) => {
@@ -82,6 +84,7 @@ const setupRoutes = async () => {
   app.use('/links', linksRoutes);
   app.use('/sections', sectionsRoutes);
   app.use('/tools', toolsRoutes);
+  app.use('/editor', editorRoutes); // Visual Editor
 
   // Health check
   app.get('/_ping', (req, res) => res.send('ok'));
