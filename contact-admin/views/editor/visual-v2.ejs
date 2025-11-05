@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+
+    <!-- Real contact-site CSS for preview -->
+    <link rel="stylesheet" href="/contact-public/css/main.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            overflow: hidden;
+        }
+
+        /* SPLIT VIEW LAYOUT */
+        .editor-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* EDITOR PANEL (LEFT) */
+        .editor-panel {
+            width: 50%;
+            height: 100vh;
+            overflow-y: auto;
+            background: white;
+            border-right: 2px solid #e0e0e0;
+            padding: 2rem;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .editor-header h1 {
+            font-size: 24px;
+            color: #2c3e50;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #d4af37;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c19b2a;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* EDITOR SECTIONS */
+        .editor-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .editor-section h2 {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* SORTABLE LINKS */
+        .link-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+        }
+
+        .link-item:hover {
+            border-color: #d4af37;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .drag-handle {
+            font-size: 20px;
+            color: #95a5a6;
+            cursor: grab;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .link-item.dragging {
+            opacity: 0.5;
+        }
+
+        .link-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .link-content input {
+            margin-bottom: 0;
+        }
+
+        .link-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background-color: #27ae60;
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        /* PREVIEW PANEL (RIGHT) */
+        .preview-panel {
+            width: 50%;
+            height: 100vh;
+            overflow-y: auto;
+            background: #0a0a0a;
+            padding: 2rem;
+        }
+
+        .preview-header-text {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        /* Preview uses contact-site CSS classes */
+        .contact-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Save Indicator */
+        .save-indicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+
+        .save-indicator.saving {
+            display: flex;
+            background: #3498db;
+            color: white;
+        }
+
+        .save-indicator.saved {
+            display: flex;
+            background: #27ae60;
+            color: white;
+        }
+
+        .save-indicator.error {
+            display: flex;
+            background: #e74c3c;
+            color: white;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .category-highlight { background: #f39c12; color: white; }
+        .category-social { background: #3498db; color: white; }
+        .category-contact { background: #27ae60; color: white; }
+        .category-extra { background: #95a5a6; color: white; }
+    </style>
+
+    <!-- Vue.js 3 from CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Sortable.js for drag & drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="editor-container">
+            <!-- EDITOR PANEL (LEFT) -->
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <h1>🎨 Visual Editor</h1>
+                    <div class="header-actions">
+                        <a href="/dashboard" class="btn btn-secondary">← Dashboard</a>
+                        <button @click="saveAll" class="btn btn-primary">💾 Salva Tutto</button>
+                    </div>
+                </div>
+
+                <!-- PROFILE SETTINGS -->
+                <div class="editor-section">
+                    <h2>⚙️ Impostazioni Profilo</h2>
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" v-model="settings.name" class="form-control" placeholder="Il tuo nome">
+                    </div>
+                    <div class="form-group">
+                        <label>Ruolo (IT)</label>
+                        <input type="text" v-model="settings.role_it" class="form-control" placeholder="Es: Direttore d'Orchestra">
+                    </div>
+                    <div class="form-group">
+                        <label>Bio (IT)</label>
+                        <textarea v-model="settings.bio_it" class="form-control" placeholder="Breve biografia..."></textarea>
+                    </div>
+                </div>
+
+                <!-- LINKS BY CATEGORY -->
+                <div v-for="category in categories" :key="category" class="editor-section">
+                    <h2>
+                        {{ getCategoryIcon(category) }} {{ getCategoryName(category) }}
+                        <span class="category-badge" :class="'category-' + category">{{ getLinksByCategory(category).length }}</span>
+                    </h2>
+                    <button @click="addLink(category)" class="btn btn-success" style="margin-bottom: 1rem;">+ Aggiungi Link</button>
+
+                    <div v-if="getLinksByCategory(category).length === 0" style="text-align: center; color: #95a5a6; padding: 2rem;">
+                        Nessun link in questa categoria
+                    </div>
+
+                    <div :ref="'sortable-' + category">
+                        <div v-for="link in getLinksByCategory(category)" :key="link.id" :data-id="link.id" class="link-item">
+                            <span class="drag-handle">☰</span>
+                            <div class="link-content">
+                                <input type="text" v-model="link.title_it" class="form-control" placeholder="Titolo link">
+                                <input type="url" v-model="link.url" class="form-control" placeholder="https://...">
+                                <input type="text" v-model="link.icon" class="form-control" placeholder="es: instagram-gold.svg">
+                            </div>
+                            <div class="link-actions">
+                                <label class="toggle">
+                                    <input type="checkbox" v-model="link.visible">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <button @click="deleteLink(link.id)" class="btn btn-danger btn-icon">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREVIEW PANEL (RIGHT) -->
+            <div class="preview-panel">
+                <div class="preview-header-text">📱 Anteprima Live (CSS Reale)</div>
+
+                <div class="contact-container">
+                    <!-- Profile Header -->
+                    <div class="profile-header">
+                        <div class="profile-avatar-wrapper">
+                            <img src="/contact-public/img/daniele-camiz-foto-profilo.png" alt="Avatar" class="profile-avatar">
+                        </div>
+                        <h1 class="profile-name">{{ settings.name || 'Nome' }}</h1>
+                        <p class="profile-role">{{ settings.role_it || 'Ruolo' }}</p>
+                        <p class="profile-bio">{{ settings.bio_it || 'Breve biografia...' }}</p>
+                    </div>
+
+                    <!-- Links by Category -->
+                    <div v-for="category in categories" :key="category" class="section" v-show="getVisibleLinksByCategory(category).length > 0">
+                        <h2 class="section-title">{{ getCategoryName(category) }}</h2>
+                        <div :class="category === 'highlight' ? 'highlight-grid' : 'links-container'">
+                            <a v-for="link in getVisibleLinksByCategory(category)"
+                               :key="link.id"
+                               :href="link.url || '#'"
+                               target="_blank"
+                               :class="category === 'highlight' ? 'highlight-card' : 'link-item'">
+                                <img v-if="link.icon" :src="'/contact-public/img/icons/' + link.icon" alt="" class="link-icon">
+                                <span class="link-text">{{ link.title_it || 'Link' }}</span>
+                                <span v-if="category !== 'highlight'" class="link-arrow">→</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Indicator -->
+        <div class="save-indicator" :class="saveStatus">
+            <div v-if="saveStatus === 'saving'" class="spinner"></div>
+            <span v-if="saveStatus === 'saving'">Salvataggio...</span>
+            <span v-if="saveStatus === 'saved'">✓ Salvato!</span>
+            <span v-if="saveStatus === 'error'">✗ Errore</span>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    settings: <%- JSON.stringify(settings) %>,
+                    links: <%- JSON.stringify(links) %>,
+                    categories: ['highlight', 'social', 'contact', 'extra'],
+                    saveStatus: '',
+                    saveTimeout: null,
+                    sortables: {}
+                };
+            },
+            mounted() {
+                this.initSortables();
+            },
+            methods: {
+                initSortables() {
+                    this.categories.forEach(category => {
+                        const el = this.$refs['sortable-' + category];
+                        if (el && el[0]) {
+                            this.sortables[category] = Sortable.create(el[0], {
+                                animation: 150,
+                                handle: '.drag-handle',
+                                ghostClass: 'dragging',
+                                onEnd: () => this.updateOrder(category)
+                            });
+                        }
+                    });
+                },
+                updateOrder(category) {
+                    const el = this.$refs['sortable-' + category];
+                    if (!el || !el[0]) return;
+
+                    const items = el[0].children;
+                    const newOrder = Array.from(items).map((item, index) => ({
+                        id: parseInt(item.dataset.id),
+                        order: index
+                    }));
+
+                    // Update local data
+                    newOrder.forEach(({ id, order }) => {
+                        const link = this.links.find(l => l.id === id);
+                        if (link) link.order_index = order;
+                    });
+
+                    // Save to backend
+                    this.saveOrder(newOrder);
+                },
+                async saveOrder(items) {
+                    try {
+                        const response = await fetch('/editor/reorder', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ items })
+                        });
+                        const data = await response.json();
+                        console.log('[Editor] Order saved:', data);
+                    } catch (error) {
+                        console.error('[Editor] Save order error:', error);
+                    }
+                },
+                async saveAll() {
+                    try {
+                        console.log('[Editor] Saving all changes...');
+                        this.showSaveStatus('saving');
+
+                        // Save settings
+                        const settingsResp = await fetch('/editor/settings', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.settings)
+                        });
+                        const settingsData = await settingsResp.json();
+                        console.log('[Editor] Settings saved:', settingsData);
+
+                        // Save each link
+                        for (const link of this.links) {
+                            if (link.id > 0) {
+                                const linkResp = await fetch(`/editor/link/${link.id}`, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(link)
+                                });
+                                const linkData = await linkResp.json();
+                                console.log('[Editor] Link updated:', linkData);
+                            } else {
+                                // New link
+                                const newLinkResp = await fetch('/editor/link', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(link)
+                                });
+                                const newLinkData = await newLinkResp.json();
+                                if (newLinkData.success && newLinkData.id) {
+                                    link.id = newLinkData.id;
+                                }
+                            }
+                        }
+
+                        console.log('[Editor] All saved successfully');
+                        this.showSaveStatus('saved');
+                    } catch (error) {
+                        console.error('[Editor] Save error:', error);
+                        this.showSaveStatus('error');
+                    }
+                },
+                showSaveStatus(status) {
+                    this.saveStatus = status;
+                    if (this.saveTimeout) clearTimeout(this.saveTimeout);
+                    if (status === 'saved' || status === 'error') {
+                        this.saveTimeout = setTimeout(() => {
+                            this.saveStatus = '';
+                        }, 3000);
+                    }
+                },
+                addLink(category) {
+                    const maxOrder = Math.max(...this.links.filter(l => l.category === category).map(l => l.order_index || 0), 0);
+                    this.links.push({
+                        id: -Date.now(),
+                        title_it: 'Nuovo Link',
+                        title_en: 'New Link',
+                        url: 'https://example.com',
+                        category: category,
+                        icon: 'internet-gold.svg',
+                        visible: 1,
+                        order_index: maxOrder + 1
+                    });
+                },
+                async deleteLink(id) {
+                    if (!confirm('Eliminare questo link?')) return;
+
+                    const index = this.links.findIndex(l => l.id === id);
+                    if (index > -1) {
+                        this.links.splice(index, 1);
+                    }
+
+                    if (id > 0) {
+                        try {
+                            await fetch(`/editor/link/${id}`, { method: 'DELETE' });
+                        } catch (error) {
+                            console.error('Delete error:', error);
+                        }
+                    }
+                },
+                getLinksByCategory(category) {
+                    return this.links
+                        .filter(l => l.category === category)
+                        .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+                },
+                getVisibleLinksByCategory(category) {
+                    return this.links
+                        .filter(l => l.category === category && l.visible)
+                        .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+                },
+                getCategoryName(category) {
+                    const names = {
+                        highlight: 'In Evidenza',
+                        social: 'Social',
+                        contact: 'Contatti',
+                        extra: 'Altri Link'
+                    };
+                    return names[category] || category;
+                },
+                getCategoryIcon(category) {
+                    const icons = {
+                        highlight: '⭐',
+                        social: '📱',
+                        contact: '📧',
+                        extra: '🔗'
+                    };
+                    return icons[category] || '🔗';
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

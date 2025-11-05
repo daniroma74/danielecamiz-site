@@ -98,7 +98,7 @@ router.get('/visual', async (req, res) => {
       ORDER BY order_index ASC
     `).all() || [];
 
-    res.render('editor/visual', {
+    res.render('editor/visual-v2', {
       title: 'Visual Editor - Contact Admin',
       settings,
       links,
@@ -223,6 +223,8 @@ router.delete('/link/:id', async (req, res) => {
 // PUT /editor/settings - Quick update settings
 router.put('/settings', async (req, res) => {
   try {
+    console.log('[editorRoutes] Updating settings:', req.body);
+
     const {
       name,
       role_it,
@@ -241,15 +243,22 @@ router.put('/settings', async (req, res) => {
       WHERE id = 1
     `);
 
-    stmt.run(
-      name, role_it, role_en, bio_it, bio_en,
-      avatar_url, background_color, text_color
+    const result = stmt.run(
+      name || '',
+      role_it || '',
+      role_en || '',
+      bio_it || '',
+      bio_en || '',
+      avatar_url || '',
+      background_color || '#ffffff',
+      text_color || '#000000'
     );
 
-    res.json({ success: true, message: 'Settings updated' });
+    console.log('[editorRoutes] Settings updated, changes:', result.changes);
+    res.json({ success: true, message: 'Settings updated', changes: result.changes });
   } catch (error) {
-    console.error('Error updating settings:', error);
-    res.status(500).json({ success: false, message: 'Update failed' });
+    console.error('[editorRoutes] Error updating settings:', error);
+    res.status(500).json({ success: false, message: 'Update failed', error: error.message });
   }
 });
 
