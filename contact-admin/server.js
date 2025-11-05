@@ -57,31 +57,31 @@ app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
 
 // Import routes (dynamic import)
 const setupRoutes = async () => {
-  const { default: authRoutes } = await import('./routes/authRoutes.js');
+  const { ensureAuthenticated, handleLogin, handleLogout } = await import('./middleware/hybridAuth.js');
   const { default: dashboardRoutes } = await import('./routes/dashboardRoutes.js');
   const { default: settingsRoutes } = await import('./routes/settingsRoutes.js');
   const { default: linksRoutes } = await import('./routes/linksRoutes.js');
   const { default: sectionsRoutes } = await import('./routes/sectionsRoutes.js');
   const { default: toolsRoutes } = await import('./routes/toolsRoutes.js');
 
-  // Public routes
-  app.use('/auth', authRoutes);
+  // Auth routes (like bio-admin)
+  app.get('/login', (req, res) => {
+    res.render('auth/login', { title: 'Login - Contact Admin', error: null });
+  });
+  app.post('/login', handleLogin);
+  app.get('/logout', handleLogout);
 
-  // Protected routes (auth middleware will be in routes)
+  // Root redirect
+  app.get('/', (req, res) => {
+    res.redirect('/dashboard');
+  });
+
+  // Protected routes
   app.use('/dashboard', dashboardRoutes);
   app.use('/settings', settingsRoutes);
   app.use('/links', linksRoutes);
   app.use('/sections', sectionsRoutes);
   app.use('/tools', toolsRoutes);
-
-  // Root redirect
-  app.get('/', (req, res) => {
-    if (req.session && req.session.authenticated) {
-      res.redirect('/dashboard');
-    } else {
-      res.redirect('/auth/login');
-    }
-  });
 
   // Health check
   app.get('/_ping', (req, res) => res.send('ok'));

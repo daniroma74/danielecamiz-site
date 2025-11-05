@@ -9,7 +9,7 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 export const config = {
   port: process.env.CONTACT_ADMIN_PORT || 3014,
-  host: process.env.CONTACT_ADMIN_HOST || 'localhost',
+  host: process.env.CONTACT_ADMIN_HOST || '0.0.0.0',
   baseUrl: process.env.CONTACT_ADMIN_BASE_URL || 'http://localhost:3014',
 
   db: {

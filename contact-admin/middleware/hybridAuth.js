@@ -1,12 +1,12 @@
-// bio-admin/middleware/hybridAuth.js
+// contact-admin/middleware/hybridAuth.js
 // Hybrid authentication: JWT token from Hub OR local session
 
 import jwt from 'jsonwebtoken';
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'changeme123';
+const ADMIN_USERNAME = process.env.CONTACT_ADMIN_USER || 'admin';
+const ADMIN_PASSWORD = process.env.CONTACT_ADMIN_PASS || 'changeme123';
 const JWT_SECRET = process.env.JWT_SECRET;
-const MODULE_ID = 'bio-admin';
+const MODULE_ID = 'contact-admin';
 const sessions = new Map();
 
 function generateSessionId() {
@@ -31,16 +31,16 @@ export function ensureAuthenticated(req, res, next) {
         role: 'admin',
         source: 'hub'
       };
-      console.log(`✅ [Bio] Authenticated via Hub token (user ${decoded.userId})`);
+      console.log(`✅ [Contact] Authenticated via Hub token (user ${decoded.userId})`);
       return next();
     } catch (error) {
-      console.warn(`⚠️  [Bio] Hub token invalid:`, error.message);
+      console.warn(`⚠️  [Contact] Hub token invalid:`, error.message);
       // Continue to local session check
     }
   }
 
-  // Try 2: Local session (cookie bio_session)
-  const sessionId = req.cookies?.bio_session;
+  // Try 2: Local session (cookie contact_session)
+  const sessionId = req.cookies?.contact_session;
 
   if (sessionId && sessions.has(sessionId)) {
     const session = sessions.get(sessionId);
@@ -76,13 +76,13 @@ export function handleLogin(req, res) {
 
     sessions.set(sessionId, session);
 
-    res.cookie('bio_session', sessionId, {
+    res.cookie('contact_session', sessionId, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: 'lax'
     });
 
-    const redirect = returnTo || req.query.redirect || '/bio';
+    const redirect = returnTo || req.query.redirect || '/dashboard';
     return res.redirect(redirect);
   } else {
     res.status(401).json({ error: 'Credenziali non valide' });
@@ -90,13 +90,13 @@ export function handleLogin(req, res) {
 }
 
 export function handleLogout(req, res) {
-  const sessionId = req.cookies?.bio_session;
+  const sessionId = req.cookies?.contact_session;
 
   if (sessionId) {
     sessions.delete(sessionId);
   }
 
-  res.clearCookie('bio_session');
+  res.clearCookie('contact_session');
   res.clearCookie('auth_token'); // Clear hub token too
   res.redirect('/login');
 }

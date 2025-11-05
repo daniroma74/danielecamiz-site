@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const analyticsController = require('../controllers/analyticsController');
-const { requireAuth } = require('../middleware/auth');
+const { verifyToken } = require('../middleware/auth');
 
 // ============================================
 // PUBLIC TRACKING ENDPOINT (no auth)
@@ -21,27 +21,27 @@ router.post('/track', analyticsController.trackEvent);
 
 // Dashboard summary (ultimi N giorni)
 // GET /api/analytics/summary?days=30&module=contact-site
-router.get('/summary', requireAuth, analyticsController.getSummary);
+router.get('/summary', verifyToken, analyticsController.getSummary);
 
 // Dettagli per modulo specifico
 // GET /api/analytics/module/:moduleId?days=30
-router.get('/module/:moduleId', requireAuth, analyticsController.getModuleStats);
+router.get('/module/:moduleId', verifyToken, analyticsController.getModuleStats);
 
 // Top performing content
 // GET /api/analytics/top?days=30&limit=10
-router.get('/top', requireAuth, analyticsController.getTopContent);
+router.get('/top', verifyToken, analyticsController.getTopContent);
 
 // Daily stats per grafico
 // GET /api/analytics/daily?days=90&module=contact-site
-router.get('/daily', requireAuth, analyticsController.getDailyStats);
+router.get('/daily', verifyToken, analyticsController.getDailyStats);
 
 // Export data (CSV o JSON)
 // GET /api/analytics/export?format=csv&days=30&module=contact-site
-router.get('/export', requireAuth, analyticsController.exportData);
+router.get('/export', verifyToken, analyticsController.exportData);
 
 // Statistiche real-time (ultimi 5 minuti)
 // GET /api/analytics/realtime
-router.get('/realtime', requireAuth, analyticsController.getRealtimeStats);
+router.get('/realtime', verifyToken, analyticsController.getRealtimeStats);
 
 // ============================================
 // ADMIN MANAGEMENT
@@ -49,6 +49,6 @@ router.get('/realtime', requireAuth, analyticsController.getRealtimeStats);
 
 // Cancella vecchi dati (oltre X giorni)
 // DELETE /api/analytics/cleanup?days=365
-router.delete('/cleanup', requireAuth, analyticsController.cleanupOldData);
+router.delete('/cleanup', verifyToken, analyticsController.cleanupOldData);
 
 module.exports = router;
