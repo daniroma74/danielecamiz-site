@@ -383,6 +383,85 @@
             </div>
         </div>
 
+        <% if (analyticsData) { %>
+        <div class="analytics-section">
+            <h2 style="font-size: 1.75rem; color: var(--text-primary); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 3px solid var(--gold); display: flex; align-items: center; gap: 0.75rem;">
+                📊 Analytics Dashboard (Ultimi <%= analyticsData.days %> giorni)
+            </h2>
+
+            <div class="stats-grid" style="margin-bottom: 2rem;">
+                <div class="stat-card">
+                    <h3>📈 Eventi Totali</h3>
+                    <p class="stat-number"><%= analyticsData.totalEvents %></p>
+                </div>
+                <div class="stat-card">
+                    <h3>🎯 Moduli Attivi</h3>
+                    <p class="stat-number"><%= analyticsData.eventsByModule.length %></p>
+                </div>
+                <div class="stat-card">
+                    <h3>🔥 Eventi/Giorno</h3>
+                    <p class="stat-number"><%= Math.round(analyticsData.totalEvents / analyticsData.days) %></p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
+                    <h3 style="margin: 0 0 1rem 0; color: var(--text-primary); font-size: 1.25rem;">Top Moduli</h3>
+                    <% if (analyticsData.eventsByModule.length > 0) { %>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <% analyticsData.eventsByModule.forEach((item, index) => { %>
+                                <li style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span style="font-weight: 600; color: var(--gold);">#<%= index + 1 %></span>
+                                        <%= item.module_id %>
+                                    </span>
+                                    <span style="font-weight: 600; color: var(--text-primary);"><%= item.count %> eventi</span>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p style="color: var(--text-secondary); font-style: italic;">Nessun dato disponibile</p>
+                    <% } %>
+                </div>
+
+                <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
+                    <h3 style="margin: 0 0 1rem 0; color: var(--text-primary); font-size: 1.25rem;">Tipi di Eventi</h3>
+                    <% if (analyticsData.eventsByType.length > 0) { %>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <% analyticsData.eventsByType.forEach((item, index) => { %>
+                                <li style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
+                                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span style="font-weight: 600; color: var(--gold);">#<%= index + 1 %></span>
+                                        <%= item.event_type %>
+                                    </span>
+                                    <span style="font-weight: 600; color: var(--text-primary);"><%= item.count %></span>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p style="color: var(--text-secondary); font-style: italic;">Nessun dato disponibile</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <% if (analyticsData.dailyTrend && analyticsData.dailyTrend.length > 0) { %>
+            <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--text-primary); font-size: 1.25rem;">Trend Giornaliero</h3>
+                <div style="display: flex; align-items: flex-end; gap: 0.5rem; height: 150px;">
+                    <% const maxCount = Math.max(...analyticsData.dailyTrend.map(d => d.count)); %>
+                    <% analyticsData.dailyTrend.forEach(day => { %>
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 0.875rem; font-weight: 600; color: var(--text-primary);"><%= day.count %></span>
+                            <div style="width: 100%; background: linear-gradient(180deg, var(--gold), var(--gold-dark)); border-radius: 4px 4px 0 0; height: <%= (day.count / maxCount) * 100 %>%;"></div>
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);"><%= new Date(day.date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }) %></span>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+        <% } %>
+
         <% if (activities && activities.length > 0) { %>
         <div class="activities-card">
             <h2>📊 Attività Recenti</h2>

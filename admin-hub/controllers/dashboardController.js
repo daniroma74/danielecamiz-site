@@ -34,20 +34,24 @@ const showDashboard = async (req, res) => {
         
         // Statistiche dashboard
         const stats = await getDashboardStats(req.user.id);
-        
+
         // Attività recenti
         const activities = await getRecentActivities(req.user.id);
-        
+
+        // Analytics summary (ultimi 7 giorni)
+        const analyticsData = await getAnalyticsSummary(7);
+
         // Formatta ultimo login
-        const lastLogin = req.session.lastLogin 
+        const lastLogin = req.session.lastLogin
             ? new Date(req.session.lastLogin).toLocaleString('it-IT')
             : 'Prima sessione';
-        
+
         res.render('dashboard/index', {
             title: 'Dashboard - Admin HUB',
             modules: userModules,
             stats,
             activities,
+            analyticsData,
             lastLogin
         });
         
@@ -137,6 +141,67 @@ async function getRecentActivities(userId) {
     } catch (error) {
         console.error('Errore caricamento attività:', error);
         return [];
+    }
+}
+
+// Ottieni riassunto analytics
+async function getAnalyticsSummary(days = 7) {
+    try {
+        // Check if analytics table exists
+        const tableExists = await get(
+            `SELECT name FROM sqlite_master WHERE type='table' AND name='hub_analytics_events'`
+        );
+
+        if (!tableExists) {
+            return null; // Analytics not available
+        }
+
+        // Total events last N days
+        const totalEvents = await get(
+            `SELECT COUNT(*) as count FROM hub_analytics_events
+             WHERE created_at >= datetime('now', '-${days} days')`
+        );
+
+        // Events by module
+        const eventsByModule = await all(
+            `SELECT module_id, COUNT(*) as count
+             FROM hub_analytics_events
+             WHERE created_at >= datetime('now', '-${days} days')
+             GROUP BY module_id
+             ORDER BY count DESC
+             LIMIT 5`
+        );
+
+        // Events by type
+        const eventsByType = await all(
+            `SELECT event_type, COUNT(*) as count
+             FROM hub_analytics_events
+             WHERE created_at >= datetime('now', '-${days} days')
+             GROUP BY event_type
+             ORDER BY count DESC
+             LIMIT 5`
+        );
+
+        // Daily trend (last 7 days)
+        const dailyTrend = await all(
+            `SELECT DATE(created_at) as date, COUNT(*) as count
+             FROM hub_analytics_events
+             WHERE created_at >= datetime('now', '-7 days')
+             GROUP BY DATE(created_at)
+             ORDER BY date ASC`
+        );
+
+        return {
+            totalEvents: totalEvents.count,
+            eventsByModule,
+            eventsByType,
+            dailyTrend,
+            days
+        };
+
+    } catch (error) {
+        console.error('Errore caricamento analytics:', error);
+        return null;
     }
 }
 
