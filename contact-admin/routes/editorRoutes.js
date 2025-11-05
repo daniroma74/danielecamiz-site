@@ -156,7 +156,8 @@ router.put('/link/:id', async (req, res) => {
 
     const stmt = db.prepare(`
       UPDATE contact_links
-      SET title_it = ?, title_en = ?, url = ?, icon = ?, visible = ?
+      SET title_it = ?, title_en = ?, url = ?, icon = ?, visible = ?,
+          scheduled_start = NULL, scheduled_end = NULL
       WHERE id = ?
     `);
 
