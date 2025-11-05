@@ -192,6 +192,11 @@ async function renderContact(req, res) {
 
     res.setHeader('Content-Language', lang);
 
+    // Prevent caching so editor changes appear immediately
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     // Language toggle
     const otherLang = lang === 'it' ? 'en' : 'it';
     data.langToggle = {
