@@ -682,11 +682,13 @@
                     console.log('[Editor] iframe:', iframe, 'contentWindow:', iframe?.contentWindow);
                     if (iframe && iframe.contentWindow) {
                         console.log('[Editor] Sending UPDATE_PREVIEW message');
+                        // Convert Vue Proxy objects to plain objects for postMessage
                         iframe.contentWindow.postMessage({
                             type: 'UPDATE_PREVIEW',
-                            settings: this.settings,
-                            links: this.links
+                            settings: JSON.parse(JSON.stringify(this.settings)),
+                            links: JSON.parse(JSON.stringify(this.links))
                         }, '*');
+                        console.log('[Editor] Message sent successfully');
                     } else {
                         console.warn('[Editor] iframe not ready yet');
                     }
