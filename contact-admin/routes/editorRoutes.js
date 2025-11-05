@@ -14,17 +14,27 @@ router.use(ensureAuthenticated);
 router.get('/visual', async (req, res) => {
   try {
     // Carica tutti i dati necessari
-    const settings = db.prepare('SELECT * FROM contact_settings WHERE id = 1').get();
+    const settings = db.prepare('SELECT * FROM contact_settings WHERE id = 1').get() || {
+      id: 1,
+      name: '',
+      role_it: '',
+      role_en: '',
+      bio_it: '',
+      bio_en: '',
+      avatar_url: '',
+      background_color: '#ffffff',
+      text_color: '#000000'
+    };
 
     const links = db.prepare(`
       SELECT * FROM contact_links
       ORDER BY display_order ASC, created_at DESC
-    `).all();
+    `).all() || [];
 
     const sections = db.prepare(`
       SELECT * FROM contact_sections
       ORDER BY display_order ASC
-    `).all();
+    `).all() || [];
 
     res.render('editor/visual', {
       title: 'Visual Editor - Contact Admin',
@@ -34,7 +44,7 @@ router.get('/visual', async (req, res) => {
     });
   } catch (error) {
     console.error('Error loading visual editor:', error);
-    res.status(500).send('Error loading editor');
+    res.status(500).send('Error loading editor: ' + error.message);
   }
 });
 
