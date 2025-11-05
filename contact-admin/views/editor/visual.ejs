@@ -519,35 +519,15 @@
             <!-- PREVIEW PANEL -->
             <div class="preview-panel">
                 <div style="text-align: center; margin-bottom: 1rem;">
-                    <h3 style="color: #7f8c8d; font-size: 14px; text-transform: uppercase;">📱 Anteprima Live</h3>
+                    <h3 style="color: #7f8c8d; font-size: 14px; text-transform: uppercase;">📱 Anteprima Live (CSS Reale)</h3>
                 </div>
 
-                <div class="phone-mockup">
-                    <div class="phone-notch"></div>
-                    <div class="phone-content">
-                        <!-- Header -->
-                        <div class="preview-header">
-                            <div class="preview-avatar">
-                                {{ settings.name ? settings.name.charAt(0).toUpperCase() : '?' }}
-                            </div>
-                            <div class="preview-name">{{ settings.name || 'Nome' }}</div>
-                            <div class="preview-role">{{ settings.role_it || 'Ruolo' }}</div>
-                            <div class="preview-bio">{{ settings.bio_it || 'Breve biografia...' }}</div>
-                        </div>
-
-                        <!-- Links by Category -->
-                        <div v-for="category in categories" :key="category" class="preview-section">
-                            <div class="preview-section-title">{{ getCategoryName(category) }}</div>
-                            <template v-for="link in getLinksByCategory(category)" :key="link.id">
-                                <a v-if="link.visible" :href="link.url" target="_blank" class="preview-link">
-                                    <span class="preview-link-icon">{{ link.icon || '🔗' }}</span>
-                                    <span class="preview-link-title">{{ link.title_it || 'Link' }}</span>
-                                    <span>→</span>
-                                </a>
-                            </template>
-                        </div>
-                    </div>
-                </div>
+                <!-- iframe with real contact-site CSS -->
+                <iframe
+                    ref="previewFrame"
+                    src="/editor/preview"
+                    style="width: 100%; height: calc(100vh - 80px); border: none; border-radius: 12px; box-shadow: 0 0 20px rgba(0,0,0,0.15);"
+                ></iframe>
             </div>
         </div>
 
@@ -601,6 +581,9 @@
                         const link = this.links.find(l => l.id === id);
                         if (link) link.order_index = order;
                     });
+
+                    // Update preview in real-time
+                    this.updatePreview();
 
                     // Save to backend
                     this.saveOrder(newOrder);
@@ -662,7 +645,15 @@
                     }
                 },
                 updatePreview() {
-                    // Preview updates automatically with v-model
+                    // Send updated data to preview iframe via postMessage
+                    const iframe = this.$refs.previewFrame;
+                    if (iframe && iframe.contentWindow) {
+                        iframe.contentWindow.postMessage({
+                            type: 'UPDATE_PREVIEW',
+                            settings: this.settings,
+                            links: this.links
+                        }, '*');
+                    }
                 },
                 addLink() {
                     const maxOrder = Math.max(...this.links.map(l => l.order_index || 0), 0);
@@ -672,10 +663,11 @@
                         title_en: 'New Link',
                         url: 'https://example.com',
                         category: 'extra',
-                        icon: '🔗',
+                        icon: 'internet-gold.svg',
                         visible: true,
                         order_index: maxOrder + 1
                     });
+                    this.updatePreview();
                 },
                 async deleteLink(id) {
                     if (!confirm('Eliminare questo link?')) return;
@@ -685,6 +677,9 @@
                     if (index > -1) {
                         this.links.splice(index, 1);
                     }
+
+                    // Update preview
+                    this.updatePreview();
 
                     // Delete from backend (if exists)
                     if (id > 0) {

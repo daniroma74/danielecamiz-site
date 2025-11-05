@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Preview</title>
+
+    <!-- Load real contact-site CSS -->
+    <link rel="stylesheet" href="/contact-public/css/main.css">
+
+    <style>
+        /* Override body to remove background image if any */
+        body {
+            background: var(--bg-primary, #0a0a0a);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        /* Center the contact container */
+        .contact-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar-wrapper">
+                <img id="preview-avatar"
+                     src="/contact-public/img/daniele-camiz-foto-profilo.png"
+                     alt="Avatar"
+                     class="profile-avatar">
+            </div>
+            <h1 id="preview-name" class="profile-name"></h1>
+            <p id="preview-role" class="profile-role"></p>
+            <p id="preview-bio" class="profile-bio"></p>
+        </div>
+
+        <!-- Highlights Section -->
+        <div id="highlight-section" class="section" style="display: none;">
+            <h2 class="section-title">In Evidenza</h2>
+            <div id="highlight-links" class="highlight-grid"></div>
+        </div>
+
+        <!-- Social Section -->
+        <div id="social-section" class="section" style="display: none;">
+            <h2 class="section-title">Social</h2>
+            <div id="social-links" class="links-container"></div>
+        </div>
+
+        <!-- Contact Section -->
+        <div id="contact-section" class="section" style="display: none;">
+            <h2 class="section-title">Contatti</h2>
+            <div id="contact-links" class="links-container"></div>
+        </div>
+
+        <!-- Extra Section -->
+        <div id="extra-section" class="section" style="display: none;">
+            <h2 class="section-title">Altri Link</h2>
+            <div id="extra-links" class="links-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initial data from server
+        let settings = <%- JSON.stringify(settings) %>;
+        let links = <%- JSON.stringify(links) %>;
+
+        // Render function
+        function render() {
+            // Update profile
+            document.getElementById('preview-name').textContent = settings.name || 'Nome';
+            document.getElementById('preview-role').textContent = settings.role_it || 'Ruolo';
+            document.getElementById('preview-bio').textContent = settings.bio_it || 'Breve biografia...';
+
+            if (settings.avatar_url) {
+                document.getElementById('preview-avatar').src = settings.avatar_url;
+            }
+
+            // Render links by category
+            const categories = ['highlight', 'social', 'contact', 'extra'];
+
+            categories.forEach(category => {
+                const categoryLinks = links
+                    .filter(l => l.category === category && l.visible)
+                    .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+
+                const sectionEl = document.getElementById(`${category}-section`);
+                const containerEl = document.getElementById(`${category}-links`);
+
+                if (categoryLinks.length === 0) {
+                    sectionEl.style.display = 'none';
+                    return;
+                }
+
+                sectionEl.style.display = 'block';
+                containerEl.innerHTML = '';
+
+                categoryLinks.forEach(link => {
+                    const linkEl = document.createElement('a');
+                    linkEl.href = link.url || '#';
+                    linkEl.target = link.target || '_blank';
+                    linkEl.className = category === 'highlight' ? 'highlight-card' : 'link-item';
+
+                    // Icon
+                    if (link.icon) {
+                        const iconEl = document.createElement('img');
+                        iconEl.src = `/contact-public/img/icons/${link.icon}`;
+                        iconEl.alt = '';
+                        iconEl.className = 'link-icon';
+                        linkEl.appendChild(iconEl);
+                    }
+
+                    // Title
+                    const titleEl = document.createElement('span');
+                    titleEl.className = 'link-text';
+                    titleEl.textContent = link.title_it || 'Link';
+                    linkEl.appendChild(titleEl);
+
+                    // Badge (if exists)
+                    if (link.badge_text) {
+                        const badgeEl = document.createElement('span');
+                        badgeEl.className = 'link-badge';
+                        badgeEl.textContent = link.badge_text;
+                        if (link.badge_color) {
+                            badgeEl.style.background = link.badge_color;
+                        }
+                        linkEl.appendChild(badgeEl);
+                    }
+
+                    // Arrow for regular links
+                    if (category !== 'highlight') {
+                        const arrowEl = document.createElement('span');
+                        arrowEl.className = 'link-arrow';
+                        arrowEl.textContent = '→';
+                        linkEl.appendChild(arrowEl);
+                    }
+
+                    containerEl.appendChild(linkEl);
+                });
+            });
+        }
+
+        // Listen for updates from parent (visual editor)
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'UPDATE_PREVIEW') {
+                settings = event.data.settings;
+                links = event.data.links;
+                render();
+            }
+        });
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>

@@ -55,6 +55,8 @@ app.set('views', path.join(__dirname, 'views'));
 // Static files
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
+// Mount contact-site public files for visual editor preview
+app.use('/contact-public', express.static(path.join(__dirname, '..', 'contact-site', 'public')));
 
 // Import routes (dynamic import)
 const setupRoutes = async () => {
