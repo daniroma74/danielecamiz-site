@@ -10,6 +10,37 @@ const router = express.Router();
 // Tutte le routes richiedono autenticazione
 router.use(ensureAuthenticated);
 
+// GET /editor/test - Debug test page
+router.get('/test', async (req, res) => {
+  try {
+    const settings = db.prepare('SELECT * FROM contact_settings WHERE id = 1').get() || {
+      id: 1,
+      name: '',
+      role_it: '',
+      role_en: '',
+      bio_it: '',
+      bio_en: '',
+      avatar_url: '',
+      background_color: '#ffffff',
+      text_color: '#000000'
+    };
+
+    const links = db.prepare(`
+      SELECT * FROM contact_links
+      ORDER BY order_index ASC, created_at DESC
+    `).all() || [];
+
+    res.render('editor/test', {
+      title: 'Editor Test - Contact Admin',
+      settings,
+      links
+    });
+  } catch (error) {
+    console.error('Error loading test page:', error);
+    res.status(500).send('Test page error: ' + error.message);
+  }
+});
+
 // GET /editor/visual - Pagina visual editor
 router.get('/visual', async (req, res) => {
   try {
