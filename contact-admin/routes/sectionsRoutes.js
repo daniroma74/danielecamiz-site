@@ -1,13 +1,10 @@
 import express from 'express';
+import { ensureAuthenticated } from '../middleware/hybridAuth.js';
+import sectionsController from '../controllers/sectionsController.js';
+
 const router = express.Router();
 
-const requireAuth = (req, res, next) => {
-  req.session && req.session.authenticated ? next() : res.redirect('/auth/login');
-};
-
-router.use(requireAuth);
-
-import sectionsController from '../controllers/sectionsController.js';
+router.use(ensureAuthenticated);
 
 router.get('/', sectionsController.listSections);
 router.post('/:id', sectionsController.updateSection);

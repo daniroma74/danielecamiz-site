@@ -1,19 +1,11 @@
 import express from 'express';
+import { ensureAuthenticated } from '../middleware/hybridAuth.js';
+import dashboardController from '../controllers/dashboardController.js';
+
 const router = express.Router();
 
-// Auth middleware
-const requireAuth = (req, res, next) => {
-  if (req.session && req.session.authenticated) {
-    next();
-  } else {
-    res.redirect('/auth/login');
-  }
-};
-
-router.use(requireAuth);
-
-// Dashboard controller
-import dashboardController from '../controllers/dashboardController.js';
+// Require authentication for all dashboard routes
+router.use(ensureAuthenticated);
 
 router.get('/', dashboardController.showDashboard);
 

@@ -1,13 +1,10 @@
 import express from 'express';
+import { ensureAuthenticated } from '../middleware/hybridAuth.js';
+import toolsController from '../controllers/toolsController.js';
+
 const router = express.Router();
 
-const requireAuth = (req, res, next) => {
-  req.session && req.session.authenticated ? next() : res.redirect('/auth/login');
-};
-
-router.use(requireAuth);
-
-import toolsController from '../controllers/toolsController.js';
+router.use(ensureAuthenticated);
 
 router.get('/qrcode', toolsController.generateQRCode);
 router.get('/preview', toolsController.previewSite);

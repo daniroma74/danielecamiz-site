@@ -1,19 +1,11 @@
 import express from 'express';
+import { ensureAuthenticated } from '../middleware/hybridAuth.js';
+import linksController from '../controllers/linksController.js';
+
 const router = express.Router();
 
-// Auth middleware
-const requireAuth = (req, res, next) => {
-  if (req.session && req.session.authenticated) {
-    next();
-  } else {
-    res.redirect('/auth/login');
-  }
-};
-
-router.use(requireAuth);
-
-// Links controller
-import linksController from '../controllers/linksController.js';
+// Require authentication for all links routes
+router.use(ensureAuthenticated);
 
 // List all links (with filters)
 router.get('/', linksController.listLinks);
