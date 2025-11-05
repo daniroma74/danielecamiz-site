@@ -116,11 +116,13 @@ async function loadDataFromDB(lang) {
     // Add sections and links
     sections.forEach(section => {
       const categoryId = section.id;
+      // Map 'highlights' (plural in sections) to 'highlight' (singular in links)
+      const linksCategoryId = categoryId === 'highlights' ? 'highlight' : categoryId;
       const titleKey = `${categoryId}Title`;
-      const linksKey = categoryId === 'highlight' ? 'highlights' : `${categoryId}Links`;
+      const linksKey = categoryId === 'highlight' || categoryId === 'highlights' ? 'highlights' : `${categoryId}Links`;
 
       data[titleKey] = lang === 'en' ? section.title_en : section.title_it;
-      data[linksKey] = linksByCategory[categoryId] || [];
+      data[linksKey] = linksByCategory[linksCategoryId] || [];
     });
 
     return data;
