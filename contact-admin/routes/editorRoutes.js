@@ -14,6 +14,7 @@ router.use(ensureAuthenticated);
  * Extract YouTube video ID from various YouTube URL formats
  * Supports:
  * - https://www.youtube.com/watch?v=VIDEO_ID
+ * - https://www.youtube.com/live/VIDEO_ID (live streams)
  * - https://youtu.be/VIDEO_ID
  * - https://www.youtube.com/embed/VIDEO_ID
  * - https://www.youtube.com/v/VIDEO_ID
@@ -22,7 +23,7 @@ function extractYouTubeId(url) {
   if (!url) return null;
 
   const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/,
     /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
   ];
 
@@ -206,6 +207,11 @@ router.put('/link/:id', async (req, res) => {
     // Auto-detect YouTube thumbnail
     const finalThumbnail = autoSetThumbnail(url, thumbnail_url);
 
+    // Convert visible to integer (handles boolean, number, or string)
+    const visibleInt = visible === true || visible === 1 || visible === '1' ? 1 : 0;
+
+    console.log(`[editorRoutes] Updating link ${id}: visible=${visible} → ${visibleInt}`);
+
     const stmt = db.prepare(`
       UPDATE contact_links
       SET title_it = ?, title_en = ?, url = ?, icon = ?, visible = ?,
@@ -213,7 +219,7 @@ router.put('/link/:id', async (req, res) => {
       WHERE id = ?
     `);
 
-    stmt.run(title_it, title_en, url, icon, visible ? 1 : 0, finalThumbnail, id);
+    stmt.run(title_it, title_en, url, icon, visibleInt, finalThumbnail, id);
 
     res.json({
       success: true,
