@@ -114,7 +114,7 @@ async function loadDataFromDB(lang) {
 
     // Group links by category
     const linksByCategory = {};
-    const highlightGroups = {}; // NEW: For grouped highlights (Linktree-style)
+    const highlightGroupsMap = {}; // Temporary map for grouping
 
     links.forEach(link => {
       if (!linksByCategory[link.category]) {
@@ -124,13 +124,10 @@ async function loadDataFromDB(lang) {
       // Auto-detect YouTube thumbnail (philosophy: just paste YouTube link, thumbnail appears!)
       const autoThumbnail = getYouTubeThumbnail(link.url);
 
-      // Find group name from group_id
-      let groupName = null;
+      // Find group from group_id
+      let linkGroup = null;
       if (link.group_id) {
-        const group = groups.find(g => g.id === link.group_id);
-        if (group) {
-          groupName = group.name;
-        }
+        linkGroup = groups.find(g => g.id === link.group_id);
       }
 
       const linkData = {
@@ -141,21 +138,30 @@ async function loadDataFromDB(lang) {
         badge: link.badge_text,
         badgeColor: link.badge_color,
         thumbnail: autoThumbnail || link.thumbnail_url, // Auto-detect first, fallback to DB
-        groupName: groupName // Group name resolved from group_id
+        groupId: linkGroup ? linkGroup.id : null,
+        groupName: linkGroup ? linkGroup.name : null
       };
 
       linksByCategory[link.category].push(linkData);
 
       // If highlight, also add to highlightGroups (Linktree-style)
       if (link.category === 'highlight') {
-        // Use empty string for ungrouped instead of null to avoid JSON serialization issues
-        const groupKey = groupName || '';
-        if (!highlightGroups[groupKey]) {
-          highlightGroups[groupKey] = [];
+        const groupKey = linkGroup ? linkGroup.id : '';
+        if (!highlightGroupsMap[groupKey]) {
+          highlightGroupsMap[groupKey] = {
+            id: groupKey,
+            name: linkGroup ? linkGroup.name : null,
+            order_index: linkGroup ? linkGroup.order_index : -1,
+            links: []
+          };
         }
-        highlightGroups[groupKey].push(linkData);
+        highlightGroupsMap[groupKey].links.push(linkData);
       }
     });
+
+    // Convert highlightGroups map to sorted array
+    const highlightGroups = Object.values(highlightGroupsMap)
+      .sort((a, b) => (a.order_index || -1) - (b.order_index || -1));
 
     // Build data object
     const data = {

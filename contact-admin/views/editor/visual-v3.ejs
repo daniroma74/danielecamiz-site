@@ -529,7 +529,7 @@
                         </div>
 
                         <!-- ACTUAL GROUPS -->
-                        <div v-for="group in groups" :key="group.id"
+                        <div v-for="group in sortedGroups" :key="group.id"
                              :data-group-id="group.id"
                              class="group-box">
                             <div class="group-header">
@@ -548,7 +548,7 @@
                                     <button @click="deleteGroup(group.id)" class="btn btn-danger">🗑️</button>
                                 </div>
                             </div>
-                            <div :ref="'groupLinks' + group.id" class="group-links" :class="{ empty: getLinksInGroup(group.id).length === 0 }">
+                            <div :ref="el => { if(el) groupLinksRefs[group.id] = el }" class="group-links" :class="{ empty: getLinksInGroup(group.id).length === 0 }">
                                 <div v-for="link in getLinksInGroup(group.id)"
                                      :key="link.id"
                                      :data-link-id="link.id"
@@ -654,7 +654,8 @@
                     saveStatus: '',
                     saveTimeout: null,
                     newGroupName: '',
-                    sortableInstances: []
+                    sortableInstances: [],
+                    groupLinksRefs: {}
                 };
             },
             computed: {
@@ -662,7 +663,12 @@
                     return this.links.filter(l => l.visible && l.category === 'highlight');
                 },
                 visibleGroups() {
-                    return this.groups.filter(g => g.visible);
+                    return this.groups
+                        .filter(g => g.visible)
+                        .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+                },
+                sortedGroups() {
+                    return [...this.groups].sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
                 }
             },
             mounted() {
@@ -728,8 +734,7 @@
 
                     // Make links within each group sortable
                     this.groups.forEach(group => {
-                        const refName = 'groupLinks' + group.id;
-                        const el = this.$refs[refName];
+                        const el = this.groupLinksRefs[group.id];
                         if (el) {
                             const linksSortable = Sortable.create(el, {
                                 group: 'links',
@@ -740,6 +745,8 @@
                                 onEnd: (evt) => self.onLinkMoved(evt, group.id)
                             });
                             this.sortableInstances.push(linksSortable);
+                        } else {
+                            console.warn('[DragDrop] Missing ref for group:', group.id);
                         }
                     });
 
@@ -930,8 +937,39 @@
                     }
                 },
                 async saveGroupsOrder() {
-                    console.log('[SaveOrder] Groups order changed');
-                    // TODO: Implement group reordering API if needed
+                    try {
+                        // Get current order from DOM
+                        const groupBoxes = this.$refs.groupsContainer.querySelectorAll('.group-box:not(.ungrouped)');
+                        const items = Array.from(groupBoxes).map((box, index) => ({
+                            id: parseInt(box.dataset.groupId),
+                            order: index
+                        }));
+
+                        console.log('[SaveOrder] Saving groups order:', items);
+
+                        const response = await fetch('/editor/groups/reorder', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ items })
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            console.log('[SaveOrder] Groups order saved');
+                            this.showSaveStatus('saved');
+
+                            // Update local data
+                            items.forEach(item => {
+                                const group = this.groups.find(g => g.id === item.id);
+                                if (group) {
+                                    group.order_index = item.order;
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('[SaveOrder] Error:', error);
+                        this.showSaveStatus('error');
+                    }
                 },
                 async saveAll() {
                     try {

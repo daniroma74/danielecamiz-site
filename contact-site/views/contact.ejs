@@ -46,27 +46,18 @@
       <section class="section">
         <h2 class="section-title"><%= data.highlightTitle || data.highlightsTitle %></h2>
 
-        <% if (data.highlightGroups && Object.keys(data.highlightGroups).length > 0) { %>
-          <!-- Grouped rendering -->
-          <%
-            const groupKeys = Object.keys(data.highlightGroups).sort((a, b) => {
-              // Handle empty string (ungrouped) items first
-              if (!a || a === '') return -1;
-              if (!b || b === '') return 1;
-              return (a || '').localeCompare(b || '');
-            });
-          %>
-          <% groupKeys.forEach(groupKey => { %>
-            <% const groupLinks = data.highlightGroups[groupKey]; %>
-            <% if (groupLinks && groupLinks.length > 0) { %>
+        <% if (data.highlightGroups && data.highlightGroups.length > 0) { %>
+          <!-- Grouped rendering (already sorted by order_index) -->
+          <% data.highlightGroups.forEach(group => { %>
+            <% if (group.links && group.links.length > 0) { %>
               <div class="highlight-group">
-                <% if (groupKey && groupKey !== '') { %>
+                <% if (group.name) { %>
                   <h3 class="group-title">
-                    <%= groupKey %>
+                    <%= group.name %>
                   </h3>
                 <% } %>
                 <div class="highlights-grid">
-                  <% groupLinks.forEach(link => { %>
+                  <% group.links.forEach(link => { %>
                     <a href="<%= link.url %>"
                        class="highlight-card"
                        target="<%= link.target || '_blank' %>"
