@@ -401,8 +401,18 @@
                             <span class="drag-handle">☰</span>
                             <div class="link-content">
                                 <input type="text" v-model="link.title_it" class="form-control" placeholder="Titolo link">
-                                <input type="url" v-model="link.url" class="form-control" placeholder="https://...">
-                                <input v-if="category === 'highlight'" type="url" v-model="link.thumbnail_url" class="form-control" placeholder="URL thumbnail (opzionale, auto per YouTube)">
+                                <div style="position: relative;">
+                                    <input type="url"
+                                           v-model="link.url"
+                                           @input="onUrlChange(link)"
+                                           class="form-control"
+                                           placeholder="https://...">
+                                    <span v-if="fetchingMetadata[link.id]"
+                                          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #d4af37;">
+                                        ⏳ Caricamento thumbnail...
+                                    </span>
+                                </div>
+                                <input v-if="category === 'highlight'" type="url" v-model="link.thumbnail_url" class="form-control" placeholder="URL thumbnail (auto-rilevato, modificabile)">
                                 <input type="text" v-model="link.icon" class="form-control" placeholder="es: instagram-gold.svg">
                             </div>
                             <div class="link-actions">
@@ -476,7 +486,9 @@
                     categories: ['highlight', 'social', 'contact', 'extra'],
                     saveStatus: '',
                     saveTimeout: null,
-                    sortables: {}
+                    sortables: {},
+                    fetchingMetadata: {}, // Track which links are fetching metadata
+                    metadataDebounce: {} // Debounce timers for URL changes
                 };
             },
             mounted() {
@@ -504,6 +516,60 @@
 
                     // Fallback to manual thumbnail_url
                     return link.thumbnail_url || null;
+                },
+                async fetchMetadata(link) {
+                    if (!link.url || link.url.length < 10) return;
+
+                    // Skip if already fetching
+                    if (this.fetchingMetadata[link.id]) return;
+
+                    // Check if YouTube (no need to fetch, already handled)
+                    if (this.getYouTubeThumbnail(link.url)) {
+                        console.log('[Editor] YouTube detected, skipping metadata fetch');
+                        return;
+                    }
+
+                    try {
+                        this.fetchingMetadata[link.id] = true;
+                        console.log('[Editor] Fetching metadata for:', link.url);
+
+                        const response = await fetch('/editor/fetch-metadata', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ url: link.url })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success && data.metadata.thumbnail) {
+                            console.log('[Editor] ✅ Thumbnail found:', data.metadata.thumbnail.substring(0, 50) + '...');
+                            link.thumbnail_url = data.metadata.thumbnail;
+
+                            // Auto-save this link
+                            await this.saveLink(link);
+
+                            // Show success indicator briefly
+                            this.showSaveStatus('saved');
+                        } else {
+                            console.log('[Editor] ⚠️ No thumbnail found for:', link.url);
+                        }
+                    } catch (error) {
+                        console.error('[Editor] Metadata fetch error:', error);
+                    } finally {
+                        this.fetchingMetadata[link.id] = false;
+                    }
+                },
+                onUrlChange(link) {
+                    // Debounce: wait 1 second after user stops typing
+                    if (this.metadataDebounce[link.id]) {
+                        clearTimeout(this.metadataDebounce[link.id]);
+                    }
+
+                    this.metadataDebounce[link.id] = setTimeout(() => {
+                        if (link.category === 'highlight') {
+                            this.fetchMetadata(link);
+                        }
+                    }, 1000);
                 },
                 initSortables() {
                     this.categories.forEach(category => {
@@ -548,6 +614,30 @@
                         console.log('[Editor] Order saved:', data);
                     } catch (error) {
                         console.error('[Editor] Save order error:', error);
+                    }
+                },
+                async saveLink(link) {
+                    try {
+                        if (!link.id || link.id <= 0) {
+                            console.log('[Editor] Cannot save link without valid ID');
+                            return;
+                        }
+
+                        console.log('[Editor] Saving link:', link.id);
+
+                        const response = await fetch(`/editor/link/${link.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(link)
+                        });
+
+                        const data = await response.json();
+                        console.log('[Editor] Link saved:', data);
+
+                        return data;
+                    } catch (error) {
+                        console.error('[Editor] Save link error:', error);
+                        throw error;
                     }
                 },
                 async saveAll() {

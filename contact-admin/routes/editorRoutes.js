@@ -4,6 +4,7 @@
 import express from 'express';
 import { ensureAuthenticated } from '../middleware/hybridAuth.js';
 import { db } from '../config/database.js';
+import * as cheerio from 'cheerio';
 
 const router = express.Router();
 
@@ -64,6 +65,111 @@ function autoSetThumbnail(url, currentThumbnail) {
 
   return null;
 }
+
+/**
+ * Fetch Open Graph metadata from any URL
+ * Extracts og:image, og:title, og:description, etc.
+ * Works with Spotify, Apple Music, Bandcamp, YouTube (as fallback), and any OG-compliant site
+ */
+async function fetchOpenGraphMetadata(url) {
+  try {
+    console.log('[Metadata] Fetching:', url);
+
+    // Check if it's YouTube first (faster, no HTTP request needed)
+    const ytId = extractYouTubeId(url);
+    if (ytId) {
+      const ytThumb = getYouTubeThumbnail(ytId);
+      console.log('[Metadata] YouTube detected:', ytThumb);
+      return {
+        thumbnail: ytThumb,
+        title: null,
+        description: null,
+        source: 'youtube'
+      };
+    }
+
+    // Fetch the page
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0)',
+      },
+      redirect: 'follow',
+      timeout: 5000
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    // Extract Open Graph metadata
+    const metadata = {
+      thumbnail: null,
+      title: null,
+      description: null,
+      source: 'opengraph'
+    };
+
+    // Try various meta tag formats
+    metadata.thumbnail =
+      $('meta[property="og:image"]').attr('content') ||
+      $('meta[property="og:image:url"]').attr('content') ||
+      $('meta[name="twitter:image"]').attr('content') ||
+      $('meta[itemprop="image"]').attr('content');
+
+    metadata.title =
+      $('meta[property="og:title"]').attr('content') ||
+      $('meta[name="twitter:title"]').attr('content') ||
+      $('title').text();
+
+    metadata.description =
+      $('meta[property="og:description"]').attr('content') ||
+      $('meta[name="twitter:description"]').attr('content') ||
+      $('meta[name="description"]').attr('content');
+
+    console.log('[Metadata] Extracted:', {
+      url,
+      thumbnail: metadata.thumbnail ? metadata.thumbnail.substring(0, 60) + '...' : 'none',
+      title: metadata.title || 'none'
+    });
+
+    return metadata;
+  } catch (error) {
+    console.error('[Metadata] Fetch error:', error.message);
+    return {
+      thumbnail: null,
+      title: null,
+      description: null,
+      error: error.message
+    };
+  }
+}
+
+// POST /editor/fetch-metadata - Auto-fetch thumbnail and metadata from URL
+router.post('/fetch-metadata', async (req, res) => {
+  try {
+    const { url } = req.body;
+
+    if (!url) {
+      return res.status(400).json({ success: false, message: 'URL required' });
+    }
+
+    const metadata = await fetchOpenGraphMetadata(url);
+
+    res.json({
+      success: true,
+      metadata
+    });
+  } catch (error) {
+    console.error('[fetch-metadata] Error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
 
 // GET /editor/preview - Live preview iframe (uses real contact-site CSS)
 router.get('/preview', async (req, res) => {
