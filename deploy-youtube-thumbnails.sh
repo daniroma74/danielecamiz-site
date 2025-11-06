@@ -27,7 +27,7 @@ echo ""
 # 3. Update existing YouTube links with thumbnails
 echo "📹 3. Updating existing YouTube links..."
 cd contact-admin
-node update-youtube-thumbnails.js
+node fix-youtube-thumbnails.js
 cd ..
 echo "✅ YouTube links updated"
 echo ""
