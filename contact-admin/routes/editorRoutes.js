@@ -39,12 +39,12 @@ function extractYouTubeId(url) {
 
 /**
  * Generate YouTube thumbnail URL from video ID
- * Uses maxresdefault for best quality, falls back to hqdefault if needed
+ * Uses hqdefault (480x360) which exists for ALL videos
+ * Note: maxresdefault doesn't exist for older/live videos
  */
 function getYouTubeThumbnail(videoId) {
   if (!videoId) return null;
-  // maxresdefault is 1280x720, hqdefault is 480x360
-  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 }
 
 /**

@@ -95,8 +95,9 @@ async function loadDataFromDB(lang) {
       for (const pattern of patterns) {
         const match = url.match(pattern);
         if (match && match[1]) {
-          const thumbUrl = `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
-          console.log(`[Thumbnail] Detected YouTube: ${url.substring(0, 60)} → ${match[1]} → ${thumbUrl}`);
+          // Use hqdefault (480x360) instead of maxresdefault - exists for ALL videos
+          const thumbUrl = `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+          console.log(`[Thumbnail] YouTube → ${thumbUrl}`);
           return thumbUrl;
         }
       }
