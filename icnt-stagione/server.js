@@ -103,6 +103,9 @@ app.use('/public', express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.webp') || filePath.endsWith('.jpg') || filePath.endsWith('.png')) {
       res.set('Cache-Control', 'public, max-age=31536000, immutable');
+      // Allow images to be loaded from other domains (CORS)
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
     }
   }
 }));
