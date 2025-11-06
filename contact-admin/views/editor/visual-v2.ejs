@@ -384,6 +384,59 @@
                     </div>
                 </div>
 
+                <!-- GROUPS MANAGEMENT -->
+                <div class="editor-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white;">
+                    <h2 style="color: white; cursor: pointer;" @click="showGroupManager = !showGroupManager">
+                        📁 Gestione Gruppi (Linktree-style)
+                        <span style="float: right; font-size: 1.2rem;">{{ showGroupManager ? '▼' : '▶' }}</span>
+                    </h2>
+
+                    <div v-show="showGroupManager" style="margin-top: 1rem;">
+                        <!-- Create New Group -->
+                        <div style="background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <label style="color: white; font-weight: 600; margin-bottom: 0.5rem; display: block;">➕ Crea Nuovo Gruppo</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input
+                                    type="text"
+                                    v-model="newGroupName"
+                                    @keyup.enter="createGroup"
+                                    class="form-control"
+                                    placeholder="Nome gruppo (es: 'Nuovi Album', 'Live')"
+                                    style="flex: 1;">
+                                <button @click="createGroup" class="btn btn-primary">Crea</button>
+                            </div>
+                        </div>
+
+                        <!-- Groups List -->
+                        <div v-if="groups.length === 0" style="text-align: center; color: rgba(255,255,255,0.7); padding: 2rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                            Nessun gruppo creato. Crea il primo gruppo per organizzare i tuoi link!
+                        </div>
+
+                        <div v-else style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div v-for="group in groups" :key="group.id"
+                                 style="background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 8px; display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="color: rgba(255,255,255,0.5); cursor: move;">☰</span>
+                                <input
+                                    type="text"
+                                    v-model="group.name"
+                                    @blur="updateGroup(group)"
+                                    class="form-control"
+                                    style="flex: 1; background: rgba(255,255,255,0.9);"
+                                    placeholder="Nome gruppo">
+                                <label class="toggle" style="margin: 0;">
+                                    <input type="checkbox" v-model="group.visible" @change="updateGroup(group)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <button @click="deleteGroup(group.id)" class="btn btn-danger btn-icon" style="opacity: 0.9;">🗑️</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 0.9rem; color: rgba(255,255,255,0.85);">
+                            💡 <strong>Come funziona:</strong> Crea gruppi, poi assegna i link highlight al gruppo desiderato usando il menu a tendina sotto ogni link.
+                        </div>
+                    </div>
+                </div>
+
                 <!-- LINKS BY CATEGORY -->
                 <div v-for="category in categories" :key="category" class="editor-section">
                     <h2>
@@ -401,7 +454,16 @@
                             <span class="drag-handle">☰</span>
                             <div class="link-content">
                                 <input type="text" v-model="link.title_it" class="form-control" placeholder="Titolo link">
-                                <input v-if="category === 'highlight'" type="text" v-model="link.group_title" class="form-control" placeholder="📁 Gruppo (opzionale, es: 'Nuovi Album')" style="border-left: 3px solid #d4af37;">
+                                <select v-if="category === 'highlight'"
+                                        v-model="link.group_id"
+                                        @change="saveLink(link)"
+                                        class="form-control"
+                                        style="border-left: 3px solid #d4af37; background: white;">
+                                    <option :value="null">📂 Senza Gruppo</option>
+                                    <option v-for="group in groups.filter(g => g.visible)" :key="group.id" :value="group.id">
+                                        📁 {{ group.name }}
+                                    </option>
+                                </select>
                                 <div style="position: relative;">
                                     <input type="url"
                                            v-model="link.url"
@@ -505,12 +567,15 @@
                 return {
                     settings: <%- JSON.stringify(settings) %>,
                     links: <%- JSON.stringify(links) %>,
+                    groups: <%- JSON.stringify(groups) %>,
                     categories: ['highlight', 'social', 'contact', 'extra'],
                     saveStatus: '',
                     saveTimeout: null,
                     sortables: {},
                     fetchingMetadata: {}, // Track which links are fetching metadata
-                    metadataDebounce: {} // Debounce timers for URL changes
+                    metadataDebounce: {}, // Debounce timers for URL changes
+                    showGroupManager: false, // Toggle for groups management panel
+                    newGroupName: '' // Input for new group creation
                 };
             },
             mounted() {
@@ -759,29 +824,134 @@
                     // Get all visible links for this category
                     const links = this.getVisibleLinksByCategory(category);
 
-                    // Group by group_title
+                    // Group by group_id
                     const grouped = {};
                     links.forEach(link => {
-                        const groupKey = link.group_title || null;
+                        // Find the group name from group_id
+                        let groupName = null;
+                        if (link.group_id) {
+                            const group = this.groups.find(g => g.id === link.group_id);
+                            if (group && group.visible) {
+                                groupName = group.name;
+                            }
+                        }
+
+                        const groupKey = groupName || null;
                         if (!grouped[groupKey]) {
                             grouped[groupKey] = [];
                         }
                         grouped[groupKey].push(link);
                     });
 
-                    // Sort: ungrouped (null) first, then alphabetically
+                    // Sort groups by their order_index
                     const sorted = {};
-                    const keys = Object.keys(grouped).sort((a, b) => {
-                        if (a === 'null') return -1;  // ungrouped first
-                        if (b === 'null') return 1;
-                        return (a || '').localeCompare(b || '');
-                    });
 
-                    keys.forEach(key => {
-                        sorted[key] = grouped[key];
-                    });
+                    // First add ungrouped links (null key)
+                    if (grouped[null]) {
+                        sorted[null] = grouped[null];
+                    }
+
+                    // Then add grouped links sorted by group order_index
+                    this.groups
+                        .filter(g => g.visible)
+                        .sort((a, b) => (a.order_index || 0) - (b.order_index || 0))
+                        .forEach(group => {
+                            if (grouped[group.name]) {
+                                sorted[group.name] = grouped[group.name];
+                            }
+                        });
 
                     return sorted;
+                },
+                async createGroup() {
+                    if (!this.newGroupName || !this.newGroupName.trim()) {
+                        alert('Inserisci un nome per il gruppo');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/editor/group', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                name: this.newGroupName.trim(),
+                                category: 'highlight'
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Reload groups from server
+                            await this.loadGroups();
+                            this.newGroupName = '';
+                            this.showSaveStatus('saved');
+                        } else {
+                            alert('Errore nella creazione del gruppo');
+                        }
+                    } catch (error) {
+                        console.error('[Editor] Create group error:', error);
+                        alert('Errore nella creazione del gruppo');
+                    }
+                },
+                async updateGroup(group) {
+                    try {
+                        const response = await fetch(`/editor/group/${group.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(group)
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            console.log('[Editor] Group updated:', group.name);
+                        }
+                    } catch (error) {
+                        console.error('[Editor] Update group error:', error);
+                    }
+                },
+                async deleteGroup(groupId) {
+                    if (!confirm('Eliminare questo gruppo? I link verranno spostati in "Senza Gruppo".')) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/editor/group/${groupId}`, {
+                            method: 'DELETE'
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // Remove from local array
+                            const index = this.groups.findIndex(g => g.id === groupId);
+                            if (index > -1) {
+                                this.groups.splice(index, 1);
+                            }
+
+                            // Reload links to reflect changes
+                            location.reload();
+                        }
+                    } catch (error) {
+                        console.error('[Editor] Delete group error:', error);
+                    }
+                },
+                async loadGroups() {
+                    try {
+                        const response = await fetch('/editor/groups');
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.groups = data.groups;
+                        }
+                    } catch (error) {
+                        console.error('[Editor] Load groups error:', error);
+                    }
+                },
+                getGroupName(groupId) {
+                    if (!groupId) return '';
+                    const group = this.groups.find(g => g.id === groupId);
+                    return group ? group.name : '';
                 },
                 getCategoryName(category) {
                     const names = {

@@ -258,11 +258,17 @@ router.get('/visual', async (req, res) => {
       ORDER BY order_index ASC
     `).all() || [];
 
+    const groups = db.prepare(`
+      SELECT * FROM link_groups
+      ORDER BY order_index ASC, created_at DESC
+    `).all() || [];
+
     res.render('editor/visual-v2', {
       title: 'Visual Editor - Contact Admin',
       settings,
       links,
-      sections
+      sections,
+      groups
     });
   } catch (error) {
     console.error('Error loading visual editor:', error);
@@ -313,7 +319,7 @@ router.put('/link/:id', async (req, res) => {
       icon,
       visible,
       thumbnail_url,
-      group_title  // ADDED: Support for link groups
+      group_id  // UPDATED: Use group_id (FK) instead of group_title (text)
     } = req.body;
 
     // Auto-detect YouTube thumbnail
@@ -322,16 +328,19 @@ router.put('/link/:id', async (req, res) => {
     // Convert visible to integer (handles boolean, number, or string)
     const visibleInt = visible === true || visible === 1 || visible === '1' ? 1 : 0;
 
-    console.log(`[editorRoutes] Updating link ${id}: visible=${visible} → ${visibleInt}, group_title=${group_title || 'none'}`);
+    // Convert group_id: null or 0 means ungrouped
+    const groupIdInt = group_id && group_id !== '0' ? parseInt(group_id) : null;
+
+    console.log(`[editorRoutes] Updating link ${id}: visible=${visible} → ${visibleInt}, group_id=${groupIdInt || 'ungrouped'}`);
 
     const stmt = db.prepare(`
       UPDATE contact_links
       SET title_it = ?, title_en = ?, url = ?, icon = ?, visible = ?,
-          thumbnail_url = ?, group_title = ?, scheduled_start = NULL, scheduled_end = NULL
+          thumbnail_url = ?, group_id = ?, scheduled_start = NULL, scheduled_end = NULL
       WHERE id = ?
     `);
 
-    stmt.run(title_it, title_en, url, icon, visibleInt, finalThumbnail, group_title || null, id);
+    stmt.run(title_it, title_en, url, icon, visibleInt, finalThumbnail, groupIdInt, id);
 
     res.json({
       success: true,
@@ -437,17 +446,144 @@ router.put('/settings', async (req, res) => {
   }
 });
 
+// ============================================================================
+// GROUPS MANAGEMENT API (Linktree-style visual groups)
+// ============================================================================
+
+// GET /editor/groups - Get all groups
+router.get('/groups', async (req, res) => {
+  try {
+    const groups = db.prepare(`
+      SELECT * FROM link_groups
+      ORDER BY order_index ASC, created_at DESC
+    `).all();
+
+    res.json({ success: true, groups });
+  } catch (error) {
+    console.error('[editorRoutes] Error fetching groups:', error);
+    res.status(500).json({ success: false, message: 'Fetch failed' });
+  }
+});
+
+// POST /editor/group - Create new group
+router.post('/group', async (req, res) => {
+  try {
+    const { name, category = 'highlight' } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, message: 'Group name required' });
+    }
+
+    // Get max order
+    const maxOrder = db.prepare(
+      'SELECT MAX(order_index) as max FROM link_groups WHERE category = ?'
+    ).get(category);
+
+    const order = (maxOrder?.max || 0) + 1;
+
+    const stmt = db.prepare(`
+      INSERT INTO link_groups (name, category, order_index, visible)
+      VALUES (?, ?, ?, 1)
+    `);
+
+    const result = stmt.run(name.trim(), category, order);
+
+    res.json({
+      success: true,
+      message: 'Group created',
+      id: result.lastInsertRowid
+    });
+  } catch (error) {
+    console.error('[editorRoutes] Error creating group:', error);
+    res.status(500).json({ success: false, message: 'Creation failed' });
+  }
+});
+
+// PUT /editor/group/:id - Update group
+router.put('/group/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, visible } = req.body;
+
+    const visibleInt = visible === true || visible === 1 || visible === '1' ? 1 : 0;
+
+    const stmt = db.prepare(`
+      UPDATE link_groups
+      SET name = ?, visible = ?
+      WHERE id = ?
+    `);
+
+    stmt.run(name, visibleInt, id);
+
+    res.json({ success: true, message: 'Group updated' });
+  } catch (error) {
+    console.error('[editorRoutes] Error updating group:', error);
+    res.status(500).json({ success: false, message: 'Update failed' });
+  }
+});
+
+// DELETE /editor/group/:id - Delete group (ungroups all links in it)
+router.delete('/group/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // First, remove group_id from all links in this group
+    db.prepare('UPDATE contact_links SET group_id = NULL WHERE group_id = ?').run(id);
+
+    // Then delete the group
+    db.prepare('DELETE FROM link_groups WHERE id = ?').run(id);
+
+    res.json({ success: true, message: 'Group deleted' });
+  } catch (error) {
+    console.error('[editorRoutes] Error deleting group:', error);
+    res.status(500).json({ success: false, message: 'Delete failed' });
+  }
+});
+
+// POST /editor/groups/reorder - Bulk reorder groups
+router.post('/groups/reorder', async (req, res) => {
+  try {
+    const { items } = req.body; // Array of { id, order }
+
+    if (!Array.isArray(items)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid items format'
+      });
+    }
+
+    const updateStmt = db.prepare(
+      'UPDATE link_groups SET order_index = ? WHERE id = ?'
+    );
+
+    const transaction = db.transaction((items) => {
+      for (const item of items) {
+        updateStmt.run(item.order, item.id);
+      }
+    });
+
+    transaction(items);
+
+    res.json({ success: true, message: 'Groups reordered' });
+  } catch (error) {
+    console.error('[editorRoutes] Error reordering groups:', error);
+    res.status(500).json({ success: false, message: 'Reorder failed' });
+  }
+});
+
 // GET /editor/export - Export all data as JSON backup
 router.get('/export', async (req, res) => {
   try {
     const settings = db.prepare('SELECT * FROM contact_settings').all();
     const links = db.prepare('SELECT * FROM contact_links ORDER BY category, order_index').all();
     const sections = db.prepare('SELECT * FROM contact_sections ORDER BY order_index').all();
+    const groups = db.prepare('SELECT * FROM link_groups ORDER BY order_index').all();
 
     const exportData = {
       settings,
       links,
       sections,
+      groups,
       exported_at: new Date().toISOString()
     };
 

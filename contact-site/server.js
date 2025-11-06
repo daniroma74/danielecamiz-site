@@ -84,6 +84,13 @@ async function loadDataFromDB(lang) {
       ORDER BY category, order_index
     `).all();
 
+    // Get groups for Linktree-style grouping
+    const groups = db.prepare(`
+      SELECT * FROM link_groups
+      WHERE visible = 1
+      ORDER BY order_index
+    `).all();
+
     // Helper: Auto-detect YouTube thumbnail from URL
     // Supports: /watch?v=, /live/, youtu.be/, /embed/, /v/
     function getYouTubeThumbnail(url) {
@@ -117,6 +124,15 @@ async function loadDataFromDB(lang) {
       // Auto-detect YouTube thumbnail (philosophy: just paste YouTube link, thumbnail appears!)
       const autoThumbnail = getYouTubeThumbnail(link.url);
 
+      // Find group name from group_id
+      let groupName = null;
+      if (link.group_id) {
+        const group = groups.find(g => g.id === link.group_id);
+        if (group) {
+          groupName = group.name;
+        }
+      }
+
       const linkData = {
         text: lang === 'en' ? link.title_en : link.title_it,
         url: link.url,
@@ -125,14 +141,14 @@ async function loadDataFromDB(lang) {
         badge: link.badge_text,
         badgeColor: link.badge_color,
         thumbnail: autoThumbnail || link.thumbnail_url, // Auto-detect first, fallback to DB
-        groupTitle: link.group_title // NEW: Group title for highlights
+        groupName: groupName // Group name resolved from group_id
       };
 
       linksByCategory[link.category].push(linkData);
 
-      // NEW: If highlight with group_title, also add to highlightGroups
+      // If highlight, also add to highlightGroups (Linktree-style)
       if (link.category === 'highlight') {
-        const groupKey = link.group_title || null;
+        const groupKey = groupName || null;
         if (!highlightGroups[groupKey]) {
           highlightGroups[groupKey] = [];
         }
