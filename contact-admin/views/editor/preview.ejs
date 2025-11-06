@@ -102,7 +102,7 @@
 
             categories.forEach(category => {
                 const categoryLinks = links
-                    .filter(l => l.category === category && l.visible)
+                    .filter(l => l.category === category)
                     .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
 
                 const sectionEl = document.getElementById(`${category}-section`);

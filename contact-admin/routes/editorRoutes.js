@@ -142,6 +142,11 @@ router.get('/visual', async (req, res) => {
       ORDER BY order_index ASC, created_at DESC
     `).all() || [];
 
+    // Convert visible from number (0/1) to boolean for Vue.js checkbox v-model
+    links.forEach(link => {
+      link.visible = Boolean(link.visible);
+    });
+
     const sections = db.prepare(`
       SELECT * FROM contact_sections
       ORDER BY order_index ASC

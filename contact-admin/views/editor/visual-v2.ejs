@@ -277,6 +277,17 @@
             margin: 0 auto;
         }
 
+        /* Override card opacity in preview - make them more visible */
+        .preview-panel .highlight-card {
+            background: rgba(26, 26, 26, 0.95) !important;
+            border: 1px solid rgba(255, 215, 0, 0.3) !important;
+        }
+
+        .preview-panel .link-item {
+            background: rgba(26, 26, 26, 0.95) !important;
+            border: 1px solid rgba(255, 215, 0, 0.2) !important;
+        }
+
         /* Save Indicator */
         .save-indicator {
             position: fixed;
@@ -391,6 +402,7 @@
                             <div class="link-content">
                                 <input type="text" v-model="link.title_it" class="form-control" placeholder="Titolo link">
                                 <input type="url" v-model="link.url" class="form-control" placeholder="https://...">
+                                <input v-if="category === 'highlight'" type="url" v-model="link.thumbnail_url" class="form-control" placeholder="URL thumbnail (opzionale, auto per YouTube)">
                                 <input type="text" v-model="link.icon" class="form-control" placeholder="es: instagram-gold.svg">
                             </div>
                             <div class="link-actions">
@@ -429,6 +441,11 @@
                                :href="link.url || '#'"
                                target="_blank"
                                :class="category === 'highlight' ? 'highlight-card' : 'link-item'">
+                                <img v-if="category === 'highlight' && getThumbnail(link)"
+                                     :src="getThumbnail(link)"
+                                     :alt="link.title_it"
+                                     class="highlight-thumbnail"
+                                     @error="$event.target.style.display='none'">
                                 <img v-if="link.icon" :src="'/contact-public/img/icons/' + link.icon" alt="" class="link-icon">
                                 <span class="link-text">{{ link.title_it || 'Link' }}</span>
                                 <span v-if="category !== 'highlight'" class="link-arrow">→</span>
@@ -466,6 +483,28 @@
                 this.initSortables();
             },
             methods: {
+                getYouTubeThumbnail(url) {
+                    if (!url) return null;
+                    const patterns = [
+                        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/,
+                        /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+                    ];
+                    for (const pattern of patterns) {
+                        const match = url.match(pattern);
+                        if (match && match[1]) {
+                            return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+                        }
+                    }
+                    return null;
+                },
+                getThumbnail(link) {
+                    // Auto-detect YouTube thumbnail first
+                    const ytThumb = this.getYouTubeThumbnail(link.url);
+                    if (ytThumb) return ytThumb;
+
+                    // Fallback to manual thumbnail_url
+                    return link.thumbnail_url || null;
+                },
                 initSortables() {
                     this.categories.forEach(category => {
                         const el = this.$refs['sortable-' + category];
