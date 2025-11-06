@@ -16,13 +16,6 @@ export const config = {
     path: process.env.MAIN_SQLITE_PATH || path.join(__dirname, '..', '..', 'cms', 'db', 'main.sqlite')
   },
 
-  cloudinary: {
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-    apiSecret: process.env.CLOUDINARY_API_SECRET,
-    defaultFolder: 'danielecamiz/contact-icons'
-  },
-
   auth: {
     username: process.env.CONTACT_ADMIN_USER || 'admin',
     password: process.env.CONTACT_ADMIN_PASS || 'admin',

@@ -436,4 +436,27 @@ router.put('/settings', async (req, res) => {
   }
 });
 
+// GET /editor/export - Export all data as JSON backup
+router.get('/export', async (req, res) => {
+  try {
+    const settings = db.prepare('SELECT * FROM contact_settings').all();
+    const links = db.prepare('SELECT * FROM contact_links ORDER BY category, order_index').all();
+    const sections = db.prepare('SELECT * FROM contact_sections ORDER BY order_index').all();
+
+    const exportData = {
+      settings,
+      links,
+      sections,
+      exported_at: new Date().toISOString()
+    };
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="contact-backup-${Date.now()}.json"`);
+    res.send(JSON.stringify(exportData, null, 2));
+  } catch (error) {
+    console.error('[editorRoutes] Export error:', error);
+    res.status(500).send('Error exporting data');
+  }
+});
+
 export default router;

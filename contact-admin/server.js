@@ -2,7 +2,6 @@
 // Gestisce settings, links, sections con scheduling e analytics
 
 import express from 'express';
-import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import helmet from 'helmet';
@@ -36,18 +35,6 @@ app.use(helmet({
   }
 }));
 
-// Session management
-app.use(session({
-  secret: config.auth.sessionSecret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: config.env === 'production',
-    httpOnly: true,
-    maxAge: 3600000 // 1 hour
-  }
-}));
-
 // View engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -61,11 +48,7 @@ app.use('/contact-public', express.static(path.join(__dirname, '..', 'contact-si
 // Import routes (dynamic import)
 const setupRoutes = async () => {
   const { ensureAuthenticated, handleLogin, handleLogout } = await import('./middleware/hybridAuth.js');
-  const { default: dashboardRoutes } = await import('./routes/dashboardRoutes.js');
   const { default: settingsRoutes } = await import('./routes/settingsRoutes.js');
-  const { default: linksRoutes } = await import('./routes/linksRoutes.js');
-  const { default: sectionsRoutes } = await import('./routes/sectionsRoutes.js');
-  const { default: toolsRoutes } = await import('./routes/toolsRoutes.js');
   const { default: editorRoutes } = await import('./routes/editorRoutes.js');
 
   // Auth routes (like bio-admin)
@@ -75,18 +58,14 @@ const setupRoutes = async () => {
   app.post('/login', handleLogin);
   app.get('/logout', handleLogout);
 
-  // Root redirect
+  // Root redirect - go directly to Visual Editor
   app.get('/', (req, res) => {
-    res.redirect('/dashboard');
+    res.redirect('/editor/visual');
   });
 
   // Protected routes
-  app.use('/dashboard', dashboardRoutes);
   app.use('/settings', settingsRoutes);
-  app.use('/links', linksRoutes);
-  app.use('/sections', sectionsRoutes);
-  app.use('/tools', toolsRoutes);
-  app.use('/editor', editorRoutes); // Visual Editor
+  app.use('/editor', editorRoutes); // Visual Editor (main interface)
 
   // Health check
   app.get('/_ping', (req, res) => res.send('ok'));
