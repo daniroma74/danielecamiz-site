@@ -148,7 +148,8 @@ async function loadDataFromDB(lang) {
 
       // If highlight, also add to highlightGroups (Linktree-style)
       if (link.category === 'highlight') {
-        const groupKey = groupName || null;
+        // Use empty string for ungrouped instead of null to avoid JSON serialization issues
+        const groupKey = groupName || '';
         if (!highlightGroups[groupKey]) {
           highlightGroups[groupKey] = [];
         }

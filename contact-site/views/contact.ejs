@@ -50,17 +50,18 @@
           <!-- Grouped rendering -->
           <%
             const groupKeys = Object.keys(data.highlightGroups).sort((a, b) => {
-              if (a === 'null') return -1; // ungrouped first
-              if (b === 'null') return 1;
+              // Handle empty string (ungrouped) items first
+              if (!a || a === '') return -1;
+              if (!b || b === '') return 1;
               return (a || '').localeCompare(b || '');
             });
           %>
           <% groupKeys.forEach(groupKey => { %>
             <% const groupLinks = data.highlightGroups[groupKey]; %>
             <% if (groupLinks && groupLinks.length > 0) { %>
-              <div class="highlight-group" style="margin-bottom: 2rem;">
-                <% if (groupKey !== 'null') { %>
-                  <h3 class="group-title" style="color: var(--gold-1); font-size: 1.1rem; margin-bottom: 1rem; padding-left: 0.5rem; border-left: 3px solid var(--gold-1);">
+              <div class="highlight-group">
+                <% if (groupKey && groupKey !== '') { %>
+                  <h3 class="group-title">
                     <%= groupKey %>
                   </h3>
                 <% } %>

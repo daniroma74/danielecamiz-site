@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+
+    <!-- Contact-site CSS for preview -->
+    <link rel="stylesheet" href="/contact-public/css/main.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            overflow: hidden;
+        }
+
+        /* SPLIT VIEW LAYOUT */
+        .editor-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* EDITOR PANEL (LEFT) */
+        .editor-panel {
+            width: 50%;
+            height: 100vh;
+            overflow-y: auto;
+            background: white;
+            border-right: 2px solid #e0e0e0;
+            padding: 2rem;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .editor-header h1 {
+            font-size: 24px;
+            color: #2c3e50;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #d4af37;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c19b2a;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* DRAG AND DROP VISUAL EDITOR */
+        .visual-editor {
+            margin-top: 2rem;
+        }
+
+        .visual-editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .visual-editor-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* CREATE NEW GROUP */
+        .create-group-box {
+            background: rgba(255,255,255,0.15);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .create-group-box input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* GROUPS CONTAINER */
+        .groups-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 200px;
+        }
+
+        /* GROUP BOX */
+        .group-box {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .group-box.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .group-box.drag-over {
+            border-color: #d4af37;
+            background: #fffef8;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .group-box.ungrouped {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+        }
+
+        .group-box.ungrouped .group-header-title {
+            color: white;
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .group-box.ungrouped .group-header {
+            border-bottom-color: rgba(255,255,255,0.3);
+        }
+
+        .group-drag-handle {
+            font-size: 20px;
+            color: #95a5a6;
+            cursor: grab;
+        }
+
+        .group-drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .group-header-title {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            padding: 0.5rem;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: text;
+            transition: all 0.2s;
+        }
+
+        .group-header-title:focus {
+            outline: none;
+            border-color: #d4af37;
+            background: white;
+        }
+
+        .group-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .group-header-actions button {
+            padding: 0.5rem;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background-color: #27ae60;
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* LINKS CONTAINER WITHIN GROUP */
+        .group-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            min-height: 60px;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .group-links.drag-over {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px dashed #d4af37;
+        }
+
+        .group-links.empty::after {
+            content: '↓ Trascina qui i link o crea nuovi link';
+            display: block;
+            text-align: center;
+            color: #95a5a6;
+            font-size: 14px;
+            padding: 1rem;
+        }
+
+        /* LINK ITEM (DRAGGABLE) */
+        .link-draggable {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+
+        .link-draggable:active {
+            cursor: grabbing;
+        }
+
+        .link-draggable.dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+
+        .link-draggable:hover {
+            border-color: #d4af37;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .link-drag-handle {
+            font-size: 18px;
+            color: #95a5a6;
+        }
+
+        .link-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .link-content input {
+            padding: 0.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .link-content input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .link-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .link-actions button {
+            padding: 0.5rem;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ADD LINK BUTTON */
+        .add-link-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px dashed #95a5a6;
+            background: transparent;
+            border-radius: 8px;
+            color: #95a5a6;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .add-link-btn:hover {
+            border-color: #27ae60;
+            color: #27ae60;
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        /* PREVIEW PANEL (RIGHT) */
+        .preview-panel {
+            width: 50%;
+            height: 100vh;
+            overflow-y: auto;
+            background: #0a0a0a;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0a0a 0%, #151515 50%, #0a0a0a 100%);
+            padding: 2rem;
+        }
+
+        .preview-header-text {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .contact-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Preview overrides for better visibility */
+        .preview-panel .highlight-card {
+            background: rgba(26, 26, 26, 0.95) !important;
+            border: 1px solid rgba(255, 215, 0, 0.3) !important;
+        }
+
+        /* Save Indicator */
+        .save-indicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+        }
+
+        .save-indicator.saving {
+            display: flex;
+            background: #3498db;
+            color: white;
+        }
+
+        .save-indicator.saved {
+            display: flex;
+            background: #27ae60;
+            color: white;
+        }
+
+        .save-indicator.error {
+            display: flex;
+            background: #e74c3c;
+            color: white;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <!-- Vue.js 3 from CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Sortable.js for drag & drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="editor-container">
+            <!-- EDITOR PANEL (LEFT) -->
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <h1>🎨 Visual Editor v3 (Drag & Drop)</h1>
+                    <div class="header-actions">
+                        <a href="/dashboard" class="btn btn-secondary">← Dashboard</a>
+                        <button @click="saveAll" class="btn btn-primary">💾 Salva Tutto</button>
+                    </div>
+                </div>
+
+                <!-- VISUAL DRAG & DROP EDITOR -->
+                <div class="visual-editor">
+                    <div class="visual-editor-header">
+                        <h2>📁 Gestione Gruppi e Link (Linktree-style)</h2>
+                    </div>
+
+                    <!-- CREATE NEW GROUP -->
+                    <div class="create-group-box">
+                        <input
+                            type="text"
+                            v-model="newGroupName"
+                            @keyup.enter="createGroup"
+                            placeholder="➕ Nome nuovo gruppo (es: 'Nuovi Album', 'Live')">
+                        <button @click="createGroup" class="btn btn-primary">Crea Gruppo</button>
+                    </div>
+
+                    <!-- GROUPS CONTAINER -->
+                    <div ref="groupsContainer" class="groups-container">
+                        <!-- UNGROUPED BOX (ALWAYS FIRST) -->
+                        <div class="group-box ungrouped" data-group-id="">
+                            <div class="group-header">
+                                <span class="group-drag-handle">☰</span>
+                                <div class="group-header-title">
+                                    📌 Senza Gruppo
+                                </div>
+                            </div>
+                            <div :ref="'group-links-'" class="group-links" :class="{ empty: getLinksInGroup('').length === 0 }">
+                                <div v-for="link in getLinksInGroup('')"
+                                     :key="link.id"
+                                     :data-link-id="link.id"
+                                     class="link-draggable">
+                                    <span class="link-drag-handle">☰</span>
+                                    <div class="link-content">
+                                        <input type="text" v-model="link.title_it" placeholder="Titolo link">
+                                        <input type="url" v-model="link.url" placeholder="https://...">
+                                    </div>
+                                    <div class="link-actions">
+                                        <label class="toggle">
+                                            <input type="checkbox" v-model="link.visible">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <button @click="deleteLink(link.id)" class="btn btn-danger">🗑️</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button @click="addLinkToGroup('')" class="add-link-btn">+ Aggiungi Link</button>
+                        </div>
+
+                        <!-- ACTUAL GROUPS -->
+                        <div v-for="group in groups" :key="group.id"
+                             :data-group-id="group.id"
+                             class="group-box">
+                            <div class="group-header">
+                                <span class="group-drag-handle">☰</span>
+                                <input
+                                    type="text"
+                                    v-model="group.name"
+                                    @blur="updateGroup(group)"
+                                    class="group-header-title"
+                                    placeholder="Nome gruppo">
+                                <div class="group-header-actions">
+                                    <label class="toggle">
+                                        <input type="checkbox" v-model="group.visible" @change="updateGroup(group)">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <button @click="deleteGroup(group.id)" class="btn btn-danger">🗑️</button>
+                                </div>
+                            </div>
+                            <div :ref="'group-links-' + group.id" class="group-links" :class="{ empty: getLinksInGroup(group.id).length === 0 }">
+                                <div v-for="link in getLinksInGroup(group.id)"
+                                     :key="link.id"
+                                     :data-link-id="link.id"
+                                     class="link-draggable">
+                                    <span class="link-drag-handle">☰</span>
+                                    <div class="link-content">
+                                        <input type="text" v-model="link.title_it" placeholder="Titolo link">
+                                        <input type="url" v-model="link.url" placeholder="https://...">
+                                    </div>
+                                    <div class="link-actions">
+                                        <label class="toggle">
+                                            <input type="checkbox" v-model="link.visible">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <button @click="deleteLink(link.id)" class="btn btn-danger">🗑️</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button @click="addLinkToGroup(group.id)" class="add-link-btn">+ Aggiungi Link</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREVIEW PANEL (RIGHT) -->
+            <div class="preview-panel">
+                <div class="preview-header-text">📱 Anteprima Live</div>
+
+                <div class="contact-container">
+                    <!-- Profile Header -->
+                    <div class="profile-header">
+                        <div class="profile-avatar-wrapper">
+                            <img src="/contact-public/img/daniele-camiz-foto-profilo.png" alt="Avatar" class="profile-avatar">
+                        </div>
+                        <h1 class="profile-name">{{ settings.name || 'Nome' }}</h1>
+                        <p class="profile-role">{{ settings.role_it || 'Ruolo' }}</p>
+                        <p class="profile-bio">{{ settings.bio_it || 'Breve biografia...' }}</p>
+                    </div>
+
+                    <!-- Preview Groups -->
+                    <div class="section" v-if="visibleHighlights.length > 0">
+                        <h2 class="section-title">In Evidenza</h2>
+
+                        <!-- Ungrouped links -->
+                        <div v-if="getVisibleLinksInGroup('').length > 0" class="highlight-group">
+                            <div class="highlights-grid">
+                                <a v-for="link in getVisibleLinksInGroup('')"
+                                   :key="link.id"
+                                   :href="link.url || '#'"
+                                   target="_blank"
+                                   class="highlight-card">
+                                    <img v-if="link.thumbnail_url"
+                                         :src="link.thumbnail_url"
+                                         :alt="link.title_it"
+                                         class="highlight-thumbnail"
+                                         @error="$event.target.style.display='none'">
+                                    <span class="link-text">{{ link.title_it || 'Link' }}</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Grouped links -->
+                        <div v-for="group in visibleGroups" :key="group.id" class="highlight-group">
+                            <h3 class="group-title">{{ group.name }}</h3>
+                            <div class="highlights-grid">
+                                <a v-for="link in getVisibleLinksInGroup(group.id)"
+                                   :key="link.id"
+                                   :href="link.url || '#'"
+                                   target="_blank"
+                                   class="highlight-card">
+                                    <img v-if="link.thumbnail_url"
+                                         :src="link.thumbnail_url"
+                                         :alt="link.title_it"
+                                         class="highlight-thumbnail"
+                                         @error="$event.target.style.display='none'">
+                                    <span class="link-text">{{ link.title_it || 'Link' }}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Indicator -->
+        <div class="save-indicator" :class="saveStatus">
+            <div v-if="saveStatus === 'saving'" class="spinner"></div>
+            <span v-if="saveStatus === 'saving'">Salvataggio...</span>
+            <span v-if="saveStatus === 'saved'">✓ Salvato!</span>
+            <span v-if="saveStatus === 'error'">✗ Errore</span>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    settings: <%- JSON.stringify(settings) %>,
+                    links: <%- JSON.stringify(links.filter(l => l.category === 'highlight')) %>,
+                    groups: <%- JSON.stringify(groups) %>,
+                    saveStatus: '',
+                    saveTimeout: null,
+                    newGroupName: ''
+                };
+            },
+            computed: {
+                visibleHighlights() {
+                    return this.links.filter(l => l.visible && l.category === 'highlight');
+                },
+                visibleGroups() {
+                    return this.groups.filter(g => g.visible);
+                }
+            },
+            mounted() {
+                this.initDragAndDrop();
+            },
+            methods: {
+                initDragAndDrop() {
+                    const self = this;
+
+                    // Make groups sortable
+                    Sortable.create(this.$refs.groupsContainer, {
+                        animation: 150,
+                        handle: '.group-drag-handle',
+                        draggable: '.group-box',
+                        filter: '.ungrouped',
+                        onEnd: () => self.saveGroupsOrder()
+                    });
+
+                    // Make links within each group sortable
+                    [...this.groups, { id: '' }].forEach(group => {
+                        const groupId = group.id || '';
+                        const el = this.$refs[`group-links-${groupId}`];
+                        if (el && el[0]) {
+                            Sortable.create(el[0], {
+                                group: 'links',
+                                animation: 150,
+                                handle: '.link-drag-handle',
+                                draggable: '.link-draggable',
+                                onEnd: (evt) => {
+                                    // Get new group from parent
+                                    const newGroupEl = evt.to.closest('.group-box');
+                                    const newGroupId = newGroupEl ? (newGroupEl.dataset.groupId || '') : '';
+                                    const linkId = parseInt(evt.item.dataset.linkId);
+
+                                    // Update link's group_id
+                                    const link = self.links.find(l => l.id === linkId);
+                                    if (link) {
+                                        link.group_id = newGroupId === '' ? null : parseInt(newGroupId);
+                                        self.saveLink(link);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                },
+                getLinksInGroup(groupId) {
+                    const gid = groupId === '' ? null : groupId;
+                    return this.links.filter(l => {
+                        const linkGroupId = l.group_id === '' ? null : l.group_id;
+                        return linkGroupId === gid;
+                    }).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+                },
+                getVisibleLinksInGroup(groupId) {
+                    return this.getLinksInGroup(groupId).filter(l => l.visible);
+                },
+                async createGroup() {
+                    if (!this.newGroupName || !this.newGroupName.trim()) {
+                        alert('Inserisci un nome per il gruppo');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/editor/group', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                name: this.newGroupName.trim(),
+                                category: 'highlight'
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            await this.loadGroups();
+                            this.newGroupName = '';
+                            this.showSaveStatus('saved');
+                            // Re-init drag and drop for new group
+                            this.$nextTick(() => this.initDragAndDrop());
+                        }
+                    } catch (error) {
+                        console.error('Create group error:', error);
+                        alert('Errore nella creazione del gruppo');
+                    }
+                },
+                async updateGroup(group) {
+                    try {
+                        const response = await fetch(`/editor/group/${group.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(group)
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            console.log('Group updated:', group.name);
+                        }
+                    } catch (error) {
+                        console.error('Update group error:', error);
+                    }
+                },
+                async deleteGroup(groupId) {
+                    if (!confirm('Eliminare questo gruppo? I link verranno spostati in "Senza Gruppo".')) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/editor/group/${groupId}`, {
+                            method: 'DELETE'
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            const index = this.groups.findIndex(g => g.id === groupId);
+                            if (index > -1) {
+                                this.groups.splice(index, 1);
+                            }
+                            // Move links to ungrouped
+                            this.links.forEach(link => {
+                                if (link.group_id === groupId) {
+                                    link.group_id = null;
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Delete group error:', error);
+                    }
+                },
+                async loadGroups() {
+                    try {
+                        const response = await fetch('/editor/groups');
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.groups = data.groups;
+                        }
+                    } catch (error) {
+                        console.error('Load groups error:', error);
+                    }
+                },
+                addLinkToGroup(groupId) {
+                    const gid = groupId === '' ? null : groupId;
+                    const maxOrder = Math.max(...this.links.map(l => l.order_index || 0), 0);
+                    this.links.push({
+                        id: -Date.now(),
+                        title_it: 'Nuovo Link',
+                        url: 'https://example.com',
+                        category: 'highlight',
+                        icon: 'internet-gold.svg',
+                        visible: 1,
+                        group_id: gid,
+                        order_index: maxOrder + 1
+                    });
+                },
+                async saveLink(link) {
+                    try {
+                        if (link.id > 0) {
+                            const response = await fetch(`/editor/link/${link.id}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(link)
+                            });
+                            const data = await response.json();
+                            console.log('Link saved:', data);
+                        } else {
+                            const response = await fetch('/editor/link', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(link)
+                            });
+                            const data = await response.json();
+                            if (data.success && data.id) {
+                                link.id = data.id;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Save link error:', error);
+                    }
+                },
+                async deleteLink(id) {
+                    if (!confirm('Eliminare questo link?')) return;
+
+                    const index = this.links.findIndex(l => l.id === id);
+                    if (index > -1) {
+                        this.links.splice(index, 1);
+                    }
+
+                    if (id > 0) {
+                        try {
+                            await fetch(`/editor/link/${id}`, { method: 'DELETE' });
+                        } catch (error) {
+                            console.error('Delete error:', error);
+                        }
+                    }
+                },
+                async saveGroupsOrder() {
+                    // TODO: Implement group reordering API
+                    console.log('Groups order changed');
+                },
+                async saveAll() {
+                    try {
+                        this.showSaveStatus('saving');
+
+                        // Save all groups
+                        for (const group of this.groups) {
+                            await this.updateGroup(group);
+                        }
+
+                        // Save all links
+                        for (const link of this.links) {
+                            await this.saveLink(link);
+                        }
+
+                        this.showSaveStatus('saved');
+                    } catch (error) {
+                        console.error('Save error:', error);
+                        this.showSaveStatus('error');
+                    }
+                },
+                showSaveStatus(status) {
+                    this.saveStatus = status;
+                    if (this.saveTimeout) clearTimeout(this.saveTimeout);
+                    if (status === 'saved' || status === 'error') {
+                        this.saveTimeout = setTimeout(() => {
+                            this.saveStatus = '';
+                        }, 3000);
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

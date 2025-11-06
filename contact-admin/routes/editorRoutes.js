@@ -229,7 +229,7 @@ router.get('/test', async (req, res) => {
   }
 });
 
-// GET /editor/visual - Pagina visual editor
+// GET /editor/visual - Pagina visual editor v3 (drag & drop)
 router.get('/visual', async (req, res) => {
   try {
     // Carica tutti i dati necessari
@@ -263,8 +263,13 @@ router.get('/visual', async (req, res) => {
       ORDER BY order_index ASC, created_at DESC
     `).all() || [];
 
-    res.render('editor/visual-v2', {
-      title: 'Visual Editor - Contact Admin',
+    // Convert group visible to boolean
+    groups.forEach(group => {
+      group.visible = Boolean(group.visible);
+    });
+
+    res.render('editor/visual-v3', {
+      title: 'Visual Editor v3 - Contact Admin',
       settings,
       links,
       sections,
@@ -272,6 +277,51 @@ router.get('/visual', async (req, res) => {
     });
   } catch (error) {
     console.error('Error loading visual editor:', error);
+    res.status(500).send('Error loading editor: ' + error.message);
+  }
+});
+
+// GET /editor/visual-v2 - Old visual editor (fallback)
+router.get('/visual-v2', async (req, res) => {
+  try {
+    const settings = db.prepare('SELECT * FROM contact_settings WHERE id = 1').get() || {
+      id: 1,
+      name: '',
+      role_it: '',
+      role_en: '',
+      bio_it: '',
+      bio_en: '',
+      avatar_url: ''
+    };
+
+    const links = db.prepare(`
+      SELECT * FROM contact_links
+      ORDER BY order_index ASC, created_at DESC
+    `).all() || [];
+
+    links.forEach(link => {
+      link.visible = Boolean(link.visible);
+    });
+
+    const sections = db.prepare(`
+      SELECT * FROM contact_sections
+      ORDER BY order_index ASC
+    `).all() || [];
+
+    const groups = db.prepare(`
+      SELECT * FROM link_groups
+      ORDER BY order_index ASC, created_at DESC
+    `).all() || [];
+
+    res.render('editor/visual-v2', {
+      title: 'Visual Editor v2 - Contact Admin',
+      settings,
+      links,
+      sections,
+      groups
+    });
+  } catch (error) {
+    console.error('Error loading visual editor v2:', error);
     res.status(500).send('Error loading editor: ' + error.message);
   }
 });
