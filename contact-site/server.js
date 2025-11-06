@@ -107,6 +107,8 @@ async function loadDataFromDB(lang) {
 
     // Group links by category
     const linksByCategory = {};
+    const highlightGroups = {}; // NEW: For grouped highlights (Linktree-style)
+
     links.forEach(link => {
       if (!linksByCategory[link.category]) {
         linksByCategory[link.category] = [];
@@ -115,15 +117,27 @@ async function loadDataFromDB(lang) {
       // Auto-detect YouTube thumbnail (philosophy: just paste YouTube link, thumbnail appears!)
       const autoThumbnail = getYouTubeThumbnail(link.url);
 
-      linksByCategory[link.category].push({
+      const linkData = {
         text: lang === 'en' ? link.title_en : link.title_it,
         url: link.url,
         icon: link.icon,
         target: link.target,
         badge: link.badge_text,
         badgeColor: link.badge_color,
-        thumbnail: autoThumbnail || link.thumbnail_url // Auto-detect first, fallback to DB
-      });
+        thumbnail: autoThumbnail || link.thumbnail_url, // Auto-detect first, fallback to DB
+        groupTitle: link.group_title // NEW: Group title for highlights
+      };
+
+      linksByCategory[link.category].push(linkData);
+
+      // NEW: If highlight with group_title, also add to highlightGroups
+      if (link.category === 'highlight') {
+        const groupKey = link.group_title || null;
+        if (!highlightGroups[groupKey]) {
+          highlightGroups[groupKey] = [];
+        }
+        highlightGroups[groupKey].push(linkData);
+      }
     });
 
     // Build data object
@@ -136,7 +150,8 @@ async function loadDataFromDB(lang) {
       pageTitle: `Links - ${settings.name}`,
       description: lang === 'en'
         ? 'All my links in one place - Contacts, social media, projects and news'
-        : 'Tutti i miei link in un unico posto - Contatti, social, progetti e news'
+        : 'Tutti i miei link in un unico posto - Contatti, social, progetti e news',
+      highlightGroups // NEW: Grouped highlights for Linktree-style display
     };
 
     // Add sections and links

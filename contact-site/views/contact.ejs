@@ -41,34 +41,83 @@
       <% } %>
     </header>
 
-    <!-- Highlights Section -->
+    <!-- Highlights Section (with Groups like Linktree) -->
     <% if (data.highlights && data.highlights.length > 0) { %>
       <section class="section">
         <h2 class="section-title"><%= data.highlightTitle || data.highlightsTitle %></h2>
-        <div class="highlights-grid">
-          <% data.highlights.forEach(link => { %>
-            <a href="<%= link.url %>"
-               class="highlight-card"
-               target="<%= link.target || '_blank' %>"
-               rel="noopener noreferrer"
-               data-category="highlight"
-               data-label="<%= link.text %>">
-              <% if (link.thumbnail) { %>
-                <img src="<%= link.thumbnail %>"
-                     alt="<%= link.text %>"
-                     class="highlight-thumbnail"
-                     onerror="this.style.display='none'">
-              <% } %>
-              <% if (link.icon) { %>
-                <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
-              <% } %>
-              <span class="link-text"><%= link.text %></span>
-              <% if (link.badge) { %>
-                <span class="link-badge" style="background: <%= link.badgeColor || '#FFD700' %>"><%= link.badge %></span>
-              <% } %>
-            </a>
+
+        <% if (data.highlightGroups && Object.keys(data.highlightGroups).length > 0) { %>
+          <!-- Grouped rendering -->
+          <%
+            const groupKeys = Object.keys(data.highlightGroups).sort((a, b) => {
+              if (a === 'null') return -1; // ungrouped first
+              if (b === 'null') return 1;
+              return (a || '').localeCompare(b || '');
+            });
+          %>
+          <% groupKeys.forEach(groupKey => { %>
+            <% const groupLinks = data.highlightGroups[groupKey]; %>
+            <% if (groupLinks && groupLinks.length > 0) { %>
+              <div class="highlight-group" style="margin-bottom: 2rem;">
+                <% if (groupKey !== 'null') { %>
+                  <h3 class="group-title" style="color: var(--gold-1); font-size: 1.1rem; margin-bottom: 1rem; padding-left: 0.5rem; border-left: 3px solid var(--gold-1);">
+                    <%= groupKey %>
+                  </h3>
+                <% } %>
+                <div class="highlights-grid">
+                  <% groupLinks.forEach(link => { %>
+                    <a href="<%= link.url %>"
+                       class="highlight-card"
+                       target="<%= link.target || '_blank' %>"
+                       rel="noopener noreferrer"
+                       data-category="highlight"
+                       data-label="<%= link.text %>">
+                      <% if (link.thumbnail) { %>
+                        <img src="<%= link.thumbnail %>"
+                             alt="<%= link.text %>"
+                             class="highlight-thumbnail"
+                             onerror="this.style.display='none'">
+                      <% } %>
+                      <% if (link.icon) { %>
+                        <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
+                      <% } %>
+                      <span class="link-text"><%= link.text %></span>
+                      <% if (link.badge) { %>
+                        <span class="link-badge" style="background: <%= link.badgeColor || '#FFD700' %>"><%= link.badge %></span>
+                      <% } %>
+                    </a>
+                  <% }); %>
+                </div>
+              </div>
+            <% } %>
           <% }); %>
-        </div>
+        <% } else { %>
+          <!-- Fallback: no groups, render flat -->
+          <div class="highlights-grid">
+            <% data.highlights.forEach(link => { %>
+              <a href="<%= link.url %>"
+                 class="highlight-card"
+                 target="<%= link.target || '_blank' %>"
+                 rel="noopener noreferrer"
+                 data-category="highlight"
+                 data-label="<%= link.text %>">
+                <% if (link.thumbnail) { %>
+                  <img src="<%= link.thumbnail %>"
+                       alt="<%= link.text %>"
+                       class="highlight-thumbnail"
+                       onerror="this.style.display='none'">
+                <% } %>
+                <% if (link.icon) { %>
+                  <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
+                <% } %>
+                <span class="link-text"><%= link.text %></span>
+                <% if (link.badge) { %>
+                  <span class="link-badge" style="background: <%= link.badgeColor || '#FFD700' %>"><%= link.badge %></span>
+                <% } %>
+              </a>
+            <% }); %>
+          </div>
+        <% } %>
       </section>
     <% } %>
 

@@ -401,6 +401,7 @@
                             <span class="drag-handle">☰</span>
                             <div class="link-content">
                                 <input type="text" v-model="link.title_it" class="form-control" placeholder="Titolo link">
+                                <input v-if="category === 'highlight'" type="text" v-model="link.group_title" class="form-control" placeholder="📁 Gruppo (opzionale, es: 'Nuovi Album')" style="border-left: 3px solid #d4af37;">
                                 <div style="position: relative;">
                                     <input type="url"
                                            v-model="link.url"
@@ -445,20 +446,41 @@
                     <!-- Links by Category -->
                     <div v-for="category in categories" :key="category" class="section" v-show="getVisibleLinksByCategory(category).length > 0">
                         <h2 class="section-title">{{ getCategoryName(category) }}</h2>
-                        <div :class="category === 'highlight' ? 'highlight-grid' : 'links-container'">
+
+                        <!-- Grouped highlights rendering -->
+                        <template v-if="category === 'highlight'">
+                            <div v-for="(groupLinks, groupTitle) in getGroupedLinks(category)" :key="groupTitle || 'ungrouped'" style="margin-bottom: 2rem;">
+                                <h3 v-if="groupTitle" style="color: var(--gold-1); font-size: 1.1rem; margin-bottom: 1rem; padding-left: 0.5rem; border-left: 3px solid var(--gold-1);">
+                                    {{ groupTitle }}
+                                </h3>
+                                <div class="highlight-grid">
+                                    <a v-for="link in groupLinks"
+                                       :key="link.id"
+                                       :href="link.url || '#'"
+                                       target="_blank"
+                                       class="highlight-card">
+                                        <img v-if="getThumbnail(link)"
+                                             :src="getThumbnail(link)"
+                                             :alt="link.title_it"
+                                             class="highlight-thumbnail"
+                                             @error="$event.target.style.display='none'">
+                                        <img v-if="link.icon" :src="'/contact-public/img/icons/' + link.icon" alt="" class="link-icon">
+                                        <span class="link-text">{{ link.title_it || 'Link' }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Regular links rendering (social, contact, extra) -->
+                        <div v-else class="links-container">
                             <a v-for="link in getVisibleLinksByCategory(category)"
                                :key="link.id"
                                :href="link.url || '#'"
                                target="_blank"
-                               :class="category === 'highlight' ? 'highlight-card' : 'link-item'">
-                                <img v-if="category === 'highlight' && getThumbnail(link)"
-                                     :src="getThumbnail(link)"
-                                     :alt="link.title_it"
-                                     class="highlight-thumbnail"
-                                     @error="$event.target.style.display='none'">
+                               class="link-item">
                                 <img v-if="link.icon" :src="'/contact-public/img/icons/' + link.icon" alt="" class="link-icon">
                                 <span class="link-text">{{ link.title_it || 'Link' }}</span>
-                                <span v-if="category !== 'highlight'" class="link-arrow">→</span>
+                                <span class="link-arrow">→</span>
                             </a>
                         </div>
                     </div>
@@ -732,6 +754,34 @@
                     return this.links
                         .filter(l => l.category === category && l.visible)
                         .sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+                },
+                getGroupedLinks(category) {
+                    // Get all visible links for this category
+                    const links = this.getVisibleLinksByCategory(category);
+
+                    // Group by group_title
+                    const grouped = {};
+                    links.forEach(link => {
+                        const groupKey = link.group_title || null;
+                        if (!grouped[groupKey]) {
+                            grouped[groupKey] = [];
+                        }
+                        grouped[groupKey].push(link);
+                    });
+
+                    // Sort: ungrouped (null) first, then alphabetically
+                    const sorted = {};
+                    const keys = Object.keys(grouped).sort((a, b) => {
+                        if (a === 'null') return -1;  // ungrouped first
+                        if (b === 'null') return 1;
+                        return (a || '').localeCompare(b || '');
+                    });
+
+                    keys.forEach(key => {
+                        sorted[key] = grouped[key];
+                    });
+
+                    return sorted;
                 },
                 getCategoryName(category) {
                     const names = {
