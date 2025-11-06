@@ -96,7 +96,8 @@ async function loadDataFromDB(lang) {
         icon: link.icon,
         target: link.target,
         badge: link.badge_text,
-        badgeColor: link.badge_color
+        badgeColor: link.badge_color,
+        thumbnail: link.thumbnail_url
       });
     });
 

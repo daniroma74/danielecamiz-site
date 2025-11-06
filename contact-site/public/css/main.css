@@ -350,6 +350,39 @@ body {
   box-shadow: var(--glow-strong), var(--shadow-lg);
 }
 
+/* Thumbnail for video/image previews in highlights */
+.highlight-thumbnail {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.highlight-card:hover .highlight-thumbnail {
+  transform: scale(1.02);
+  box-shadow: var(--glow-gold), var(--shadow-lg);
+}
+
+/* Make highlight cards display in column when they have thumbnails */
+.highlight-card:has(.highlight-thumbnail) {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+}
+
+.highlight-card:has(.highlight-thumbnail) .link-icon,
+.highlight-card:has(.highlight-thumbnail) .link-text,
+.highlight-card:has(.highlight-thumbnail) .link-badge {
+  margin: var(--spacing-sm) var(--spacing-sm) 0;
+}
+
+.highlight-card:has(.highlight-thumbnail) .link-text {
+  margin-bottom: var(--spacing-sm);
+}
+
 /* ============================================
    FOOTER
    ============================================ */

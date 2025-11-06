@@ -53,6 +53,12 @@
                rel="noopener noreferrer"
                data-category="highlight"
                data-label="<%= link.text %>">
+              <% if (link.thumbnail) { %>
+                <img src="<%= link.thumbnail %>"
+                     alt="<%= link.text %>"
+                     class="highlight-thumbnail"
+                     onerror="this.style.display='none'">
+              <% } %>
               <% if (link.icon) { %>
                 <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
               <% } %>

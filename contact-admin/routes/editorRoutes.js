@@ -10,6 +10,60 @@ const router = express.Router();
 // Tutte le routes richiedono autenticazione
 router.use(ensureAuthenticated);
 
+/**
+ * Extract YouTube video ID from various YouTube URL formats
+ * Supports:
+ * - https://www.youtube.com/watch?v=VIDEO_ID
+ * - https://youtu.be/VIDEO_ID
+ * - https://www.youtube.com/embed/VIDEO_ID
+ * - https://www.youtube.com/v/VIDEO_ID
+ */
+function extractYouTubeId(url) {
+  if (!url) return null;
+
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Generate YouTube thumbnail URL from video ID
+ * Uses maxresdefault for best quality, falls back to hqdefault if needed
+ */
+function getYouTubeThumbnail(videoId) {
+  if (!videoId) return null;
+  // maxresdefault is 1280x720, hqdefault is 480x360
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
+/**
+ * Auto-detect and set thumbnail_url for YouTube videos
+ */
+function autoSetThumbnail(url, currentThumbnail) {
+  // If thumbnail already set manually, don't override
+  if (currentThumbnail && currentThumbnail.trim()) {
+    return currentThumbnail;
+  }
+
+  // Check if URL is YouTube
+  const videoId = extractYouTubeId(url);
+  if (videoId) {
+    return getYouTubeThumbnail(videoId);
+  }
+
+  return null;
+}
+
 // GET /editor/preview - Live preview iframe (uses real contact-site CSS)
 router.get('/preview', async (req, res) => {
   try {
@@ -145,19 +199,27 @@ router.put('/link/:id', async (req, res) => {
       title_en,
       url,
       icon,
-      visible
+      visible,
+      thumbnail_url
     } = req.body;
+
+    // Auto-detect YouTube thumbnail
+    const finalThumbnail = autoSetThumbnail(url, thumbnail_url);
 
     const stmt = db.prepare(`
       UPDATE contact_links
       SET title_it = ?, title_en = ?, url = ?, icon = ?, visible = ?,
-          scheduled_start = NULL, scheduled_end = NULL
+          thumbnail_url = ?, scheduled_start = NULL, scheduled_end = NULL
       WHERE id = ?
     `);
 
-    stmt.run(title_it, title_en, url, icon, visible ? 1 : 0, id);
+    stmt.run(title_it, title_en, url, icon, visible ? 1 : 0, finalThumbnail, id);
 
-    res.json({ success: true, message: 'Link updated' });
+    res.json({
+      success: true,
+      message: 'Link updated',
+      thumbnail_url: finalThumbnail
+    });
   } catch (error) {
     console.error('Error updating link:', error);
     res.status(500).json({ success: false, message: 'Update failed' });
@@ -172,8 +234,12 @@ router.post('/link', async (req, res) => {
       title_en,
       url,
       category,
-      icon
+      icon,
+      thumbnail_url
     } = req.body;
+
+    // Auto-detect YouTube thumbnail
+    const finalThumbnail = autoSetThumbnail(url, thumbnail_url);
 
     // Get max order per category
     const maxOrder = db.prepare(
@@ -184,16 +250,17 @@ router.post('/link', async (req, res) => {
 
     const stmt = db.prepare(`
       INSERT INTO contact_links
-      (title_it, title_en, url, category, icon, order_index, visible)
-      VALUES (?, ?, ?, ?, ?, ?, 1)
+      (title_it, title_en, url, category, icon, order_index, visible, thumbnail_url)
+      VALUES (?, ?, ?, ?, ?, ?, 1, ?)
     `);
 
-    const result = stmt.run(title_it, title_en, url, category, icon, order);
+    const result = stmt.run(title_it, title_en, url, category, icon, order, finalThumbnail);
 
     res.json({
       success: true,
       message: 'Link created',
-      id: result.lastInsertRowid
+      id: result.lastInsertRowid,
+      thumbnail_url: finalThumbnail
     });
   } catch (error) {
     console.error('Error creating link:', error);

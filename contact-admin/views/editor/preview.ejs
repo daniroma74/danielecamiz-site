@@ -104,6 +104,20 @@
                     linkEl.target = link.target || '_blank';
                     linkEl.className = category === 'highlight' ? 'highlight-card' : 'link-item';
 
+                    // Thumbnail for highlight cards (if exists)
+                    if (category === 'highlight' && link.thumbnail_url) {
+                        const thumbEl = document.createElement('img');
+                        thumbEl.src = link.thumbnail_url;
+                        thumbEl.alt = link.title_it || '';
+                        thumbEl.className = 'highlight-thumbnail';
+                        thumbEl.style.cssText = 'width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem;';
+                        thumbEl.onerror = function() {
+                            // Hide if thumbnail fails to load
+                            this.style.display = 'none';
+                        };
+                        linkEl.appendChild(thumbEl);
+                    }
+
                     // Icon
                     if (link.icon) {
                         const iconEl = document.createElement('img');
