@@ -95,9 +95,12 @@ async function loadDataFromDB(lang) {
       for (const pattern of patterns) {
         const match = url.match(pattern);
         if (match && match[1]) {
-          return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+          const thumbUrl = `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+          console.log(`[Thumbnail] Detected YouTube: ${url.substring(0, 60)} → ${match[1]} → ${thumbUrl}`);
+          return thumbUrl;
         }
       }
+      console.log(`[Thumbnail] No match for: ${url.substring(0, 60)}`);
       return null;
     }
 
