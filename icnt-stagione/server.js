@@ -163,7 +163,10 @@ app.use((req, res, next) => {
     res.locals.meta = {
       title: 'ICNT - I Concerti nel Tempio',
       description: 'Stagione concerti ICNT Roma',
-      url: BASE_URL
+      url: BASE_URL,
+      image: `${BASE_URL}/public/img/icnt_logo.png`,
+      type: 'website',
+      locale: 'it_IT'
     };
   }
   next();
@@ -416,7 +419,7 @@ app.get('/stagione/:code', (req, res) => {
         title: `Stagione ICNT ${code} - I Concerti nel Tempio`,
         description: `Calendario completo della stagione ICNT ${code}. ${eventsAll.length} concerti da non perdere a Roma.`,
         url: `${BASE_URL}/stagione/${code}`,
-        image: `${BASE_URL}/public/img/og-image.jpg`,
+        image: `${BASE_URL}/public/img/icnt_logo.png`,
         type: 'website',
         locale: 'it_IT'
       },
