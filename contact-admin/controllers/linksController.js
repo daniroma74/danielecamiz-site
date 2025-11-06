@@ -1,5 +1,45 @@
 import { all, get, run } from '../config/database.js';
 
+/**
+ * Extract YouTube video ID from various YouTube URL formats
+ */
+function extractYouTubeId(url) {
+  if (!url) return null;
+
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Generate YouTube thumbnail URL from video ID
+ */
+function getYouTubeThumbnail(videoId) {
+  if (!videoId) return null;
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
+/**
+ * Auto-detect and set thumbnail_url for YouTube videos
+ */
+function autoSetThumbnail(url) {
+  const videoId = extractYouTubeId(url);
+  if (videoId) {
+    return getYouTubeThumbnail(videoId);
+  }
+  return null;
+}
+
 const listLinks = async (req, res) => {
   try {
     const category = req.query.category || 'all';
@@ -58,12 +98,15 @@ const createLink = async (req, res) => {
       description_en
     } = req.body;
 
+    // Auto-detect YouTube thumbnail
+    const thumbnail_url = autoSetThumbnail(url);
+
     await run(
       `INSERT INTO contact_links (
         category, title_it, title_en, url, icon, visible, order_index, target,
         badge_text, badge_color, scheduled_start, scheduled_end, is_internal,
-        description_it, description_en
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        description_it, description_en, thumbnail_url
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         category, title_it, title_en, url, icon, visible, order_index, target,
         badge_text || null,
@@ -72,7 +115,8 @@ const createLink = async (req, res) => {
         scheduled_end || null,
         is_internal,
         description_it || null,
-        description_en || null
+        description_en || null,
+        thumbnail_url
       ]
     );
 
@@ -123,6 +167,9 @@ const updateLink = async (req, res) => {
       description_en
     } = req.body;
 
+    // Auto-detect YouTube thumbnail
+    const thumbnail_url = autoSetThumbnail(url);
+
     await run(
       `UPDATE contact_links SET
         title_it = ?,
@@ -139,6 +186,7 @@ const updateLink = async (req, res) => {
         is_internal = ?,
         description_it = ?,
         description_en = ?,
+        thumbnail_url = ?,
         updated_at = datetime('now')
       WHERE id = ?`,
       [
@@ -150,6 +198,7 @@ const updateLink = async (req, res) => {
         is_internal,
         description_it || null,
         description_en || null,
+        thumbnail_url,
         id
       ]
     );
