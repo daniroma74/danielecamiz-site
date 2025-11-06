@@ -58,9 +58,14 @@ const setupRoutes = async () => {
   app.post('/login', handleLogin);
   app.get('/logout', handleLogout);
 
-  // Root redirect - go directly to Visual Editor
-  app.get('/', (req, res) => {
-    res.redirect('/editor/visual');
+  // Root redirect - go to dashboard
+  app.get('/', ensureAuthenticated, (req, res) => {
+    res.redirect('/dashboard');
+  });
+
+  // Dashboard with quick links
+  app.get('/dashboard', ensureAuthenticated, (req, res) => {
+    res.render('dashboard', { title: 'Dashboard - Contact Admin' });
   });
 
   // Protected routes

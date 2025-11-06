@@ -312,7 +312,8 @@ router.put('/link/:id', async (req, res) => {
       url,
       icon,
       visible,
-      thumbnail_url
+      thumbnail_url,
+      group_title  // ADDED: Support for link groups
     } = req.body;
 
     // Auto-detect YouTube thumbnail
@@ -321,16 +322,16 @@ router.put('/link/:id', async (req, res) => {
     // Convert visible to integer (handles boolean, number, or string)
     const visibleInt = visible === true || visible === 1 || visible === '1' ? 1 : 0;
 
-    console.log(`[editorRoutes] Updating link ${id}: visible=${visible} → ${visibleInt}`);
+    console.log(`[editorRoutes] Updating link ${id}: visible=${visible} → ${visibleInt}, group_title=${group_title || 'none'}`);
 
     const stmt = db.prepare(`
       UPDATE contact_links
       SET title_it = ?, title_en = ?, url = ?, icon = ?, visible = ?,
-          thumbnail_url = ?, scheduled_start = NULL, scheduled_end = NULL
+          thumbnail_url = ?, group_title = ?, scheduled_start = NULL, scheduled_end = NULL
       WHERE id = ?
     `);
 
-    stmt.run(title_it, title_en, url, icon, visibleInt, finalThumbnail, id);
+    stmt.run(title_it, title_en, url, icon, visibleInt, finalThumbnail, group_title || null, id);
 
     res.json({
       success: true,
