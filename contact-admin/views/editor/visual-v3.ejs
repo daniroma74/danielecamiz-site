@@ -121,19 +121,20 @@
 
         /* CREATE NEW GROUP */
         .create-group-box {
-            background: rgba(255,255,255,0.15);
+            background: rgba(102, 126, 234, 0.1);
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             display: flex;
             gap: 0.5rem;
             align-items: center;
+            border: 2px dashed #667eea;
         }
 
         .create-group-box input {
             flex: 1;
             padding: 0.75rem;
-            border: none;
+            border: 1px solid #e0e0e0;
             border-radius: 6px;
             font-size: 14px;
         }
@@ -155,15 +156,9 @@
             transition: all 0.3s ease;
         }
 
-        .group-box.dragging {
-            opacity: 0.5;
-            transform: scale(0.95);
-        }
-
-        .group-box.drag-over {
-            border-color: #d4af37;
-            background: #fffef8;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        .group-box.sortable-ghost {
+            opacity: 0.4;
+            background: #e3f2fd;
         }
 
         .group-box.ungrouped {
@@ -193,6 +188,7 @@
             font-size: 20px;
             color: #95a5a6;
             cursor: grab;
+            user-select: none;
         }
 
         .group-drag-handle:active {
@@ -284,14 +280,14 @@
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            min-height: 60px;
+            min-height: 80px;
             padding: 0.5rem;
             border-radius: 8px;
             background: rgba(255,255,255,0.5);
             transition: all 0.3s ease;
         }
 
-        .group-links.drag-over {
+        .group-links.sortable-drag-over {
             background: rgba(212, 175, 55, 0.1);
             border: 2px dashed #d4af37;
         }
@@ -302,7 +298,7 @@
             text-align: center;
             color: #95a5a6;
             font-size: 14px;
-            padding: 1rem;
+            padding: 1.5rem;
         }
 
         /* LINK ITEM (DRAGGABLE) */
@@ -314,17 +310,12 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            cursor: grab;
             transition: all 0.2s;
         }
 
-        .link-draggable:active {
-            cursor: grabbing;
-        }
-
-        .link-draggable.dragging {
-            opacity: 0.5;
-            transform: rotate(3deg);
+        .link-draggable.sortable-ghost {
+            opacity: 0.4;
+            background: #e3f2fd;
         }
 
         .link-draggable:hover {
@@ -335,6 +326,12 @@
         .link-drag-handle {
             font-size: 18px;
             color: #95a5a6;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .link-drag-handle:active {
+            cursor: grabbing;
         }
 
         .link-content {
@@ -383,6 +380,7 @@
             transition: all 0.2s;
             font-size: 14px;
             font-weight: 600;
+            margin-top: 0.5rem;
         }
 
         .add-link-btn:hover {
@@ -415,12 +413,6 @@
         .contact-container {
             max-width: 700px;
             margin: 0 auto;
-        }
-
-        /* Preview overrides for better visibility */
-        .preview-panel .highlight-card {
-            background: rgba(26, 26, 26, 0.95) !important;
-            border: 1px solid rgba(255, 215, 0, 0.3) !important;
         }
 
         /* Save Indicator */
@@ -514,26 +506,26 @@
                                     📌 Senza Gruppo
                                 </div>
                             </div>
-                            <div :ref="'group-links-'" class="group-links" :class="{ empty: getLinksInGroup('').length === 0 }">
-                                <div v-for="link in getLinksInGroup('')"
+                            <div ref="groupLinksUngrouped" class="group-links" :class="{ empty: getLinksInGroup(null).length === 0 }">
+                                <div v-for="link in getLinksInGroup(null)"
                                      :key="link.id"
                                      :data-link-id="link.id"
                                      class="link-draggable">
                                     <span class="link-drag-handle">☰</span>
                                     <div class="link-content">
-                                        <input type="text" v-model="link.title_it" placeholder="Titolo link">
-                                        <input type="url" v-model="link.url" placeholder="https://...">
+                                        <input type="text" v-model="link.title_it" @blur="saveLink(link)" placeholder="Titolo link">
+                                        <input type="url" v-model="link.url" @blur="saveLink(link)" placeholder="https://...">
                                     </div>
                                     <div class="link-actions">
                                         <label class="toggle">
-                                            <input type="checkbox" v-model="link.visible">
+                                            <input type="checkbox" v-model="link.visible" @change="saveLink(link)">
                                             <span class="toggle-slider"></span>
                                         </label>
                                         <button @click="deleteLink(link.id)" class="btn btn-danger">🗑️</button>
                                     </div>
                                 </div>
                             </div>
-                            <button @click="addLinkToGroup('')" class="add-link-btn">+ Aggiungi Link</button>
+                            <button @click="addLinkToGroup(null)" class="add-link-btn">+ Aggiungi Link</button>
                         </div>
 
                         <!-- ACTUAL GROUPS -->
@@ -556,19 +548,19 @@
                                     <button @click="deleteGroup(group.id)" class="btn btn-danger">🗑️</button>
                                 </div>
                             </div>
-                            <div :ref="'group-links-' + group.id" class="group-links" :class="{ empty: getLinksInGroup(group.id).length === 0 }">
+                            <div :ref="'groupLinks' + group.id" class="group-links" :class="{ empty: getLinksInGroup(group.id).length === 0 }">
                                 <div v-for="link in getLinksInGroup(group.id)"
                                      :key="link.id"
                                      :data-link-id="link.id"
                                      class="link-draggable">
                                     <span class="link-drag-handle">☰</span>
                                     <div class="link-content">
-                                        <input type="text" v-model="link.title_it" placeholder="Titolo link">
-                                        <input type="url" v-model="link.url" placeholder="https://...">
+                                        <input type="text" v-model="link.title_it" @blur="saveLink(link)" placeholder="Titolo link">
+                                        <input type="url" v-model="link.url" @blur="saveLink(link)" placeholder="https://...">
                                     </div>
                                     <div class="link-actions">
                                         <label class="toggle">
-                                            <input type="checkbox" v-model="link.visible">
+                                            <input type="checkbox" v-model="link.visible" @change="saveLink(link)">
                                             <span class="toggle-slider"></span>
                                         </label>
                                         <button @click="deleteLink(link.id)" class="btn btn-danger">🗑️</button>
@@ -587,13 +579,13 @@
 
                 <div class="contact-container">
                     <!-- Profile Header -->
-                    <div class="profile-header">
-                        <div class="profile-avatar-wrapper">
-                            <img src="/contact-public/img/daniele-camiz-foto-profilo.png" alt="Avatar" class="profile-avatar">
+                    <div class="header">
+                        <div class="avatar-container">
+                            <img src="/contact-public/img/daniele-camiz-foto-profilo.png" alt="Avatar" class="avatar">
                         </div>
-                        <h1 class="profile-name">{{ settings.name || 'Nome' }}</h1>
-                        <p class="profile-role">{{ settings.role_it || 'Ruolo' }}</p>
-                        <p class="profile-bio">{{ settings.bio_it || 'Breve biografia...' }}</p>
+                        <h1 class="name">{{ settings.name || 'Nome' }}</h1>
+                        <p class="role">{{ settings.role_it || 'Ruolo' }}</p>
+                        <p class="bio">{{ settings.bio_it || 'Breve biografia...' }}</p>
                     </div>
 
                     <!-- Preview Groups -->
@@ -601,15 +593,15 @@
                         <h2 class="section-title">In Evidenza</h2>
 
                         <!-- Ungrouped links -->
-                        <div v-if="getVisibleLinksInGroup('').length > 0" class="highlight-group">
+                        <div v-if="getVisibleLinksInGroup(null).length > 0" class="highlight-group">
                             <div class="highlights-grid">
-                                <a v-for="link in getVisibleLinksInGroup('')"
+                                <a v-for="link in getVisibleLinksInGroup(null)"
                                    :key="link.id"
                                    :href="link.url || '#'"
                                    target="_blank"
                                    class="highlight-card">
-                                    <img v-if="link.thumbnail_url"
-                                         :src="link.thumbnail_url"
+                                    <img v-if="getThumbnail(link)"
+                                         :src="getThumbnail(link)"
                                          :alt="link.title_it"
                                          class="highlight-thumbnail"
                                          @error="$event.target.style.display='none'">
@@ -627,8 +619,8 @@
                                    :href="link.url || '#'"
                                    target="_blank"
                                    class="highlight-card">
-                                    <img v-if="link.thumbnail_url"
-                                         :src="link.thumbnail_url"
+                                    <img v-if="getThumbnail(link)"
+                                         :src="getThumbnail(link)"
                                          :alt="link.title_it"
                                          class="highlight-thumbnail"
                                          @error="$event.target.style.display='none'">
@@ -661,7 +653,8 @@
                     groups: <%- JSON.stringify(groups) %>,
                     saveStatus: '',
                     saveTimeout: null,
-                    newGroupName: ''
+                    newGroupName: '',
+                    sortableInstances: []
                 };
             },
             computed: {
@@ -673,53 +666,108 @@
                 }
             },
             mounted() {
-                this.initDragAndDrop();
+                this.$nextTick(() => {
+                    this.initDragAndDrop();
+                });
             },
             methods: {
+                getThumbnail(link) {
+                    // Auto-detect YouTube thumbnail
+                    const ytThumb = this.getYouTubeThumbnail(link.url);
+                    if (ytThumb) return ytThumb;
+
+                    // Fallback to manual thumbnail
+                    return link.thumbnail_url || null;
+                },
+                getYouTubeThumbnail(url) {
+                    if (!url) return null;
+                    const patterns = [
+                        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/,
+                        /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+                    ];
+                    for (const pattern of patterns) {
+                        const match = url.match(pattern);
+                        if (match && match[1]) {
+                            return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+                        }
+                    }
+                    return null;
+                },
                 initDragAndDrop() {
                     const self = this;
 
+                    // Clear old instances
+                    this.sortableInstances.forEach(instance => instance.destroy());
+                    this.sortableInstances = [];
+
                     // Make groups sortable
-                    Sortable.create(this.$refs.groupsContainer, {
-                        animation: 150,
-                        handle: '.group-drag-handle',
-                        draggable: '.group-box',
-                        filter: '.ungrouped',
-                        onEnd: () => self.saveGroupsOrder()
-                    });
+                    if (this.$refs.groupsContainer) {
+                        const groupsSortable = Sortable.create(this.$refs.groupsContainer, {
+                            animation: 150,
+                            handle: '.group-drag-handle',
+                            draggable: '.group-box',
+                            filter: '.ungrouped',
+                            ghostClass: 'sortable-ghost',
+                            onEnd: () => self.saveGroupsOrder()
+                        });
+                        this.sortableInstances.push(groupsSortable);
+                    }
+
+                    // Make links within ungrouped sortable
+                    if (this.$refs.groupLinksUngrouped) {
+                        const ungroupedSortable = Sortable.create(this.$refs.groupLinksUngrouped, {
+                            group: 'links',
+                            animation: 150,
+                            handle: '.link-drag-handle',
+                            draggable: '.link-draggable',
+                            ghostClass: 'sortable-ghost',
+                            onEnd: (evt) => self.onLinkMoved(evt, null)
+                        });
+                        this.sortableInstances.push(ungroupedSortable);
+                    }
 
                     // Make links within each group sortable
-                    [...this.groups, { id: '' }].forEach(group => {
-                        const groupId = group.id || '';
-                        const el = this.$refs[`group-links-${groupId}`];
-                        if (el && el[0]) {
-                            Sortable.create(el[0], {
+                    this.groups.forEach(group => {
+                        const refName = 'groupLinks' + group.id;
+                        const el = this.$refs[refName];
+                        if (el) {
+                            const linksSortable = Sortable.create(el, {
                                 group: 'links',
                                 animation: 150,
                                 handle: '.link-drag-handle',
                                 draggable: '.link-draggable',
-                                onEnd: (evt) => {
-                                    // Get new group from parent
-                                    const newGroupEl = evt.to.closest('.group-box');
-                                    const newGroupId = newGroupEl ? (newGroupEl.dataset.groupId || '') : '';
-                                    const linkId = parseInt(evt.item.dataset.linkId);
-
-                                    // Update link's group_id
-                                    const link = self.links.find(l => l.id === linkId);
-                                    if (link) {
-                                        link.group_id = newGroupId === '' ? null : parseInt(newGroupId);
-                                        self.saveLink(link);
-                                    }
-                                }
+                                ghostClass: 'sortable-ghost',
+                                onEnd: (evt) => self.onLinkMoved(evt, group.id)
                             });
+                            this.sortableInstances.push(linksSortable);
                         }
                     });
+
+                    console.log('[DragDrop] Initialized', this.sortableInstances.length, 'sortable instances');
+                },
+                onLinkMoved(evt, groupId) {
+                    // Get the link that was moved
+                    const linkId = parseInt(evt.item.dataset.linkId);
+                    const link = this.links.find(l => l.id === linkId);
+
+                    if (!link) return;
+
+                    // Get new group from parent element
+                    const newGroupEl = evt.to.closest('.group-box');
+                    const newGroupIdStr = newGroupEl ? newGroupEl.dataset.groupId : '';
+                    const newGroupId = newGroupIdStr === '' ? null : parseInt(newGroupIdStr);
+
+                    console.log('[DragDrop] Link moved:', linkId, 'to group:', newGroupId);
+
+                    // Update link's group_id
+                    link.group_id = newGroupId;
+                    this.saveLink(link);
                 },
                 getLinksInGroup(groupId) {
-                    const gid = groupId === '' ? null : groupId;
                     return this.links.filter(l => {
-                        const linkGroupId = l.group_id === '' ? null : l.group_id;
-                        return linkGroupId === gid;
+                        // Handle null/undefined comparison
+                        const linkGroupId = l.group_id === undefined || l.group_id === '' ? null : l.group_id;
+                        return linkGroupId === groupId;
                     }).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
                 },
                 getVisibleLinksInGroup(groupId) {
@@ -766,6 +814,7 @@
                         const data = await response.json();
                         if (data.success) {
                             console.log('Group updated:', group.name);
+                            this.showSaveStatus('saved');
                         }
                     } catch (error) {
                         console.error('Update group error:', error);
@@ -794,6 +843,7 @@
                                     link.group_id = null;
                                 }
                             });
+                            this.$nextTick(() => this.initDragAndDrop());
                         }
                     } catch (error) {
                         console.error('Delete group error:', error);
@@ -812,42 +862,54 @@
                     }
                 },
                 addLinkToGroup(groupId) {
-                    const gid = groupId === '' ? null : groupId;
                     const maxOrder = Math.max(...this.links.map(l => l.order_index || 0), 0);
-                    this.links.push({
+                    const newLink = {
                         id: -Date.now(),
                         title_it: 'Nuovo Link',
+                        title_en: 'New Link',
                         url: 'https://example.com',
                         category: 'highlight',
                         icon: 'internet-gold.svg',
-                        visible: 1,
-                        group_id: gid,
+                        visible: true,
+                        group_id: groupId,
                         order_index: maxOrder + 1
-                    });
+                    };
+                    this.links.push(newLink);
+                    console.log('[AddLink] Created new link in group:', groupId);
                 },
                 async saveLink(link) {
                     try {
+                        // Convert visible boolean to int
+                        const linkData = {
+                            ...link,
+                            visible: link.visible ? 1 : 0
+                        };
+
                         if (link.id > 0) {
                             const response = await fetch(`/editor/link/${link.id}`, {
                                 method: 'PUT',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(link)
+                                body: JSON.stringify(linkData)
                             });
                             const data = await response.json();
-                            console.log('Link saved:', data);
+                            console.log('[SaveLink] Updated:', link.id);
+                            this.showSaveStatus('saved');
                         } else {
                             const response = await fetch('/editor/link', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(link)
+                                body: JSON.stringify(linkData)
                             });
                             const data = await response.json();
                             if (data.success && data.id) {
                                 link.id = data.id;
+                                console.log('[SaveLink] Created:', link.id);
+                                this.showSaveStatus('saved');
                             }
                         }
                     } catch (error) {
                         console.error('Save link error:', error);
+                        this.showSaveStatus('error');
                     }
                 },
                 async deleteLink(id) {
@@ -861,14 +923,15 @@
                     if (id > 0) {
                         try {
                             await fetch(`/editor/link/${id}`, { method: 'DELETE' });
+                            this.showSaveStatus('saved');
                         } catch (error) {
                             console.error('Delete error:', error);
                         }
                     }
                 },
                 async saveGroupsOrder() {
-                    // TODO: Implement group reordering API
-                    console.log('Groups order changed');
+                    console.log('[SaveOrder] Groups order changed');
+                    // TODO: Implement group reordering API if needed
                 },
                 async saveAll() {
                     try {
