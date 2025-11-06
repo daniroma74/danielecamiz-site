@@ -68,6 +68,22 @@
         let settings = <%- JSON.stringify(settings) %>;
         let links = <%- JSON.stringify(links) %>;
 
+        // Helper: Auto-detect YouTube thumbnail from URL
+        function getYouTubeThumbnail(url) {
+            if (!url) return null;
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+            ];
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match && match[1]) {
+                    return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+                }
+            }
+            return null;
+        }
+
         // Render function
         function render() {
             // Update profile
@@ -104,10 +120,14 @@
                     linkEl.target = link.target || '_blank';
                     linkEl.className = category === 'highlight' ? 'highlight-card' : 'link-item';
 
-                    // Thumbnail for highlight cards (if exists)
-                    if (category === 'highlight' && link.thumbnail_url) {
+                    // Auto-detect YouTube thumbnail (philosophy: just paste YouTube link!)
+                    const autoThumbnail = getYouTubeThumbnail(link.url);
+                    const thumbnailUrl = autoThumbnail || link.thumbnail_url;
+
+                    // Thumbnail for highlight cards (if exists or auto-detected)
+                    if (category === 'highlight' && thumbnailUrl) {
                         const thumbEl = document.createElement('img');
-                        thumbEl.src = link.thumbnail_url;
+                        thumbEl.src = thumbnailUrl;
                         thumbEl.alt = link.title_it || '';
                         thumbEl.className = 'highlight-thumbnail';
                         thumbEl.style.cssText = 'width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem;';

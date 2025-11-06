@@ -84,12 +84,32 @@ async function loadDataFromDB(lang) {
       ORDER BY category, order_index
     `).all();
 
+    // Helper: Auto-detect YouTube thumbnail from URL
+    function getYouTubeThumbnail(url) {
+      if (!url) return null;
+      const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+      ];
+      for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+          return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+        }
+      }
+      return null;
+    }
+
     // Group links by category
     const linksByCategory = {};
     links.forEach(link => {
       if (!linksByCategory[link.category]) {
         linksByCategory[link.category] = [];
       }
+
+      // Auto-detect YouTube thumbnail (philosophy: just paste YouTube link, thumbnail appears!)
+      const autoThumbnail = getYouTubeThumbnail(link.url);
+
       linksByCategory[link.category].push({
         text: lang === 'en' ? link.title_en : link.title_it,
         url: link.url,
@@ -97,7 +117,7 @@ async function loadDataFromDB(lang) {
         target: link.target,
         badge: link.badge_text,
         badgeColor: link.badge_color,
-        thumbnail: link.thumbnail_url
+        thumbnail: autoThumbnail || link.thumbnail_url // Auto-detect first, fallback to DB
       });
     });
 

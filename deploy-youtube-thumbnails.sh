@@ -16,10 +16,10 @@ git pull origin claude/project-review-011CUoMaULBEc6ErgbH4ZpUS
 echo "✅ Code updated"
 echo ""
 
-# 2. Run database migration
-echo "🗄️  2. Running database migration..."
+# 2. Run database migration (SAFE - won't overwrite your data!)
+echo "🗄️  2. Running safe database migration..."
 cd contact-admin
-node rebuild-simple.js 2>/dev/null || echo "⚠️  Migration may have already run"
+node migrate-safe.js
 cd ..
 echo "✅ Database migration complete"
 echo ""
