@@ -839,3 +839,152 @@ textarea.form-control {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================ */
+/* MOBILE OPTIMIZATION - Small Tablets & Large Phones */
+/* ============================================ */
+@media (max-width: 640px) {
+  .admin-main {
+    padding: 15px 12px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    min-height: 44px; /* Apple tap target minimum */
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .table-responsive {
+    font-size: 13px;
+  }
+}
+
+/* ============================================ */
+/* MOBILE OPTIMIZATION - Standard iPhones (iPhone 12/13/14/15) */
+/* ============================================ */
+@media (max-width: 425px) {
+  .admin-main {
+    padding: 12px 10px;
+  }
+
+  .page-title {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  .btn {
+    padding: 12px 16px;
+    font-size: 14px;
+    min-height: 44px;
+    width: 100%; /* Full width buttons on small phones */
+  }
+
+  .btn-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card {
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 12px;
+    font-size: 16px; /* Prevent iOS zoom on focus */
+    min-height: 44px;
+  }
+
+  .table-responsive {
+    font-size: 12px;
+  }
+
+  /* Ensure all tap targets are 44x44px minimum */
+  a, button, input[type="submit"], input[type="button"], .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ============================================ */
+/* MOBILE OPTIMIZATION - Small iPhones (iPhone SE, 12 mini) */
+/* ============================================ */
+@media (max-width: 375px) {
+  .admin-main {
+    padding: 10px 8px;
+  }
+
+  .page-title {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .stats-grid,
+  .cards-grid,
+  .items-grid {
+    grid-template-columns: 1fr; /* Single column on tiny screens */
+    gap: 10px;
+  }
+
+  /* Make navigation more compact */
+  .nav-links {
+    gap: 4px;
+  }
+
+  .nav-links a {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  /* Reduce spacing to maximize content area */
+  .content-area {
+    padding: 15px 10px;
+  }
+
+  .modal-content {
+    margin: 5px;
+    padding: 15px;
+  }
+}
