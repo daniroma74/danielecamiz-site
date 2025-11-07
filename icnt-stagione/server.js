@@ -57,6 +57,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// CORS headers for Open Graph images (allow other domains to fetch thumbnails)
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+
+  // Respond to preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
 /* ------------------------- EMERGENCY RESET ------------------------- */
 app.get('/__reset', (req, res) => {
   res.set('Clear-Site-Data', '"cache", "storage", "cookies"');
