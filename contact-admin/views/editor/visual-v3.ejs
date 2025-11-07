@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
 
+    <!-- Shared admin base styles -->
+    <link rel="stylesheet" href="/shared/css/admin-base.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Contact-site CSS for preview -->
     <link rel="stylesheet" href="/contact-public/css/main.css">
 
@@ -468,6 +474,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 <body>
+    <!-- Back to Hub button -->
+    <%- include('../../../shared/partials/back-to-hub') %>
+
     <div id="app">
         <div class="editor-container">
             <!-- EDITOR PANEL (LEFT) -->
