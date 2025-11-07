@@ -514,7 +514,7 @@
                                     <span class="link-drag-handle">☰</span>
                                     <div class="link-content">
                                         <input type="text" v-model="link.title_it" @blur="saveLink(link)" placeholder="Titolo link">
-                                        <input type="url" v-model="link.url" @blur="saveLink(link)" placeholder="https://...">
+                                        <input type="url" v-model="link.url" @input="onUrlChange(link)" @blur="saveLink(link)" placeholder="https://...">
                                     </div>
                                     <div class="link-actions">
                                         <label class="toggle">
@@ -556,7 +556,7 @@
                                     <span class="link-drag-handle">☰</span>
                                     <div class="link-content">
                                         <input type="text" v-model="link.title_it" @blur="saveLink(link)" placeholder="Titolo link">
-                                        <input type="url" v-model="link.url" @blur="saveLink(link)" placeholder="https://...">
+                                        <input type="url" v-model="link.url" @input="onUrlChange(link)" @blur="saveLink(link)" placeholder="https://...">
                                     </div>
                                     <div class="link-actions">
                                         <label class="toggle">
@@ -655,7 +655,9 @@
                     saveTimeout: null,
                     newGroupName: '',
                     sortableInstances: [],
-                    groupLinksRefs: {}
+                    groupLinksRefs: {},
+                    fetchingMetadata: {},      // Track which links are fetching metadata
+                    metadataDebounce: {}       // Debounce timers for auto-fetch
                 };
             },
             computed: {
@@ -698,6 +700,70 @@
                         }
                     }
                     return null;
+                },
+                async fetchMetadata(link) {
+                    if (!link.url || link.url.length < 10) return;
+
+                    // Skip if already fetching
+                    if (this.fetchingMetadata[link.id]) {
+                        console.log('[Editor] Already fetching metadata for:', link.id);
+                        return;
+                    }
+
+                    // Skip if it's YouTube (already handled)
+                    if (this.getYouTubeThumbnail(link.url)) {
+                        console.log('[Editor] YouTube link, skipping Open Graph fetch');
+                        return;
+                    }
+
+                    // Skip if thumbnail already exists
+                    if (link.thumbnail_url && link.thumbnail_url.length > 0) {
+                        console.log('[Editor] Thumbnail already exists, skipping fetch');
+                        return;
+                    }
+
+                    try {
+                        this.fetchingMetadata[link.id] = true;
+                        console.log('[Editor] 🔄 Fetching Open Graph metadata for:', link.url);
+
+                        const response = await fetch('/editor/fetch-metadata', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ url: link.url })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success && data.metadata.thumbnail) {
+                            console.log('[Editor] ✅ Thumbnail found:', data.metadata.thumbnail.substring(0, 50) + '...');
+                            link.thumbnail_url = data.metadata.thumbnail;
+
+                            // Auto-save this link
+                            await this.saveLink(link);
+
+                            // Show success indicator briefly
+                            this.showSaveStatus('saved');
+                        } else {
+                            console.log('[Editor] ⚠️ No thumbnail found for:', link.url);
+                        }
+                    } catch (error) {
+                        console.error('[Editor] ❌ Error fetching metadata:', error);
+                    } finally {
+                        this.fetchingMetadata[link.id] = false;
+                    }
+                },
+                onUrlChange(link) {
+                    // Clear existing debounce timer
+                    if (this.metadataDebounce[link.id]) {
+                        clearTimeout(this.metadataDebounce[link.id]);
+                    }
+
+                    // Set new timer to auto-fetch metadata after 1 second
+                    this.metadataDebounce[link.id] = setTimeout(() => {
+                        if (link.category === 'highlight') {
+                            this.fetchMetadata(link);
+                        }
+                    }, 1000);
                 },
                 initDragAndDrop() {
                     const self = this;
