@@ -1,19 +1,69 @@
 <!DOCTYPE html>
-<html>
-<head><title>Settings</title><link rel="stylesheet" href="/public/css/admin.css"></head>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Contact Admin</title>
+
+  <!-- Shared admin base styles -->
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Module-specific styles -->
+  <link rel="stylesheet" href="/public/css/admin.css">
+</head>
 <body>
+  <!-- Back to Hub button -->
+  <%- include('../../shared/partials/back-to-hub') %>
+
+  <!-- Navigation -->
   <%- include('../partials/nav') %>
-  <main class="container">
-    <h1>Settings</h1>
-    <form method="POST" action="/settings">
-      <label>Name: <input name="name" value="<%= settings.name || '' %>" required></label>
-      <label>Role IT: <input name="role_it" value="<%= settings.role_it || '' %>"></label>
-      <label>Role EN: <input name="role_en" value="<%= settings.role_en || '' %>"></label>
-      <label>Bio IT: <textarea name="bio_it"><%= settings.bio_it || '' %></textarea></label>
-      <label>Bio EN: <textarea name="bio_en"><%= settings.bio_en || '' %></textarea></label>
-      <label>Avatar URL: <input name="avatar_url" value="<%= settings.avatar_url || '' %>"></label>
-      <button type="submit" class="btn btn-primary">Save</button>
-    </form>
+
+  <!-- Settings Content -->
+  <main class="container" style="max-width: 800px; margin: 2rem auto; padding: 2rem;">
+    <h1 style="margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+      <i class="fas fa-cog"></i> Settings
+    </h1>
+
+    <div class="settings-form">
+      <form method="POST" action="/settings">
+        <div class="form-group">
+          <label for="name"><i class="fas fa-user"></i> Name</label>
+          <input type="text" id="name" name="name" value="<%= settings.name || '' %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="role_it"><i class="fas fa-briefcase"></i> Role (Italiano)</label>
+          <input type="text" id="role_it" name="role_it" value="<%= settings.role_it || '' %>">
+        </div>
+
+        <div class="form-group">
+          <label for="role_en"><i class="fas fa-briefcase"></i> Role (English)</label>
+          <input type="text" id="role_en" name="role_en" value="<%= settings.role_en || '' %>">
+        </div>
+
+        <div class="form-group">
+          <label for="bio_it"><i class="fas fa-align-left"></i> Bio (Italiano)</label>
+          <textarea id="bio_it" name="bio_it" rows="4"><%= settings.bio_it || '' %></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="bio_en"><i class="fas fa-align-left"></i> Bio (English)</label>
+          <textarea id="bio_en" name="bio_en" rows="4"><%= settings.bio_en || '' %></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="avatar_url"><i class="fas fa-image"></i> Avatar URL</label>
+          <input type="text" id="avatar_url" name="avatar_url" value="<%= settings.avatar_url || '' %>">
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Salva Settings
+        </button>
+      </form>
+    </div>
   </main>
 </body>
 </html>

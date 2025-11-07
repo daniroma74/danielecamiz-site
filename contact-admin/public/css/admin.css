@@ -2,6 +2,22 @@
 /* Base styles are in /shared/css/admin-base.css */
 
 /* ============================================ */
+/* LAYOUT ADJUSTMENTS FOR BACK-TO-HUB BUTTON */
+/* ============================================ */
+
+/* Prevent overlap with back-to-hub button */
+body {
+  position: relative;
+}
+
+/* Add space for back-to-hub button on desktop */
+@media (min-width: 769px) {
+  .admin-nav {
+    padding-right: 180px; /* Make room for back-to-hub button */
+  }
+}
+
+/* ============================================ */
 /* NAVIGATION */
 /* ============================================ */
 
@@ -12,6 +28,8 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 100; /* Lower than back-to-hub (z-index: 1000) */
 }
 
 .nav-brand {
@@ -489,6 +507,69 @@
 /* ============================================ */
 /* SETTINGS PAGE */
 /* ============================================ */
+
+.settings-form {
+  background: var(--surface);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
+}
+
+.settings-form .form-group {
+  margin-bottom: 1.75rem;
+}
+
+.settings-form .form-group:last-of-type {
+  margin-bottom: 2rem;
+}
+
+.settings-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-form label i {
+  color: var(--gold);
+  width: 20px;
+}
+
+.settings-form input,
+.settings-form textarea {
+  width: 100%;
+  padding: 0.875rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s;
+  background: var(--surface);
+}
+
+.settings-form input:focus,
+.settings-form textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+}
+
+.settings-form textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.settings-form .btn {
+  margin-top: 1rem;
+  padding: 1rem 2rem;
+  font-size: 1.05rem;
+}
 
 .settings-sections {
   display: flex;
