@@ -5,14 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/static/css/gallery-admin.css">
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
+  <%- include('../../../shared/partials/admin-navbar', {
+    moduleName: 'Gallery Admin',
+    moduleIcon: 'fa-images',
+    moduleUrl: '/gallery',
+    links: [
+      { url: '/gallery', label: 'Dashboard', icon: 'fa-chart-line', active: false },
+      { url: '/gallery/collections', label: 'Collezioni', icon: 'fa-folder', active: false },
+      { url: '/gallery/photos', label: 'Foto', icon: 'fa-camera', active: false },
+      { url: '/gallery/videos', label: 'Video', icon: 'fa-film', active: true },
+      { url: '/gallery/audios', label: 'Audio', icon: 'fa-music', active: false }
+    ]
+  }) %>
+
+  <main class="content-area">
         <div class="content-header">
           <h1>Gestione Video</h1>
           <div class="header-actions">

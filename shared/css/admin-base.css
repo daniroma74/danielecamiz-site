@@ -51,6 +51,65 @@ body {
   padding: 30px 20px;
 }
 
+/* Container (for centered content) */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Lists */
+.item-list,
+.news-list,
+.articles-list {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.list-item {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-light);
+  transition: var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.list-item:hover {
+  background: var(--bg);
+}
+
+.list-item-content {
+  flex: 1;
+}
+
+.list-item-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.list-item-meta {
+  color: var(--text-muted);
+  font-size: 13px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.list-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
 /* Cards */
 .admin-card {
   background: var(--card);
@@ -248,13 +307,18 @@ textarea.form-control {
 }
 
 /* Tables */
-.admin-table {
+.admin-table,
+.data-table {
   width: 100%;
   border-collapse: collapse;
   background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
-.admin-table th {
+.admin-table th,
+.data-table th {
   background: var(--bg);
   padding: 15px;
   text-align: left;
@@ -262,16 +326,42 @@ textarea.form-control {
   color: var(--text-secondary);
   border-bottom: 2px solid var(--border);
   font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.admin-table td {
+.admin-table td,
+.data-table td {
   padding: 15px;
   border-bottom: 1px solid var(--border-light);
   font-size: 14px;
+  vertical-align: middle;
 }
 
-.admin-table tr:hover {
+.admin-table tr:hover,
+.data-table tr:hover {
   background: var(--bg);
+}
+
+.admin-table tr:last-child td,
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Table wrapper for responsive */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Table actions (buttons in table cells) */
+.table-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 /* Modals */
@@ -532,147 +622,33 @@ textarea.form-control {
 }
 
 /* ============================================ */
-/* LAYOUT SIDEBAR + HEADER */
+/* UNIFIED TOP NAVBAR LAYOUT (NO SIDEBAR) */
 /* ============================================ */
 
+/* Main layout wrapper - simple, no sidebar */
 .admin-layout {
-  display: flex;
   min-height: 100vh;
   background: var(--bg);
-}
-
-/* SIDEBAR */
-.sidebar {
-  width: 260px;
-  background: var(--surface);
-  border-right: 2px solid var(--border);
   display: flex;
   flex-direction: column;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 100;
-  box-shadow: var(--shadow-md);
 }
 
-.sidebar-header {
-  padding: 25px 20px;
-  border-bottom: 2px solid var(--border);
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-}
-
-.sidebar-header h2 {
-  margin: 0;
-  color: white;
-  font-size: 20px;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 0.5px;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 20px 0;
-  overflow-y: auto;
-}
-
-.sidebar-nav .nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: var(--transition);
-  border-left: 3px solid transparent;
-  margin: 4px 0;
-}
-
-.sidebar-nav .nav-item .icon {
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
-}
-
-.sidebar-nav .nav-item:hover {
-  background: var(--bg);
-  color: var(--gold);
-  border-left-color: var(--gold);
-}
-
-.sidebar-nav .nav-item.active {
-  background: rgba(212, 175, 55, 0.1);
-  color: var(--gold);
-  border-left-color: var(--gold);
-  font-weight: 600;
-}
-
-.sidebar-footer {
-  padding: 20px;
-  border-top: 2px solid var(--border);
-  background: var(--bg);
-}
-
-.sidebar-footer .btn {
-  width: 100%;
-  justify-content: center;
-  font-size: 13px;
-}
-
-/* MAIN CONTENT AREA */
-.main-content {
-  flex: 1;
-  margin-left: 260px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* HEADER */
-.admin-header {
-  background: var(--surface);
-  border-bottom: 2px solid var(--border);
-  padding: 20px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: var(--shadow);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-.header-left h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-info {
-  padding: 8px 16px;
-  background: var(--bg);
-  border-radius: 20px;
-  font-size: 14px;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-/* CONTENT AREA */
+/* Content area - full width, below navbar */
 .content-area {
   flex: 1;
-  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 30px 20px;
 }
 
+/* Main content container (alternative to content-area) */
+.admin-main {
+  flex: 1;
+}
+
+/* Page header (used in all modules) */
+.page-header,
 .content-header {
   display: flex;
   justify-content: space-between;
@@ -682,6 +658,7 @@ textarea.form-control {
   border-bottom: 2px solid var(--border);
 }
 
+.page-header h1,
 .content-header h1 {
   margin: 0;
   font-size: 28px;
@@ -692,14 +669,104 @@ textarea.form-control {
   gap: 12px;
 }
 
+.page-header h1 i,
 .content-header h1 i {
   color: var(--gold);
+}
+
+.page-title-section h1 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title-section h1 i {
+  color: var(--gold);
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin: 0;
 }
 
 .header-actions {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Filters bar (used in concerts, news, etc) */
+.filters-bar {
+  background: var(--surface);
+  padding: 20px;
+  border-radius: var(--radius);
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.filter-btn {
+  padding: 10px 18px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  background: var(--surface);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.filter-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: white;
+}
+
+/* Search form in filters */
+.search-form {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-form input[type="search"] {
+  flex: 1;
+  padding: 10px 15px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.search-form button {
+  padding: 10px 20px;
 }
 
 /* Stats Grid for Dashboard */
@@ -767,21 +834,14 @@ textarea.form-control {
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .sidebar {
-    width: 220px;
-  }
-
-  .main-content {
-    margin-left: 220px;
-  }
-
   .stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 
 @media (max-width: 768px) {
-  .admin-main {
+  .admin-main,
+  .content-area {
     padding: 20px 15px;
   }
 
@@ -791,33 +851,6 @@ textarea.form-control {
 
   .modal-content {
     margin: 10px;
-  }
-
-  .sidebar {
-    width: 100%;
-    position: fixed;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .main-content {
-    margin-left: 0;
-  }
-
-  .admin-header {
-    padding: 15px 20px;
-  }
-
-  .header-left h1 {
-    font-size: 20px;
-  }
-
-  .content-area {
-    padding: 20px 15px;
   }
 
   .content-header {
