@@ -559,6 +559,104 @@
 }
 
 /* ============================================ */
+/* MOBILE OPTIMIZATION - iPhone & Small Screens */
+/* ============================================ */
+
+@media (max-width: 425px) {
+  /* Make navbar more compact and touch-friendly */
+  .nav-container {
+    padding: 10px 15px;
+    gap: 10px;
+  }
+
+  .nav-brand {
+    font-size: 18px;
+  }
+
+  .nav-brand i {
+    font-size: 20px;
+  }
+
+  .nav-links {
+    gap: 6px;
+  }
+
+  .nav-links a {
+    padding: 12px 14px; /* Ensure 44px tap target */
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  /* Compact page header for more content space */
+  .page-header {
+    margin-bottom: 20px;
+  }
+
+  .page-title-section h1 {
+    font-size: 22px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+  }
+
+  /* Make filter buttons stack vertically on tiny screens */
+  .filter-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .filter-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* Concert cards more compact */
+  .concert-card {
+    padding: 14px;
+  }
+
+  .concert-title {
+    font-size: 16px;
+  }
+
+  .concert-meta {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 375px) {
+  /* Extra compact for iPhone SE / 12 mini */
+  .nav-container {
+    padding: 8px 12px;
+  }
+
+  .nav-brand {
+    font-size: 16px;
+  }
+
+  .nav-links a {
+    padding: 10px 12px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .nav-links a i {
+    font-size: 14px;
+  }
+
+  .page-title-section h1 {
+    font-size: 20px;
+  }
+
+  /* Reduce icon size to save space */
+  .page-title-section h1 i {
+    font-size: 18px;
+  }
+}
+
+/* ============================================ */
 /* ANIMAZIONI */
 /* ============================================ */
 
