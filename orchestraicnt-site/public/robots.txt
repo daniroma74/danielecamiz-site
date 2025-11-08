@@ -1,0 +1,14 @@
+# Orchestra ICNT - robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://orchestraicnt.danielecamiz.com/sitemap.xml
+
+# Disallow admin/private areas
+Disallow: /api/
+Disallow: /admin/
+
+# Crawl delay (optional)
+Crawl-delay: 1
