@@ -16,6 +16,9 @@
     <div class="page-header">
       <h1>📰 Gestione News</h1>
       <div class="actions">
+        <a href="/news/newsletter" class="btn btn-info" style="margin-right: 0.5rem;">
+          📧 Newsletter Digest
+        </a>
         <a href="/news/new" class="btn btn-primary">✍️ Nuovo Articolo</a>
       </div>
     </div>
@@ -61,8 +64,19 @@
                     <% if (post.cover_image) { %>
                       <img src="<%= post.cover_image %>" alt="" class="post-thumb">
                     <% } %>
-                    <div>
-                      <strong><%= post.title_it %></strong>
+                    <div style="flex: 1;">
+                      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <strong><%= post.title_it %></strong>
+                        <% if (post.newsletter_sent_at) { %>
+                          <span class="badge" style="background: #4caf50; color: white; font-size: 0.7rem; padding: 0.2rem 0.5rem;" title="Newsletter inviata il <%= new Date(post.newsletter_sent_at).toLocaleDateString('it-IT') %>">
+                            ✅ Newsletter
+                          </span>
+                        <% } else if (post.include_in_newsletter) { %>
+                          <span class="badge" style="background: #4a90e2; color: white; font-size: 0.7rem; padding: 0.2rem 0.5rem;" title="Selezionato per prossima newsletter">
+                            📧 In Newsletter
+                          </span>
+                        <% } %>
+                      </div>
                       <% if (post.title_en) { %>
                         <br><small class="text-muted"><%= post.title_en %></small>
                       <% } %>

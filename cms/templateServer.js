@@ -1,4 +1,15 @@
 // cms/templateServer.js
+
+// Global error handlers for unhandled rejections/exceptions
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[FATAL] Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('[FATAL] Uncaught Exception:', error);
+  // Don't exit - let PM2 handle it
+});
+
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';

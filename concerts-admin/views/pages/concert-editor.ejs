@@ -151,6 +151,13 @@
             </div>
 
             <div class="form-group">
+              <label for="chorus_name">Coro</label>
+              <input type="text" id="chorus_name" name="chorus_name" class="form-control"
+                     placeholder="Nome del coro"
+                     value="<%= chorus || '' %>">
+            </div>
+
+            <div class="form-group">
               <label>Solisti</label>
               <div id="soloistsContainer">
                 <!-- Popolato da JS -->
@@ -511,7 +518,7 @@
     window.EVENTS_ADMIN_URL = '<%= eventsAdminUrl %>';
     window.CONCERT_ID = '<%= concert ? concert.id : '' %>';
   </script>
-  <script src="/js/concert-editor.js"></script>
+  <script src="/js/concert-editor.js?v=2.4.0"></script>
 
 </body>
 </html>

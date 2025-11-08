@@ -1,130 +1,441 @@
-/* =========================
-   BIO – HERO COMPATTO + 3 CARD
-   I valori arrivano dal JSON come CSS variables inline
-   (fallback qui sotto se il JSON non li fornisce).
-   Variabili:
-   --hero-bio-min-h       (px)
-   --hero-bio-focus-y     (% 0..100)  → focus verticale dell’immagine
-   --hero-bio-zoom        (scala)     → 1=100%, >1 zoom-in, <1 zoom-out
-   --hero-bio-text-offset (px)        → offset titolo+claim (se non presente: 40px)
-   --hero-bio-blur        (px)        → intensità blur immagine (opz.)
-   --hero-bio-brightness  (0..1)      → luminosità immagine (opz.)
-   ========================= */
+/* Bio Page - Modern Professional Redesign */
 
-/* ===== HERO COMPATTO ===== */
-.hero-bio.hero-compact {
+/* ===== HERO BIO ===== */
+.hero-bio {
   position: relative;
-  min-height: var(--hero-bio-min-h, 325px);
-  padding: 24px 0;
+  min-height: var(--hero-bio-min-h, 400px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  border-bottom: 1px solid #cba135;
+  background: #0a0a0a;
 }
 
-/* Wrapper immagine assoluta */
 .hero-bio .hero-media {
   position: absolute;
-  inset: 0;
-  overflow: hidden;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
 }
 
-/* L'immagine fa da background vero e proprio */
 .hero-bio .hero-media-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* focus verticale controllato dal JSON */
-  object-position: center var(--hero-bio-focus-y, 50%);
-  /* zoom controllato dal JSON */
+  object-position: 50% var(--hero-bio-focus-y, 50%);
   transform: scale(var(--hero-bio-zoom, 1));
-  /* effetti opzionali */
-  filter: blur(var(--hero-bio-blur, 4px)) brightness(var(--hero-bio-brightness, 0.9));
-  display: block;
+  filter: blur(var(--hero-bio-blur, 4px)) brightness(var(--hero-bio-brightness, 0.8));
 }
 
-/* Overlay testi */
-.hero-bio .hero-overlay { position: relative; z-index: 1; }
+.hero-bio .hero-overlay {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.35) 0%, rgba(10, 10, 10, 0.55) 100%);
+  padding: 5rem 2rem;
+  text-align: center;
+}
 
 .hero-bio .hero-container {
-  max-width: 1100px;
-  /* offset titolo+claim: JSON (hero_text_offset) o fallback 40px */
-  margin: var(--hero-bio-text-offset, 40px) auto 0;
-  padding: 0 16px;
-  display: grid;
-  gap: 8px;
-  align-items: center;
-  grid-template-columns: 1fr auto;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .hero-bio .hero-title {
-  grid-column: 1 / -1;
-  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
-  margin: 0;
+  font-size: 4rem;
+  font-weight: 800;
+  margin: 0 0 1.5rem 0;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 30px rgba(212, 175, 55, 0.3);
+  animation: heroFadeIn 0.8s ease-out;
 }
 
 .hero-bio .hero-claim {
-  margin: 0;
-  opacity: 0.9;
-  font-size: clamp(1rem, 2.2vw, 1.1rem);
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 300;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: heroFadeIn 1s ease-out 0.2s backwards;
 }
 
 .hero-bio .btn-anchor {
-  justify-self: end;
-  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.2);
+  border: 2px solid rgba(212, 175, 55, 0.4);
+  color: #d4af37;
+  font-size: 1.8rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  animation: heroFadeIn 1.2s ease-out 0.4s backwards, bounce 2s ease-in-out 2s infinite;
 }
 
-/* Mobile */
-@media (max-width: 720px) {
-  .hero-bio .hero-container {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-top: calc(var(--hero-bio-text-offset, 40px) * 0.6);
+.hero-bio .btn-anchor:hover {
+  background: rgba(212, 175, 55, 0.3);
+  border-color: #d4af37;
+  transform: translateY(4px);
+}
+
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  .hero-bio .btn-anchor { justify-self: start; }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* ===== TRE CARD ===== */
-.bio-panels.container { 
-  max-width: 1100px; 
-  margin: 28px auto; 
-  padding: 0 16px; 
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
 }
+
+/* ===== BIO PANELS ===== */
+.bio-panels {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 5rem 2rem 3rem 2rem;
+  background: #0a0a0a;
+}
+
 .panels-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-@media (max-width: 980px) {
-  .panels-grid { grid-template-columns: 1fr; }
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2.5rem;
 }
 
 .panel-card {
-  background: #0e0e0e;
-  border: 1px solid #2a2a2a;
-  border-radius: 16px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 2.5rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.panel-header .panel-title { margin: 0; font-size: 1.2rem; letter-spacing: 0.3px; }
-.panel-body .panel-intro { margin: 0; line-height: 1.6; }
-.panel-body .placeholder { opacity: 0.7; }
-.panel-footer { margin-top: auto; display: flex; justify-content: flex-end; }
+.panel-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #d4af37 0%, #f0d478 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
 
-/* ===== MULTIMEDIA / SOCIAL (slot) ===== */
-.bio-media.container { max-width: 1100px; margin: 16px auto; padding: 0 16px; }
-.media-flex { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
-@media (max-width: 980px) { .media-flex { grid-template-columns: 1fr; } }
+.panel-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(212, 175, 55, 0.1);
+  background: linear-gradient(135deg, rgba(30, 30, 30, 0.9) 0%, rgba(20, 20, 20, 0.95) 100%);
+}
 
-/* ===== CTA ===== */
-.bio-cta.container { max-width: 1100px; margin: 24px auto 48px; padding: 0 16px; text-align: center; }
+.panel-card:hover::before {
+  opacity: 1;
+}
 
-/* ===== TIPOGRAFIA RICCA ===== */
-.rich-text p { margin: 0 0 12px; line-height: 1.7; }
-.rich-text ul { margin: 0 0 12px 20px; }
-.rich-text h4, .rich-text h5, .rich-text h6 { margin: 16px 0 8px; }
+.panel-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-/* ===== MODALI CSS (:target) – vedi anche pages/bio/bio-modal.css ===== */
-.modal__close { line-height: 1; }
+.panel-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.panel-title::before {
+  content: '';
+  width: 4px;
+  height: 28px;
+  background: linear-gradient(180deg, #d4af37 0%, #f0d478 100%);
+  border-radius: 2px;
+}
+
+.panel-body {
+  min-height: 150px;
+  margin-bottom: 2rem;
+}
+
+.panel-intro {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.panel-intro.placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+}
+
+.panel-footer {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.panel-footer .btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.panel-footer .btn-secondary {
+  background: rgba(212, 175, 55, 0.1);
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  color: #d4af37;
+}
+
+.panel-footer .btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #d4af37;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2);
+}
+
+/* ===== PRESS KIT CTA ===== */
+.bio-cta {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%);
+  border: 2px solid rgba(212, 175, 55, 0.2);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bio-cta::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+  animation: ctaPulse 4s ease-in-out infinite;
+}
+
+.bio-cta .btn-primary {
+  position: relative;
+  z-index: 1;
+  padding: 1.25rem 3rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #d4af37 0%, #f0d478 100%);
+  border: none;
+  border-radius: 14px;
+  color: #0a0a0a;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+}
+
+.bio-cta .btn-primary:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(212, 175, 55, 0.4);
+}
+
+@keyframes ctaPulse {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10%, 10%); }
+}
+
+/* ===== MODALS ===== */
+.modal-target {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-target:target {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.modal__backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+
+.modal__dialog {
+  position: relative;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 24px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 3rem;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal__close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  line-height: 1;
+}
+
+.modal__close:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.3);
+  color: #d4af37;
+  transform: rotate(90deg);
+}
+
+.modal__content {
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.8;
+}
+
+.modal__content .modal-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #d4af37;
+  margin: 0 0 2rem 0;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+}
+
+.modal__content p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.modal__content p:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .hero-bio .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-bio .hero-claim {
+    font-size: 1.1rem;
+  }
+
+  .hero-bio .hero-overlay {
+    padding: 3rem 1.5rem;
+  }
+
+  .bio-panels {
+    padding: 3rem 1rem;
+  }
+
+  .panels-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .panel-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .panel-title {
+    font-size: 1.5rem;
+  }
+
+  .bio-cta {
+    margin: 3rem auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .bio-cta .btn-primary {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+  }
+
+  .modal__dialog {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+
+  .modal__content .modal-title {
+    font-size: 1.8rem;
+  }
+}

@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2FA Setup - daniele</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+        }
+        h1 { color: #333; }
+        .secret-code {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+        .instructions {
+            text-align: left;
+            margin: 1rem 0;
+        }
+        .instructions li {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Configurazione 2FA</h1>
+        <p>Utente: <strong>daniele</strong></p>
+        
+        <img src="data:image/png;base64,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" alt="QR Code 2FA" />
+        
+        <div class="secret-code">
+            IB6W 2S3J IZCV ESLL OZHX C62L HY4W GKBQ EU3W CSZ3 GYUV QSB6 EVFA
+        </div>
+        
+        <div class="instructions">
+            <h3>Istruzioni:</h3>
+            <ol>
+                <li>Installa un'app authenticator (Google Authenticator, Authy, etc)</li>
+                <li>Scansiona il QR code o inserisci manualmente il codice</li>
+                <li>Conserva questo codice in un luogo sicuro</li>
+                <li>Elimina questo file dopo la configurazione</li>
+            </ol>
+        </div>
+        
+        <p><strong>IMPORTANTE:</strong> Salva questo codice segreto in un posto sicuro!</p>
+    </div>
+</body>
+</html>

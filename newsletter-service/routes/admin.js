@@ -75,4 +75,9 @@ R('get',  '/test-email',  'renderTestEmail');
 R('post', '/test-email',  'sendTestEmail');
 R('get',  '/settings',    'renderSettings');
 
+// Digest Newsletter
+R('get',  '/digest/preview',     'previewDigest');
+R('post', '/digest/test',        'sendTestDigest');
+R('post', '/digest/send',        'sendDigest');
+
 export default router;

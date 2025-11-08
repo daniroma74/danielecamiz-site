@@ -42,11 +42,11 @@
     </div>
   </header>
 
-  <!-- Tabs / filtri (client-side compat) -->
+  <!-- Tabs / filtri (tags dinamici) -->
   <nav class="news-tabs" id="news_tabs" aria-label="<%= lang==='en' ? 'Filters' : 'Filtri' %>">
-    <button class="news-tab <%= (ACTIVE==='all') ? 'is-active' : '' %>" data-filter-cat="all"><%= lang==='en' ? 'All' : 'Tutte' %></button>
+    <button class="news-tab <%= (ACTIVE==='all') ? 'is-active' : '' %>" data-filter="all"><%= lang==='en' ? 'All' : 'Tutte' %></button>
     <% CATS.forEach(function(c){ %>
-      <button class="news-tab <%= (ACTIVE===c.id) ? 'is-active' : '' %>" data-filter-cat="<%= c.id %>"><%= c.label %></button>
+      <button class="news-tab <%= (ACTIVE===c.id) ? 'is-active' : '' %>" data-filter="<%= c.id %>"><%= c.label %></button>
     <% }) %>
     <span id="news_count" class="news-count" aria-live="polite" style="margin-left:auto;">
       (<%= P ? P.total : (Array.isArray(news) ? news.length : 0) %>)

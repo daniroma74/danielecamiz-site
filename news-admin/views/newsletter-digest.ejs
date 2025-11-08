@@ -1,0 +1,297 @@
+<!-- news-admin/views/newsletter-digest.ejs -->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter Digest - News Admin</title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/news-admin.css">
+  <style>
+    .digest-container { max-width: 1200px; margin: 0 auto; }
+    .digest-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    }
+    .digest-hero h1 { margin: 0 0 0.5rem; font-size: 2rem; }
+    .digest-hero p { margin: 0; opacity: 0.95; font-size: 1.1rem; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .stat-card__number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #667eea;
+      margin: 0;
+    }
+    .stat-card__label {
+      color: #666;
+      font-size: 0.95rem;
+      margin: 0.25rem 0 0;
+    }
+
+    .selected-posts {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .selected-posts h2 {
+      margin: 0 0 1rem;
+      color: #333;
+      font-size: 1.5rem;
+    }
+    .post-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+      background: #fafafa;
+      transition: all 0.2s;
+    }
+    .post-item:hover { background: #f0f0f0; }
+    .post-item__thumb {
+      width: 120px;
+      height: 68px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #ddd;
+    }
+    .post-item__content { flex: 1; }
+    .post-item__title {
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+      color: #333;
+    }
+    .post-item__meta {
+      font-size: 0.85rem;
+      color: #666;
+      margin: 0.25rem 0;
+    }
+    .post-item__actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .preview-section {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .preview-section h2 {
+      margin: 0 0 1rem;
+      color: #333;
+      font-size: 1.5rem;
+    }
+    .email-preview {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 2rem;
+      background: #f9f9f9;
+      min-height: 400px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+    .action-buttons .btn { min-width: 200px; }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+    .empty-state p { font-size: 1.1rem; margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <%- include('../../shared/partials/back-to-hub') %>
+  <%- include('partials/header') %>
+
+  <div class="container digest-container">
+    <!-- Hero -->
+    <div class="digest-hero">
+      <h1>📧 Newsletter Digest</h1>
+      <p>Gestisci e invia il digest bimestrale/trimestrale con le news selezionate</p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-card__number"><%= selectedPosts.length %></p>
+        <p class="stat-card__label">Post Selezionati</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card__number"><%= subscribersCount %></p>
+        <p class="stat-card__label">Iscritti Attivi</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card__number"><%= lastDigest ? new Date(lastDigest.sent_at).toLocaleDateString('it-IT', {month: 'short', year: 'numeric'}) : 'Mai' %></p>
+        <p class="stat-card__label">Ultimo Invio</p>
+      </div>
+    </div>
+
+    <!-- Selected Posts -->
+    <div class="selected-posts">
+      <h2>🎯 Articoli Selezionati per la Newsletter</h2>
+
+      <% if (selectedPosts.length === 0) { %>
+        <div class="empty-state">
+          <p>📭 Nessun articolo selezionato</p>
+          <p><small>Vai nella lista news e spunta "Includi nella prossima newsletter" negli articoli che vuoi inviare</small></p>
+          <a href="/news" class="btn btn-primary" style="margin-top: 1rem;">📰 Vai alla Lista News</a>
+        </div>
+      <% } else { %>
+        <% selectedPosts.forEach(post => { %>
+          <div class="post-item">
+            <% if (post.cover_image) { %>
+              <img src="<%= post.cover_image %>" alt="" class="post-item__thumb">
+            <% } else { %>
+              <div class="post-item__thumb" style="display: flex; align-items: center; justify-content: center; background: #e0e0e0;">
+                <span style="font-size: 2rem;">📰</span>
+              </div>
+            <% } %>
+            <div class="post-item__content">
+              <h3 class="post-item__title"><%= post.title_it %></h3>
+              <p class="post-item__meta">
+                <%= post.category || 'news' %> •
+                <%= new Date(post.publish_date || post.created_at).toLocaleDateString('it-IT') %>
+              </p>
+              <p style="font-size: 0.9rem; color: #666; margin: 0.5rem 0 0;">
+                <%= (post.excerpt_it || '').substring(0, 120) %>...
+              </p>
+            </div>
+            <div class="post-item__actions">
+              <a href="/news/<%= post.id %>/edit" class="btn btn-sm btn-secondary" title="Modifica">
+                ✏️
+              </a>
+            </div>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+
+    <!-- Preview Section -->
+    <% if (selectedPosts.length > 0) { %>
+      <div class="preview-section">
+        <h2>👁️ Anteprima Email</h2>
+        <div class="email-preview" id="emailPreview">
+          <p style="text-align: center; color: #999;">
+            Caricamento anteprima...
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/news'">
+          ← Torna alla Lista
+        </button>
+        <button type="button" class="btn btn-info" onclick="refreshPreview()">
+          🔄 Aggiorna Anteprima
+        </button>
+        <button type="button" class="btn btn-success" onclick="sendDigest()" id="sendBtn">
+          📤 Invia Newsletter (<%= subscribersCount %> iscritti)
+        </button>
+      </div>
+    <% } %>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    // Load preview on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      <% if (selectedPosts.length > 0) { %>
+        refreshPreview();
+      <% } %>
+    });
+
+    async function refreshPreview() {
+      const preview = document.getElementById('emailPreview');
+      if (!preview) return;
+
+      preview.innerHTML = '<p style="text-align: center; color: #999;">⏳ Generando anteprima...</p>';
+
+      try {
+        const response = await fetch('/news/newsletter/preview');
+        const data = await response.json();
+
+        if (response.ok && data.html) {
+          preview.innerHTML = data.html;
+        } else {
+          preview.innerHTML = '<p style="text-align: center; color: #d32f2f;">❌ Errore nel caricamento dell\'anteprima</p>';
+        }
+      } catch (error) {
+        console.error('Preview error:', error);
+        preview.innerHTML = '<p style="text-align: center; color: #d32f2f;">❌ Errore di connessione</p>';
+      }
+    }
+
+    async function sendDigest() {
+      const btn = document.getElementById('sendBtn');
+      const count = <%= subscribersCount %>;
+
+      const confirmed = confirm(
+        `🚀 Sei sicuro di voler inviare la newsletter a ${count} iscritti?\n\n` +
+        `Questa azione invierà ${<%= selectedPosts.length %>} articoli via email.`
+      );
+
+      if (!confirmed) return;
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Invio in corso...';
+
+      try {
+        const response = await fetch('/news/newsletter/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          alert(`✅ Newsletter inviata con successo a ${data.sent || count} iscritti!`);
+          window.location.reload();
+        } else {
+          alert(`❌ Errore: ${data.error || 'Invio fallito'}`);
+          btn.disabled = false;
+          btn.textContent = '📤 Invia Newsletter';
+        }
+      } catch (error) {
+        console.error('Send error:', error);
+        alert('❌ Errore di connessione');
+        btn.disabled = false;
+        btn.textContent = '📤 Invia Newsletter';
+      }
+    }
+  </script>
+</body>
+</html>

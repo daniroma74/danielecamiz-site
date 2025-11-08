@@ -5,7 +5,6 @@ import path from 'path';
 import fs from 'fs/promises';
 
 import { listPageCss, havePageJs } from '../utils/assetHelpers.js';
-import { getCategories } from '../utils/newsCategories.js';
 import * as Store from '../utils/newsStore.js';
 import { buildCoverCardSrcset, buildCoverPostSrcset, buildCoverLqip, resolveFrontendImg } from '../utils/mediaResolver.js';
 
@@ -181,8 +180,29 @@ export async function listNews(req, res) {
       };
     });
 
-    // ===== categories =====
-    const categories = await getCategories(lang);
+    // ===== Extract unique tags from all posts =====
+    const allTagsSet = new Set();
+    mapped.forEach(post => {
+      if (Array.isArray(post.tags)) {
+        post.tags.forEach(tag => {
+          if (tag && typeof tag === 'string' && tag.trim()) {
+            allTagsSet.add(tag.trim());
+          }
+        });
+      }
+    });
+
+    // Convert to array and sort alphabetically
+    const allTags = Array.from(allTagsSet).sort((a, b) => a.localeCompare(b, lang));
+
+    // Build categories from tags (for backward compatibility with template)
+    const categories = allTags.map(tag => ({
+      id: tag,
+      label: tag.charAt(0).toUpperCase() + tag.slice(1), // Capitalize first letter
+      label_it: tag.charAt(0).toUpperCase() + tag.slice(1),
+      label_en: tag.charAt(0).toUpperCase() + tag.slice(1)
+    }));
+
     const catIds = new Set(categories.map(c => c.id));
     const qsCat = String(req.query.cat || '').trim();
     const activeCat = qsCat && catIds.has(qsCat) ? qsCat : 'all';

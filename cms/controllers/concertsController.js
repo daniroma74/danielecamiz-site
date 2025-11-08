@@ -469,22 +469,25 @@ export async function getConcertsPage(req, res) {
     const cssFiles = Array.isArray(pageAssets.css) ? pageAssets.css : [];
     let pageScripts = pageAssets && pageAssets.jsEntry ? [pageAssets.jsEntry] : [];
 
+    // Cache buster timestamp for JS files
+    const cacheBuster = Date.now();
+
     const jsCandidates = [
-      { abs: path.join(FRONTEND_ROOT, 'js', 'concerts-year-toggle.js'), web: '/js/concerts-year-toggle.js' },
-      { abs: path.join(FRONTEND_ROOT, 'js', 'concerts-lightbox.js'),   web: '/js/concerts-lightbox.js' },
-      { abs: path.join(FRONTEND_ROOT, 'js', 'modules', 'concerts', 'concerts.js'), web: '/js/modules/concerts/concerts.js' },
+      { abs: path.join(FRONTEND_ROOT, 'js', 'concerts-year-toggle.js'), web: `/js/concerts-year-toggle.js?v=${cacheBuster}` },
+      { abs: path.join(FRONTEND_ROOT, 'js', 'concerts-lightbox.js'),   web: `/js/concerts-lightbox.js?v=${cacheBuster}` },
+      { abs: path.join(FRONTEND_ROOT, 'js', 'modules', 'concerts', 'concerts.js'), web: `/js/modules/concerts/concerts.js?v=${cacheBuster}` },
     ];
     for (const c of jsCandidates) {
-      try { await fs.access(c.abs); if (!pageScripts.includes(c.web)) pageScripts.push(c.web); } catch {}
+      try { await fs.access(c.abs); if (!pageScripts.some(s => s.startsWith(c.web.split('?')[0]))) pageScripts.push(c.web); } catch {}
     }
     const desiredOrder = [
-      '/js/concerts-lightbox.js',
-      '/js/modules/concerts/concerts.js',
-      '/js/concerts-year-toggle.js'
+      `/js/concerts-lightbox.js?v=${cacheBuster}`,
+      `/js/modules/concerts/concerts.js?v=${cacheBuster}`,
+      `/js/concerts-year-toggle.js?v=${cacheBuster}`
     ];
     const orderedScripts = [];
-    desiredOrder.forEach(s => { if (pageScripts.includes(s)) orderedScripts.push(s); });
-    pageScripts.forEach(s => { if (!orderedScripts.includes(s)) orderedScripts.push(s); });
+    desiredOrder.forEach(s => { if (pageScripts.some(ps => ps.includes(s.split('?')[0]))) orderedScripts.push(s); });
+    pageScripts.forEach(s => { if (!orderedScripts.some(os => os.includes(s.split('?')[0]))) orderedScripts.push(s); });
     pageScripts = orderedScripts;
 
     return res.renderPage('pages/frontend/concerts', {

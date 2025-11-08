@@ -533,22 +533,29 @@ class ConcertEditor {
   toggleWorkSoloist(workIndex, soloistId) {
     if (!this.selectedWorks[workIndex]) return;
 
-    console.log(`🔧 Toggle solista ${soloistId} per brano ${workIndex}`);
+    // Converti sempre in stringa per consistenza
+    const soloistIdStr = String(soloistId);
+    console.log(`🔧 Toggle solista ${soloistIdStr} per brano ${workIndex}`);
 
     if (!this.selectedWorks[workIndex].soloist_ids) {
       this.selectedWorks[workIndex].soloist_ids = [];
     }
 
-    const currentIds = this.selectedWorks[workIndex].soloist_ids;
-    const index = currentIds.indexOf(soloistId);
+    // Assicurati che tutti gli ID nell'array siano stringhe
+    const currentIds = this.selectedWorks[workIndex].soloist_ids.map(id => String(id));
+    this.selectedWorks[workIndex].soloist_ids = currentIds;
+
+    const index = currentIds.indexOf(soloistIdStr);
 
     if (index > -1) {
+      console.log(`  ⊟ Rimuovo solista ${soloistIdStr}`);
       currentIds.splice(index, 1);
     } else {
-      currentIds.push(soloistId);
+      console.log(`  ⊞ Aggiungo solista ${soloistIdStr}`);
+      currentIds.push(soloistIdStr);
     }
 
-    console.log(`✅ Solisti assegnati al brano ${workIndex}:`, currentIds);
+    console.log(`✅ Solisti totali per brano ${workIndex}: ${currentIds.length}`, currentIds);
   }
   
   renderSelectedWorks() {
@@ -580,8 +587,12 @@ class ConcertEditor {
             ${this.soloists.length > 0 ? `
               <div style="display:flex;flex-direction:column;gap:4px;max-width:300px">
                 ${this.soloists.map((s, idx) => {
-                  const soloistKey = s.id || `idx_${idx}`;
-                  const isChecked = w.soloist_ids && w.soloist_ids.includes(soloistKey);
+                  const soloistKey = String(s.id || `idx_${idx}`);
+                  const soloistIdsStr = (w.soloist_ids || []).map(id => String(id));
+                  const isChecked = soloistIdsStr.includes(soloistKey);
+                  const isChorus = s.instrument === 'Coro';
+                  const icon = isChorus ? '🎭' : '🎤';
+                  const labelStyle = isChorus ? 'font-weight:600;color:var(--primary,#8b5cf6)' : '';
                   return `
                     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px;border-radius:4px;transition:background 0.2s"
                            onmouseover="this.style.background='var(--bg)'"
@@ -590,7 +601,7 @@ class ConcertEditor {
                              ${isChecked ? 'checked' : ''}
                              onchange="concertEditor.toggleWorkSoloist(${i}, '${soloistKey}')"
                              style="cursor:pointer">
-                      <span style="font-size:13px">${s.name || 'Nuovo solista'}${s.instrument ? ` (${s.instrument})` : ''}</span>
+                      <span style="font-size:13px;${labelStyle}">${icon} ${s.name || 'Nuovo solista'}${s.instrument && !isChorus ? ` (${s.instrument})` : ''}</span>
                     </label>
                   `;
                 }).join('')}
@@ -618,7 +629,8 @@ class ConcertEditor {
 
   const soloistIndexMap = new Map();
   this.soloists.forEach((s, idx) => {
-    const key = s.id || `idx_${idx}`;
+    // Converti sempre in stringa per consistenza
+    const key = String(s.id || `idx_${idx}`);
     soloistIndexMap.set(key, idx);
     console.log(`🗺️ Mapping: key="${key}" -> indice=${idx}, soloist={id:${s.id}, name:"${s.name}"}`);
   });
@@ -637,6 +649,7 @@ class ConcertEditor {
     program_notes: formData.get('program_notes'),
     conductor_name: formData.get('conductor_name'),
     orchestra_name: formData.get('orchestra_name'),
+    chorus_name: formData.get('chorus_name'),
     poster_vertical_cloudinary: formData.get('poster_vertical_cloudinary'),
     poster_horizontal_cloudinary: formData.get('poster_horizontal_cloudinary'),
     soloists: JSON.stringify(this.soloists.map(s => ({
@@ -645,12 +658,14 @@ class ConcertEditor {
     }))),
     selected_works: JSON.stringify(this.selectedWorks.map((w, i) => {
       console.log(`📖 Brano ${i}: work_id=${w.id}, soloist_ids=${JSON.stringify(w.soloist_ids)}`);
+      // Converti le chiavi in stringa prima di cercarle nella mappa
       const indices = (w.soloist_ids || []).map(key => {
-        const idx = soloistIndexMap.get(key);
-        console.log(`  → Chiave "${key}" -> indice ${idx}`);
+        const keyStr = String(key);
+        const idx = soloistIndexMap.get(keyStr);
+        console.log(`  → Chiave "${keyStr}" (tipo: ${typeof keyStr}) -> indice ${idx}`);
         return idx;
       }).filter(idx => idx !== undefined);
-      console.log(`  → Indici finali: ${JSON.stringify(indices)}`);
+      console.log(`  → Indici finali: ${JSON.stringify(indices)} (totale: ${indices.length})`);
       return {
         work_id: w.id,
         movement_id: w.movement_id,

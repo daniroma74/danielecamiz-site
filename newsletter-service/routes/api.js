@@ -9,40 +9,51 @@ const router = Router();
 // ============= SUBSCRIBE =============
 router.post('/subscribe', async (req, res) => {
   try {
-    const { email, name } = req.body;
+    const { email, name, preferences, lang } = req.body;
     const db = req.app.locals.db;
-    
+
     if (!email || !email.includes('@')) {
-      return res.json({ 
-        success: false, 
-        error: 'Email non valida' 
+      return res.json({
+        success: false,
+        error: 'Email non valida'
       });
     }
-    
-    const existing = await getOne(db, 
+
+    // Validate preferences
+    const validPreferences = ['concerts', 'news', 'both'];
+    const userPreferences = validPreferences.includes(preferences) ? preferences : 'both';
+
+    // Validate lang
+    const validLangs = ['it', 'en'];
+    const userLang = validLangs.includes(lang) ? lang : 'it';
+
+    const existing = await getOne(db,
       'SELECT * FROM newsletter_subscribers WHERE email = ?', [email]
     );
-    
+
     if (existing) {
       if (existing.status === 'unsubscribed') {
         await runDB(db, `
-          UPDATE newsletter_subscribers 
-          SET status = 'active', updated_at = datetime('now')
+          UPDATE newsletter_subscribers
+          SET status = 'active',
+              preferences = ?,
+              lang = ?,
+              updated_at = datetime('now')
           WHERE email = ?
-        `, [email]);
+        `, [userPreferences, userLang, email]);
         return res.json({ success: true, message: 'Iscrizione riattivata!' });
       }
       return res.json({ success: false, error: 'Email già iscritta' });
     }
-    
+
     await runDB(db, `
-      INSERT INTO newsletter_subscribers 
-      (email, name, status, source, created_at)
-      VALUES (?, ?, 'active', 'website', datetime('now'))
-    `, [email, name || null]);
-    
+      INSERT INTO newsletter_subscribers
+      (email, name, status, preferences, lang, source, created_at)
+      VALUES (?, ?, 'active', ?, ?, 'website', datetime('now'))
+    `, [email, name || null, userPreferences, userLang]);
+
     res.json({ success: true, message: 'Iscrizione completata!' });
-    
+
   } catch (error) {
     console.error('Subscribe error:', error);
     res.json({ success: false, error: 'Errore iscrizione' });
@@ -382,14 +393,18 @@ router.post('/check-subscription', async (req, res) => {
   try {
     const { email } = req.body;
     const db = req.app.locals.db;
-    
+
     const subscriber = await getOne(db,
-      'SELECT status FROM newsletter_subscribers WHERE email = ?', [email]
+      'SELECT * FROM newsletter_subscribers WHERE email = ?', [email]
     );
-    
+
     res.json({
       success: true,
-      subscribed: subscriber && ['active', 'subscribed'].includes(subscriber.status)
+      subscribed: subscriber && ['active', 'subscribed'].includes(subscriber.status),
+      subscriber: subscriber ? {
+        preferences: subscriber.preferences || 'both',
+        lang: subscriber.lang || 'it'
+      } : null
     });
   } catch (error) {
     res.json({ success: false, error: error.message });

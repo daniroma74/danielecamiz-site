@@ -45,11 +45,34 @@ class ConcertsController {
           posterUrl
         };
       });
-      
+
+      // Raggruppa i concerti per categoria
+      const futureConcerts = concertsWithPosters.filter(c => c.is_future === 1 || new Date(c.date) >= new Date());
+      const pastConcerts = concertsWithPosters.filter(c => c.is_future === 0 && new Date(c.date) < new Date());
+
+      // Raggruppa i concerti passati per anno
+      const concertsByYear = {};
+      pastConcerts.forEach(concert => {
+        const year = new Date(concert.date).getFullYear();
+        if (!concertsByYear[year]) {
+          concertsByYear[year] = [];
+        }
+        concertsByYear[year].push(concert);
+      });
+
+      // Converti in array ordinato (anni più recenti prima)
+      const yearGroups = Object.keys(concertsByYear)
+        .sort((a, b) => b - a)
+        .map(year => ({
+          year: parseInt(year),
+          concerts: concertsByYear[year]
+        }));
+
       res.render('pages/dashboard', {
         title: 'Dashboard Concerti',
         currentPage: 'dashboard',
-        concerts: concertsWithPosters,
+        futureConcerts,
+        yearGroups,
         filter,
         search,
         stagingUrl: process.env.STAGING_URL || 'https://www.danielecamiz.com',
@@ -61,14 +84,71 @@ class ConcertsController {
     }
   }
   
+  async renderPerformers(req, res, next) {
+    try {
+      // Query per ottenere tutti i solisti, orchestre e cori con conteggio concerti
+      const performers = await dbPromise.all(`
+        SELECT
+          cp.name,
+          cp.role,
+          cp.instrument,
+          COUNT(cp.concert_id) as concert_count,
+          MIN(c.date) as first_concert,
+          MAX(c.date) as last_concert,
+          GROUP_CONCAT(c.id || '|||' || c.title || '|||' || c.date, '§§§') as concerts_list
+        FROM concert_performers cp
+        JOIN concerts c ON cp.concert_id = c.id
+        WHERE cp.role IN ('soloist', 'chorus', 'orchestra')
+        GROUP BY cp.name, cp.role, cp.instrument
+        ORDER BY cp.role, concert_count DESC, cp.name
+      `);
+
+      // Processa la lista dei concerti per ogni performer
+      const processedPerformers = performers.map(p => {
+        const concerts = p.concerts_list ? p.concerts_list.split('§§§').map(c => {
+          const [id, title, date] = c.split('|||');
+          return { id, title, date };
+        }) : [];
+        return {
+          ...p,
+          concerts: concerts
+        };
+      });
+
+      // Raggruppa per tipo
+      const soloists = processedPerformers.filter(p => p.role === 'soloist');
+      const choruses = processedPerformers.filter(p => p.role === 'chorus');
+      const orchestras = processedPerformers.filter(p => p.role === 'orchestra');
+
+      const stats = {
+        total_soloists: soloists.length,
+        total_choruses: choruses.length,
+        total_orchestras: orchestras.length
+      };
+
+      res.render('pages/performers', {
+        title: 'Solisti & Ensemble',
+        currentPage: 'performers',
+        soloists,
+        choruses,
+        orchestras,
+        stats,
+        stagingUrl: process.env.STAGING_URL || 'https://www.danielecamiz.com'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async renderRepertoire(req, res, next) {
     try {
       const search = req.query.search || '';
       const composer = req.query.composer || '';
       const category = req.query.category || '';
-      
+
       let query = `
-        SELECT w.*, 
+        SELECT w.*,
+               c.id as composer_id,
                c.full_name as composer_name,
                c.short_name as composer_short,
                cat.label_it as category_label,
@@ -82,44 +162,66 @@ class ConcertsController {
         WHERE 1=1
       `;
       let params = [];
-      
+
       if (search) {
         query += ' AND (w.title LIKE ? OR c.full_name LIKE ? OR w.catalogue LIKE ?)';
         params.push(`%${search}%`, `%${search}%`, `%${search}%`);
       }
-      
+
       if (composer) {
         query += ' AND w.composer_id = ?';
         params.push(composer);
       }
-      
+
       if (category) {
         query += ' AND w.category_id = ?';
         params.push(category);
       }
-      
+
       query += ' GROUP BY w.id ORDER BY c.sort_key, w.title';
-      
+
       const works = await dbPromise.all(query, params);
-      
+
       const composers = await dbPromise.all(
         'SELECT * FROM composers ORDER BY sort_key, full_name'
       );
-      
+
       const categories = await dbPromise.all(
         'SELECT * FROM categories ORDER BY position, label_it'
       );
-      
+
       const stats = {
         total_works: { count: works.length },
         total_composers: await dbPromise.get('SELECT COUNT(DISTINCT id) as count FROM composers'),
         total_categories: await dbPromise.get('SELECT COUNT(*) as count FROM categories')
       };
-      
+
+      // Group works by composer if no specific filters are applied
+      let composerGroups = [];
+      if (!search && !composer && !category) {
+        const worksByComposer = {};
+        works.forEach(work => {
+          const composerId = work.composer_id;
+          if (!worksByComposer[composerId]) {
+            worksByComposer[composerId] = {
+              composer_id: composerId,
+              composer_name: work.composer_name,
+              composer_short: work.composer_short,
+              works: []
+            };
+          }
+          worksByComposer[composerId].works.push(work);
+        });
+
+        // Convert to array and keep order (already sorted by sort_key)
+        composerGroups = Object.values(worksByComposer);
+      }
+
       res.render('pages/repertoire', {
         title: 'Gestione Repertorio',
         currentPage: 'repertoire',
         works,
+        composerGroups,
         composers,
         categories,
         stats,
@@ -150,6 +252,7 @@ class ConcertsController {
       let soloists = [];
       let conductor = '';
       let orchestra = '';
+      let chorus = '';
       
       if (concertId) {
         concert = await dbPromise.get('SELECT * FROM concerts WHERE id = ?', [concertId]);
@@ -217,11 +320,16 @@ class ConcertsController {
         performersData.forEach(p => {
           if (p.role === 'conductor') conductor = p.name;
           else if (p.role === 'orchestra') orchestra = p.name;
+          else if (p.role === 'chorus') {
+            chorus = p.name; // Salva il nome del coro
+            // NON aggiungiamo il coro alla lista soloists per evitare duplicazioni
+            // Il coro viene gestito separatamente tramite il campo chorus_name
+          }
           else if (p.role === 'soloist') {
-            soloists.push({ 
+            soloists.push({
               id: p.id,
-              name: p.name, 
-              instrument: p.instrument || '' 
+              name: p.name,
+              instrument: p.instrument || ''
             });
           }
         });
@@ -243,6 +351,7 @@ class ConcertsController {
         soloists: JSON.stringify(soloists),
         conductor,
         orchestra,
+        chorus,
         composers,
         categories,
         allWorks,

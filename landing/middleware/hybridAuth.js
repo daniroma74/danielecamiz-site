@@ -56,11 +56,17 @@ export function ensureAuthenticated(req, res, next) {
     }
   }
 
-  // No valid authentication found
+  // No valid authentication found - redirect to Admin Hub
+  const hubDomain = process.env.HUB_DOMAIN || 'hub.danielecamiz.com';
+  const moduleId = process.env.MODULE_ID || 'events-admin';
+  const currentUrl = `https://${req.get('host')}${req.originalUrl}`;
+
   if (req.xhr || req.headers.accept?.includes('application/json')) {
     return res.status(401).json({ error: 'Non autenticato' });
   }
-  return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
+
+  // Redirect to Hub login with return URL
+  return res.redirect(`https://${hubDomain}/auth/module-login?module=${moduleId}&returnUrl=${encodeURIComponent(currentUrl)}`);
 }
 
 export function handleLogin(req, res) {

@@ -131,7 +131,8 @@ function collectFormData() {
     meta_description_en: document.getElementById('meta_description_en')?.value || null,
     social_share_on_publish: document.getElementById('social_share_on_publish')?.checked || false,
     social_providers: providers,
-    social_messages: messages
+    social_messages: messages,
+    include_in_newsletter: document.getElementById('include_in_newsletter')?.checked ? 1 : 0
   };
 }
 

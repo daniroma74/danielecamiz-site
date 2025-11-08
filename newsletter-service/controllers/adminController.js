@@ -6,36 +6,67 @@ import { applyInlineStyles } from '../utils/inlineStyles.js';
 
 const BASE_URL = process.env.BASE_URL || 'https://newsletter-admin.danielecamiz.com';
 
-// ============= DASHBOARD =============
+// ============= UNIFIED DASHBOARD =============
 export async function renderDashboard(req, res, next) {
   try {
     const db = req.app.locals.db;
-    
+
+    // Basic stats
     const stats = {
-      total_subscribers: (await getOne(db, 
+      total_subscribers: (await getOne(db,
         "SELECT COUNT(*) as count FROM newsletter_subscribers"
       ))?.count || 0,
-      
+
       active_subscribers: (await getOne(db,
         "SELECT COUNT(*) as count FROM newsletter_subscribers WHERE status IN ('active', 'subscribed')"
       ))?.count || 0,
-      
+
       campaigns_sent: (await getOne(db,
         "SELECT COUNT(*) as count FROM newsletter_campaigns WHERE status = 'sent'"
       ))?.count || 0,
-      
+
       new_this_week: (await getOne(db,
         "SELECT COUNT(*) as count FROM newsletter_subscribers WHERE created_at >= date('now', '-7 days')"
+      ))?.count || 0,
+
+      // Preference stats
+      preferences_both: (await getOne(db,
+        "SELECT COUNT(*) as count FROM newsletter_subscribers WHERE status = 'active' AND preferences = 'both'"
+      ))?.count || 0,
+
+      preferences_concerts: (await getOne(db,
+        "SELECT COUNT(*) as count FROM newsletter_subscribers WHERE status = 'active' AND preferences = 'concerts'"
+      ))?.count || 0,
+
+      preferences_news: (await getOne(db,
+        "SELECT COUNT(*) as count FROM newsletter_subscribers WHERE status = 'active' AND preferences = 'news'"
       ))?.count || 0
     };
-    
-    const campaigns = await queryDB(db, `
-      SELECT * FROM newsletter_campaigns 
-      ORDER BY created_at DESC 
-      LIMIT 5
-    `) || [];
-    
-    res.render('pages/admin-dashboard', { stats, campaigns });
+
+    // Get digest data from news-admin API
+    let digestData = {
+      selectedPosts: [],
+      recipientCount: 0
+    };
+
+    try {
+      const fetch = (await import('node-fetch')).default;
+      const response = await fetch('http://localhost:3005/news/api/newsletter-posts');
+      if (response.ok) {
+        const data = await response.json();
+        digestData.selectedPosts = data.posts || [];
+
+        // Count recipients who want news
+        const newsRecipients = await getOne(db,
+          "SELECT COUNT(*) as count FROM newsletter_subscribers WHERE status = 'active' AND preferences IN ('news', 'both')"
+        );
+        digestData.recipientCount = newsRecipients?.count || 0;
+      }
+    } catch (error) {
+      console.error('Error fetching digest data from news-admin:', error);
+    }
+
+    res.render('pages/unified-dashboard', { stats, digestData });
   } catch (error) {
     console.error('Dashboard error:', error);
     next(error);
@@ -622,3 +653,217 @@ export async function renderSettings(req, res) { res.status(404).send('Non imple
 export async function getCampaignData(req, res) { res.json({ success: false }); }
 export async function renderStats(req, res) { res.status(404).send('Non implementato'); }
 export async function duplicateCampaign(req, res) { res.json({ success: false }); }
+
+// ============= DIGEST NEWSLETTER =============
+
+/**
+ * Generate HTML preview of digest newsletter
+ */
+export async function previewDigest(req, res, next) {
+  try {
+    const db = req.app.locals.db;
+
+    // Fetch posts from news-admin API
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch('http://localhost:3005/news/api/newsletter-posts');
+
+    if (!response.ok) {
+      return res.status(500).send('Error fetching posts from news-admin');
+    }
+
+    const data = await response.json();
+    const posts = data.posts || [];
+
+    if (posts.length === 0) {
+      return res.send('<h1>No posts selected for newsletter</h1><p>Go to news-admin and mark some articles.</p>');
+    }
+
+    // Render email template
+    const ejs = await import('ejs');
+    const path = await import('path');
+
+    const templatePath = path.join(process.cwd(), 'views', 'email-templates', 'digest.ejs');
+
+    const html = await ejs.renderFile(templatePath, {
+      lang: 'it',
+      subject: 'Newsletter Daniele Camiz',
+      posts: posts,
+      unsubscribeUrl: `${BASE_URL}/newsletter/manage?email=example@example.com`
+    });
+
+    res.send(html);
+  } catch (error) {
+    console.error('Preview digest error:', error);
+    next(error);
+  }
+}
+
+/**
+ * Send test digest email
+ */
+export async function sendTestDigest(req, res) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.json({ success: false, error: 'Email required' });
+    }
+
+    const db = req.app.locals.db;
+
+    // Fetch posts from news-admin API
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch('http://localhost:3005/news/api/newsletter-posts');
+
+    if (!response.ok) {
+      return res.json({ success: false, error: 'Error fetching posts from news-admin' });
+    }
+
+    const data = await response.json();
+    const posts = data.posts || [];
+
+    if (posts.length === 0) {
+      return res.json({ success: false, error: 'No posts selected for newsletter' });
+    }
+
+    // Render email template
+    const ejs = await import('ejs');
+    const path = await import('path');
+
+    const templatePath = path.join(process.cwd(), 'views', 'email-templates', 'digest.ejs');
+
+    const html = await ejs.renderFile(templatePath, {
+      lang: 'it',
+      subject: 'Newsletter Daniele Camiz',
+      posts: posts,
+      unsubscribeUrl: `${BASE_URL}/newsletter/manage?email=${encodeURIComponent(email)}`
+    });
+
+    // Send test email
+    await sendNewsletterEmail(email, '[TEST] Newsletter Daniele Camiz', html);
+
+    res.json({ success: true, message: `Test email sent to ${email}` });
+  } catch (error) {
+    console.error('Send test digest error:', error);
+    res.json({ success: false, error: error.message });
+  }
+}
+
+/**
+ * Send digest newsletter to all subscribers
+ */
+export async function sendDigest(req, res) {
+  try {
+    const db = req.app.locals.db;
+
+    // Fetch posts from news-admin API
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch('http://localhost:3005/news/api/newsletter-posts');
+
+    if (!response.ok) {
+      return res.json({ success: false, error: 'Error fetching posts from news-admin' });
+    }
+
+    const data = await response.json();
+    const posts = data.posts || [];
+
+    if (posts.length === 0) {
+      return res.json({ success: false, error: 'No posts selected for newsletter' });
+    }
+
+    // Get subscribers who want news (preferences: 'news' or 'both')
+    const subscribers = await queryDB(db, `
+      SELECT * FROM newsletter_subscribers
+      WHERE status = 'active'
+      AND preferences IN ('news', 'both')
+    `) || [];
+
+    if (subscribers.length === 0) {
+      return res.json({ success: false, error: 'No active subscribers for news digest' });
+    }
+
+    // Create campaign record
+    const campaignSubject = 'Newsletter Daniele Camiz';
+    const now = new Date().toISOString();
+
+    const campaignResult = await runDB(db, `
+      INSERT INTO newsletter_campaigns
+      (name, subject, content_json, type, status, sent_at, sent_count, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      `Digest ${new Date().toLocaleDateString('it-IT')}`,
+      campaignSubject,
+      JSON.stringify({ posts: posts.map(p => p.id) }),
+      'digest',
+      'sent',
+      now,
+      subscribers.length,
+      now,
+      now
+    ]);
+
+    const campaignId = campaignResult.lastID;
+
+    // Render and send emails
+    const ejs = await import('ejs');
+    const path = await import('path');
+    const templatePath = path.join(process.cwd(), 'views', 'email-templates', 'digest.ejs');
+
+    let sent = 0;
+    let failed = 0;
+
+    for (const subscriber of subscribers) {
+      try {
+        const lang = subscriber.lang || 'it';
+
+        const html = await ejs.renderFile(templatePath, {
+          lang: lang,
+          subject: campaignSubject,
+          posts: posts,
+          unsubscribeUrl: `${BASE_URL}/newsletter/manage?email=${encodeURIComponent(subscriber.email)}`
+        });
+
+        await sendNewsletterEmail(subscriber.email, campaignSubject, html);
+        sent++;
+
+        // Log successful send
+        await runDB(db, `
+          INSERT INTO newsletter_logs
+          (campaign_id, subscriber_id, event_type, created_at)
+          VALUES (?, ?, ?, ?)
+        `, [campaignId, subscriber.id, 'sent', new Date().toISOString()]);
+
+      } catch (error) {
+        console.error(`Failed to send to ${subscriber.email}:`, error);
+        failed++;
+      }
+
+      // Small delay to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    // Mark posts as sent in news-admin
+    try {
+      const postIds = posts.map(p => p.id);
+      await fetch('http://localhost:3005/news/api/newsletter-posts/mark-sent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postIds })
+      });
+    } catch (error) {
+      console.error('Error marking posts as sent:', error);
+    }
+
+    res.json({
+      success: true,
+      sent,
+      failed,
+      campaignId,
+      message: `Digest sent to ${sent} subscribers`
+    });
+
+  } catch (error) {
+    console.error('Send digest error:', error);
+    res.json({ success: false, error: error.message });
+  }
+}

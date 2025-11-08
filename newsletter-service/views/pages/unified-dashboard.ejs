@@ -1,0 +1,430 @@
+<!-- newsletter-service/views/pages/unified-dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter - Dashboard Unificata</title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <style>
+    body { background: #f5f7fa; }
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2.5rem 2rem;
+      margin: -2rem -2rem 2rem;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    }
+    .hero h1 { margin: 0 0 0.5rem; font-size: 2.5rem; font-weight: 300; }
+    .hero p { margin: 0; opacity: 0.95; font-size: 1.1rem; }
+
+    .tabs-nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 0;
+    }
+    .tab-button {
+      background: none;
+      border: none;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    .tab-button:hover { color: #667eea; background: #f0f0f0; }
+    .tab-button.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      background: white;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .stat-card__number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #667eea;
+      margin: 0;
+    }
+    .stat-card__label {
+      color: #666;
+      font-size: 0.9rem;
+      margin: 0.5rem 0 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 1.5rem;
+    }
+    .card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .post-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+      background: #fafafa;
+    }
+    .post-item__thumb {
+      width: 120px;
+      height: 68px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #ddd;
+      flex-shrink: 0;
+    }
+    .post-item__content { flex: 1; }
+    .post-item__title {
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+      color: #333;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+    .btn-success {
+      background: #4caf50;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #43a047;
+    }
+
+    .preference-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .preference-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      background: #f0f0f0;
+    }
+    .preference-badge.concerts { background: #e3f2fd; color: #1976d2; }
+    .preference-badge.news { background: #fff3e0; color: #f57c00; }
+    .preference-badge.both { background: #e8f5e9; color: #388e3c; }
+  </style>
+</head>
+<body>
+  <%- include('../../../shared/partials/back-to-hub') %>
+
+  <nav style="background: #1a1a1a; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <div style="font-size: 1.2rem; font-weight: 600;">📧 Newsletter Service</div>
+    <a href="/logout" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 4px;">Logout</a>
+  </nav>
+
+  <div class="container">
+    <div class="hero">
+      <h1>📧 Newsletter Dashboard</h1>
+      <p>Gestione unificata newsletter Daniele Camiz e ICNT</p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-card__number"><%= stats.total_subscribers %></p>
+        <p class="stat-card__label">Iscritti Totali</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card__number"><%= stats.active_subscribers %></p>
+        <p class="stat-card__label">Attivi</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card__number"><%= digestData.selectedPosts.length %></p>
+        <p class="stat-card__label">News da Inviare</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card__number"><%= stats.campaigns_sent %></p>
+        <p class="stat-card__label">Invii Totali</p>
+      </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-nav">
+      <button class="tab-button active" onclick="switchTab('digest')">
+        📰 Digest News Daniele
+        <% if (digestData.selectedPosts.length > 0) { %>
+          <span style="background: #4caf50; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.8rem; margin-left: 0.5rem;">
+            <%= digestData.selectedPosts.length %>
+          </span>
+        <% } %>
+      </button>
+      <button class="tab-button" onclick="switchTab('concerts')">
+        🎼 Newsletter ICNT Concerti
+      </button>
+      <button class="tab-button" onclick="switchTab('subscribers')">
+        👥 Iscritti (<%= stats.active_subscribers %>)
+      </button>
+      <button class="tab-button" onclick="switchTab('stats')">
+        📊 Statistiche
+      </button>
+    </div>
+
+    <!-- Tab: Digest News -->
+    <div id="tab-digest" class="tab-content active">
+      <div class="card">
+        <h2>📰 Digest News Daniele Camiz</h2>
+        <p style="color: #666; margin-bottom: 1.5rem;">
+          Articoli selezionati automaticamente da news-admin per il prossimo digest bimestrale/trimestrale
+        </p>
+
+        <% if (digestData.selectedPosts.length === 0) { %>
+          <div class="empty-state">
+            <p style="font-size: 1.2rem;">📭 Nessun articolo selezionato</p>
+            <p><small>Vai in news-admin e spunta "Includi nella Newsletter" negli articoli</small></p>
+            <a href="http://localhost:3005/news" class="btn btn-primary" style="margin-top: 1rem; display: inline-block; text-decoration: none;">
+              📰 Vai a News Admin
+            </a>
+          </div>
+        <% } else { %>
+          <% digestData.selectedPosts.forEach(post => { %>
+            <div class="post-item">
+              <% if (post.cover_image) { %>
+                <img src="<%= post.cover_image %>" alt="" class="post-item__thumb">
+              <% } else { %>
+                <div class="post-item__thumb" style="display: flex; align-items: center; justify-content: center;">
+                  <span style="font-size: 2rem;">📰</span>
+                </div>
+              <% } %>
+              <div class="post-item__content">
+                <h3 class="post-item__title"><%= post.title_it %></h3>
+                <p style="font-size: 0.85rem; color: #666; margin: 0.25rem 0;">
+                  <%= post.category || 'news' %> •
+                  <%= new Date(post.publish_date || post.created_at).toLocaleDateString('it-IT') %>
+                </p>
+                <p style="font-size: 0.9rem; color: #666; margin: 0.5rem 0 0;">
+                  <%= (post.excerpt_it || '').substring(0, 120) %>...
+                </p>
+              </div>
+            </div>
+          <% }); %>
+
+          <div class="action-buttons">
+            <button type="button" class="btn btn-secondary" onclick="refreshDigestPreview()">
+              👁️ Anteprima Email
+            </button>
+            <button type="button" class="btn btn-primary" onclick="sendTestEmail()">
+              📧 Invia Email di Prova
+            </button>
+            <button type="button" class="btn btn-success" onclick="sendDigestNewsletter()">
+              📤 Invia Digest (<%= digestData.recipientCount %> iscritti)
+            </button>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Tab: ICNT Concerts -->
+    <div id="tab-concerts" class="tab-content">
+      <div class="card">
+        <h2>🎼 Newsletter ICNT Concerti</h2>
+        <p style="color: #666; margin-bottom: 1.5rem;">
+          Crea newsletter manuale per annunciare nuovi concerti e stagioni
+        </p>
+        <div class="action-buttons">
+          <a href="/admin/campaigns/new" class="btn btn-primary" style="text-decoration: none;">
+            ✍️ Crea Nuova Newsletter Concerti
+          </a>
+          <a href="/admin/campaigns" class="btn btn-secondary" style="text-decoration: none;">
+            📋 Vedi Newsletter Inviate
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Subscribers -->
+    <div id="tab-subscribers" class="tab-content">
+      <div class="card">
+        <h2>👥 Gestione Iscritti</h2>
+        <div class="preference-badges">
+          <div class="preference-badge both">
+            <span>✅ Entrambe:</span>
+            <strong><%= stats.preferences_both || 0 %></strong>
+          </div>
+          <div class="preference-badge concerts">
+            <span>🎼 Solo Concerti:</span>
+            <strong><%= stats.preferences_concerts || 0 %></strong>
+          </div>
+          <div class="preference-badge news">
+            <span>📰 Solo News:</span>
+            <strong><%= stats.preferences_news || 0 %></strong>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <a href="/admin/subscribers" class="btn btn-primary" style="text-decoration: none;">
+            📋 Vedi Tutti gli Iscritti
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Stats -->
+    <div id="tab-stats" class="tab-content">
+      <div class="card">
+        <h2>📊 Statistiche</h2>
+        <p>Dashboard statistiche completa in sviluppo...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer style="text-align: center; padding: 2rem; color: #999; margin-top: 3rem;">
+    <p>Newsletter Service • Daniele Camiz & ICNT</p>
+  </footer>
+
+  <script>
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Show selected tab
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    async function refreshDigestPreview() {
+      // Open preview in new window
+      window.open('/admin/digest/preview', '_blank', 'width=800,height=600');
+    }
+
+    async function sendTestEmail() {
+      const email = prompt('Inserisci email per test:', 'daniele.camiz@gmail.com');
+      if (!email) return;
+
+      try {
+        const response = await fetch('/admin/digest/test', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert(`✅ ${result.message}`);
+        } else {
+          alert(`❌ Errore: ${result.error}`);
+        }
+      } catch (error) {
+        alert(`❌ Errore: ${error.message}`);
+      }
+    }
+
+    async function sendDigestNewsletter() {
+      const count = <%= digestData.recipientCount %>;
+      const confirmed = confirm(
+        `🚀 Sei sicuro di voler inviare il digest a ${count} iscritti?\n\n` +
+        `Verranno inviati <%= digestData.selectedPosts.length %> articoli.`
+      );
+
+      if (!confirmed) return;
+
+      try {
+        // Show loading state
+        const button = event.target;
+        button.disabled = true;
+        button.textContent = '📤 Invio in corso...';
+
+        const response = await fetch('/admin/digest/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert(`✅ ${result.message}\n\nInviati: ${result.sent}\nFalliti: ${result.failed}`);
+          // Reload page to update stats
+          window.location.reload();
+        } else {
+          alert(`❌ Errore: ${result.error}`);
+          button.disabled = false;
+          button.textContent = '📤 Invia Digest (<%= digestData.recipientCount %> iscritti)';
+        }
+      } catch (error) {
+        alert(`❌ Errore: ${error.message}`);
+        button.disabled = false;
+        button.textContent = '📤 Invia Digest (<%= digestData.recipientCount %> iscritti)';
+      }
+    }
+  </script>
+</body>
+</html>

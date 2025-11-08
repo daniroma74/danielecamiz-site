@@ -56,6 +56,11 @@
   function openModalWithHtml(html) {
     if (!overlay) buildOverlay();
     content.innerHTML = html;
+
+    // Apri tutti i <details> per mostrare i dettagli dei concerti
+    const allDetails = content.querySelectorAll('.concert-details');
+    allDetails.forEach(d => d.setAttribute('open', ''));
+
     // Visualizza la modal; il layout è gestito da modal.css
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';

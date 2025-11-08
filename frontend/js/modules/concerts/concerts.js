@@ -64,8 +64,15 @@ function bindSummaryToLightbox(){
     var summary = e.target.closest('summary.details-summary, summary.concert-details, details.concert-details > summary');
     if (!summary) return;
 
+    // NON aprire lightbox se siamo già dentro la modal anno
+    var inYearModal = summary.closest('#year_modal');
+    if (inYearModal) {
+      // Lascia che il <details> funzioni normalmente (anche se il CSS lo nasconde)
+      return;
+    }
+
     // Only act if the global lightbox API exists
-    if (typeof window.openConcertLightbox !== 'function') return;
+    if (typeof window.openConcertFromDOM !== 'function') return;
 
     e.preventDefault();
     if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
@@ -74,15 +81,19 @@ function bindSummaryToLightbox(){
     var details = summary.closest('details');
     if (details && details.hasAttribute('open')) details.removeAttribute('open');
 
-    var payload = summary.getAttribute('data-payload') || (summary.dataset && summary.dataset.payload) || null;
-    if (!payload) {
-      var block = summary.closest('.concert-card, .concert-item, li, article, .upcoming-row');
-      payload = payloadFromBlock(block);
-    } else {
-      payload = parseConcert(payload);
+    // Find the concert item that contains this summary
+    var concertItem = summary.closest('.concert-item, .concert-card, li[data-concert-id], article[data-concert-id]');
+    if (!concertItem) return;
+
+    // Get the concert ID from data attribute
+    var concertId = concertItem.getAttribute('data-concert-id');
+    if (!concertId) {
+      console.warn('[concerts] No data-concert-id found on concert item');
+      return;
     }
 
-    if (payload) window.openConcertLightbox(payload);
+    // Open lightbox using the new DB-based method
+    window.openConcertFromDOM(concertId);
   }, { capture: true });
 }
 

@@ -40,6 +40,9 @@
       <a href="/admin/repertoire" class="<%= currentPage === 'repertoire' ? 'active' : '' %>">
         <i class="fas fa-book"></i> Repertorio
       </a>
+      <a href="/admin/performers" class="<%= currentPage === 'performers' ? 'active' : '' %>">
+        <i class="fas fa-users"></i> Solisti & Ensemble
+      </a>
       <a href="<%= stagingUrl || 'https://www.danielecamiz.com' %>/concerts" target="_blank" class="nav-link-external">
         <i class="fas fa-external-link-alt"></i> Frontend
       </a>
@@ -70,13 +73,13 @@
     <div class="filters-bar">
       <div class="filter-buttons">
         <a href="/admin/dashboard?filter=all" class="filter-btn <%= filter === 'all' ? 'active' : '' %>">
-          <i class="fas fa-list"></i> Tutti (<%= concerts.length %>)
+          <i class="fas fa-list"></i> Tutti (<%= futureConcerts.length + yearGroups.reduce((sum, g) => sum + g.concerts.length, 0) %>)
         </a>
         <a href="/admin/dashboard?filter=future" class="filter-btn <%= filter === 'future' ? 'active' : '' %>">
-          <i class="fas fa-calendar-plus"></i> Futuri
+          <i class="fas fa-calendar-plus"></i> Futuri (<%= futureConcerts.length %>)
         </a>
         <a href="/admin/dashboard?filter=past" class="filter-btn <%= filter === 'past' ? 'active' : '' %>">
-          <i class="fas fa-calendar-check"></i> Passati
+          <i class="fas fa-calendar-check"></i> Passati (<%= yearGroups.reduce((sum, g) => sum + g.concerts.length, 0) %>)
         </a>
       </div>
       
@@ -96,21 +99,8 @@
     </div>
 
     <!-- CONCERTI GRID -->
-    <% if (concerts && concerts.length > 0) { %>
-      <% 
-        const now = new Date();
-        let displayConcerts = concerts;
-        
-        if (filter === 'future') {
-          displayConcerts = concerts.filter(c => new Date(c.date) >= now);
-        } else if (filter === 'past') {
-          displayConcerts = concerts.filter(c => new Date(c.date) < now);
-        }
-        
-        const futureConcerts = displayConcerts.filter(c => new Date(c.date) >= now).sort((a, b) => new Date(a.date) - new Date(b.date));
-        const pastConcerts = displayConcerts.filter(c => new Date(c.date) < now).sort((a, b) => new Date(b.date) - new Date(a.date));
-      %>
-      
+    <% if (futureConcerts.length > 0 || yearGroups.length > 0) { %>
+
       <!-- CONCERTI FUTURI -->
       <% if (filter === 'all' || filter === 'future') { %>
         <% if (futureConcerts.length > 0) { %>
@@ -240,30 +230,25 @@
         <% } %>
       <% } %>
       
-      <!-- CONCERTI PASSATI -->
+      <!-- CONCERTI PASSATI RAGGRUPPATI PER ANNO -->
       <% if (filter === 'all' || filter === 'past') { %>
-        <% if (pastConcerts.length > 0) { %>
-          <% if (filter === 'all') { %>
-            <div class="section-header archive-header">
-              <h2>
-                <i class="fas fa-archive"></i> Archivio Concerti Passati
-              </h2>
-              <button id="toggleArchive" class="btn btn-sm btn-secondary">
-                <i class="fas fa-chevron-down"></i> Mostra (<%= pastConcerts.length %>)
-              </button>
-            </div>
-            
-            <div id="archiveConcerts" style="display: none;">
-          <% } else { %>
-            <div class="section-header">
-              <h2><i class="fas fa-archive"></i> Concerti Passati</h2>
-              <span class="badge-count"><%= pastConcerts.length %></span>
-            </div>
-            <div>
-          <% } %>
-          
-          <div class="concerts-grid">
-            <% pastConcerts.forEach(concert => { %>
+        <% if (yearGroups.length > 0) { %>
+
+          <% yearGroups.forEach((yearGroup, yearIndex) => { %>
+            <div class="year-section">
+              <div class="section-header year-header" style="cursor: pointer;" onclick="toggleYear(<%= yearGroup.year %>)">
+                <h2>
+                  <i class="fas fa-calendar-alt"></i> <%= yearGroup.year %>
+                  <span class="badge-count"><%= yearGroup.concerts.length %></span>
+                </h2>
+                <button class="btn btn-sm btn-secondary" id="toggleBtn<%= yearGroup.year %>">
+                  <i class="fas fa-chevron-down" id="toggleIcon<%= yearGroup.year %>"></i>
+                  <span id="toggleText<%= yearGroup.year %>">Mostra</span>
+                </button>
+              </div>
+
+              <div id="year<%= yearGroup.year %>" class="concerts-grid" style="display: <%= filter === 'past' || yearIndex === 0 ? 'grid' : 'none' %>;">
+                <% yearGroup.concerts.forEach(concert => { %>
               <% 
                 const dateObj = new Date(concert.date);
                 const formattedDate = dateObj.toLocaleDateString('it-IT', {
@@ -340,23 +325,33 @@
                 </div>
               </div>
             <% }); %>
-          </div>
-          
-          </div>
-          
-          <% if (filter === 'all') { %>
-            <script>
-              document.getElementById('toggleArchive').addEventListener('click', function() {
-                const archive = document.getElementById('archiveConcerts');
-                const icon = this.querySelector('i');
-                const isHidden = archive.style.display === 'none';
-                
-                archive.style.display = isHidden ? 'block' : 'none';
-                icon.className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-                this.innerHTML = `<i class="${icon.className}"></i> ${isHidden ? 'Nascondi' : 'Mostra'} (<%= pastConcerts.length %>)`;
-              });
-            </script>
-          <% } %>
+              </div>
+            </div>
+          <% }); %>
+
+          <script>
+            function toggleYear(year) {
+              const yearDiv = document.getElementById('year' + year);
+              const icon = document.getElementById('toggleIcon' + year);
+              const text = document.getElementById('toggleText' + year);
+              const isHidden = yearDiv.style.display === 'none' || yearDiv.style.display === '';
+
+              yearDiv.style.display = isHidden ? 'grid' : 'none';
+              icon.className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+              text.textContent = isHidden ? 'Nascondi' : 'Mostra';
+            }
+
+            // Inizializza lo stato dei toggle
+            <% yearGroups.forEach((yearGroup, idx) => { %>
+              <% if (filter !== 'past' && idx > 0) { %>
+                document.getElementById('toggleIcon<%= yearGroup.year %>').className = 'fas fa-chevron-down';
+                document.getElementById('toggleText<%= yearGroup.year %>').textContent = 'Mostra';
+              <% } else { %>
+                document.getElementById('toggleIcon<%= yearGroup.year %>').className = 'fas fa-chevron-up';
+                document.getElementById('toggleText<%= yearGroup.year %>').textContent = 'Nascondi';
+              <% } %>
+            <% }); %>
+          </script>
         <% } else if (filter === 'past') { %>
           <div class="empty-state">
             <i class="fas fa-calendar-check fa-3x"></i>

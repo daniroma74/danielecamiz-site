@@ -122,17 +122,57 @@ export async function getRepertoirePage(req, res) {
       `label_${lang}`, 'label_it', 'label_en', 'label'
     ]);
 
+    // Get works from upcoming concerts (future dates)
     const upcomingWorks = await qAll(db, `
-      SELECT w.*,
+      SELECT DISTINCT w.*,
              c.full_name AS composer_name,
-             ${catLangLabel === 'id' ? 'cat.id' : `cat.${catLangLabel}`} AS category_name
+             ${catLangLabel === 'id' ? 'cat.id' : `cat.${catLangLabel}`} AS category_name,
+             co.date AS concert_date
       FROM works w
       JOIN composers c         ON w.composer_id = c.id
       LEFT JOIN categories cat ON w.category_id = cat.id
-      WHERE NOT EXISTS (SELECT 1 FROM concert_program cp WHERE cp.work_id = w.id)
-      ORDER BY ${orderCol} DESC
+      JOIN concert_program cp  ON cp.work_id = w.id
+      JOIN concerts co         ON cp.concert_id = co.id
+      WHERE co.date >= date('now')
+      ORDER BY co.date ASC, w.title
       LIMIT 20
     `).catch(e => { console.error('[Repertoire] upcomingWorks:', e); return []; });
+
+    // Get collaborators (soloists, choruses, orchestras) - separate queries for each
+    let collaborators = { soloists: [], choruses: [], orchestras: [] };
+    try {
+      // Soloists - exclude choruses (instrument = 'Coro' or 'coro')
+      const soloists = await qAll(db, `
+        SELECT cp.name, cp.role, cp.instrument, COUNT(*) as concert_count
+        FROM concert_performers cp
+        WHERE cp.role = 'soloist'
+          AND (cp.instrument IS NULL OR LOWER(cp.instrument) NOT LIKE '%coro%')
+        GROUP BY cp.name, cp.role, cp.instrument
+        ORDER BY concert_count DESC, cp.name
+      `);
+
+      // Orchestras
+      const orchestras = await qAll(db, `
+        SELECT cp.name, cp.role, COUNT(*) as concert_count
+        FROM concert_performers cp
+        WHERE cp.role = 'orchestra'
+        GROUP BY cp.name, cp.role
+        ORDER BY concert_count DESC, cp.name
+      `);
+
+      // Choruses
+      const choruses = await qAll(db, `
+        SELECT cp.name, cp.role, COUNT(*) as concert_count
+        FROM concert_performers cp
+        WHERE cp.role = 'chorus'
+        GROUP BY cp.name, cp.role
+        ORDER BY concert_count DESC, cp.name
+      `);
+
+      collaborators = { soloists, choruses, orchestras };
+    } catch (collabErr) {
+      console.error('[Repertoire] collaborators query failed:', collabErr);
+    }
 
     // Get all works for the main listing
     const works = await qAll(db, `
@@ -197,10 +237,9 @@ export async function getRepertoirePage(req, res) {
       upcomingWorks,
       frequentlyPerformed: topWorks,
       comingSoon: upcomingWorks,
+      collaborators,
       pageStyles: [
-        '/css/pages/repertoire/repertoire-base.css',
-        '/css/pages/repertoire/repertoire-modern.css',
-        '/css/pages/repertoire/repertoire-responsive.css',
+        '/css/pages/repertoire/repertoire-new.css',
       ],
       pageScripts: ['/js/modules/repertoire/repertoire.js'],
     });

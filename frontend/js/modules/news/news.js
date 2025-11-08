@@ -268,11 +268,36 @@
     });
   }
 
+  /* ===== Clickable tags ===== */
+  function initClickableTags() {
+    // Make tags in cards clickable to filter
+    document.addEventListener('click', function(e) {
+      const tag = e.target.closest('.tag');
+      if (!tag) return;
+
+      e.preventDefault();
+      const tagText = tag.textContent.trim();
+
+      // Find the tab button for this tag
+      const tabs = $all('#news_tabs .news-tab');
+      const matchingTab = tabs.find(btn => {
+        const filterVal = btn.getAttribute('data-filter') || btn.getAttribute('data-filter-cat');
+        return filterVal && filterVal.toLowerCase() === tagText.toLowerCase();
+      });
+
+      if (matchingTab) {
+        matchingTab.click();
+        matchingTab.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  }
+
   /* ===== Init ===== */
   function init() {
     initTabsAndPaging();
     initNewsletterForm();
     initLqipFade();
+    initClickableTags();
   }
 
   if (document.readyState === 'loading') {

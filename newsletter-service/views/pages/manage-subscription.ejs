@@ -55,6 +55,40 @@
                value="<%= typeof email !== 'undefined' && email ? email : '' %>">
       </div>
 
+      <!-- Preferences Section (shown when subscribing) -->
+      <div id="preferences-section" style="display:none; margin-bottom:25px; padding:20px; background:#f8f9fa; border-radius:10px;">
+        <label style="margin-bottom:15px;">📬 Cosa vuoi ricevere?</label>
+        <div style="margin-bottom:15px;">
+          <label style="display:flex; align-items:center; cursor:pointer; padding:10px; background:white; border-radius:8px; margin-bottom:10px;">
+            <input type="radio" name="preferences" value="both" checked style="margin-right:10px; width:auto;">
+            <div>
+              <strong>🎼 + 📰 Entrambe</strong>
+              <small style="display:block; color:#666; font-weight:normal;">Newsletter concerti ICNT + News dal sito Daniele Camiz</small>
+            </div>
+          </label>
+          <label style="display:flex; align-items:center; cursor:pointer; padding:10px; background:white; border-radius:8px; margin-bottom:10px;">
+            <input type="radio" name="preferences" value="concerts" style="margin-right:10px; width:auto;">
+            <div>
+              <strong>🎼 Solo Concerti</strong>
+              <small style="display:block; color:#666; font-weight:normal;">Solo avvisi concerti ICNT</small>
+            </div>
+          </label>
+          <label style="display:flex; align-items:center; cursor:pointer; padding:10px; background:white; border-radius:8px;">
+            <input type="radio" name="preferences" value="news" style="margin-right:10px; width:auto;">
+            <div>
+              <strong>📰 Solo News</strong>
+              <small style="display:block; color:#666; font-weight:normal;">Solo digest news dal sito</small>
+            </div>
+          </label>
+        </div>
+
+        <label style="margin-bottom:10px;">🌍 Lingua preferita:</label>
+        <select id="lang" style="width:100%; padding:12px; border:2px solid #e0e0e0; border-radius:10px; font-size:16px;">
+          <option value="it">🇮🇹 Italiano</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+      </div>
+
       <div class="actions">
         <button class="btn btn-primary" onclick="checkStatus()">🔍 Verifica Iscrizione</button>
         <button id="subscribe-btn" class="btn btn-success" onclick="subscribe()" style="display:none;">✅ Iscriviti alla Newsletter</button>
@@ -95,24 +129,33 @@
     function showLoading(show) {
       document.getElementById('loading').className = show ? 'loading active' : 'loading';
     }
-    function setStatus(isSubscribed) {
+    function setStatus(isSubscribed, subscriberData) {
       const box = document.getElementById('status-box');
+      const prefSection = document.getElementById('preferences-section');
+
       if (isSubscribed) {
         box.className = 'status-box active';
+        let prefText = 'Entrambe';
+        if (subscriberData && subscriberData.preferences) {
+          if (subscriberData.preferences === 'concerts') prefText = 'Solo Concerti';
+          else if (subscriberData.preferences === 'news') prefText = 'Solo News';
+        }
         box.innerHTML = `
           <div style="font-size:48px;margin-bottom:10px;">✅</div>
           <h3 style="color:#2e7d32;margin-bottom:10px;">Sei iscritto!</h3>
-          <p>Ricevi regolarmente la nostra newsletter.</p>`;
+          <p>Ricevi: <strong>${prefText}</strong></p>`;
         document.getElementById('subscribe-btn').style.display = 'none';
         document.getElementById('unsubscribe-btn').style.display = 'block';
+        prefSection.style.display = 'none';
       } else {
         box.className = 'status-box inactive';
         box.innerHTML = `
           <div style="font-size:48px;margin-bottom:10px;">📭</div>
           <h3 style="color:#f57c00;margin-bottom:10px;">Non sei iscritto</h3>
-          <p>Iscriviti per ricevere aggiornamenti sui concerti.</p>`;
+          <p>Iscriviti per ricevere aggiornamenti.</p>`;
         document.getElementById('subscribe-btn').style.display = 'block';
         document.getElementById('unsubscribe-btn').style.display = 'none';
+        prefSection.style.display = 'block';
       }
     }
 
@@ -128,7 +171,7 @@
         });
         const data = await res.json();
         if (res.ok && typeof data.subscribed === 'boolean') {
-          setStatus(data.subscribed);
+          setStatus(data.subscribed, data.subscriber);
         } else {
           showMessage('⚠️ Verifica non disponibile al momento.', 'error');
         }
@@ -141,21 +184,25 @@
       const email = document.getElementById('email').value.trim();
       if (!email || !email.includes('@')) return showMessage('⚠️ Inserisci un indirizzo email valido', 'error');
 
+      // Get preferences
+      const preferences = document.querySelector('input[name="preferences"]:checked')?.value || 'both';
+      const lang = document.getElementById('lang').value;
+
       showLoading(true);
       try {
         const res = await fetch('/api/subscribe', {
           method: 'POST', headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ email, preferences, lang })
         });
         const data = await res.json();
         if (res.ok && data.success) {
           showMessage('🎉 ' + (data.message || 'Iscrizione effettuata.'), 'success');
           setTimeout(checkStatus, 1200);
         } else {
-          showMessage('⚠️ ' + (data.error || 'Impossibile completare l’iscrizione.'), 'error');
+          showMessage('⚠️ ' + (data.error || 'Impossibile completare l'iscrizione.'), 'error');
         }
       } catch (e) {
-        showMessage('❌ Errore durante l’iscrizione. Riprova.', 'error');
+        showMessage('❌ Errore durante l'iscrizione. Riprova.', 'error');
       } finally { showLoading(false); }
     }
 

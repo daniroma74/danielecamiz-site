@@ -53,22 +53,17 @@
 
         <% if (Array.isArray(upcomingConcerts) && upcomingConcerts.length) { %>
           <div class="upcoming-table" role="list">
-            <% upcomingConcerts.forEach(c => {
+            <% upcomingConcerts.forEach((c, upIdx) => {
                  const poster = c.poster || c.locandina || '';
                  const hasLandingPage = c.booking_enabled && c.slug;
                  const landingUrl = hasLandingPage ? `https://${c.slug}.danielecamiz.com` : null;
-                 const payload = JSON.stringify({
-                   title: c.title, program: c.program, date: c.date, location: c.location,
-                   orchestra: c.orchestra, conductor: c.conductor, soloists: c.soloists,
-                   notes: c.notes, poster: poster, poster_horizontal: c.poster_horizontal_url || '', youtube: c.youtube,
-                   slug: c.slug, booking_enabled: c.booking_enabled
-                 });
+                 const concertId = `concert_upcoming_${upIdx}`;
                  const dateObj = parseISO(c.date);
                  const month  = dateObj ? dateObj.toLocaleString(lang==='en'?'en-GB':'it-IT', { month:'long' }) : '';
                  const day    = dateObj ? String(dateObj.getDate()).padStart(2,'0') : '';
                  const txtBook = lang==='en' ? 'Book Now' : 'Prenota';
             %>
-              <article class="up-row" role="listitem">
+              <article class="up-row" role="listitem" data-concert-id="<%= concertId %>">
                 <div class="up-date">
                   <div class="up-month"><%= month %></div>
                   <div class="up-day"><%= day %></div>
@@ -81,12 +76,59 @@
                 <div class="up-cta">
                   <% if (hasLandingPage) { %>
                     <button class="btn btn-secondary" type="button"
-                            onclick='openConcertPreview(<%- payload %>, "<%= landingUrl %>")'><%= txtDetails %></button>
+                            onclick="openConcertPreview(null, '<%= landingUrl %>')"><%= txtDetails %></button>
                     <a href="<%= landingUrl %>" class="btn btn-primary" style="margin-left: 0.5rem;"><%= txtBook %></a>
                   <% } else { %>
                     <button class="btn btn-secondary" type="button"
-                            onclick='openConcertLightbox(<%- payload %>)'><%= txtDetails %></button>
+                            onclick="openConcertFromDOM('<%= concertId %>')"><%= txtDetails %></button>
                   <% } %>
+                </div>
+
+                <!-- Dettagli completi nascosti per lightbox (dal DB) -->
+                <div class="concert-full-details" id="details_<%= concertId %>" style="display: none;">
+                  <div class="concert-lightbox-poster-view">
+                    <div class="concert-lightbox-img">
+                      <% if (poster) { %><img src="<%= poster %>" alt="<%= c.title || 'Poster' %>" /><% } %>
+                    </div>
+                    <div class="concert-lightbox-info">
+                      <h3><%= c.title || (lang==='en'?'Concert':'Concerto') %></h3>
+                      <% if (c.date || c.location) { %>
+                        <p style="margin:.25rem 0 1rem 0;opacity:.9;">
+                          <%= c.date || '' %><% if (c.date && c.location) { %> – <% } %><%= c.location || '' %>
+                        </p>
+                      <% } %>
+
+                      <% if (c.orchestra || c.conductor || c.soloists) { %>
+                        <ul style="margin:.25rem 0 1rem 0;line-height:1.5;list-style:none;padding:0;">
+                          <% if (c.orchestra) { %><li><strong><%= _t('concerts.orchestra','Orchestra') %>:</strong> <%= c.orchestra %></li><% } %>
+                          <% if (c.conductor) { %><li><strong><%= _t('concerts.conductor','Direttore') %>:</strong> <%= c.conductor %></li><% } %>
+                          <% if (c.soloists) { %><li><strong><%= _t('concerts.soloist','Solista') %>:</strong> <%= c.soloists %></li><% } %>
+                        </ul>
+                      <% } %>
+
+                      <% if (c.program) { %>
+                        <div style="margin:.5rem 0 0 0;">
+                          <strong><%= lang==='en'?'Program':'Programma' %>:</strong>
+                          <ul style="margin:.25rem 0 0 1.1rem;line-height:1.5;">
+                            <% const programLines = (typeof c.program === 'string' ? c.program.split(/\r?\n/) : (Array.isArray(c.program) ? c.program : [])); %>
+                            <% programLines.forEach(line => { %>
+                              <% if (line.trim()) { %><li><%= line.trim() %></li><% } %>
+                            <% }) %>
+                          </ul>
+                        </div>
+                      <% } %>
+
+                      <% if (c.notes) { %>
+                        <p style="margin:.75rem 0 0 0;white-space:pre-wrap;"><%= c.notes %></p>
+                      <% } %>
+
+                      <% if (c.youtube) { %>
+                        <div class="lightbox-buttons" style="margin-top: 1.5rem;">
+                          <a class="btn" href="<%= c.youtube %>" target="_blank" rel="noopener">YouTube</a>
+                        </div>
+                      <% } %>
+                    </div>
+                  </div>
                 </div>
               </article>
             <% }) %>
@@ -95,9 +137,11 @@
           <p class="empty-state"><%= txtNoUpcoming %></p>
         <% } %>
       </section>
+    </div>
+  </div>
 
-      <!-- ARCHIVIO: tutti CHIUSI di default -->
-      <section id="past_section" aria-labelledby="past_title">
+  <!-- ARCHIVIO: fisso sulla sinistra su desktop, dopo i futuri su mobile -->
+  <section id="past_section" aria-labelledby="past_title">
         <h2 id="past_title" class="section-title"><%= txtPast %></h2>
 
         <% const pastYears = (Array.isArray(concertsByYear) ? concertsByYear : []).filter(g => (g.concerts||[]).length); %>
@@ -117,18 +161,14 @@
               <ul class="concerts-year-list">
                 <% g.concerts.forEach((c, idx) => {
                      const poster = c.poster || c.locandina || '';
-                     const payload = JSON.stringify({
-                       title:c.title, program:c.program, date:c.date,
-                       location:c.location, orchestra:c.orchestra, conductor:c.conductor,
-                       soloists:c.soloists, notes:c.notes, poster:poster, youtube:c.youtube
-                     });
+                     const concertId = `concert_${g.year}_${idx}`;
                 %>
-                  <li class="concert-item" role="listitem" style="--item-index: <%= idx %>">
+                  <li class="concert-item" role="listitem" style="--item-index: <%= idx %>" data-concert-id="<%= concertId %>">
                     <div class="concert-block">
                       <% if (poster) { %>
                         <a class="concert-thumb-link"
                            href="<%= poster %>"
-                           onclick='event.preventDefault(); openConcertLightbox(<%- payload %>);'
+                           onclick="event.preventDefault(); openConcertFromDOM('<%= concertId %>');"
                            aria-label="<%= (lang==='en'?'Open poster':'Apri locandina') %>">
                           <img class="concert-poster" src="<%= poster %>" alt="<%= c.title || 'Poster' %>" loading="lazy" />
                         </a>
@@ -159,6 +199,53 @@
                             <a class="btn" href="<%= c.youtube %>" target="_blank" rel="noopener">YouTube</a>
                           </div>
                         <% } %>
+
+                        <!-- Dettagli completi nascosti per lightbox (dal DB) -->
+                        <div class="concert-full-details" id="details_<%= concertId %>" style="display: none;">
+                          <div class="concert-lightbox-poster-view">
+                            <div class="concert-lightbox-img">
+                              <% if (poster) { %><img src="<%= poster %>" alt="<%= c.title || 'Poster' %>" /><% } %>
+                            </div>
+                            <div class="concert-lightbox-info">
+                              <h3><%= c.title || (lang==='en'?'Concert':'Concerto') %></h3>
+                              <% if (c.date || c.location) { %>
+                                <p style="margin:.25rem 0 1rem 0;opacity:.9;">
+                                  <%= c.date || '' %><% if (c.date && c.location) { %> – <% } %><%= c.location || '' %>
+                                </p>
+                              <% } %>
+
+                              <% if (c.orchestra || c.conductor || c.soloists) { %>
+                                <ul style="margin:.25rem 0 1rem 0;line-height:1.5;list-style:none;padding:0;">
+                                  <% if (c.orchestra) { %><li><strong><%= _t('concerts.orchestra','Orchestra') %>:</strong> <%= c.orchestra %></li><% } %>
+                                  <% if (c.conductor) { %><li><strong><%= _t('concerts.conductor','Direttore') %>:</strong> <%= c.conductor %></li><% } %>
+                                  <% if (c.soloists) { %><li><strong><%= _t('concerts.soloist','Solista') %>:</strong> <%= c.soloists %></li><% } %>
+                                </ul>
+                              <% } %>
+
+                              <% if (c.program) { %>
+                                <div style="margin:.5rem 0 0 0;">
+                                  <strong><%= lang==='en'?'Program':'Programma' %>:</strong>
+                                  <ul style="margin:.25rem 0 0 1.1rem;line-height:1.5;">
+                                    <% const programLines = (typeof c.program === 'string' ? c.program.split(/\r?\n/) : (Array.isArray(c.program) ? c.program : [])); %>
+                                    <% programLines.forEach(line => { %>
+                                      <% if (line.trim()) { %><li><%= line.trim() %></li><% } %>
+                                    <% }) %>
+                                  </ul>
+                                </div>
+                              <% } %>
+
+                              <% if (c.notes) { %>
+                                <p style="margin:.75rem 0 0 0;white-space:pre-wrap;"><%= c.notes %></p>
+                              <% } %>
+
+                              <% if (c.youtube) { %>
+                                <div class="lightbox-buttons" style="margin-top: 1.5rem;">
+                                  <a class="btn" href="<%= c.youtube %>" target="_blank" rel="noopener">YouTube</a>
+                                </div>
+                              <% } %>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </li>
@@ -167,16 +254,14 @@
             </div>
           <% }) %>
         </div>
-      </section>
-    </div>
+  </section>
 
-    <!-- Colonna destra: HERO sticky -->
-    <aside class="right-hero hero-concerts" style="<%= heroStyle %>">
-      <div class="hero-media" aria-hidden="true">
-        <img class="hero-media-img" src="<%= heroImg %>" alt="" loading="eager" />
-      </div>
-    </aside>
-  </div>
+  <!-- Colonna destra: HERO sticky (fuori dal layout-grid) -->
+  <aside class="right-hero hero-concerts" style="<%= heroStyle %>">
+    <div class="hero-media" aria-hidden="true">
+      <img class="hero-media-img" src="<%= heroImg %>" alt="" loading="eager" />
+    </div>
+  </aside>
 
   <!-- Lightbox (NASCOSTA di default) -->
   <div id="concert_lightbox" role="dialog" aria-modal="true" tabindex="-1" hidden>
@@ -187,10 +272,9 @@
         <div id="concert_iframe_container" class="concert-lightbox-iframe" style="display: none;">
           <iframe id="concert_iframe" frameborder="0" allowfullscreen></iframe>
         </div>
-        <!-- Poster + dettagli (layout originale) -->
-        <div id="concert_poster_container" class="concert-lightbox-poster-view">
-          <div class="concert-lightbox-img"><img id="concert_poster" alt="Concert poster" /></div>
-          <div id="concert_details" class="concert-lightbox-info" tabindex="0"></div>
+        <!-- Poster + dettagli (il contenuto viene copiato dal DOM nascosto) -->
+        <div id="concert_poster_container">
+          <!-- Il contenuto viene popolato dinamicamente da openConcertFromDOM() -->
         </div>
       </div>
     </div>

@@ -37,6 +37,9 @@
       <a href="/admin/repertoire" class="<%= currentPage === 'repertoire' ? 'active' : '' %>">
         <i class="fas fa-book"></i> Repertorio
       </a>
+      <a href="/admin/performers" class="<%= currentPage === 'performers' ? 'active' : '' %>">
+        <i class="fas fa-users"></i> Solisti & Ensemble
+      </a>
       <a href="<%= stagingUrl || 'https://www.danielecamiz.com' %>/concerts" target="_blank" class="nav-link-external">
         <i class="fas fa-external-link-alt"></i> Frontend
       </a>
@@ -138,99 +141,209 @@
       </form>
     </div>
 
-    <!-- WORKS TABLE -->
-    <div class="works-table-container">
-      <table class="works-table">
-        <thead>
-          <tr>
-            <th>Brano</th>
-            <th>Compositore</th>
-            <th>Catalogo</th>
-            <th>Categoria</th>
-            <th>Esecuzioni</th>
-            <th class="actions-cell">Azioni</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (works && works.length > 0) { %>
-            <% works.forEach(work => { %>
+    <!-- WORKS TABLE - Grouped by composer when no filters applied -->
+    <% if (composerGroups && composerGroups.length > 0) { %>
+      <!-- GROUPED VIEW BY COMPOSER -->
+      <% composerGroups.forEach((group, index) => { %>
+        <div class="composer-section" data-composer-id="<%= group.composer_id %>">
+          <div class="composer-header" onclick="toggleComposerSection(<%= group.composer_id %>)">
+            <h2>
+              <i class="fas fa-user-tie"></i>
+              <%= group.composer_name %>
+              <span class="badge-count"><%= group.works.length %></span>
+            </h2>
+            <button type="button" class="btn btn-sm">
+              <i class="fas fa-chevron-down composer-toggle-icon"></i>
+            </button>
+          </div>
+          <div class="composer-works" id="composer-works-<%= group.composer_id %>" style="<%= index === 0 ? '' : 'display: none;' %>">
+            <div class="works-table-container">
+              <table class="works-table">
+                <thead>
+                  <tr>
+                    <th>Brano</th>
+                    <th>Catalogo</th>
+                    <th>Categoria</th>
+                    <th>Esecuzioni</th>
+                    <th class="actions-cell">Azioni</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% group.works.forEach(work => { %>
+                    <tr>
+                      <td>
+                        <div class="work-title">
+                          <strong><%= work.title %></strong>
+                          <% if (work.subtitle) { %>
+                            <small><%= work.subtitle %></small>
+                          <% } %>
+                        </div>
+                      </td>
+                      <td class="work-catalogue">
+                        <%= work.catalogue || '-' %>
+                      </td>
+                      <td>
+                        <span class="category-badge">
+                          <%= work.category_label || 'Non categorizzato' %>
+                        </span>
+                      </td>
+                      <td>
+                        <div class="stats-badges">
+                          <% if (work.past_count > 0) { %>
+                            <span class="stat-badge past">
+                              <i class="fas fa-check-circle"></i>
+                              <%= work.past_count %>
+                            </span>
+                          <% } %>
+                          <% if (work.future_count > 0) { %>
+                            <span class="stat-badge future">
+                              <i class="fas fa-calendar-plus"></i>
+                              <%= work.future_count %>
+                            </span>
+                          <% } %>
+                          <% if (work.past_count === 0 && work.future_count === 0) { %>
+                            <span class="text-muted">-</span>
+                          <% } %>
+                        </div>
+                      </td>
+                      <td class="actions-cell">
+                        <div class="action-buttons">
+                          <button onclick="editWork(<%= work.id %>)"
+                                  class="btn-icon"
+                                  title="Modifica brano">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button onclick="showWorkDetails(<%= work.id %>)"
+                                  class="btn-icon btn-movements"
+                                  title="Dettagli e movimenti">
+                            <i class="fas fa-list"></i>
+                          </button>
+                          <button onclick="deleteWork(<%= work.id %>, '<%= work.title.replace(/'/g, "\\'") %>')"
+                                  class="btn-icon btn-danger"
+                                  title="Elimina brano">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <!-- FLAT VIEW (with filters) -->
+      <div class="works-table-container">
+        <table class="works-table">
+          <thead>
+            <tr>
+              <th>Brano</th>
+              <th>Compositore</th>
+              <th>Catalogo</th>
+              <th>Categoria</th>
+              <th>Esecuzioni</th>
+              <th class="actions-cell">Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (works && works.length > 0) { %>
+              <% works.forEach(work => { %>
+                <tr>
+                  <td>
+                    <div class="work-title">
+                      <strong><%= work.title %></strong>
+                      <% if (work.subtitle) { %>
+                        <small><%= work.subtitle %></small>
+                      <% } %>
+                    </div>
+                  </td>
+                  <td class="work-composer">
+                    <%= work.composer_name || work.composer_short || '-' %>
+                  </td>
+                  <td class="work-catalogue">
+                    <%= work.catalogue || '-' %>
+                  </td>
+                  <td>
+                    <span class="category-badge">
+                      <%= work.category_label || 'Non categorizzato' %>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="stats-badges">
+                      <% if (work.past_count > 0) { %>
+                        <span class="stat-badge past">
+                          <i class="fas fa-check-circle"></i>
+                          <%= work.past_count %>
+                        </span>
+                      <% } %>
+                      <% if (work.future_count > 0) { %>
+                        <span class="stat-badge future">
+                          <i class="fas fa-calendar-plus"></i>
+                          <%= work.future_count %>
+                        </span>
+                      <% } %>
+                      <% if (work.past_count === 0 && work.future_count === 0) { %>
+                        <span class="text-muted">-</span>
+                      <% } %>
+                    </div>
+                  </td>
+                  <td class="actions-cell">
+                    <div class="action-buttons">
+                      <button onclick="editWork(<%= work.id %>)"
+                              class="btn-icon"
+                              title="Modifica brano">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button onclick="showWorkDetails(<%= work.id %>)"
+                              class="btn-icon btn-movements"
+                              title="Dettagli e movimenti">
+                        <i class="fas fa-list"></i>
+                      </button>
+                      <button onclick="deleteWork(<%= work.id %>, '<%= work.title.replace(/'/g, "\\'") %>')"
+                              class="btn-icon btn-danger"
+                              title="Elimina brano">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
               <tr>
-                <td>
-                  <div class="work-title">
-                    <strong><%= work.title %></strong>
-                    <% if (work.subtitle) { %>
-                      <small><%= work.subtitle %></small>
-                    <% } %>
-                  </div>
-                </td>
-                <td class="work-composer">
-                  <%= work.composer_name || work.composer_short || '-' %>
-                </td>
-                <td class="work-catalogue">
-                  <%= work.catalogue || '-' %>
-                </td>
-                <td>
-                  <span class="category-badge">
-                    <%= work.category_label || 'Non categorizzato' %>
-                  </span>
-                </td>
-                <td>
-                  <div class="stats-badges">
-                    <% if (work.past_count > 0) { %>
-                      <span class="stat-badge past">
-                        <i class="fas fa-check-circle"></i>
-                        <%= work.past_count %>
-                      </span>
-                    <% } %>
-                    <% if (work.future_count > 0) { %>
-                      <span class="stat-badge future">
-                        <i class="fas fa-calendar-plus"></i>
-                        <%= work.future_count %>
-                      </span>
-                    <% } %>
-                    <% if (work.past_count === 0 && work.future_count === 0) { %>
-                      <span class="text-muted">-</span>
-                    <% } %>
-                  </div>
-                </td>
-                <td class="actions-cell">
-                  <div class="action-buttons">
-                    <button onclick="editWork(<%= work.id %>)" 
-                            class="btn-icon" 
-                            title="Modifica brano">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button onclick="showWorkDetails(<%= work.id %>)" 
-                            class="btn-icon btn-movements" 
-                            title="Dettagli e movimenti">
-                      <i class="fas fa-list"></i>
-                    </button>
-                    <button onclick="deleteWork(<%= work.id %>, '<%= work.title.replace(/'/g, "\\'") %>')" 
-                            class="btn-icon btn-danger" 
-                            title="Elimina brano">
-                      <i class="fas fa-trash"></i>
+                <td colspan="6">
+                  <div class="empty-state">
+                    <i class="fas fa-music fa-3x"></i>
+                    <h3>Nessun brano trovato</h3>
+                    <p>Aggiungi il primo brano al repertorio</p>
+                    <button onclick="showAddWork()" class="btn btn-primary">
+                      <i class="fas fa-plus"></i> Nuovo Brano
                     </button>
                   </div>
                 </td>
               </tr>
-            <% }) %>
-          <% } else { %>
-            <tr>
-              <td colspan="6">
-                <div class="empty-state">
-                  <i class="fas fa-music fa-3x"></i>
-                  <h3>Nessun brano trovato</h3>
-                  <p>Aggiungi il primo brano al repertorio</p>
-                  <button onclick="showAddWork()" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Nuovo Brano
-                  </button>
-                </div>
-              </td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
-    </div>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <script>
+    function toggleComposerSection(composerId) {
+      const worksContainer = document.getElementById(`composer-works-${composerId}`);
+      const section = document.querySelector(`[data-composer-id="${composerId}"]`);
+      const icon = section.querySelector('.composer-toggle-icon');
+
+      if (worksContainer.style.display === 'none') {
+        worksContainer.style.display = 'block';
+        icon.style.transform = 'rotate(0deg)';
+      } else {
+        worksContainer.style.display = 'none';
+        icon.style.transform = 'rotate(-90deg)';
+      }
+    }
+    </script>
 
   </main>
 

@@ -146,13 +146,13 @@ router.put('/composers/:id', async (req, res, next) => {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
-    // Verifica se esiste già un compositore con questo slug (escludendo l'ID corrente)
+    // Verifica se esiste già un compositore con questo full_name (escludendo l'ID corrente)
     const existing = await dbPromise.get(
-      'SELECT id FROM composers WHERE slug = ? AND id != ?',
-      [slug, parseInt(id, 10)]
+      'SELECT id, full_name FROM composers WHERE full_name = ? AND id != ?',
+      [full_name, parseInt(id, 10)]
     );
 
-    console.log(`🔍 Controllo slug "${slug}" per compositore ID ${id}. Trovato esistente:`, existing);
+    console.log(`🔍 Controllo full_name "${full_name}" per compositore ID ${id}. Trovato esistente:`, existing);
 
     if (existing) {
       return res.status(400).json({
@@ -309,6 +309,7 @@ router.post('/concerts', async (req, res, next) => {
       description_html,
       conductor_name,
       orchestra_name,
+      chorus_name,
       soloists,
       selected_works,
       program_notes,
@@ -372,24 +373,44 @@ router.post('/concerts', async (req, res, next) => {
         [concertId, orchestra_name]
       );
     }
-    
+
+    if (chorus_name) {
+      await dbPromise.run(
+        `INSERT INTO concert_performers (concert_id, role, name)
+         VALUES (?, 'chorus', ?)`,
+        [concertId, chorus_name]
+      );
+    }
+
+    // Inserisci solisti e crea array ordinato di ID
+    const soloistIds = [];
     if (soloists) {
       const soloistsList = typeof soloists === 'string' ? JSON.parse(soloists) : soloists;
-      for (const soloist of soloistsList) {
+      console.log('🎤 Lista solisti ricevuta (POST):', soloistsList);
+      for (let i = 0; i < soloistsList.length; i++) {
+        const soloist = soloistsList[i];
         if (soloist.name && soloist.name.trim()) {
-          await dbPromise.run(
+          const result = await dbPromise.run(
             `INSERT INTO concert_performers (concert_id, role, name, instrument)
              VALUES (?, 'soloist', ?, ?)`,
             [concertId, soloist.name.trim(), soloist.instrument || null]
           );
+          soloistIds.push(result.lastID);
+          console.log(`✅ Solista indice ${i}: "${soloist.name}" -> DB ID ${result.lastID}`);
+        } else {
+          soloistIds.push(null);
+          console.log(`⚠️ Solista indice ${i}: vuoto, inserito null`);
         }
       }
     }
-    
+    console.log('🎤 Array completo solisti IDs (POST):', soloistIds);
+
     if (selected_works) {
       const worksList = typeof selected_works === 'string' ? JSON.parse(selected_works) : selected_works;
+      console.log('📚 Selected works ricevuti (POST):', JSON.stringify(worksList, null, 2));
       for (let i = 0; i < worksList.length; i++) {
         const item = worksList[i];
+        console.log(`📖 Brano ${i}: work_id=${item.work_id}, soloist_indices=${JSON.stringify(item.soloist_indices)}`);
         const result = await dbPromise.run(
           `INSERT INTO concert_program (concert_id, work_id, movement_id, position)
            VALUES (?, ?, ?, ?)`,
@@ -406,6 +427,7 @@ router.post('/concerts', async (req, res, next) => {
         if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
           for (const soloistIndex of item.soloist_indices) {
             if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
+              console.log(`📋 Brano ${i + 1} (POST): Assegnando solista indice ${soloistIndex} → ID ${soloistIds[soloistIndex]}`);
               await dbPromise.run(
                 `INSERT INTO concert_program_soloists (program_item_id, performer_id)
                  VALUES (?, ?)`,
@@ -454,6 +476,7 @@ router.put('/concerts/:id', async (req, res, next) => {
       description_html,
       conductor_name,
       orchestra_name,
+      chorus_name,
       soloists,
       selected_works,
       program_notes,
@@ -462,7 +485,7 @@ router.put('/concerts/:id', async (req, res, next) => {
       poster_horizontal_cloudinary,
       tags
     } = req.body;
-    
+
     const selectedDate = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -496,10 +519,7 @@ router.put('/concerts/:id', async (req, res, next) => {
     
     // Cancella performers esistenti
     await dbPromise.run('DELETE FROM concert_performers WHERE concert_id = ?', [id]);
-    
-    // Mappa per solisti: nome -> ID
-    const soloistIdMap = new Map();
-    
+
     if (conductor_name) {
       await dbPromise.run(
         `INSERT INTO concert_performers (concert_id, role, name) VALUES (?, 'conductor', ?)`,
@@ -513,7 +533,14 @@ router.put('/concerts/:id', async (req, res, next) => {
         [id, orchestra_name]
       );
     }
-    
+
+    if (chorus_name) {
+      await dbPromise.run(
+        `INSERT INTO concert_performers (concert_id, role, name) VALUES (?, 'chorus', ?)`,
+        [id, chorus_name]
+      );
+    }
+
     // Inserisci solisti e crea array ordinato di ID
     const soloistIds = [];
     if (soloists) {
