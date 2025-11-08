@@ -1,0 +1,28 @@
+{
+  "name": "orchestraicnt-site",
+  "version": "1.0.0",
+  "description": "Sito pubblico dell'Orchestra ICNT - Orchestra sinfonica a Roma",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "serve": "npx http-server public -p 3000"
+  },
+  "keywords": [
+    "orchestra",
+    "icnt",
+    "musica",
+    "classica",
+    "roma",
+    "sinfonica"
+  ],
+  "author": "Daniele Camiz",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

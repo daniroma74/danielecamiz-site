@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Orchestra ICNT - Orchestra sinfonica a Roma. Musica classica, concerti ed eventi orchestrali con giovani talenti e musicisti appassionati.">
+  <meta name="keywords" content="orchestra, Roma, musica classica, concerti, ICNT, sinfonica">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Orchestra ICNT - Musica Sinfonica a Roma">
+  <meta property="og:description" content="Orchestra sinfonica formata da giovani studenti e musicisti appassionati">
+  <meta property="og:type" content="website">
+
+  <title>Orchestra ICNT - Musica Sinfonica a Roma</title>
+
+  <!-- Preconnect per performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Defer JS -->
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar-content">
+      <div class="navbar-brand">
+        <img src="assets/images/logo.png" alt="Orchestra ICNT Logo" class="navbar-logo" id="navbar-logo">
+        <span class="navbar-title">Orchestra ICNT</span>
+      </div>
+
+      <button class="navbar-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="navbar-menu" id="navMenu">
+        <li><a href="#home" class="nav-link active">Home</a></li>
+        <li><a href="#concerti" class="nav-link">Concerti</a></li>
+        <li><a href="#chi-siamo" class="nav-link">Chi Siamo</a></li>
+        <li><a href="#media" class="nav-link">Media</a></li>
+        <li><a href="#contatti" class="nav-link">Contatti</a></li>
+        <li><a href="https://portal.orchestraicnt.danielecamiz.com" class="nav-link nav-link-special">Area Riservata</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="home">
+    <div class="hero-media">
+      <!-- Placeholder per video/immagine - da sostituire con media reale -->
+      <div class="hero-image" style="background-image: url('assets/images/hero-orchestra.jpg');">
+        <!-- Fallback gradient se immagine non carica -->
+        <div class="hero-gradient"></div>
+      </div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="hero-title-main">Orchestra ICNT</span>
+          <span class="hero-title-sub">Musica Sinfonica a Roma</span>
+        </h1>
+        <p class="hero-claim">
+          Dove la passione incontra l'eccellenza musicale
+        </p>
+        <div class="hero-cta">
+          <a href="#concerti" class="btn btn-primary">Prossimi Concerti</a>
+          <a href="#chi-siamo" class="btn btn-outline">Scopri di più</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator">
+      <span>Scorri</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M19 12l-7 7-7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- PROSSIMI CONCERTI -->
+  <section class="section concerts-section" id="concerti">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Stagione 2024/25</span>
+        <h2 class="section-title">Prossimi Concerti</h2>
+        <p class="section-subtitle">Non perdere i nostri eventi musicali</p>
+      </div>
+
+      <div class="concerts-grid">
+        <!-- Concert Card 1 -->
+        <article class="concert-card">
+          <div class="concert-date">
+            <span class="concert-day">15</span>
+            <span class="concert-month">DIC</span>
+            <span class="concert-year">2024</span>
+          </div>
+          <div class="concert-info">
+            <h3 class="concert-title">Concerto di Natale</h3>
+            <p class="concert-program">
+              <strong>Programma:</strong> Čajkovskij - Schiaccianoci Suite, Corelli - Concerto Grosso
+            </p>
+            <div class="concert-meta">
+              <span class="concert-location">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                Auditorium Santa Cecilia, Roma
+              </span>
+              <span class="concert-time">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                20:30
+              </span>
+            </div>
+            <a href="#" class="btn btn-small btn-primary">Info e Biglietti</a>
+          </div>
+        </article>
+
+        <!-- Concert Card 2 -->
+        <article class="concert-card">
+          <div class="concert-date">
+            <span class="concert-day">28</span>
+            <span class="concert-month">GEN</span>
+            <span class="concert-year">2025</span>
+          </div>
+          <div class="concert-info">
+            <h3 class="concert-title">Omaggio a Beethoven</h3>
+            <p class="concert-program">
+              <strong>Programma:</strong> Beethoven - Sinfonia n. 5, Ouverture Coriolano
+            </p>
+            <div class="concert-meta">
+              <span class="concert-location">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                Teatro dell'Opera, Roma
+              </span>
+              <span class="concert-time">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                21:00
+              </span>
+            </div>
+            <a href="#" class="btn btn-small btn-primary">Info e Biglietti</a>
+          </div>
+        </article>
+
+        <!-- Concert Card 3 -->
+        <article class="concert-card">
+          <div class="concert-date">
+            <span class="concert-day">18</span>
+            <span class="concert-month">MAR</span>
+            <span class="concert-year">2025</span>
+          </div>
+          <div class="concert-info">
+            <h3 class="concert-title">Capolavori Romantici</h3>
+            <p class="concert-program">
+              <strong>Programma:</strong> Brahms - Sinfonia n. 1, Mendelssohn - Le Ebridi
+            </p>
+            <div class="concert-meta">
+              <span class="concert-location">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                Auditorium Parco della Musica
+              </span>
+              <span class="concert-time">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+                20:00
+              </span>
+            </div>
+            <a href="#" class="btn btn-small btn-primary">Info e Biglietti</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="section-footer">
+        <a href="#" class="btn btn-outline">Vedi tutta la stagione</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHI SIAMO -->
+  <section class="section about-section" id="chi-siamo">
+    <div class="container">
+      <div class="about-content">
+        <div class="about-image">
+          <img src="assets/images/orchestra-group.jpg" alt="Orchestra ICNT" loading="lazy">
+          <div class="about-badge">
+            <span class="badge-number">50+</span>
+            <span class="badge-label">Musicisti</span>
+          </div>
+        </div>
+
+        <div class="about-text">
+          <span class="section-label">La nostra storia</span>
+          <h2 class="section-title">Chi Siamo</h2>
+
+          <p class="about-description">
+            L'<strong>Orchestra ICNT</strong> è un ensemble sinfonico che riunisce giovani studenti di musica
+            e musicisti amatori appassionati, tutti accomunati dall'amore per la musica classica e
+            dall'aspirazione all'eccellenza artistica.
+          </p>
+
+          <p class="about-description">
+            Nata a Roma, la nostra orchestra si distingue per l'energia, l'entusiasmo e la dedizione
+            dei suoi membri. Pur non essendo professionisti, molti dei nostri musicisti hanno raggiunto
+            livelli di preparazione molto avanzati, permettendo all'orchestra di affrontare un repertorio
+            sinfonico impegnativo e variegato.
+          </p>
+
+          <div class="about-features">
+            <div class="feature-item">
+              <div class="feature-icon">🎵</div>
+              <div class="feature-content">
+                <h4>Repertorio Classico</h4>
+                <p>Dai grandi classici alle opere contemporanee</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-icon">🎓</div>
+              <div class="feature-content">
+                <h4>Formazione Continua</h4>
+                <p>Crescita artistica e professionale costante</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-icon">❤️</div>
+              <div class="feature-content">
+                <h4>Passione e Dedizione</h4>
+                <p>Musicisti motivati e appassionati</p>
+              </div>
+            </div>
+          </div>
+
+          <a href="#contatti" class="btn btn-primary">Unisciti a noi</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEDIA / VIDEO -->
+  <section class="section media-section" id="media">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Ascoltaci</span>
+        <h2 class="section-title">Video e Registrazioni</h2>
+        <p class="section-subtitle">Scopri le nostre performance</p>
+      </div>
+
+      <div class="media-grid">
+        <!-- Video 1 - da sostituire con ID reali YouTube -->
+        <div class="media-card">
+          <div class="media-thumbnail">
+            <iframe
+              loading="lazy"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              title="Orchestra ICNT - Performance"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="media-info">
+            <h3>Čajkovskij - Schiaccianoci</h3>
+            <p>Concerto di Natale 2023</p>
+          </div>
+        </div>
+
+        <!-- Video 2 -->
+        <div class="media-card">
+          <div class="media-thumbnail">
+            <iframe
+              loading="lazy"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              title="Orchestra ICNT - Performance"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="media-info">
+            <h3>Beethoven - Sinfonia n. 5</h3>
+            <p>Stagione 2023/24</p>
+          </div>
+        </div>
+
+        <!-- Video 3 -->
+        <div class="media-card">
+          <div class="media-thumbnail">
+            <iframe
+              loading="lazy"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              title="Orchestra ICNT - Performance"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="media-info">
+            <h3>Brahms - Sinfonia n. 1</h3>
+            <p>Primavera 2024</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-footer">
+        <a href="https://youtube.com/@orchestraicnt" target="_blank" class="btn btn-outline">
+          Vedi tutti i video su YouTube
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATTI -->
+  <section class="section contact-section" id="contatti">
+    <div class="container">
+      <div class="contact-content">
+        <div class="contact-info">
+          <span class="section-label">Parliamone</span>
+          <h2 class="section-title">Contattaci</h2>
+          <p class="contact-description">
+            Hai domande? Vuoi unirti all'orchestra? Cerchi informazioni sui concerti?
+            Scrivici, ti risponderemo al più presto!
+          </p>
+
+          <div class="contact-details">
+            <div class="contact-item">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <div>
+                <h4>Email</h4>
+                <a href="mailto:info@orchestraicnt.it">info@orchestraicnt.it</a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <div>
+                <h4>Dove siamo</h4>
+                <p>Roma, Italia</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="YouTube">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contactForm">
+          <div class="form-group">
+            <label for="name">Nome e Cognome</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Oggetto</label>
+            <select id="subject" name="subject" required>
+              <option value="">Seleziona...</option>
+              <option value="info">Informazioni generali</option>
+              <option value="join">Voglio unirmi all'orchestra</option>
+              <option value="tickets">Biglietti e concerti</option>
+              <option value="other">Altro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Messaggio</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">Invia Messaggio</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-col">
+          <img src="assets/images/logo.png" alt="Orchestra ICNT" class="footer-logo">
+          <p class="footer-description">
+            Orchestra sinfonica di giovani talenti e musicisti appassionati a Roma.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Link Rapidi</h4>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#concerti">Concerti</a></li>
+            <li><a href="#chi-siamo">Chi Siamo</a></li>
+            <li><a href="#media">Media</a></li>
+            <li><a href="#contatti">Contatti</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contatti</h4>
+          <ul class="footer-links">
+            <li><a href="mailto:info@orchestraicnt.it">info@orchestraicnt.it</a></li>
+            <li>Roma, Italia</li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Seguici</h4>
+          <div class="footer-social">
+            <a href="#" aria-label="Facebook">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="YouTube">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 Orchestra ICNT. Tutti i diritti riservati.</p>
+        <p class="footer-credits">
+          Website by <a href="https://danielecamiz.com" target="_blank">Daniele Camiz</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top button -->
+  <button class="back-to-top" id="backToTop" aria-label="Torna su">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
+
+</body>
+</html>

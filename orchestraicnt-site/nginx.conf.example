@@ -1,0 +1,185 @@
+# Orchestra ICNT - Nginx Configuration Example
+# File: /etc/nginx/sites-available/orchestraicnt
+
+# ============================================
+# OPZIONE 1: Solo File Statici (Consigliato)
+# ============================================
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name orchestraicnt.danielecamiz.com;
+
+    # Root directory
+    root /home/daniele/danielecamiz-site/orchestraicnt-site/public;
+    index index.html;
+
+    # Logging
+    access_log /var/log/nginx/orchestraicnt-access.log;
+    error_log /var/log/nginx/orchestraicnt-error.log;
+
+    # Main location
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Assets caching
+    location ~* \.(jpg|jpeg|png|gif|ico|svg|webp)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location ~* \.(css|js|woff|woff2|ttf|eot)$ {
+        expires 1M;
+        add_header Cache-Control "public";
+    }
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "no-referrer-when-downgrade" always;
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript
+               application/x-javascript application/xml+rss
+               application/javascript application/json
+               image/svg+xml;
+
+    # Deny access to hidden files
+    location ~ /\. {
+        deny all;
+    }
+}
+
+# SSL Configuration (aggiungere dopo certbot)
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name orchestraicnt.danielecamiz.com;
+
+    # SSL certificates (gestiti da certbot)
+    ssl_certificate /etc/letsencrypt/live/orchestraicnt.danielecamiz.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/orchestraicnt.danielecamiz.com/privkey.pem;
+
+    # SSL configuration
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    # Same configuration as HTTP
+    root /home/daniele/danielecamiz-site/orchestraicnt-site/public;
+    index index.html;
+
+    access_log /var/log/nginx/orchestraicnt-access.log;
+    error_log /var/log/nginx/orchestraicnt-error.log;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~* \.(jpg|jpeg|png|gif|ico|svg|webp)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location ~* \.(css|js|woff|woff2|ttf|eot)$ {
+        expires 1M;
+        add_header Cache-Control "public";
+    }
+
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "no-referrer-when-downgrade" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript
+               application/x-javascript application/xml+rss
+               application/javascript application/json
+               image/svg+xml;
+
+    location ~ /\. {
+        deny all;
+    }
+}
+
+# Redirect HTTP to HTTPS
+server {
+    listen 80;
+    listen [::]:80;
+    server_name orchestraicnt.danielecamiz.com;
+    return 301 https://$server_name$request_uri;
+}
+
+
+# ============================================
+# OPZIONE 2: Con Node.js Backend (se necessario)
+# ============================================
+
+# Decommentare se usi Express server per API/form
+
+# upstream orchestraicnt_backend {
+#     server 127.0.0.1:3100;
+#     keepalive 64;
+# }
+
+# server {
+#     listen 80;
+#     server_name orchestraicnt.danielecamiz.com;
+#
+#     # Serve static files directly
+#     root /home/daniele/danielecamiz-site/orchestraicnt-site/public;
+#
+#     # API requests to Node.js
+#     location /api {
+#         proxy_pass http://orchestraicnt_backend;
+#         proxy_http_version 1.1;
+#         proxy_set_header Upgrade $http_upgrade;
+#         proxy_set_header Connection 'upgrade';
+#         proxy_set_header Host $host;
+#         proxy_cache_bypass $http_upgrade;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#     }
+#
+#     # Static files
+#     location / {
+#         try_files $uri $uri/ /index.html;
+#     }
+#
+#     # Cache settings (same as above)
+#     # ...
+# }
+
+
+# ============================================
+# SETUP INSTRUCTIONS
+# ============================================
+
+# 1. Copia questo file in sites-available:
+#    sudo cp nginx.conf.example /etc/nginx/sites-available/orchestraicnt
+#
+# 2. Crea symlink in sites-enabled:
+#    sudo ln -s /etc/nginx/sites-available/orchestraicnt /etc/nginx/sites-enabled/
+#
+# 3. Testa la configurazione:
+#    sudo nginx -t
+#
+# 4. Ricarica Nginx:
+#    sudo systemctl reload nginx
+#
+# 5. Setup SSL con Let's Encrypt:
+#    sudo certbot --nginx -d orchestraicnt.danielecamiz.com
+#
+# 6. Verifica rinnovo automatico:
+#    sudo certbot renew --dry-run
