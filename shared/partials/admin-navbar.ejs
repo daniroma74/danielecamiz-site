@@ -1,0 +1,256 @@
+<%
+/**
+ * Shared Admin Navbar - Unified Navigation for All Admin Modules
+ *
+ * Usage:
+ * <%- include('../../shared/partials/admin-navbar', {
+ *   moduleName: 'Concerts Admin',
+ *   moduleIcon: 'fa-music',
+ *   moduleUrl: '/admin',
+ *   links: [
+ *     { url: '/admin/dashboard', label: 'Concerti', icon: 'fa-calendar', active: currentPage === 'dashboard' },
+ *     { url: '/admin/repertoire', label: 'Repertorio', icon: 'fa-book', active: currentPage === 'repertoire' }
+ *   ]
+ * }) %>
+ */
+
+const navModuleName = typeof moduleName !== 'undefined' ? moduleName : 'Admin';
+const navModuleIcon = typeof moduleIcon !== 'undefined' ? moduleIcon : 'fa-cog';
+const navModuleUrl = typeof moduleUrl !== 'undefined' ? moduleUrl : '/';
+const navLinks = typeof links !== 'undefined' ? links : [];
+const hubUrl = typeof hubDashboardUrl !== 'undefined' ? hubDashboardUrl : 'https://hub.danielecamiz.com/dashboard';
+const logoutUrl = typeof logoutUrl !== 'undefined' ? logoutUrl : '/logout';
+%>
+
+<nav class="shared-admin-nav">
+  <div class="nav-container">
+    <!-- Module Brand -->
+    <a href="<%= navModuleUrl %>" class="nav-brand">
+      <i class="fas <%= navModuleIcon %>"></i>
+      <span class="brand-text"><%= navModuleName %></span>
+    </a>
+
+    <!-- Navigation Links -->
+    <div class="nav-center">
+      <% navLinks.forEach(link => { %>
+        <a href="<%= link.url %>" class="nav-link <%= link.active ? 'active' : '' %>">
+          <% if (link.icon) { %>
+            <i class="fas <%= link.icon %>"></i>
+          <% } %>
+          <span><%= link.label %></span>
+        </a>
+      <% }) %>
+    </div>
+
+    <!-- Right Actions (Hub + Logout) -->
+    <div class="nav-actions">
+      <a href="<%= hubUrl %>" class="nav-link nav-hub" title="Torna all'Admin Hub">
+        <i class="fas fa-th"></i>
+        <span class="hub-text">Hub</span>
+      </a>
+      <a href="<%= logoutUrl %>" class="nav-link nav-logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Esci</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<style>
+/* Shared Admin Navbar - Unified Styling */
+.shared-admin-nav {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.shared-admin-nav .nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 64px;
+}
+
+/* Brand */
+.shared-admin-nav .nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.shared-admin-nav .nav-brand:hover {
+  opacity: 0.9;
+}
+
+.shared-admin-nav .nav-brand i {
+  font-size: 22px;
+}
+
+/* Center Links */
+.shared-admin-nav .nav-center {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: center;
+}
+
+/* Nav Links (both center and actions) */
+.shared-admin-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px 16px;
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+  min-height: 44px; /* Touch target */
+}
+
+.shared-admin-nav .nav-link:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+.shared-admin-nav .nav-link.active {
+  background: rgba(255,255,255,0.25);
+  color: white;
+}
+
+.shared-admin-nav .nav-link i {
+  font-size: 16px;
+}
+
+/* Right Actions */
+.shared-admin-nav .nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shared-admin-nav .nav-hub {
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding-left: 1rem;
+  margin-left: 0.5rem;
+}
+
+.shared-admin-nav .nav-logout {
+  background: rgba(231, 76, 60, 0.2);
+}
+
+.shared-admin-nav .nav-logout:hover {
+  background: rgba(231, 76, 60, 0.4);
+}
+
+/* ============================================ */
+/* MOBILE RESPONSIVE */
+/* ============================================ */
+
+@media (max-width: 768px) {
+  .shared-admin-nav .nav-container {
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    min-height: auto;
+  }
+
+  .shared-admin-nav .nav-brand {
+    font-size: 16px;
+  }
+
+  .shared-admin-nav .nav-brand i {
+    font-size: 18px;
+  }
+
+  .shared-admin-nav .nav-center {
+    width: 100%;
+    order: 3;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+  }
+
+  .shared-admin-nav .nav-actions {
+    order: 2;
+  }
+
+  .shared-admin-nav .nav-link {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  /* Hide hub border on mobile */
+  .shared-admin-nav .nav-hub {
+    border-left: none;
+    padding-left: 12px;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 425px) {
+  .shared-admin-nav .nav-container {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .shared-admin-nav .nav-brand {
+    font-size: 15px;
+  }
+
+  .shared-admin-nav .nav-brand .brand-text {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .shared-admin-nav .nav-link {
+    padding: 8px 10px;
+    font-size: 12px;
+    gap: 0.35rem;
+  }
+
+  .shared-admin-nav .nav-link i {
+    font-size: 14px;
+  }
+
+  /* Smaller tap targets but still 44px min-height */
+  .shared-admin-nav .nav-link {
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 375px) {
+  /* Extra compact for iPhone SE / 12 mini */
+  .shared-admin-nav .nav-brand {
+    font-size: 14px;
+  }
+
+  .shared-admin-nav .nav-brand i {
+    font-size: 16px;
+  }
+
+  /* Hide some text on tiny screens, keep icons */
+  .shared-admin-nav .hub-text {
+    display: none;
+  }
+
+  .shared-admin-nav .nav-link span {
+    font-size: 11px;
+  }
+}
+</style>

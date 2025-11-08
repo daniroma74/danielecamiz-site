@@ -2,20 +2,8 @@
 /* Base styles are in /shared/css/admin-base.css */
 
 /* ============================================ */
-/* LAYOUT ADJUSTMENTS FOR BACK-TO-HUB BUTTON */
+/* LAYOUT - No longer needed, Hub integrated in navbar */
 /* ============================================ */
-
-/* Prevent overlap with back-to-hub button */
-body {
-  position: relative;
-}
-
-/* Add space for back-to-hub button on desktop */
-@media (min-width: 769px) {
-  .admin-nav {
-    padding-right: 180px; /* Make room for back-to-hub button */
-  }
-}
 
 /* ============================================ */
 /* NAVIGATION */

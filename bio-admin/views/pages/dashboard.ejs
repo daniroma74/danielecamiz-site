@@ -5,15 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/static/css/bio-admin.css">
 </head>
 <body>
-  <%- include('../../../shared/partials/back-to-hub') %>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
+  <!-- Unified Navigation -->
+  <%- include('../../../shared/partials/admin-navbar', {
+    moduleName: 'Bio Admin',
+    moduleIcon: 'fa-user',
+    moduleUrl: '/bio',
+    links: [
+      { url: '/bio', label: 'Dashboard', icon: 'fa-chart-line', active: currentPath === '/bio' },
+      { url: '/bio/biography', label: 'Biografia', icon: 'fa-file-alt', active: currentPath.startsWith('/bio/biography') },
+      { url: '/bio/curriculum', label: 'Curriculum', icon: 'fa-file-invoice', active: currentPath.startsWith('/bio/curriculum') },
+      { url: '/bio/story', label: 'Storia', icon: 'fa-book', active: currentPath.startsWith('/bio/story') },
+      { url: '/bio/presskit', label: 'Press Kit', icon: 'fa-box', active: currentPath.startsWith('/bio/presskit') }
+    ]
+  }) %>
+
+  <main class="content-area" style="padding: 2rem;">
         <div class="stats-grid">
           <div class="stat-card">
             <h3>Biografia</h3>
@@ -67,9 +77,7 @@
             </a>
           </div>
         </div>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script src="/static/js/bio-admin.js"></script>
 </body>

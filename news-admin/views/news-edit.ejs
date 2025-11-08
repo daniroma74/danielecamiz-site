@@ -8,6 +8,7 @@
   <title><%= isNew ? 'Nuovo' : 'Modifica' %> Articolo - News Admin</title>
   
   <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/static/css/news-admin.css">
   <link rel="stylesheet" href="/static/css/news-editor.css">
   
@@ -29,8 +30,17 @@
   </script>
 </head>
 <body>
-  <%- include('partials/header') %>
-  
+  <!-- Unified Navigation -->
+  <%- include('../../shared/partials/admin-navbar', {
+    moduleName: 'News Admin',
+    moduleIcon: 'fa-newspaper',
+    moduleUrl: '/news',
+    links: [
+      { url: '/news', label: 'Lista News', icon: 'fa-list', active: false },
+      { url: '/news/new', label: 'Nuovo', icon: 'fa-plus', active: true }
+    ]
+  }) %>
+
   <div class="container">
     <div class="page-header">
       <h1><%= isNew ? '✍️ Nuovo Articolo' : '✏️ Modifica Articolo' %></h1>

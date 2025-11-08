@@ -10,31 +10,17 @@
 </head>
 <body data-cloudinary-cloud-name="<%= cloudinaryConfig.cloudName %>"
       data-cloudinary-upload-preset="<%= cloudinaryConfig.uploadPreset %>">
-  <!-- Back to Hub Button -->
-  <%- include('../partials/back-to-hub') %>
-
-  <!-- NAVBAR -->
-<nav class="admin-nav">
-  <div class="nav-container">
-    <a href="/admin" class="nav-brand">
-      <i class="fas fa-music"></i> Concerts Admin
-    </a>
-    <div class="nav-links">
-      <a href="/admin/dashboard" class="<%= currentPage === 'dashboard' ? 'active' : '' %>">
-        <i class="fas fa-calendar"></i> Concerti
-      </a>
-      <a href="/admin/repertoire" class="<%= currentPage === 'repertoire' ? 'active' : '' %>">
-        <i class="fas fa-book"></i> Repertorio
-      </a>
-      <a href="<%= stagingUrl || 'https://www.danielecamiz.com' %>/concerts" target="_blank" class="nav-link-external">
-        <i class="fas fa-external-link-alt"></i> Frontend
-      </a>
-      <a href="/auth/logout" class="btn-logout">
-        <i class="fas fa-sign-out-alt"></i> Esci
-      </a>
-    </div>
-  </div>
-</nav>
+  <!-- Unified Navigation -->
+  <%- include('../../shared/partials/admin-navbar', {
+    moduleName: 'Concerts Admin',
+    moduleIcon: 'fa-music',
+    moduleUrl: '/admin',
+    links: [
+      { url: '/admin/dashboard', label: 'Concerti', icon: 'fa-calendar', active: currentPage === 'dashboard' },
+      { url: '/admin/repertoire', label: 'Repertorio', icon: 'fa-book', active: currentPage === 'repertoire' }
+    ],
+    logoutUrl: '/auth/logout'
+  }) %>
 
   <main class="admin-main">
     <div class="page-header">

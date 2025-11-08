@@ -5,15 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/static/css/press-admin.css">
 </head>
 <body>
-  <%- include('../../../shared/partials/back-to-hub') %>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
+  <!-- Unified Navigation -->
+  <%- include('../../../shared/partials/admin-navbar', {
+    moduleName: 'Press Admin',
+    moduleIcon: 'fa-newspaper',
+    moduleUrl: '/press',
+    links: [
+      { url: '/press', label: 'Dashboard', icon: 'fa-chart-line', active: currentPath === '/press' },
+      { url: '/press/articles', label: 'Articoli', icon: 'fa-file-alt', active: currentPath.startsWith('/press/articles') },
+      { url: '/press/quotes', label: 'Citazioni', icon: 'fa-quote-right', active: currentPath.startsWith('/press/quotes') }
+    ]
+  }) %>
+
+  <main class="content-area" style="padding: 2rem;">
         <div class="stats-grid">
           <div class="stat-card">
             <h3>Articoli</h3>
@@ -64,9 +72,7 @@
             <a href="/press/quotes" class="btn btn-primary">Gestisci Citazioni</a>
           </div>
         </div>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script src="/static/js/press-admin.js"></script>
 </body>

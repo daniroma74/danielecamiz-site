@@ -15,11 +15,18 @@
   <link rel="stylesheet" href="/public/css/admin.css">
 </head>
 <body>
-  <!-- Back to Hub button -->
-  <%- include('../../shared/partials/back-to-hub') %>
-
-  <!-- Navigation -->
-  <%- include('partials/nav') %>
+  <!-- Unified Navigation -->
+  <%- include('../../shared/partials/admin-navbar', {
+    moduleName: 'Contact Admin',
+    moduleIcon: 'fa-envelope',
+    moduleUrl: '/dashboard',
+    links: [
+      { url: '/dashboard', label: 'Dashboard', icon: 'fa-home', active: true },
+      { url: '/editor/visual', label: 'Editor', icon: 'fa-palette', active: false },
+      { url: '/settings', label: 'Settings', icon: 'fa-cog', active: false },
+      { url: '/editor/export', label: 'Export', icon: 'fa-download', active: false }
+    ]
+  }) %>
 
   <!-- Dashboard Content -->
   <div class="dashboard-container">
