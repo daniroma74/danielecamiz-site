@@ -15,14 +15,7 @@
 </head>
 <body>
   <!-- Back to Hub Button -->
-  <div style="position: fixed; top: 90px; right: 30px; z-index: 10000;">
-    <a href="https://hub.danielecamiz.com/dashboard" title="Torna all'Admin HUB" style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: white; padding: 0.6rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); transition: all 0.3s ease;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      <span>Hub</span>
-    </a>
-  </div>
+  <%- include('../partials/back-to-hub') %>
 
   <!-- NAVBAR -->
 <nav class="admin-nav">
