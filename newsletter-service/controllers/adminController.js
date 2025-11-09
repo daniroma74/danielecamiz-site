@@ -663,6 +663,9 @@ export async function previewDigest(req, res, next) {
   try {
     const db = req.app.locals.db;
 
+    // Get customization from query params
+    const { subject, introIt, introEn, notes } = req.query;
+
     // Fetch posts from news-admin API
     const fetch = (await import('node-fetch')).default;
     const response = await fetch('http://localhost:3005/news/api/newsletter-posts');
@@ -686,8 +689,10 @@ export async function previewDigest(req, res, next) {
 
     const html = await ejs.renderFile(templatePath, {
       lang: 'it',
-      subject: 'Newsletter Daniele Camiz',
+      subject: subject || 'Newsletter Daniele Camiz',
       posts: posts,
+      introText: introIt || null,
+      notes: notes || null,
       unsubscribeUrl: `${BASE_URL}/newsletter/manage?email=example@example.com`
     });
 
@@ -703,7 +708,7 @@ export async function previewDigest(req, res, next) {
  */
 export async function sendTestDigest(req, res) {
   try {
-    const { email } = req.body;
+    const { email, subject, introIt, introEn, notes } = req.body;
 
     if (!email) {
       return res.json({ success: false, error: 'Email required' });
@@ -732,15 +737,19 @@ export async function sendTestDigest(req, res) {
 
     const templatePath = path.join(process.cwd(), 'views', 'email-templates', 'digest.ejs');
 
+    const emailSubject = subject || 'Newsletter Daniele Camiz';
+
     const html = await ejs.renderFile(templatePath, {
       lang: 'it',
-      subject: 'Newsletter Daniele Camiz',
+      subject: emailSubject,
       posts: posts,
+      introText: introIt || null,
+      notes: notes || null,
       unsubscribeUrl: `${BASE_URL}/newsletter/manage?email=${encodeURIComponent(email)}`
     });
 
     // Send test email
-    await sendNewsletterEmail(email, '[TEST] Newsletter Daniele Camiz', html);
+    await sendNewsletterEmail(email, `[TEST] ${emailSubject}`, html);
 
     res.json({ success: true, message: `Test email sent to ${email}` });
   } catch (error) {
@@ -754,6 +763,7 @@ export async function sendTestDigest(req, res) {
  */
 export async function sendDigest(req, res) {
   try {
+    const { subject, introIt, introEn, notes } = req.body;
     const db = req.app.locals.db;
 
     // Fetch posts from news-admin API
@@ -783,7 +793,7 @@ export async function sendDigest(req, res) {
     }
 
     // Create campaign record
-    const campaignSubject = 'Newsletter Daniele Camiz';
+    const campaignSubject = subject || 'Newsletter Daniele Camiz';
     const now = new Date().toISOString();
 
     const campaignResult = await runDB(db, `
@@ -793,7 +803,10 @@ export async function sendDigest(req, res) {
     `, [
       `Digest ${new Date().toLocaleDateString('it-IT')}`,
       campaignSubject,
-      JSON.stringify({ posts: posts.map(p => p.id) }),
+      JSON.stringify({
+        posts: posts.map(p => p.id),
+        customization: { subject, introIt, introEn, notes }
+      }),
       'digest',
       'sent',
       now,
@@ -815,11 +828,14 @@ export async function sendDigest(req, res) {
     for (const subscriber of subscribers) {
       try {
         const lang = subscriber.lang || 'it';
+        const introText = lang === 'it' ? (introIt || null) : (introEn || null);
 
         const html = await ejs.renderFile(templatePath, {
           lang: lang,
           subject: campaignSubject,
           posts: posts,
+          introText: introText,
+          notes: notes || null,
           unsubscribeUrl: `${BASE_URL}/newsletter/manage?email=${encodeURIComponent(subscriber.email)}`
         });
 

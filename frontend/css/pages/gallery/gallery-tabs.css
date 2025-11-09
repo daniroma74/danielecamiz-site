@@ -12,10 +12,10 @@
     height: 100px;
     padding: 0;
     background: transparent;
-    border: 2px solid var(--accent-color);
+    border: 1px solid var(--accent-color);
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     color: var(--accent-color);
     font-weight: bold;

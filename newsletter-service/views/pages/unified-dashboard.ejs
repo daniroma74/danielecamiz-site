@@ -242,11 +242,52 @@
           <div class="empty-state">
             <p style="font-size: 1.2rem;">📭 Nessun articolo selezionato</p>
             <p><small>Vai in news-admin e spunta "Includi nella Newsletter" negli articoli</small></p>
-            <a href="http://localhost:3005/news" class="btn btn-primary" style="margin-top: 1rem; display: inline-block; text-decoration: none;">
+            <a href="https://news-admin.danielecamiz.com/news" class="btn btn-primary" style="margin-top: 1rem; display: inline-block; text-decoration: none;">
               📰 Vai a News Admin
             </a>
           </div>
         <% } else { %>
+          <!-- Custom Message Editor -->
+          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h3 style="margin: 0 0 1rem; font-size: 1.2rem;">✍️ Personalizza il Digest</h3>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Oggetto Email:</label>
+              <input type="text" id="digest-subject"
+                     placeholder="Newsletter Daniele Camiz - [Mese Anno]"
+                     value="Newsletter Daniele Camiz"
+                     style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 1rem;">
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Messaggio Introduttivo (IT):</label>
+              <textarea id="digest-intro-it" rows="3"
+                        placeholder="Ciao, ecco le ultime novità dal sito di Daniele Camiz..."
+                        style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 1rem; font-family: inherit; resize: vertical;">Ciao,
+
+Ecco le ultime novità dal sito di Daniele Camiz. Troverai <%= digestData.selectedPosts.length %> <%= digestData.selectedPosts.length === 1 ? 'articolo selezionato' : 'articoli selezionati' %> per te.</textarea>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Messaggio Introduttivo (EN):</label>
+              <textarea id="digest-intro-en" rows="3"
+                        placeholder="Hello, here are the latest news from Daniele Camiz's website..."
+                        style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 1rem; font-family: inherit; resize: vertical;">Hello,
+
+Here are the latest news from Daniele Camiz's website. You'll find <%= digestData.selectedPosts.length %> selected <%= digestData.selectedPosts.length === 1 ? 'article' : 'articles' %> for you.</textarea>
+            </div>
+
+            <div>
+              <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">📝 Note Aggiuntive (opzionale):</label>
+              <textarea id="digest-notes" rows="3"
+                        placeholder="Eventuali comunicazioni speciali, annunci, link esterni, ecc..."
+                        style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 1rem; font-family: inherit; resize: vertical;"></textarea>
+              <small style="color: #666;">Queste note verranno aggiunte alla fine dell'email, prima del footer.</small>
+            </div>
+          </div>
+
+          <!-- Article List -->
+          <h3 style="margin: 0 0 1rem; font-size: 1.2rem;">📰 Articoli Selezionati (<%= digestData.selectedPosts.length %>)</h3>
           <% digestData.selectedPosts.forEach(post => { %>
             <div class="post-item">
               <% if (post.cover_image) { %>
@@ -292,7 +333,7 @@
           Crea newsletter manuale per annunciare nuovi concerti e stagioni
         </p>
         <div class="action-buttons">
-          <a href="/admin/campaigns/new" class="btn btn-primary" style="text-decoration: none;">
+          <a href="/admin/campaign/new" class="btn btn-primary" style="text-decoration: none;">
             ✍️ Crea Nuova Newsletter Concerti
           </a>
           <a href="/admin/campaigns" class="btn btn-secondary" style="text-decoration: none;">
@@ -356,14 +397,27 @@
       event.target.classList.add('active');
     }
 
+    function getDigestCustomization() {
+      return {
+        subject: document.getElementById('digest-subject')?.value || 'Newsletter Daniele Camiz',
+        introIt: document.getElementById('digest-intro-it')?.value || '',
+        introEn: document.getElementById('digest-intro-en')?.value || '',
+        notes: document.getElementById('digest-notes')?.value || ''
+      };
+    }
+
     async function refreshDigestPreview() {
-      // Open preview in new window
-      window.open('/admin/digest/preview', '_blank', 'width=800,height=600');
+      const custom = getDigestCustomization();
+      // Pass customization as query params
+      const params = new URLSearchParams(custom);
+      window.open(`/admin/digest/preview?${params.toString()}`, '_blank', 'width=800,height=600');
     }
 
     async function sendTestEmail() {
       const email = prompt('Inserisci email per test:', 'daniele.camiz@gmail.com');
       if (!email) return;
+
+      const custom = getDigestCustomization();
 
       try {
         const response = await fetch('/admin/digest/test', {
@@ -371,7 +425,10 @@
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({
+            email,
+            ...custom
+          })
         });
 
         const result = await response.json();
@@ -395,6 +452,8 @@
 
       if (!confirmed) return;
 
+      const custom = getDigestCustomization();
+
       try {
         // Show loading state
         const button = event.target;
@@ -405,7 +464,8 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          body: JSON.stringify(custom)
         });
 
         const result = await response.json();

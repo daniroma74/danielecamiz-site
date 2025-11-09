@@ -16,31 +16,48 @@
   align-items: center;
   text-align: center;
   padding: 3rem 2rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 2px solid var(--accent-color, #b8860b);
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  background: var(--_news-panel, #121212);
+  border: 1px solid var(--accent-color, #d4af37);
+  border-radius: 14px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   color: white;
+  overflow: hidden;
+}
+
+.subcategory-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color, #d4af37), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.subcategory-card:hover::before {
+  opacity: 1;
 }
 
 .subcategory-card:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--accent-color-light, #daa520);
-  box-shadow: 0 8px 24px rgba(184, 134, 11, 0.2);
+  transform: translateY(-4px);
+  background: var(--_news-panel, #141414);
+  border-color: color-mix(in srgb, var(--accent-color, #d4af37) 30%, var(--accent-color-light, #f0d478) 70%);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5), 0 0 0 1px color-mix(in srgb, var(--accent-color, #d4af37) 20%, transparent);
 }
 
 .subcategory-icon {
   font-size: 3rem;
-  color: var(--accent-color, #b8860b);
+  color: var(--accent-color, #d4af37);
   margin-bottom: 1.5rem;
   transition: transform 0.3s ease;
 }
 
 .subcategory-card:hover .subcategory-icon {
   transform: scale(1.1);
-  color: var(--accent-color-light, #daa520);
+  color: var(--accent-color-light, #f0d478);
 }
 
 .subcategory-title {
@@ -61,7 +78,7 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: var(--accent-color, #b8860b);
+  background: var(--accent-color, #d4af37);
   color: black;
   font-weight: 600;
   font-size: 0.85rem;

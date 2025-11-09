@@ -18,12 +18,14 @@
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: 8px;
-    border: 2px solid var(--accent-color);
-    transition: transform 0.3s ease;
+    border: 1px solid var(--accent-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
-  
+
   .cover-block img:hover {
-    transform: scale(1.03);
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2), 0 4px 12px rgba(0, 0, 0, 0.4);
   }
   
   .cover-title {

@@ -34,7 +34,7 @@
   -webkit-backdrop-filter: blur(12px);
 
   border: 1px solid rgba(212, 175, 55, 0.15);
-  border-radius: 20px;
+  border-radius: 14px;
   padding: 2rem;
 
   /* Enhanced shadows */
@@ -76,7 +76,7 @@
   -webkit-backdrop-filter: blur(10px);
 
   border: 1px solid rgba(212, 175, 55, 0.15);
-  border-radius: 18px;
+  border-radius: 14px;
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);

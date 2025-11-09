@@ -130,6 +130,23 @@
       color: #999;
       text-decoration: underline;
     }
+    .notes-section {
+      background: #fff8e1;
+      border-left: 4px solid #ffc107;
+      padding: 20px;
+      margin: 20px 30px;
+      border-radius: 6px;
+    }
+    .notes-section h3 {
+      margin: 0 0 10px;
+      color: #f57c00;
+      font-size: 18px;
+    }
+    .notes-section p {
+      margin: 0;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
@@ -142,12 +159,16 @@
 
     <!-- Intro -->
     <div class="intro">
-      <% if (lang === 'it') { %>
-        <p>Ciao,</p>
-        <p>Ecco le ultime novità dal sito di Daniele Camiz. Troverai <%= posts.length %> <%= posts.length === 1 ? 'articolo' : 'articoli' %> selezionati per te.</p>
+      <% if (introText) { %>
+        <%- introText.replace(/\n/g, '<br>') %>
       <% } else { %>
-        <p>Hello,</p>
-        <p>Here are the latest news from Daniele Camiz's website. You'll find <%= posts.length %> selected <%= posts.length === 1 ? 'article' : 'articles' %> for you.</p>
+        <% if (lang === 'it') { %>
+          <p>Ciao,</p>
+          <p>Ecco le ultime novità dal sito di Daniele Camiz. Troverai <%= posts.length %> <%= posts.length === 1 ? 'articolo' : 'articoli' %> selezionati per te.</p>
+        <% } else { %>
+          <p>Hello,</p>
+          <p>Here are the latest news from Daniele Camiz's website. You'll find <%= posts.length %> selected <%= posts.length === 1 ? 'article' : 'articles' %> for you.</p>
+        <% } %>
       <% } %>
     </div>
 
@@ -186,10 +207,18 @@
       </div>
     <% }); %>
 
+    <!-- Additional Notes Section -->
+    <% if (notes && notes.trim()) { %>
+      <div class="notes-section">
+        <h3><%= lang === 'it' ? '📝 Altre Comunicazioni' : '📝 Additional Notes' %></h3>
+        <p><%- notes.replace(/\n/g, '<br>') %></p>
+      </div>
+    <% } %>
+
     <!-- Footer -->
     <div class="footer">
       <p><strong>Daniele Camiz</strong></p>
-      <p><%= lang === 'it' ? 'Violoncellista - Compositore' : 'Cellist - Composer' %></p>
+      <p><%= lang === 'it' ? 'Direttore d\'Orchestra' : 'Conductor' %></p>
 
       <div class="social-links">
         <a href="https://www.danielecamiz.com">Website</a> •

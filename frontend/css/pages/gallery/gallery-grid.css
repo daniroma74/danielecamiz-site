@@ -9,12 +9,14 @@
   .gallery-grid img {
     max-width: 240px;
     height: auto;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid var(--accent-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
   
   .gallery-grid img:hover {
-    transform: scale(1.02);
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2), 0 4px 12px rgba(0, 0, 0, 0.4);
   }
