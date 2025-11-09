@@ -178,39 +178,52 @@
     </div>
 
     <!-- SOLOISTS SECTION -->
-    <% if (soloists && soloists.length > 0) { %>
+    <% if (instrumentGroups && instrumentGroups.length > 0) { %>
       <div class="section-header">
-        <h2><i class="fas fa-user-music"></i> Solisti <span class="badge-count"><%= soloists.length %></span></h2>
+        <h2><i class="fas fa-user-music"></i> Solisti <span class="badge-count"><%= stats.total_soloists %></span></h2>
       </div>
 
-      <% soloists.forEach(soloist => { %>
-        <div class="performer-card">
-          <div class="performer-header">
-            <div>
-              <div class="performer-name">
-                <i class="fas fa-microphone"></i>
-                <%= soloist.name %>
+      <% instrumentGroups.forEach((group, idx) => { %>
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #667eea; font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-left: 10px; border-left: 3px solid #667eea; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 10px;"
+              onclick="toggleGroup('instrument-group-<%= idx %>')">
+            <i class="fas fa-chevron-down" id="icon-instrument-group-<%= idx %>" style="font-size: 12px; transition: transform 0.3s; transform: rotate(-90deg);"></i>
+            <span><i class="fas fa-guitar"></i> <%= group.instrument %>
+            <span style="color: #9ca3af; font-size: 14px; font-weight: 400;">(<%= group.soloists.length %>)</span></span>
+          </h3>
+
+          <div id="instrument-group-<%= idx %>" style="display: none;">
+          <% group.soloists.forEach(soloist => { %>
+            <div class="performer-card">
+              <div class="performer-header">
+                <div>
+                  <div class="performer-name">
+                    <i class="fas fa-microphone"></i>
+                    <%= soloist.name %>
+                  </div>
+                  <% if (soloist.displayInstrument && group.instrument === 'Voce') { %>
+                    <div class="performer-instrument"><%= soloist.displayInstrument %></div>
+                  <% } %>
+                </div>
+                <div class="performer-stats">
+                  <div class="stat-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <%= soloist.concert_count %> <%= soloist.concert_count === 1 ? 'concerto' : 'concerti' %>
+                  </div>
+                </div>
               </div>
-              <% if (soloist.instrument) { %>
-                <div class="performer-instrument"><%= soloist.instrument %></div>
+              <% if (soloist.concerts && soloist.concerts.length > 0) { %>
+                <div class="concerts-list">
+                  <% soloist.concerts.forEach(concert => { %>
+                    <a href="/admin/concert/<%= concert.id %>/edit" class="concert-link">
+                      <%= concert.title %> (<%= new Date(concert.date).getFullYear() %>)
+                    </a>
+                  <% }) %>
+                </div>
               <% } %>
             </div>
-            <div class="performer-stats">
-              <div class="stat-item">
-                <i class="fas fa-calendar-check"></i>
-                <%= soloist.concert_count %> <%= soloist.concert_count === 1 ? 'concerto' : 'concerti' %>
-              </div>
-            </div>
+          <% }) %>
           </div>
-          <% if (soloist.concerts && soloist.concerts.length > 0) { %>
-            <div class="concerts-list">
-              <% soloist.concerts.forEach(concert => { %>
-                <a href="/admin/concert/<%= concert.id %>/edit" class="concert-link">
-                  <%= concert.title %> (<%= new Date(concert.date).getFullYear() %>)
-                </a>
-              <% }) %>
-            </div>
-          <% } %>
         </div>
       <% }) %>
     <% } %>
@@ -290,5 +303,21 @@
     <% } %>
 
   </main>
+
+  <script>
+    function toggleGroup(groupId) {
+      const group = document.getElementById(groupId);
+      const icon = document.getElementById('icon-' + groupId);
+
+      if (group.style.display === 'none') {
+        group.style.display = 'block';
+        icon.style.transform = 'rotate(0deg)';
+      } else {
+        group.style.display = 'none';
+        icon.style.transform = 'rotate(-90deg)';
+      }
+    }
+  </script>
+
 </body>
 </html>

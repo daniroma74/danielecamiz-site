@@ -341,16 +341,9 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-}
-
-@media (min-width: 768px) and (max-width: 1199px) {
-  .concerts-year-list {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
-  }
 }
 
 .concert-item {
@@ -385,12 +378,21 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
+/* Layout metà superiore: poster sx + info dx */
+.concert-top-section {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .concert-thumb-link {
   display: block;
   overflow: hidden;
   aspect-ratio: 3/4;
   background: #1a1a1a;
-  border-radius: 16px 16px 0 0;
+  border-radius: 12px;
 }
 
 .concert-poster {
@@ -407,15 +409,19 @@
 @media (min-width: 1200px) {
   .concert-thumb-link {
     aspect-ratio: 2/3;
-    border-radius: 12px 12px 0 0;
   }
 }
 
 .concert-info {
-  padding: 1.5rem;
-  flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+}
+
+/* Metà inferiore: programma a tutta larghezza */
+.concert-bottom-section {
+  padding: 1.5rem;
+  flex: 1;
 }
 
 .concert-title {
@@ -433,7 +439,11 @@
 }
 
 @media (min-width: 1200px) {
-  .concert-info {
+  .concert-top-section {
+    padding: 1rem;
+  }
+
+  .concert-bottom-section {
     padding: 1rem;
   }
 
@@ -450,8 +460,7 @@
 }
 
 .concert-details {
-  margin-top: auto;
-  padding-top: 1rem;
+  margin: 0;
 }
 
 @media (min-width: 1200px) {
@@ -685,11 +694,22 @@
     flex-direction: row;
   }
 
-  .concerts-year-list {
+  .concert-lightbox-poster-view {
     grid-template-columns: 1fr;
   }
 
-  .concert-lightbox-poster-view {
+  /* Su mobile mantieni layout verticale per concerti passati */
+  .concert-top-section {
     grid-template-columns: 1fr;
+    padding: 1rem;
+    border-bottom: none;
+  }
+
+  .concert-bottom-section {
+    padding: 1rem 1rem 1.5rem 1rem;
+  }
+
+  .concert-thumb-link {
+    border-radius: 12px 12px 0 0;
   }
 }

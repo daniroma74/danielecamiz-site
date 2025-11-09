@@ -190,13 +190,19 @@
                       <td>
                         <div class="stats-badges">
                           <% if (work.past_count > 0) { %>
-                            <span class="stat-badge past">
+                            <span class="stat-badge past clickable concert-count-badge"
+                                  data-work-id="<%= work.id %>"
+                                  data-work-title="<%= work.title.replace(/"/g, '&quot;') %>"
+                                  title="Clicca per vedere i concerti">
                               <i class="fas fa-check-circle"></i>
                               <%= work.past_count %>
                             </span>
                           <% } %>
                           <% if (work.future_count > 0) { %>
-                            <span class="stat-badge future">
+                            <span class="stat-badge future clickable concert-count-badge"
+                                  data-work-id="<%= work.id %>"
+                                  data-work-title="<%= work.title.replace(/"/g, '&quot;') %>"
+                                  title="Clicca per vedere i concerti">
                               <i class="fas fa-calendar-plus"></i>
                               <%= work.future_count %>
                             </span>

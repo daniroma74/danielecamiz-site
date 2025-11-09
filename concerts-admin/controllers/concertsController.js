@@ -120,6 +120,81 @@ class ConcertsController {
       const choruses = processedPerformers.filter(p => p.role === 'chorus');
       const orchestras = processedPerformers.filter(p => p.role === 'orchestra');
 
+      // Funzione per normalizzare gli strumenti
+      const normalizeInstrument = (instrument) => {
+        if (!instrument) return 'Altro';
+
+        const normalized = instrument.trim().toLowerCase();
+
+        // Escludi "Coro" dai solisti - deve stare solo in ensemble
+        if (normalized === 'coro') {
+          return null;
+        }
+
+        // Raggruppa tutti i cantanti
+        if (['soprano', 'mezzosoprano', 'contralto', 'tenore', 'baritono', 'basso'].includes(normalized)) {
+          return 'Voce';
+        }
+
+        // Normalizza strumenti comuni
+        const instrumentMap = {
+          'pianoforte': 'Pianoforte',
+          'piano': 'Pianoforte',
+          'violino': 'Violino',
+          'violoncello': 'Violoncello',
+          'cello': 'Violoncello',
+          'viola': 'Viola',
+          'contrabbasso': 'Contrabbasso',
+          'flauto': 'Flauto',
+          'oboe': 'Oboe',
+          'clarinetto': 'Clarinetto',
+          'fagotto': 'Fagotto',
+          'corno': 'Corno',
+          'tromba': 'Tromba',
+          'trombone': 'Trombone',
+          'arpa': 'Arpa',
+          'organo': 'Organo',
+          'sassofono': 'Sassofono',
+          'chitarra': 'Chitarra',
+          'percussioni': 'Percussioni'
+        };
+
+        return instrumentMap[normalized] || instrument.trim();
+      };
+
+      // Raggruppa solisti per strumento normalizzato
+      const soloistsByInstrument = {};
+      soloists.forEach(soloist => {
+        const instrument = normalizeInstrument(soloist.instrument);
+        // Salta se è null (es. Coro)
+        if (!instrument) return;
+
+        if (!soloistsByInstrument[instrument]) {
+          soloistsByInstrument[instrument] = [];
+        }
+        // Mantieni lo strumento originale per visualizzazione
+        soloistsByInstrument[instrument].push({
+          ...soloist,
+          displayInstrument: soloist.instrument ? soloist.instrument.trim() : null
+        });
+      });
+
+      // Ordine personalizzato: Voce prima, poi strumenti alfabetici
+      const instrumentOrder = ['Voce'];
+      const instrumentGroups = Object.keys(soloistsByInstrument)
+        .sort((a, b) => {
+          const aIndex = instrumentOrder.indexOf(a);
+          const bIndex = instrumentOrder.indexOf(b);
+          if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+          if (aIndex !== -1) return -1;
+          if (bIndex !== -1) return 1;
+          return a.localeCompare(b);
+        })
+        .map(instrument => ({
+          instrument,
+          soloists: soloistsByInstrument[instrument].sort((a, b) => a.name.localeCompare(b.name))
+        }));
+
       const stats = {
         total_soloists: soloists.length,
         total_choruses: choruses.length,
@@ -129,7 +204,7 @@ class ConcertsController {
       res.render('pages/performers', {
         title: 'Solisti & Ensemble',
         currentPage: 'performers',
-        soloists,
+        instrumentGroups,
         choruses,
         orchestras,
         stats,
@@ -284,7 +359,7 @@ class ConcertsController {
         `, [concertId]);
         
         // Mappatura programma con soloist_ids dalla tabella di join
-        selectedWorks = await Promise.all(program.map(async (item) => {
+        const rawWorks = await Promise.all(program.map(async (item) => {
           let movementTitle = null;
           if (item.movement_id && item.movement_number != null) {
             let parts = [`${item.movement_number}.`];
@@ -310,6 +385,51 @@ class ConcertsController {
             soloist_ids: itemSoloists.map(s => s.performer_id)
           };
         }));
+
+        // Raggruppa movimenti consecutivi dello stesso brano
+        selectedWorks = [];
+        let i = 0;
+        while (i < rawWorks.length) {
+          const current = rawWorks[i];
+
+          // Se non ha movement_id, è un'opera intera - non raggruppare
+          if (!current.movement_id) {
+            selectedWorks.push(current);
+            i++;
+            continue;
+          }
+
+          // Cerca movimenti consecutivi dello stesso brano
+          const grouped = [current];
+          let j = i + 1;
+          while (j < rawWorks.length &&
+                 rawWorks[j].id === current.id &&
+                 rawWorks[j].movement_id) {
+            grouped.push(rawWorks[j]);
+            j++;
+          }
+
+          // Se trovati più movimenti, crea un gruppo
+          if (grouped.length > 1) {
+            selectedWorks.push({
+              id: current.id,
+              title: current.title,
+              subtitle: current.subtitle,
+              composer_name: current.composer_name,
+              catalogue: current.catalogue,
+              grouped_movements: grouped.map(w => ({
+                movement_id: w.movement_id,
+                movement_title: w.movement_title
+              })),
+              soloist_ids: current.soloist_ids // Usa i solisti del primo
+            });
+            i = j;
+          } else {
+            // Singolo movimento
+            selectedWorks.push(current);
+            i++;
+          }
+        }
         
         // Carica performers CON id
         const performersData = await dbPromise.all(

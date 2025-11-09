@@ -40,8 +40,12 @@ router.put('/repertoire/movements/:id', (req, res, next) =>
   repertoireController.updateMovement(req, res, next)
 );
 
-router.delete('/repertoire/movements/:id', (req, res, next) => 
+router.delete('/repertoire/movements/:id', (req, res, next) =>
   repertoireController.deleteMovement(req, res, next)
+);
+
+router.get('/repertoire/works/:workId/concerts', (req, res, next) =>
+  repertoireController.getConcertsByWork(req, res, next)
 );
 
 // ========== COMPOSERS ==========
@@ -408,31 +412,54 @@ router.post('/concerts', async (req, res, next) => {
     if (selected_works) {
       const worksList = typeof selected_works === 'string' ? JSON.parse(selected_works) : selected_works;
       console.log('📚 Selected works ricevuti (POST):', JSON.stringify(worksList, null, 2));
+
+      let position = 1;
       for (let i = 0; i < worksList.length; i++) {
         const item = worksList[i];
-        console.log(`📖 Brano ${i}: work_id=${item.work_id}, soloist_indices=${JSON.stringify(item.soloist_indices)}`);
-        const result = await dbPromise.run(
-          `INSERT INTO concert_program (concert_id, work_id, movement_id, position)
-           VALUES (?, ?, ?, ?)`,
-          [
-            concertId,
-            item.work_id || item.id,
-            item.movement_id || null,
-            i + 1
-          ]
-        );
 
-        const programItemId = result.lastID;
+        // Se ha grouped_movements, espandi e salva ogni movimento
+        if (item.grouped_movements && item.grouped_movements.length > 0) {
+          console.log(`📖 Gruppo ${i}: work_id=${item.work_id}, ${item.grouped_movements.length} movimenti`);
+          for (const movement of item.grouped_movements) {
+            const result = await dbPromise.run(
+              `INSERT INTO concert_program (concert_id, work_id, movement_id, position)
+               VALUES (?, ?, ?, ?)`,
+              [concertId, item.work_id || item.id, movement.movement_id, position++]
+            );
 
-        if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
-          for (const soloistIndex of item.soloist_indices) {
-            if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
-              console.log(`📋 Brano ${i + 1} (POST): Assegnando solista indice ${soloistIndex} → ID ${soloistIds[soloistIndex]}`);
-              await dbPromise.run(
-                `INSERT INTO concert_program_soloists (program_item_id, performer_id)
-                 VALUES (?, ?)`,
-                [programItemId, soloistIds[soloistIndex]]
-              );
+            const programItemId = result.lastID;
+            if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
+              for (const soloistIndex of item.soloist_indices) {
+                if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
+                  await dbPromise.run(
+                    `INSERT INTO concert_program_soloists (program_item_id, performer_id)
+                     VALUES (?, ?)`,
+                    [programItemId, soloistIds[soloistIndex]]
+                  );
+                }
+              }
+            }
+          }
+        } else {
+          // Movimento singolo o opera intera
+          console.log(`📖 Brano ${i}: work_id=${item.work_id}, movement_id=${item.movement_id}`);
+          const result = await dbPromise.run(
+            `INSERT INTO concert_program (concert_id, work_id, movement_id, position)
+             VALUES (?, ?, ?, ?)`,
+            [concertId, item.work_id || item.id, item.movement_id || null, position++]
+          );
+
+          const programItemId = result.lastID;
+          if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
+            for (const soloistIndex of item.soloist_indices) {
+              if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
+                console.log(`📋 Brano ${i + 1} (POST): Assegnando solista indice ${soloistIndex} → ID ${soloistIds[soloistIndex]}`);
+                await dbPromise.run(
+                  `INSERT INTO concert_program_soloists (program_item_id, performer_id)
+                   VALUES (?, ?)`,
+                  [programItemId, soloistIds[soloistIndex]]
+                );
+              }
             }
           }
         }
@@ -588,30 +615,52 @@ router.put('/concerts/:id', async (req, res, next) => {
     // Inserisci programma con multipli solisti
     if (selected_works) {
       const worksList = typeof selected_works === 'string' ? JSON.parse(selected_works) : selected_works;
+
+      let position = 1;
       for (let i = 0; i < worksList.length; i++) {
         const item = worksList[i];
 
-        const result = await dbPromise.run(
-          `INSERT INTO concert_program (concert_id, work_id, movement_id, position) VALUES (?, ?, ?, ?)`,
-          [
-            id,
-            item.work_id || item.id,
-            item.movement_id || null,
-            i + 1
-          ]
-        );
+        // Se ha grouped_movements, espandi e salva ogni movimento
+        if (item.grouped_movements && item.grouped_movements.length > 0) {
+          console.log(`📖 Gruppo ${i} (PUT): work_id=${item.work_id}, ${item.grouped_movements.length} movimenti`);
+          for (const movement of item.grouped_movements) {
+            const result = await dbPromise.run(
+              `INSERT INTO concert_program (concert_id, work_id, movement_id, position)
+               VALUES (?, ?, ?, ?)`,
+              [id, item.work_id || item.id, movement.movement_id, position++]
+            );
 
-        const programItemId = result.lastID;
+            const programItemId = result.lastID;
+            if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
+              for (const soloistIndex of item.soloist_indices) {
+                if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
+                  await dbPromise.run(
+                    `INSERT INTO concert_program_soloists (program_item_id, performer_id)
+                     VALUES (?, ?)`,
+                    [programItemId, soloistIds[soloistIndex]]
+                  );
+                }
+              }
+            }
+          }
+        } else {
+          // Movimento singolo o opera intera
+          const result = await dbPromise.run(
+            `INSERT INTO concert_program (concert_id, work_id, movement_id, position) VALUES (?, ?, ?, ?)`,
+            [id, item.work_id || item.id, item.movement_id || null, position++]
+          );
 
-        if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
-          for (const soloistIndex of item.soloist_indices) {
-            if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
-              console.log(`📋 Brano ${i + 1}: Assegnando solista indice ${soloistIndex} → ID ${soloistIds[soloistIndex]}`);
-              await dbPromise.run(
-                `INSERT INTO concert_program_soloists (program_item_id, performer_id)
-                 VALUES (?, ?)`,
-                [programItemId, soloistIds[soloistIndex]]
-              );
+          const programItemId = result.lastID;
+          if (item.soloist_indices && Array.isArray(item.soloist_indices)) {
+            for (const soloistIndex of item.soloist_indices) {
+              if (soloistIndex !== undefined && soloistIds[soloistIndex]) {
+                console.log(`📋 Brano ${i + 1}: Assegnando solista indice ${soloistIndex} → ID ${soloistIds[soloistIndex]}`);
+                await dbPromise.run(
+                  `INSERT INTO concert_program_soloists (program_item_id, performer_id)
+                   VALUES (?, ?)`,
+                  [programItemId, soloistIds[soloistIndex]]
+                );
+              }
             }
           }
         }

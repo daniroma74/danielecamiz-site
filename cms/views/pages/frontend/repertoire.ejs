@@ -156,7 +156,15 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
           <% frequentlyPerformed.slice(0, 8).forEach(work => { %>
             <div class="rep-work-card">
               <div class="rep-work-header">
-                <h4 class="rep-work-title"><%= work.title || (lang === 'en' ? 'Untitled' : 'Senza titolo') %></h4>
+                <h4 class="rep-work-title">
+                  <%= work.title || (lang === 'en' ? 'Untitled' : 'Senza titolo') %>
+                  <% if (work.catalogue) { %>
+                    <span style="color: var(--gold); font-weight: 400; font-size: 0.9em;"><%= work.catalogue %></span>
+                  <% } %>
+                </h4>
+                <% if (work.subtitle) { %>
+                  <p class="rep-work-subtitle" style="color: var(--text-secondary); font-size: 0.9em; font-style: italic; margin-top: 4px;"><%= work.subtitle %></p>
+                <% } %>
                 <p class="rep-work-composer"><%= work.composer_name %></p>
               </div>
               <div class="rep-work-meta">
@@ -176,7 +184,15 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
           <% comingSoon.slice(0, 8).forEach(work => { %>
             <div class="rep-work-card rep-work-card-new">
               <div class="rep-work-header">
-                <h4 class="rep-work-title"><%= work.title || (lang === 'en' ? 'Untitled' : 'Senza titolo') %></h4>
+                <h4 class="rep-work-title">
+                  <%= work.title || (lang === 'en' ? 'Untitled' : 'Senza titolo') %>
+                  <% if (work.catalogue) { %>
+                    <span style="color: var(--gold); font-weight: 400; font-size: 0.9em;"><%= work.catalogue %></span>
+                  <% } %>
+                </h4>
+                <% if (work.subtitle) { %>
+                  <p class="rep-work-subtitle" style="color: var(--text-secondary); font-size: 0.9em; font-style: italic; margin-top: 4px;"><%= work.subtitle %></p>
+                <% } %>
                 <p class="rep-work-composer"><%= work.composer_name %></p>
               </div>
               <div class="rep-work-badge-new">
@@ -218,7 +234,15 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
             <div class="rep-composer-works" id="composer_<%= composer.id %>" style="display: none;">
               <% composer.works.forEach(work => { %>
                 <div class="rep-work-item">
-                  <span class="rep-work-item-title"><%= work.title %></span>
+                  <span class="rep-work-item-title">
+                    <%= work.title %>
+                    <% if (work.catalogue) { %>
+                      <span style="color: var(--gold); font-weight: 400; margin-left: 8px;"><%= work.catalogue %></span>
+                    <% } %>
+                    <% if (work.subtitle) { %>
+                      <span style="color: var(--text-secondary); font-style: italic; margin-left: 8px;"><%= work.subtitle %></span>
+                    <% } %>
+                  </span>
                   <% if (work.category_name) { %>
                     <span class="rep-work-item-cat"><%= work.category_name %></span>
                   <% } %>

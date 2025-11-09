@@ -275,6 +275,40 @@ class RepertoireController {
       next(error);
     }
   }
+
+  async getConcertsByWork(req, res, next) {
+    try {
+      const { workId } = req.params;
+
+      // Query per ottenere tutti i concerti che includono questo brano
+      const concerts = await dbPromise.all(`
+        SELECT DISTINCT
+          c.id,
+          c.title,
+          c.date,
+          c.location,
+          c.is_future,
+          w.title as work_title,
+          w.catalogue,
+          cp.movement_id,
+          m.movement_number,
+          m.title as movement_title
+        FROM concerts c
+        INNER JOIN concert_program cp ON c.id = cp.concert_id
+        INNER JOIN works w ON cp.work_id = w.id
+        LEFT JOIN movements m ON cp.movement_id = m.id
+        WHERE w.id = ?
+        ORDER BY c.date DESC, c.id DESC
+      `, [workId]);
+
+      res.json({
+        success: true,
+        concerts: concerts
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default RepertoireController;

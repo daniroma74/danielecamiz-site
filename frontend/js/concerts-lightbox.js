@@ -58,6 +58,7 @@
 
     // Mostra lightbox
     overlay.removeAttribute('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
     overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
 
@@ -71,6 +72,7 @@
     if (!overlay) return;
 
     overlay.setAttribute('hidden', '');
+    overlay.setAttribute('aria-hidden', 'true');
     overlay.classList.remove('show');
     document.body.style.overflow = '';
 
@@ -100,6 +102,7 @@
 
     // Mostra lightbox
     overlay.removeAttribute('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
     overlay.classList.add('show', 'iframe-mode');
     document.body.style.overflow = 'hidden';
 
@@ -139,4 +142,4 @@
     init();
   }
 })();
-/* Updated: Sat Nov  8 09:00:44 AM UTC 2025 */
+/* Updated: 2025-11-09 17:30:00 */

@@ -277,7 +277,7 @@
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <input type="radio" name="workType" id="workTypeMovement" value="movement" onchange="concertEditor.toggleWorkType()">
-            <span>Solo un Movimento</span>
+            <span>Uno o più Movimenti</span>
           </label>
         </div>
       </div>
@@ -320,10 +320,10 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-primary" onclick="concertEditor.addWorkToProgram()">
-        <i class="fas fa-plus"></i> Aggiungi al Programma
+        <i class="fas fa-plus"></i> Aggiungi
       </button>
-      <button type="button" class="btn btn-secondary" onclick="concertEditor.closeQuickAddModal()">
-        <i class="fas fa-times"></i> Annulla
+      <button type="button" class="btn btn-success" onclick="concertEditor.closeQuickAddModal()">
+        <i class="fas fa-check"></i> Fine
       </button>
     </div>
   </div>

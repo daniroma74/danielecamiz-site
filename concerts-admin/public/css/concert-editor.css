@@ -303,7 +303,9 @@
 }
 
 .btn-move,
-.btn-remove {
+.btn-remove,
+.btn-group,
+.btn-ungroup {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-primary);
@@ -321,6 +323,26 @@
   border-color: var(--gold);
   color: white;
   transform: translateY(-2px);
+}
+
+.btn-group {
+  color: var(--success, #10b981);
+  border-color: var(--success, #10b981);
+}
+
+.btn-group:hover {
+  background: var(--success, #10b981);
+  color: white;
+}
+
+.btn-ungroup {
+  color: var(--warning, #f59e0b);
+  border-color: var(--warning, #f59e0b);
+}
+
+.btn-ungroup:hover {
+  background: var(--warning, #f59e0b);
+  color: white;
 }
 
 .btn-remove {
@@ -423,6 +445,12 @@
   background: var(--gold);
   color: white;
   border-color: var(--gold);
+}
+
+/* Form group con position relative per autocomplete */
+.form-group {
+  position: relative;
+  margin-bottom: 1.5rem;
 }
 
 .autocomplete-results {

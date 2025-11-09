@@ -626,10 +626,15 @@ async function deleteMovement(movementId, workId) {
 }
 
 async function addNewMovement(workId) {
-  const currentMovements = document.querySelectorAll('.movement-item').length;
+  // Trova il numero massimo esistente dai movimenti visibili
+  const movementItems = document.querySelectorAll('.movement-item .movement-number');
+  const existingNumbers = Array.from(movementItems).map(el => parseInt(el.textContent) || 0);
+  const maxNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 0;
+  const nextNumber = maxNumber + 1;
+
   const movementNumber = prompt(
-    `Numero del movimento (hai già ${currentMovements} movimento/i).\nInserisci il numero:`,
-    currentMovements + 1
+    `Numero del movimento (hai già ${existingNumbers.length} movimento/i, max: ${maxNumber}).\nInserisci il numero:`,
+    nextNumber
   );
 
   if (!movementNumber || isNaN(movementNumber) || movementNumber < 1) {
@@ -670,6 +675,138 @@ async function addNewMovement(workId) {
 function showToast(message, type = 'info') {
   if (window.repertoireManager) {
     window.repertoireManager.showToast(message, type);
+  }
+}
+
+// Event delegation per i badge dei concerti
+document.addEventListener('click', (e) => {
+  const badge = e.target.closest('.concert-count-badge');
+  if (badge) {
+    const workId = badge.getAttribute('data-work-id');
+    const workTitle = badge.getAttribute('data-work-title');
+    if (workId && workTitle) {
+      showConcertsList(workId, workTitle);
+    }
+  }
+});
+
+// Mostra lista concerti per un brano
+async function showConcertsList(workId, workTitle) {
+  try {
+    const response = await fetch(`/api/repertoire/works/${workId}/concerts`);
+    const data = await response.json();
+
+    if (!data.success) {
+      showToast('Errore caricamento concerti', 'error');
+      return;
+    }
+
+    const concerts = data.concerts || [];
+
+    if (concerts.length === 0) {
+      showToast('Nessun concerto trovato', 'info');
+      return;
+    }
+
+    // Raggruppa per concert_id
+    const concertsMap = new Map();
+    concerts.forEach(c => {
+      if (!concertsMap.has(c.id)) {
+        concertsMap.set(c.id, {
+          id: c.id,
+          title: c.title,
+          date: c.date,
+          location: c.location,
+          is_future: c.is_future,
+          movements: []
+        });
+      }
+      if (c.movement_title) {
+        concertsMap.get(c.id).movements.push({
+          number: c.movement_number,
+          title: c.movement_title
+        });
+      }
+    });
+
+    const uniqueConcerts = Array.from(concertsMap.values());
+
+    // Crea modal
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'concertsListModal';
+
+    const concertsHTML = uniqueConcerts.map(c => {
+      const dateObj = new Date(c.date);
+      const formattedDate = dateObj.toLocaleDateString('it-IT', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      const badge = c.is_future
+        ? '<span class="stat-badge future"><i class="fas fa-calendar-plus"></i> Futuro</span>'
+        : '<span class="stat-badge past"><i class="fas fa-check-circle"></i> Passato</span>';
+
+      let movementsHTML = '';
+      if (c.movements.length > 0) {
+        movementsHTML = `
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted);">
+            <strong style="color: var(--gold);">Movimenti eseguiti:</strong>
+            <div style="margin-top: 6px;">
+              ${c.movements.map(m => `${m.number}. ${m.title}`).join(' • ')}
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="concert-card" style="padding: 20px; background: var(--bg); border-radius: 12px; border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+            <div>
+              <h4 style="margin: 0 0 8px 0; color: var(--gold);">${c.title}</h4>
+              <div style="color: var(--text-secondary); font-size: 14px;">
+                <i class="fas fa-calendar"></i> ${formattedDate}
+              </div>
+              ${c.location ? `<div style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">
+                <i class="fas fa-map-marker-alt"></i> ${c.location}
+              </div>` : ''}
+            </div>
+            ${badge}
+          </div>
+          ${movementsHTML}
+          <div style="margin-top: 12px;">
+            <a href="/admin/concerts/${c.id}/edit" class="btn btn-sm btn-secondary" style="text-decoration: none;">
+              <i class="fas fa-edit"></i> Modifica concerto
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    modal.innerHTML = `
+      <div class="modal-content modal-large">
+        <div class="modal-header">
+          <h2><i class="fas fa-calendar-alt"></i> Concerti: ${workTitle}</h2>
+          <button onclick="closeModal('concertsListModal')" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="concerts-list" style="display: flex; flex-direction: column; gap: 15px;">
+            ${concertsHTML}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('concertsListModal')">
+            <i class="fas fa-times"></i> Chiudi
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+  } catch (error) {
+    console.error('Errore:', error);
+    showToast('Errore durante il caricamento', 'error');
   }
 }
 

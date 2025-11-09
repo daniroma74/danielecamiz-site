@@ -1,4 +1,4 @@
-#!/bin/bash
+work-start#!/bin/bash
 
 # Script per terminare una sessione di lavoro
 # Crea commit, push e backup finale

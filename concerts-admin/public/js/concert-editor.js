@@ -509,10 +509,19 @@ class ConcertEditor {
       catalogue: work.catalogue,
       soloist_ids: []
     });
-    
+
     this.renderSelectedWorks();
-    this.closeQuickAddModal();
-    this.showToast('Aggiunto!', 'success');
+
+    // Se è un movimento, non chiudere la modal per permettere di aggiungere altri movimenti
+    if (isMovement) {
+      // Reset selezione movimento per aggiungerne altri
+      document.getElementById('movementSelect').selectedIndex = 0;
+      this.showToast('Movimento aggiunto! Puoi aggiungerne altri o chiudere.', 'success');
+    } else {
+      // Se è l'opera intera, chiudi la modal
+      this.closeQuickAddModal();
+      this.showToast('Aggiunto!', 'success');
+    }
   }
   
   removeWork(index) {
@@ -561,61 +570,141 @@ class ConcertEditor {
   renderSelectedWorks() {
     const container = document.getElementById('selectedWorksList');
     if (!container) return;
-    
+
     console.log('🎵 Rendering works:', this.selectedWorks.length);
     console.log('👥 Solisti disponibili:', this.soloists);
-    
+
     if (this.selectedWorks.length === 0) {
       container.innerHTML = '<p class="no-data">Nessun brano</p>';
       return;
     }
-    
-    container.innerHTML = this.selectedWorks.map((w, i) => `
-      <div class="selected-work-item">
-        <div class="work-number">${i + 1}</div>
-        <div class="work-info-detail">
-          <strong>${w.title}</strong>
-          ${w.subtitle ? `<div style="color:var(--text-muted);font-size:13px;margin-top:2px;font-style:italic">${w.subtitle}</div>` : ''}
-          ${w.movement_title ? `<span style="color:var(--gold);font-style:italic;display:block;margin-top:4px">${w.movement_title}</span>` : ''}
-          <span style="color:var(--text-secondary);font-size:13px">${w.composer_name}${w.catalogue ? ' - ' + w.catalogue : ''}</span>
 
-          <!-- ✅ CHECKBOX SOLISTI MULTIPLI -->
-          <div style="margin-top:8px">
-            <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">
-              <i class="fas fa-users"></i> Solisti per questo brano:
-            </label>
-            ${this.soloists.length > 0 ? `
-              <div style="display:flex;flex-direction:column;gap:4px;max-width:300px">
-                ${this.soloists.map((s, idx) => {
-                  const soloistKey = String(s.id || `idx_${idx}`);
-                  const soloistIdsStr = (w.soloist_ids || []).map(id => String(id));
-                  const isChecked = soloistIdsStr.includes(soloistKey);
-                  const isChorus = s.instrument === 'Coro';
-                  const icon = isChorus ? '🎭' : '🎤';
-                  const labelStyle = isChorus ? 'font-weight:600;color:var(--primary,#8b5cf6)' : '';
-                  return `
-                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px;border-radius:4px;transition:background 0.2s"
-                           onmouseover="this.style.background='var(--bg)'"
-                           onmouseout="this.style.background='transparent'">
-                      <input type="checkbox"
-                             ${isChecked ? 'checked' : ''}
-                             onchange="concertEditor.toggleWorkSoloist(${i}, '${soloistKey}')"
-                             style="cursor:pointer">
-                      <span style="font-size:13px;${labelStyle}">${icon} ${s.name || 'Nuovo solista'}${s.instrument && !isChorus ? ` (${s.instrument})` : ''}</span>
-                    </label>
-                  `;
-                }).join('')}
-              </div>
-            ` : '<span style="color:#999;font-size:12px">Nessun solista disponibile</span>'}
+    // Supporta sia card separate che raggruppate
+    // Se work.grouped_movements esiste, mostra gruppo
+    container.innerHTML = this.selectedWorks.map((work, index) => {
+      const isGroup = work.grouped_movements && work.grouped_movements.length > 0;
+
+      let displayTitle, movementsList = '';
+      if (isGroup) {
+        // Card raggruppata
+        displayTitle = work.title;
+        movementsList = `
+          <div style="color:var(--gold);font-style:italic;margin-top:6px;line-height:1.6">
+            ${work.grouped_movements.map(m => m.movement_title).join('<br>')}
+          </div>
+        `;
+      } else {
+        // Card singola
+        displayTitle = work.title;
+        if (work.movement_id) {
+          movementsList = `
+            <div style="color:var(--gold);font-style:italic;margin-top:6px">
+              ${work.movement_title}
+            </div>
+          `;
+        }
+      }
+
+      // Trova movimenti consecutivi dello stesso brano per pulsante raggruppa
+      let canGroup = false;
+      if (work.movement_id && !isGroup && index < this.selectedWorks.length - 1) {
+        const next = this.selectedWorks[index + 1];
+        canGroup = next.id === work.id && next.movement_id && !next.grouped_movements;
+      }
+
+      return `
+        <div class="selected-work-item">
+          <div class="work-number">${index + 1}</div>
+          <div class="work-info-detail">
+            <strong>${displayTitle}</strong>
+            ${movementsList}
+            ${work.subtitle ? `<div style="color:var(--text-muted);font-size:13px;margin-top:2px;font-style:italic">${work.subtitle}</div>` : ''}
+            <span style="color:var(--text-secondary);font-size:13px">${work.composer_name}${work.catalogue ? ' - ' + work.catalogue : ''}</span>
+
+            <!-- CHECKBOX SOLISTI -->
+            <div style="margin-top:8px">
+              <label style="font-size:12px;color:#666;display:block;margin-bottom:4px">
+                <i class="fas fa-users"></i> Solisti per questo brano:
+              </label>
+              ${this.soloists.length > 0 ? `
+                <div style="display:flex;flex-direction:column;gap:4px;max-width:300px">
+                  ${this.soloists.map((s, idx) => {
+                    const soloistKey = String(s.id || `idx_${idx}`);
+                    const soloistIdsStr = (work.soloist_ids || []).map(id => String(id));
+                    const isChecked = soloistIdsStr.includes(soloistKey);
+                    const isChorus = s.instrument === 'Coro';
+                    const icon = isChorus ? '🎭' : '🎤';
+                    const labelStyle = isChorus ? 'font-weight:600;color:var(--primary,#8b5cf6)' : '';
+                    return `
+                      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px;border-radius:4px;transition:background 0.2s"
+                             onmouseover="this.style.background='var(--bg)'"
+                             onmouseout="this.style.background='transparent'">
+                        <input type="checkbox"
+                               ${isChecked ? 'checked' : ''}
+                               onchange="concertEditor.toggleWorkSoloist(${index}, '${soloistKey}')"
+                               style="cursor:pointer">
+                        <span style="font-size:13px;${labelStyle}">${icon} ${s.name || 'Nuovo solista'}${s.instrument && !isChorus ? ` (${s.instrument})` : ''}</span>
+                      </label>
+                    `;
+                  }).join('')}
+                </div>
+              ` : '<span style="color:#999;font-size:12px">Nessun solista disponibile</span>'}
+            </div>
+          </div>
+          <div class="work-controls">
+            ${canGroup ? `<button type="button" class="btn-group" onclick="concertEditor.groupWithNext(${index})" title="Raggruppa col successivo">⊕</button>` : ''}
+            ${isGroup ? `<button type="button" class="btn-ungroup" onclick="concertEditor.ungroupMovements(${index})" title="Separa movimenti">⊖</button>` : ''}
+            <button type="button" class="btn-move" onclick="concertEditor.moveWork(${index},-1)" ${index===0?'disabled':''} title="Sposta su">↑</button>
+            <button type="button" class="btn-move" onclick="concertEditor.moveWork(${index},1)" ${index===this.selectedWorks.length-1?'disabled':''} title="Sposta giù">↓</button>
+            <button type="button" class="btn-remove" onclick="concertEditor.removeWork(${index})" title="Rimuovi">×</button>
           </div>
         </div>
-        <div class="work-controls">
-          <button type="button" class="btn-move" onclick="concertEditor.moveWork(${i},-1)" ${i===0?'disabled':''}>↑</button>
-          <button type="button" class="btn-move" onclick="concertEditor.moveWork(${i},1)" ${i===this.selectedWorks.length-1?'disabled':''}>↓</button>
-          <button type="button" class="btn-remove" onclick="concertEditor.removeWork(${i})">×</button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+  }
+
+  groupWithNext(index) {
+    const current = this.selectedWorks[index];
+    const next = this.selectedWorks[index + 1];
+
+    if (!current || !next || current.id !== next.id) return;
+
+    // Crea gruppo o aggiungi al gruppo esistente
+    if (!current.grouped_movements) {
+      current.grouped_movements = [
+        { movement_id: current.movement_id, movement_title: current.movement_title },
+        { movement_id: next.movement_id, movement_title: next.movement_title }
+      ];
+      // Rimuovi movement_id dalla card principale
+      delete current.movement_id;
+      delete current.movement_title;
+    } else {
+      current.grouped_movements.push({
+        movement_id: next.movement_id,
+        movement_title: next.movement_title
+      });
+    }
+
+    // Rimuovi il successivo
+    this.selectedWorks.splice(index + 1, 1);
+    this.renderSelectedWorks();
+  }
+
+  ungroupMovements(index) {
+    const group = this.selectedWorks[index];
+    if (!group.grouped_movements) return;
+
+    // Espandi il gruppo in card separate
+    const expanded = group.grouped_movements.map(m => ({
+      ...group,
+      movement_id: m.movement_id,
+      movement_title: m.movement_title,
+      grouped_movements: null
+    }));
+
+    // Sostituisci il gruppo con le card separate
+    this.selectedWorks.splice(index, 1, ...expanded);
+    this.renderSelectedWorks();
   }
   
  async saveConcert(e) {
@@ -669,6 +758,7 @@ class ConcertEditor {
       return {
         work_id: w.id,
         movement_id: w.movement_id,
+        grouped_movements: w.grouped_movements || null,
         soloist_indices: indices
       };
     }))
