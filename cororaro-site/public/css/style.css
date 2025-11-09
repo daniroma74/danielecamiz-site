@@ -107,6 +107,10 @@ body {
   line-height: 1.7;
   color: var(--text-primary);
   background-color: var(--avorio);
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(210, 105, 30, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(218, 165, 32, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(107, 142, 35, 0.03) 0%, transparent 50%);
   overflow-x: hidden;
 }
 
@@ -190,10 +194,14 @@ ul, ol {
   left: 0;
   right: 0;
   height: var(--navbar-height);
-  background: var(--avorio);
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--terra-scura) 0%, var(--marrone-caldo) 100%);
+  background-image:
+    linear-gradient(135deg, var(--terra-scura) 0%, var(--marrone-caldo) 100%),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.02) 10px, rgba(255, 255, 255, 0.02) 20px);
+  box-shadow: var(--shadow-lg);
   z-index: 1000;
   transition: all var(--transition-base);
+  border-bottom: 3px solid var(--oro-antico);
 }
 
 .navbar-content {
@@ -210,8 +218,9 @@ ul, ol {
 }
 
 .navbar-logo {
-  height: 50px;
+  height: 65px;
   width: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .navbar-title {
@@ -231,7 +240,7 @@ ul, ol {
   font-family: var(--font-body);
   font-size: var(--fs-base);
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--avorio);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-md);
   transition: all var(--transition-base);
@@ -240,7 +249,7 @@ ul, ol {
 
 .nav-link:hover,
 .nav-link.active {
-  color: var(--terracotta);
+  color: var(--oro-light);
 }
 
 .nav-link::after {
@@ -251,7 +260,7 @@ ul, ol {
   transform: translateX(-50%) scaleX(0);
   width: 80%;
   height: 3px;
-  background: var(--terracotta);
+  background: var(--oro-light);
   transition: transform var(--transition-base);
   border-radius: var(--radius-full);
 }
@@ -262,14 +271,19 @@ ul, ol {
 }
 
 .nav-link-special {
-  background: var(--verde-oliva);
-  color: var(--text-light) !important;
-  padding: var(--spacing-xs) var(--spacing-md);
+  background: linear-gradient(135deg, var(--terracotta-light) 0%, var(--oro-antico) 100%);
+  color: var(--text-primary) !important;
+  font-weight: 700;
+  padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--radius-full);
+  box-shadow: 0 4px 12px rgba(218, 165, 32, 0.4);
+  transform: translateY(0);
 }
 
 .nav-link-special:hover {
-  background: var(--verde-oliva-dark);
+  background: linear-gradient(135deg, var(--oro-antico) 0%, var(--terracotta-light) 100%);
+  box-shadow: 0 6px 16px rgba(218, 165, 32, 0.6);
+  transform: translateY(-2px);
 }
 
 .nav-link-special::after {
@@ -286,7 +300,7 @@ ul, ol {
 .navbar-toggle span {
   width: 28px;
   height: 3px;
-  background: var(--terracotta);
+  background: var(--oro-light);
   transition: all var(--transition-base);
   border-radius: var(--radius-full);
 }
@@ -461,26 +475,31 @@ ul, ol {
 }
 
 .btn-primary {
-  background: var(--terracotta);
+  background: linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-dark) 100%);
   color: var(--text-light);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 15px rgba(210, 105, 30, 0.4);
 }
 
 .btn-primary:hover {
-  background: var(--terracotta-dark);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-3px);
+  background: linear-gradient(135deg, var(--terracotta-dark) 0%, var(--marrone-caldo) 100%);
+  box-shadow: 0 6px 20px rgba(210, 105, 30, 0.6);
+  transform: translateY(-4px) scale(1.02);
 }
 
 .btn-outline {
-  background: transparent;
+  background: rgba(255, 250, 240, 0.1);
   color: var(--text-light);
-  border-color: var(--text-light);
+  border-color: var(--oro-light);
+  border-width: 2px;
+  box-shadow: 0 2px 8px rgba(218, 165, 32, 0.2);
 }
 
 .btn-outline:hover {
-  background: var(--text-light);
-  color: var(--terracotta);
+  background: linear-gradient(135deg, var(--oro-antico) 0%, var(--oro-light) 100%);
+  color: var(--text-primary);
+  border-color: var(--oro-light);
+  box-shadow: 0 4px 15px rgba(218, 165, 32, 0.5);
+  transform: translateY(-4px) scale(1.02);
 }
 
 .btn-small {
@@ -626,16 +645,21 @@ ul, ol {
 }
 
 .value-card {
-  background: var(--avorio);
+  background: linear-gradient(135deg, var(--avorio) 0%, rgba(255, 250, 240, 0.8) 100%);
   padding: var(--spacing-xl);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-base);
+  border: 2px solid transparent;
+  border-bottom: 4px solid var(--oro-antico);
+  transition: all var(--transition-base);
 }
 
 .value-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--oro-light);
+  border-bottom-color: var(--terracotta);
+  border-bottom-width: 6px;
 }
 
 .value-icon {
@@ -660,7 +684,21 @@ ul, ol {
    ============================================ */
 
 .repertoire-section {
-  background: var(--avorio);
+  background: linear-gradient(180deg, var(--beige) 0%, var(--avorio) 100%);
+  position: relative;
+}
+
+.repertoire-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(107, 142, 35, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(210, 105, 30, 0.05) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .repertoire-map {
@@ -684,18 +722,22 @@ ul, ol {
 }
 
 .region-card {
-  background: var(--beige);
+  background: linear-gradient(135deg, var(--avorio) 0%, var(--beige) 100%);
   padding: var(--spacing-xl);
   border-radius: var(--radius-xl);
   text-align: center;
   box-shadow: var(--shadow-md);
-  border-top: 4px solid var(--terracotta);
-  transition: transform var(--transition-base);
+  border-top: 5px solid var(--terracotta);
+  border-left: 1px solid var(--oro-antico);
+  border-right: 1px solid var(--oro-antico);
+  border-bottom: 1px solid var(--oro-antico);
+  transition: all var(--transition-base);
 }
 
 .region-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+  border-top-width: 7px;
 }
 
 .region-flag {
