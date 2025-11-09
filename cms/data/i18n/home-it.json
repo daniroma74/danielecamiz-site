@@ -19,26 +19,27 @@
       "img": "/img/projects/MSC_facebook_photo_profile.png",
       "imgAlt": "MSC logo",
       "title": "Mozart Symphonies Challenge",
-      "desc": "L’integrale delle sinfonie di Mozart, 2019–2026.",
-      "links": [
-        {
-          "text": "Playlist YouTube",
-          "url": "https://youtube.com/playlist?list=PL9ZlyjQawCLHEihz26TP7lhdDbNw-dSW7&si=pXWWcgAuDq7tZI1b"
-        },
-        {
-          "text": "Pagina Facebook",
-          "url": "https://www.facebook.com/mozartsymphonieschallenge/"
-        }
-      ]
+      "desc": "L'integrale delle sinfonie di Mozart, 2019–2026.",
+      "btnText": "Pagina Facebook",
+      "btnUrl": "https://www.facebook.com/mozartsymphonieschallenge/"
     },
     {
       "id": "orchestra",
       "img": "/img/projects/ICNTO_facebook_photo_profile.png",
       "imgAlt": "ICNT Orchestra logo",
       "title": "ICNT Orchestra",
-      "desc": "L’orchestra residente de I Concerti Nel Tempio.",
-      "btnText": "Visita la pagina Facebook",
-      "btnUrl": "https://www.facebook.com/icntorchestra/"
+      "desc": "L'orchestra residente de I Concerti Nel Tempio.",
+      "btnText": "Visita il sito",
+      "btnUrl": "https://orchestraicnt.danielecamiz.com"
+    },
+    {
+      "id": "cororaro",
+      "img": "/img/projects/cororaro_logo.png",
+      "imgAlt": "Coro Raro logo",
+      "title": "Coro Raro",
+      "desc": "Ensemble vocale specializzato in musica corale rara e contemporanea.",
+      "btnText": "Visita il sito",
+      "btnUrl": "https://cororaro.it"
     }
   ]
 }

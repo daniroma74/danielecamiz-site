@@ -42,36 +42,26 @@
   gap: 1.2rem;
   padding: 1rem;
 
-  /* Glassmorphism background */
-  background: linear-gradient(
-    135deg,
-    rgba(20, 20, 20, 0.95) 0%,
-    rgba(30, 30, 30, 0.92) 100%
-  );
+  /* Glassmorphism background - usa variables */
+  background: var(--card-bg-glass);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 
   /* Modern border with gold accent */
-  border: 1px solid rgba(212, 175, 55, 0.12);
+  border: var(--card-border);
   border-radius: 14px;
 
   /* Enhanced shadows */
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.35),
-    0 2px 8px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--card-shadow);
 
-  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.35s var(--ease-smooth);
   cursor: pointer;
 }
 
 .home-news .news-card__body:hover {
   transform: translateY(-4px);
-  border-color: rgba(212, 175, 55, 0.25);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.45),
-    0 4px 16px rgba(212, 175, 55, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .home-news .news-card__media {

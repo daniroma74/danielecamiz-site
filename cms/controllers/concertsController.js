@@ -217,7 +217,7 @@ async function fetchPersonnelAndExtras(ids) {
   try {
     const rows = await new Promise((resolve, reject) => {
       db.all(
-        `SELECT concert_id, orchestra, conductor, soloists
+        `SELECT concert_id, orchestra_name, conductor_name, soloists_list
          FROM view_concert_personnel_agg
          WHERE concert_id IN (${placeholders(ids.length)})`,
         ids,
@@ -226,9 +226,9 @@ async function fetchPersonnelAndExtras(ids) {
     });
     for (const r of rows) {
       result.personnel.set(r.concert_id, {
-        orchestra: r.orchestra || '',
-        conductor: r.conductor || '',
-        soloists: r.soloists || ''
+        orchestra: r.orchestra_name || '',
+        conductor: r.conductor_name || '',
+        soloists: r.soloists_list || ''
       });
     }
   } catch (e) {
@@ -277,10 +277,17 @@ async function fetchPrograms(ids) {
       const cid = r.concert_id;
       const comp = firstText(r.composer_full_name, r.composer_name, r.composer);
       const work = firstText(r.work_title, r.title, r.work);
+      const subtitle = firstText(r.work_subtitle, r.subtitle);
       const cat  = firstText(r.work_catalogue, r.work_catalog, r.catalog, r.catno);
       const pos  = Number(r.position || r.pos || r.order || 0) || 0;
 
-      const line = joinNonEmpty([comp, work + (cat ? ` (${cat})` : '')], ' — ');
+      // Costruisce: Compositore — Titolo Cat Sottotitolo (senza parentesi)
+      let workParts = [work];
+      if (cat) workParts.push(cat);
+      if (subtitle) workParts.push(subtitle);
+      const workStr = workParts.join(' ');
+
+      const line = joinNonEmpty([comp, workStr], ' — ');
       if (!byId.has(cid)) byId.set(cid, []);
       byId.get(cid).push({ pos, line });
     }

@@ -24,6 +24,36 @@ class RepertoireManager {
     if (composerForm) {
       composerForm.addEventListener('submit', (e) => this.saveComposer(e));
     }
+
+    // Event delegation per i badge dei concerti - usa capture phase per intercettare prima
+    document.addEventListener('click', (e) => {
+      // Verifica se il click è su un badge o dentro un badge
+      let badge = null;
+
+      // Prima prova a vedere se è il badge stesso
+      if (e.target.classList.contains('concert-count-badge')) {
+        badge = e.target;
+      } else {
+        // Altrimenti cerca il parent più vicino
+        badge = e.target.closest('.concert-count-badge');
+      }
+
+      if (badge) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const workId = badge.getAttribute('data-work-id');
+        const workTitle = badge.getAttribute('data-work-title');
+
+        console.log('Click su badge:', { workId, workTitle, badge });
+
+        if (workId && workTitle) {
+          showConcertsList(workId, workTitle);
+        } else {
+          console.error('Attributi data mancanti:', { workId, workTitle });
+        }
+      }
+    }, true); // true = usa capture phase
   }
   
   async loadData() {
@@ -678,18 +708,6 @@ function showToast(message, type = 'info') {
   }
 }
 
-// Event delegation per i badge dei concerti
-document.addEventListener('click', (e) => {
-  const badge = e.target.closest('.concert-count-badge');
-  if (badge) {
-    const workId = badge.getAttribute('data-work-id');
-    const workTitle = badge.getAttribute('data-work-title');
-    if (workId && workTitle) {
-      showConcertsList(workId, workTitle);
-    }
-  }
-});
-
 // Mostra lista concerti per un brano
 async function showConcertsList(workId, workTitle) {
   try {
@@ -813,4 +831,46 @@ async function showConcertsList(workId, workTitle) {
 // Inizializza
 document.addEventListener('DOMContentLoaded', () => {
   window.repertoireManager = new RepertoireManager();
+
+  // LISTENER GLOBALE per i badge dei concerti (backup se quello della classe non funziona)
+  console.log('[REPERTOIRE] Attivando listener globale per badge concerti');
+
+  document.body.addEventListener('click', function(event) {
+    console.log('[REPERTOIRE] Click rilevato su:', event.target);
+
+    // Cerca il badge partendo dall'elemento cliccato
+    let element = event.target;
+    let badge = null;
+    let depth = 0;
+    const maxDepth = 5;
+
+    // Risali l'albero DOM cercando .concert-count-badge
+    while (element && depth < maxDepth) {
+      console.log(`[REPERTOIRE] Checking element (depth ${depth}):`, element.className);
+
+      if (element.classList && element.classList.contains('concert-count-badge')) {
+        badge = element;
+        break;
+      }
+      element = element.parentElement;
+      depth++;
+    }
+
+    if (badge) {
+      console.log('[REPERTOIRE] Badge trovato!', badge);
+      event.preventDefault();
+      event.stopPropagation();
+
+      const workId = badge.getAttribute('data-work-id');
+      const workTitle = badge.getAttribute('data-work-title');
+
+      console.log('[REPERTOIRE] WorkId:', workId, 'WorkTitle:', workTitle);
+
+      if (workId && workTitle) {
+        showConcertsList(workId, workTitle);
+      } else {
+        console.error('[REPERTOIRE] Attributi data mancanti!');
+      }
+    }
+  }, false);
 });

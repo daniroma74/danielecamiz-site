@@ -27,6 +27,7 @@
 /* Hero */
 
 .news-hero { margin-bottom: 1rem; }
+/* Gradient text uniformato - ora usa .page-title-gradient da base.css */
 .news-hero__title {
   font-size: 4rem;
   font-weight: 800;

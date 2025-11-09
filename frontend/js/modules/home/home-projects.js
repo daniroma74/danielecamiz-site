@@ -1,44 +1,50 @@
-export async function loadProjects() {
-  const projectTitleEl = document.getElementById('projects_title');
-  if (projectTitleEl) projectTitleEl.textContent = window.labels[window.lang]?.home?.projects_title || 'My Projects';
+// Aggiungi click handlers alle card progetti già renderizzate SSR
+export function initHomeProjects() {
+  const projectBoxes = document.querySelectorAll('.project_box');
 
-  const projectGrid = document.getElementById('projects_grid');
-  if (!projectGrid) {
-    console.warn('projects_grid element not found');
+  if (!projectBoxes.length) {
+    console.warn('[home-projects] No project boxes found');
     return;
   }
 
-  try {
-    const lang = window.lang || 'it';
-    const res = await fetch(`/data/home-${lang}.json`);
-    if (!res.ok) throw new Error(`Error loading home-${lang}.json`);
+  console.log(`[home-projects] Initializing ${projectBoxes.length} project cards`);
 
-    const data = await res.json();
+  projectBoxes.forEach(box => {
+    // Cerca il primo link nella card per determinare l'URL
+    const linkElement = box.querySelector('.project_links a');
 
-    projectGrid.innerHTML = '';
-    (data.projects || []).forEach(p => {
-      const box = document.createElement('div');
-      box.className = 'project_box';
-      box.id = p.id;
+    if (!linkElement) {
+      console.warn('[home-projects] No link found for project:', box.id);
+      return;
+    }
 
-      let linksHtml = '';
-      if (p.links) {
-        linksHtml = p.links.map(link => `<a class="btn" href="${link.url}" target="_blank" rel="noopener">${link.text}</a>`).join('');
-      } else if (p.btnUrl && p.btnText) {
-        linksHtml = `<a class="btn" href="${p.btnUrl}" target="_blank" rel="noopener">${p.btnText}</a>`;
-      }
+    const mainUrl = linkElement.href;
 
-      box.innerHTML = `
-        <div class="project_img">
-          <img src="${p.img}" alt="${p.imgAlt}" loading="lazy" />
-        </div>
-        <h3>${p.title}</h3>
-        <div class="project_desc">${p.desc}</div>
-        ${linksHtml}
-      `;
-      projectGrid.appendChild(box);
+    // Aggiungi attributi per accessibilità
+    box.setAttribute('tabindex', '0');
+    box.setAttribute('role', 'button');
+    box.setAttribute('aria-label', box.querySelector('h3')?.textContent || 'Project');
+    box.setAttribute('data-url', mainUrl);
+
+    console.log(`[home-projects] Adding handlers to ${box.id} -> ${mainUrl}`);
+
+    // Aggiungi click handler
+    box.addEventListener('click', (e) => {
+      // Non propagare se hanno cliccato sul link stesso
+      if (e.target.tagName === 'A') return;
+
+      e.preventDefault();
+      console.log(`[home-projects] Opening: ${mainUrl}`);
+      window.open(mainUrl, '_blank', 'noopener,noreferrer');
     });
-  } catch (error) {
-    console.error('Error loading projects:', error);
-  }
+
+    // Supporto tastiera
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        console.log(`[home-projects] Opening (keyboard): ${mainUrl}`);
+        window.open(mainUrl, '_blank', 'noopener,noreferrer');
+      }
+    });
+  });
 }

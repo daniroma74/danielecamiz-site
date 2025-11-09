@@ -20,16 +20,8 @@
       "imgAlt": "MSC logo",
       "title": "Mozart Symphonies Challenge",
       "desc": "The complete Mozart symphonies, 2019–2026.",
-      "links": [
-        {
-          "text": "YouTube Playlist",
-          "url": "https://youtube.com/playlist?list=PL9ZlyjQawCLHEihz26TP7lhdDbNw-dSW7&si=pXWWcgAuDq7tZI1b"
-        },
-        {
-          "text": "Facebook Page",
-          "url": "https://www.facebook.com/mozartsymphonieschallenge/"
-        }
-      ]
+      "btnText": "Facebook Page",
+      "btnUrl": "https://www.facebook.com/mozartsymphonieschallenge/"
     },
     {
       "id": "orchestra",
@@ -37,8 +29,17 @@
       "imgAlt": "ICNT Orchestra logo",
       "title": "ICNT Orchestra",
       "desc": "Resident orchestra of I Concerti Nel Tempio.",
-      "btnText": "Visit the Facebook page",
-      "btnUrl": "https://www.facebook.com/icntorchestra/"
+      "btnText": "Visit the website",
+      "btnUrl": "https://orchestraicnt.danielecamiz.com"
+    },
+    {
+      "id": "cororaro",
+      "img": "/img/projects/cororaro_logo.png",
+      "imgAlt": "Coro Raro logo",
+      "title": "Coro Raro",
+      "desc": "Vocal ensemble specialized in rare and contemporary choral music.",
+      "btnText": "Visit the website",
+      "btnUrl": "https://cororaro.it"
     }
   ]
 }

@@ -5,6 +5,7 @@
   }
 
   /* Intestazione */
+  /* Gradient text uniformato - ora usa .page-title-gradient da base.css */
   #press h2,
   #press_title {
     text-align: center;

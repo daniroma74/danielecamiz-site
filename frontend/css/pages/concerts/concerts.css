@@ -19,6 +19,7 @@
   backdrop-filter: blur(12px);
 }
 
+/* Gradient text uniformato - ora usa .page-title-gradient da base.css */
 .page-title {
   font-size: 4rem;
   font-weight: 800;

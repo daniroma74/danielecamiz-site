@@ -8,6 +8,21 @@
 
   --font-content: 'Cormorant Garamond', serif;
   --font-ui: 'Montserrat', sans-serif;
+
+  /* Colori testo uniformati */
+  --text-primary: #fffbe9;
+  --text-secondary: rgba(244, 238, 212, 0.85);
+  --text-meta: rgba(212, 175, 55, 0.8);
+
+  /* Glassmorphism cards */
+  --card-bg-glass: linear-gradient(135deg, rgba(25, 25, 25, 0.95) 0%, rgba(35, 35, 35, 0.92) 100%);
+  --card-border: 1px solid rgba(212, 175, 55, 0.2);
+  --card-border-hover: 1px solid rgba(212, 175, 55, 0.45);
+  --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --card-shadow-hover: 0 8px 32px rgba(212, 175, 55, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* Animation timing */
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* ====== RESET BASE ====== */
@@ -78,5 +93,65 @@ section {
   margin-bottom: 3vw;
   letter-spacing: 0.03em;
   text-align: center;
-  text-shadow: 0 2px 16px #000, 0 0px 1px #f7cc3c80;
+  text-shadow: 0 2px 16px #000, 0 0px 1px rgba(247, 204, 60, 0.5);
+}
+
+/* ====== PAGE HERO TITLE (gradient uniformato per tutte le pagine) ====== */
+.page-title-gradient {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.8rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  text-align: center;
+}
+
+/* ====== CARD HOVER EFFECT UNIFORMATO ====== */
+.card-hover-lift {
+  transition: all 0.4s var(--ease-smooth);
+  cursor: pointer;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Variant con scale aggiuntivo */
+.card-hover-lift-scale {
+  transition: all 0.4s var(--ease-smooth);
+  cursor: pointer;
+}
+
+.card-hover-lift-scale:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* ====== GLASSMORPHISM CARD BASE ====== */
+.card-glass {
+  background: var(--card-bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+}
+
+/* ====== REDUCED MOTION SUPPORT ====== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

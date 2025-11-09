@@ -22,7 +22,7 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
 
   <div class="projects_grid" id="projects_grid">
     <%
-      const _projects = Array.isArray(homeData?.projects) ? homeData.projects.slice(0,3) : [];
+      const _projects = Array.isArray(homeData?.projects) ? homeData.projects : [];
       if (_projects.length) {
         _projects.forEach(p => {
     %>

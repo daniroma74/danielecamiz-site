@@ -1,6 +1,7 @@
 // concerts-admin/controllers/concertsController.js
 import { dbPromise } from '../config/database.js';
 import cloudinaryService from '../services/cloudinaryService.js';
+import { groupSoloistsByInstrument } from '../../shared/utils/performersGrouping.js';
 
 class ConcertsController {
   
@@ -120,80 +121,8 @@ class ConcertsController {
       const choruses = processedPerformers.filter(p => p.role === 'chorus');
       const orchestras = processedPerformers.filter(p => p.role === 'orchestra');
 
-      // Funzione per normalizzare gli strumenti
-      const normalizeInstrument = (instrument) => {
-        if (!instrument) return 'Altro';
-
-        const normalized = instrument.trim().toLowerCase();
-
-        // Escludi "Coro" dai solisti - deve stare solo in ensemble
-        if (normalized === 'coro') {
-          return null;
-        }
-
-        // Raggruppa tutti i cantanti
-        if (['soprano', 'mezzosoprano', 'contralto', 'tenore', 'baritono', 'basso'].includes(normalized)) {
-          return 'Voce';
-        }
-
-        // Normalizza strumenti comuni
-        const instrumentMap = {
-          'pianoforte': 'Pianoforte',
-          'piano': 'Pianoforte',
-          'violino': 'Violino',
-          'violoncello': 'Violoncello',
-          'cello': 'Violoncello',
-          'viola': 'Viola',
-          'contrabbasso': 'Contrabbasso',
-          'flauto': 'Flauto',
-          'oboe': 'Oboe',
-          'clarinetto': 'Clarinetto',
-          'fagotto': 'Fagotto',
-          'corno': 'Corno',
-          'tromba': 'Tromba',
-          'trombone': 'Trombone',
-          'arpa': 'Arpa',
-          'organo': 'Organo',
-          'sassofono': 'Sassofono',
-          'chitarra': 'Chitarra',
-          'percussioni': 'Percussioni'
-        };
-
-        return instrumentMap[normalized] || instrument.trim();
-      };
-
-      // Raggruppa solisti per strumento normalizzato
-      const soloistsByInstrument = {};
-      soloists.forEach(soloist => {
-        const instrument = normalizeInstrument(soloist.instrument);
-        // Salta se è null (es. Coro)
-        if (!instrument) return;
-
-        if (!soloistsByInstrument[instrument]) {
-          soloistsByInstrument[instrument] = [];
-        }
-        // Mantieni lo strumento originale per visualizzazione
-        soloistsByInstrument[instrument].push({
-          ...soloist,
-          displayInstrument: soloist.instrument ? soloist.instrument.trim() : null
-        });
-      });
-
-      // Ordine personalizzato: Voce prima, poi strumenti alfabetici
-      const instrumentOrder = ['Voce'];
-      const instrumentGroups = Object.keys(soloistsByInstrument)
-        .sort((a, b) => {
-          const aIndex = instrumentOrder.indexOf(a);
-          const bIndex = instrumentOrder.indexOf(b);
-          if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
-          if (aIndex !== -1) return -1;
-          if (bIndex !== -1) return 1;
-          return a.localeCompare(b);
-        })
-        .map(instrument => ({
-          instrument,
-          soloists: soloistsByInstrument[instrument].sort((a, b) => a.name.localeCompare(b.name))
-        }));
+      // Usa la funzione condivisa per raggruppare i solisti
+      const instrumentGroups = groupSoloistsByInstrument(soloists);
 
       const stats = {
         total_soloists: soloists.length,

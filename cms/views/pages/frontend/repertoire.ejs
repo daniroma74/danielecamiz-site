@@ -54,39 +54,35 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
         </p>
 
         <div class="rep-collab-grid">
-          <!-- Soloists -->
-          <% if (hasSoloists) { %>
+          <!-- Soloists - raggruppati per strumento -->
+          <% if (hasSoloists && collaborators.soloistGroups && collaborators.soloistGroups.length > 0) { %>
             <div class="rep-collab-category">
               <h3 class="rep-collab-cat-title">
                 <i class="fas fa-microphone"></i>
                 <%= txtSoloists %> <span class="rep-collab-count">(<%= collaborators.soloists.length %>)</span>
               </h3>
-              <div class="rep-collab-list" id="soloistsList">
-                <% collaborators.soloists.slice(0, 8).forEach(soloist => { %>
-                  <div class="rep-collab-item">
-                    <div class="rep-collab-name"><%= soloist.name %></div>
-                    <% if (soloist.instrument) { %>
-                      <div class="rep-collab-instrument"><%= soloist.instrument %></div>
-                    <% } %>
-                    <div class="rep-collab-badge"><%= soloist.concert_count %></div>
+
+              <% collaborators.soloistGroups.forEach((group, groupIdx) => { %>
+                <div style="margin-bottom: 20px;">
+                  <h4 style="color: #d4af37; font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid #d4af37; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 10px;"
+                      onclick="toggleSoloistGroup('soloist-group-<%= groupIdx %>')">
+                    <i class="fas fa-chevron-down" id="icon-soloist-group-<%= groupIdx %>" style="font-size: 12px; transition: transform 0.3s; transform: rotate(-90deg);"></i>
+                    <span><%= group.instrument %> <span style="color: #9ca3af; font-size: 14px; font-weight: 400;">(<%= group.soloists.length %>)</span></span>
+                  </h4>
+
+                  <div id="soloist-group-<%= groupIdx %>" class="rep-collab-list" style="display: none;">
+                    <% group.soloists.forEach(soloist => { %>
+                      <div class="rep-collab-item">
+                        <div class="rep-collab-name"><%= soloist.name %></div>
+                        <% if (group.instrument === 'Voce' && soloist.displayInstrument) { %>
+                          <div class="rep-collab-instrument"><%= soloist.displayInstrument %></div>
+                        <% } %>
+                        <div class="rep-collab-badge"><%= soloist.concert_count %></div>
+                      </div>
+                    <% }) %>
                   </div>
-                <% }) %>
-                <% collaborators.soloists.slice(8).forEach(soloist => { %>
-                  <div class="rep-collab-item rep-collab-hidden">
-                    <div class="rep-collab-name"><%= soloist.name %></div>
-                    <% if (soloist.instrument) { %>
-                      <div class="rep-collab-instrument"><%= soloist.instrument %></div>
-                    <% } %>
-                    <div class="rep-collab-badge"><%= soloist.concert_count %></div>
-                  </div>
-                <% }) %>
-              </div>
-              <% if (collaborators.soloists.length > 8) { %>
-                <button class="rep-collab-toggle" data-target="soloistsList">
-                  <span class="rep-toggle-more"><%= lang === 'en' ? 'Show all' : 'Mostra tutti' %> (<%= collaborators.soloists.length - 8 %> <%= lang === 'en' ? 'more' : 'in più' %>)</span>
-                  <span class="rep-toggle-less" style="display: none;"><%= lang === 'en' ? 'Show less' : 'Mostra meno' %></span>
-                </button>
-              <% } %>
+                </div>
+              <% }) %>
             </div>
           <% } %>
 
@@ -304,6 +300,20 @@ document.querySelectorAll('.rep-composer-toggle').forEach(btn => {
     }
   });
 });
+
+// Soloist groups toggle (per strumento)
+function toggleSoloistGroup(groupId) {
+  const group = document.getElementById(groupId);
+  const icon = document.getElementById('icon-' + groupId);
+
+  if (group.style.display === 'none') {
+    group.style.display = 'grid';
+    icon.style.transform = 'rotate(0deg)';
+  } else {
+    group.style.display = 'none';
+    icon.style.transform = 'rotate(-90deg)';
+  }
+}
 
 // Collaborators toggle
 document.querySelectorAll('.rep-collab-toggle').forEach(btn => {

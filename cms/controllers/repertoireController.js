@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { initDatabase } from '../utils/utils.js';
+import { groupSoloistsByInstrument } from '../../shared/utils/performersGrouping.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -151,6 +152,9 @@ export async function getRepertoirePage(req, res) {
         ORDER BY concert_count DESC, cp.name
       `);
 
+      // Raggruppa i solisti per strumento usando la funzione condivisa
+      const soloistGroups = groupSoloistsByInstrument(soloists);
+
       // Orchestras
       const orchestras = await qAll(db, `
         SELECT cp.name, cp.role, COUNT(*) as concert_count
@@ -169,7 +173,7 @@ export async function getRepertoirePage(req, res) {
         ORDER BY concert_count DESC, cp.name
       `);
 
-      collaborators = { soloists, choruses, orchestras };
+      collaborators = { soloists, soloistGroups, choruses, orchestras };
     } catch (collabErr) {
       console.error('[Repertoire] collaborators query failed:', collabErr);
     }

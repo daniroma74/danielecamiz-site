@@ -186,18 +186,15 @@
                       <!-- Metà inferiore: programma + dettagli a tutta larghezza -->
                       <div class="concert-bottom-section">
                         <% if (c.program || c.orchestra || c.conductor || c.soloists || c.notes) { %>
-                          <details class="concert-details">
-                            <summary class="details-summary" data-more="<%= txtMore %>" data-less="<%= txtLess %>"><%= txtMore %></summary>
-                            <div class="concert-extra">
-                              <% if (c.program) { %><div class="concert-program"><pre><%= c.program %></pre></div><% } %>
-                              <ul class="concert-facts">
-                                <% if (c.orchestra) { %><li><strong><%= _t('concerts.orchestra','Orchestra') %>:</strong> <%= c.orchestra %></li><% } %>
-                                <% if (c.conductor) { %><li><strong><%= _t('concerts.conductor','Direttore') %>:</strong> <%= c.conductor %></li><% } %>
-                                <% if (c.soloists)  { %><li><strong><%= _t('concerts.soloist','Solista') %>:</strong> <%= c.soloists %></li><% } %>
-                                <% if (c.notes)     { %><li><strong>Note:</strong> <%= c.notes %></li><% } %>
-                              </ul>
-                            </div>
-                          </details>
+                          <div class="concert-extra">
+                            <% if (c.program) { %><div class="concert-program"><pre><%= c.program %></pre></div><% } %>
+                            <ul class="concert-facts">
+                              <% if (c.orchestra) { %><li><strong><%= _t('concerts.orchestra','Orchestra') %>:</strong> <%= c.orchestra %></li><% } %>
+                              <% if (c.conductor) { %><li><strong><%= _t('concerts.conductor','Direttore') %>:</strong> <%= c.conductor %></li><% } %>
+                              <% if (c.soloists) { %><li><strong><%= _t('concerts.soloist','Solista') %>:</strong> <%= c.soloists %></li><% } %>
+                              <% if (c.notes)     { %><li><strong>Note:</strong> <%= c.notes %></li><% } %>
+                            </ul>
+                          </div>
                         <% } %>
 
                         <% if (c.youtube) { %>

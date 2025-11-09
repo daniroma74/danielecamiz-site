@@ -43,6 +43,7 @@
   margin: 0 auto;
 }
 
+/* Gradient text uniformato - ora usa .page-title-gradient da base.css */
 .hero-bio .hero-title {
   font-size: 4rem;
   font-weight: 800;
