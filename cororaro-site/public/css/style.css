@@ -344,6 +344,18 @@ ul, ol {
   margin: 0 auto;
 }
 
+.hero-logo-wrapper {
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.hero-logo {
+  max-width: 90%;
+  width: 600px;
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
 .hero-title {
   margin-bottom: var(--spacing-lg);
 }
