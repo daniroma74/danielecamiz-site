@@ -1,0 +1,29 @@
+{
+  "name": "cororaro-site",
+  "version": "1.0.0",
+  "description": "Sito web ufficiale Coro Raro - Voci dal Mondo per un Mondo Migliore",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js",
+    "prod": "NODE_ENV=production node server.js"
+  },
+  "keywords": [
+    "coro",
+    "raro",
+    "musica",
+    "solidarietà",
+    "Roma",
+    "Prati Fiscali",
+    "etnica",
+    "folklorica"
+  ],
+  "author": "Daniele Camiz",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

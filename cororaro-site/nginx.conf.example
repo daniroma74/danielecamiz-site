@@ -1,0 +1,166 @@
+# ================================
+# Coro Raro - Nginx Configuration
+# cororaro.it
+# ================================
+
+# ---- HTTP (80) ----
+server {
+  listen 80;
+  listen [::]:80;
+  server_name cororaro.it www.cororaro.it;
+
+  # Redirect to HTTPS
+  return 301 https://cororaro.it$request_uri;
+}
+
+# ---- HTTPS (443) - www redirect ----
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  server_name www.cororaro.it;
+
+  # SSL
+  ssl_certificate /etc/letsencrypt/live/cororaro.it/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/cororaro.it/privkey.pem;
+
+  # Redirect www to non-www
+  return 301 https://cororaro.it$request_uri;
+}
+
+# ---- HTTPS (443) - Main ----
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  server_name cororaro.it;
+
+  # SSL Configuration
+  ssl_certificate /etc/letsencrypt/live/cororaro.it/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/cororaro.it/privkey.pem;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_ciphers HIGH:!aNULL:!MD5;
+  ssl_prefer_server_ciphers on;
+
+  # Logging
+  access_log /var/log/nginx/cororaro-access.log;
+  error_log /var/log/nginx/cororaro-error.log;
+
+  # Static files
+  root /home/daniele/danielecamiz-site/cororaro-site/public;
+  index index.html;
+
+  # API proxy to Node.js backend
+  location /api/ {
+    proxy_pass http://127.0.0.1:3120;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_cache_bypass $http_upgrade;
+  }
+
+  # Static files caching
+  location ~* \.(jpg|jpeg|png|gif|ico|svg|webp)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+  }
+
+  location ~* \.(css|js|woff|woff2|ttf|eot)$ {
+    expires 1M;
+    add_header Cache-Control "public";
+  }
+
+  # Security headers
+  add_header X-Frame-Options "SAMEORIGIN" always;
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header X-XSS-Protection "1; mode=block" always;
+  add_header Referrer-Policy "no-referrer-when-downgrade" always;
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+  # Gzip
+  gzip on;
+  gzip_vary on;
+  gzip_min_length 1024;
+  gzip_types text/plain text/css text/javascript application/javascript
+             application/json application/xml+rss image/svg+xml;
+
+  # Deny access to hidden files
+  location ~ /\. {
+    deny all;
+  }
+
+  # SPA fallback
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}
+
+# ================================
+# STAGING Configuration
+# staging.cororaro.it
+# ================================
+
+server {
+  listen 80;
+  listen [::]:80;
+  server_name staging.cororaro.it;
+
+  # Noindex
+  add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+
+  # Basic Auth
+  auth_basic "Staging Coro Raro";
+  auth_basic_user_file /etc/nginx/.htpasswd-stage;
+
+  # Static files
+  root /home/daniele/danielecamiz-site/cororaro-site/public;
+  index index.html;
+
+  # API proxy
+  location /api/ {
+    proxy_pass http://127.0.0.1:3120;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # Cache
+  location ~* \.(jpg|jpeg|png|gif|ico|svg)$ {
+    expires 7d;
+  }
+
+  location ~* \.(css|js)$ {
+    expires 1d;
+  }
+
+  # SPA fallback
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}
+
+# ================================
+# SETUP INSTRUCTIONS
+# ================================
+
+# 1. Copy to sites-available:
+#    sudo cp nginx.conf.example /etc/nginx/sites-available/cororaro.it.conf
+#
+# 2. Enable site:
+#    sudo ln -s /etc/nginx/sites-available/cororaro.it.conf /etc/nginx/sites-enabled/
+#
+# 3. Test configuration:
+#    sudo nginx -t
+#
+# 4. Reload Nginx:
+#    sudo systemctl reload nginx
+#
+# 5. Setup SSL:
+#    sudo certbot --nginx -d cororaro.it -d www.cororaro.it
+#
+# 6. Test auto-renewal:
+#    sudo certbot renew --dry-run
