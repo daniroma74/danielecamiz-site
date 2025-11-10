@@ -1,0 +1,210 @@
+<div class="page-header">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1>Gestione Repertorio</h1>
+      <p><%= pagination.total %> brani totali</p>
+    </div>
+    <a href="/admin/repertoire/new" class="btn">+ Nuovo Brano</a>
+  </div>
+</div>
+
+<% if (typeof success !== 'undefined') { %>
+  <div class="alert alert-success">
+    ✅ <%= success === 'created' ? 'Brano creato con successo' : 'Brano aggiornato con successo' %>
+  </div>
+<% } %>
+
+<style>
+  .filters {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .filters form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .filters input, .filters select {
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+
+  .filters input {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    background: var(--terracotta);
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--beige);
+  }
+
+  tr:hover {
+    background: var(--avorio);
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .pagination a, .pagination span {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .pagination .active {
+    background: var(--terracotta);
+    color: white;
+    border-color: var(--terracotta);
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .badge-active {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .badge-inactive {
+    background: #f8d7da;
+    color: #721c24;
+  }
+</style>
+
+<div class="filters">
+  <form method="GET">
+    <input type="text" name="search" placeholder="Cerca per titolo, descrizione..." value="<%= filters.search %>">
+    <select name="country">
+      <option value="">Tutti i paesi</option>
+      <% countries.forEach(c => { %>
+        <option value="<%= c.code %>" <%= filters.country === c.code ? 'selected' : '' %>>
+          <%= c.flag %> <%= c.name %>
+        </option>
+      <% }) %>
+    </select>
+    <button type="submit" class="btn btn-secondary">Filtra</button>
+  </form>
+</div>
+
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Paese</th>
+        <th>Titolo</th>
+        <th>Lingua</th>
+        <th>Difficoltà</th>
+        <th>Stato</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (songs.length === 0) { %>
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+            Nessun brano trovato
+          </td>
+        </tr>
+      <% } else { %>
+        <% songs.forEach(song => { %>
+          <tr>
+            <td><%= song.flag %> <%= song.country_name %></td>
+            <td><strong><%= song.title %></strong></td>
+            <td><%= song.language || 'N/D' %></td>
+            <td><%= song.difficulty || 'medium' %></td>
+            <td>
+              <span class="badge <%= song.is_active ? 'badge-active' : 'badge-inactive' %>">
+                <%= song.is_active ? 'Attivo' : 'Inattivo' %>
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <a href="/admin/repertoire/<%= song.id %>/edit" class="btn btn-small btn-secondary">
+                  Modifica
+                </a>
+                <button onclick="deleteSong(<%= song.id %>)" class="btn btn-small btn-danger">
+                  Elimina
+                </button>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<% if (pagination.totalPages > 1) { %>
+  <div class="pagination">
+    <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+      <a href="?page=<%= i %>&search=<%= filters.search %>&country=<%= filters.country %>"
+         class="<%= i === pagination.page ? 'active' : '' %>">
+        <%= i %>
+      </a>
+    <% } %>
+  </div>
+<% } %>
+
+<script>
+  function deleteSong(id) {
+    if (!confirm('Sei sicuro di voler eliminare questo brano?')) return;
+
+    fetch(`/admin/repertoire/${id}/delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert('Errore durante l\'eliminazione');
+      }
+    })
+    .catch(err => alert('Errore di rete'));
+  }
+</script>

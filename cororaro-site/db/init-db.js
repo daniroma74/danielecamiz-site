@@ -9,17 +9,24 @@ const fs = require('fs');
 const path = require('path');
 
 const DB_PATH = path.join(__dirname, 'cororaro.db');
-const SQL_FILE = path.join(__dirname, 'init-repertoire.sql');
+const SQL_REPERTOIRE = path.join(__dirname, 'init-repertoire.sql');
+const SQL_ADMIN = path.join(__dirname, 'migrations', '002_create_admin_users.sql');
 
 console.log('🎵 Coro Raro - Database Initialization\n');
 
-// Read SQL file
-if (!fs.existsSync(SQL_FILE)) {
-  console.error(`❌ SQL file not found: ${SQL_FILE}`);
+// Read SQL files
+if (!fs.existsSync(SQL_REPERTOIRE)) {
+  console.error(`❌ SQL file not found: ${SQL_REPERTOIRE}`);
   process.exit(1);
 }
 
-const sql = fs.readFileSync(SQL_FILE, 'utf8');
+if (!fs.existsSync(SQL_ADMIN)) {
+  console.error(`❌ SQL file not found: ${SQL_ADMIN}`);
+  process.exit(1);
+}
+
+const sqlRepertoire = fs.readFileSync(SQL_REPERTOIRE, 'utf8');
+const sqlAdmin = fs.readFileSync(SQL_ADMIN, 'utf8');
 
 // Create database
 const db = new sqlite3.Database(DB_PATH, (err) => {
@@ -30,40 +37,62 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
   console.log(`✅ Database connected: ${DB_PATH}`);
 });
 
-// Execute SQL
-db.exec(sql, (err) => {
+// Execute SQL - Repertoire first
+db.exec(sqlRepertoire, (err) => {
   if (err) {
-    console.error('❌ Error executing SQL:', err.message);
+    console.error('❌ Error executing repertoire SQL:', err.message);
     db.close();
     process.exit(1);
   }
 
-  console.log('✅ Tables created successfully');
+  console.log('✅ Repertoire tables created');
 
-  // Verify data
-  db.get('SELECT COUNT(*) as count FROM countries', (err, row) => {
+  // Execute Admin SQL
+  db.exec(sqlAdmin, (err) => {
     if (err) {
-      console.error('❌ Error counting countries:', err.message);
-    } else {
-      console.log(`✅ Countries inserted: ${row.count}`);
-    }
-  });
-
-  db.get('SELECT COUNT(*) as count FROM repertoire', (err, row) => {
-    if (err) {
-      console.error('❌ Error counting repertoire:', err.message);
-    } else {
-      console.log(`✅ Repertoire songs inserted: ${row.count}`);
+      console.error('❌ Error executing admin SQL:', err.message);
+      db.close();
+      process.exit(1);
     }
 
-    // Close database
-    db.close((err) => {
+    console.log('✅ Admin tables created');
+
+    // Verify data
+    db.get('SELECT COUNT(*) as count FROM countries', (err, row) => {
       if (err) {
-        console.error('❌ Error closing database:', err.message);
+        console.error('❌ Error counting countries:', err.message);
       } else {
-        console.log('\n✅ Database initialization complete!');
-        console.log(`📁 Database location: ${DB_PATH}\n`);
+        console.log(`✅ Countries inserted: ${row.count}`);
       }
+    });
+
+    db.get('SELECT COUNT(*) as count FROM repertoire', (err, row) => {
+      if (err) {
+        console.error('❌ Error counting repertoire:', err.message);
+      } else {
+        console.log(`✅ Repertoire songs inserted: ${row.count}`);
+      }
+    });
+
+    db.get('SELECT COUNT(*) as count FROM admin_users', (err, row) => {
+      if (err) {
+        console.error('❌ Error counting admin users:', err.message);
+      } else {
+        console.log(`✅ Admin users created: ${row.count}`);
+      }
+
+      // Close database
+      db.close((err) => {
+        if (err) {
+          console.error('❌ Error closing database:', err.message);
+        } else {
+          console.log('\n✅ Database initialization complete!');
+          console.log(`📁 Database location: ${DB_PATH}`);
+          console.log('\n🔐 Default admin credentials:');
+          console.log('   Username: admin');
+          console.log('   Password: admin123\n');
+        }
+      });
     });
   });
 });

@@ -1,0 +1,169 @@
+<div class="page-header">
+  <h1><%= action === 'create' ? 'Nuovo Brano' : 'Modifica Brano' %></h1>
+  <p><%= action === 'create' ? 'Aggiungi un nuovo brano al repertorio' : 'Modifica i dettagli del brano' %></p>
+</div>
+
+<style>
+  .form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  .form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--terracotta);
+  }
+
+  .form-group small {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: auto;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--beige);
+  }
+</style>
+
+<div class="form-container">
+  <form method="POST" action="<%= action === 'create' ? '/admin/repertoire' : `/admin/repertoire/${song.id}` %>">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="country_id">Paese *</label>
+        <select id="country_id" name="country_id" required>
+          <option value="">Seleziona un paese...</option>
+          <% countries.forEach(c => { %>
+            <option value="<%= c.id %>" <%= song.country_id == c.id ? 'selected' : '' %>>
+              <%= c.flag %> <%= c.name %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="language">Lingua</label>
+        <input type="text" id="language" name="language" value="<%= song.language || '' %>" placeholder="es. Italiano, Swahili">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="title">Titolo Brano *</label>
+      <input type="text" id="title" name="title" value="<%= song.title || '' %>" required placeholder="es. Bella Ciao">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descrizione</label>
+      <textarea id="description" name="description" placeholder="Breve descrizione del brano..."><%= song.description || '' %></textarea>
+      <small>Una breve descrizione che apparirà nel modal del sito</small>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="difficulty">Difficoltà</label>
+        <select id="difficulty" name="difficulty">
+          <option value="easy" <%= song.difficulty === 'easy' ? 'selected' : '' %>>Facile</option>
+          <option value="medium" <%= !song.difficulty || song.difficulty === 'medium' ? 'selected' : '' %>>Medio</option>
+          <option value="hard" <%= song.difficulty === 'hard' ? 'selected' : '' %>>Difficile</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="duration_seconds">Durata (secondi)</label>
+        <input type="number" id="duration_seconds" name="duration_seconds" value="<%= song.duration_seconds || '' %>" placeholder="180">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="audio_url">Link Audio</label>
+      <input type="url" id="audio_url" name="audio_url" value="<%= song.audio_url || '' %>" placeholder="https://www.youtube.com/watch?v=...">
+      <small>YouTube, Spotify, SoundCloud, o qualsiasi altro link audio</small>
+    </div>
+
+    <div class="form-group">
+      <label for="sheet_music_url">Link Spartito (PDF)</label>
+      <input type="url" id="sheet_music_url" name="sheet_music_url" value="<%= song.sheet_music_url || '' %>" placeholder="https://cloudinary.com/...">
+      <small>URL diretto al file PDF dello spartito (verrà integrato Cloudinary)</small>
+    </div>
+
+    <div class="form-group">
+      <label for="lyrics">Testo del Brano</label>
+      <textarea id="lyrics" name="lyrics" style="min-height: 200px;"><%= song.lyrics || '' %></textarea>
+      <small>Il testo completo del brano (opzionale)</small>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="sort_order">Ordinamento</label>
+        <input type="number" id="sort_order" name="sort_order" value="<%= song.sort_order || 0 %>">
+        <small>Numero per ordinare i brani (default: 0)</small>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <input type="checkbox" id="is_active" name="is_active" <%= !song.id || song.is_active ? 'checked' : '' %>>
+        <label for="is_active" style="margin: 0;">Attivo (visibile sul sito)</label>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn">
+        <%= action === 'create' ? '✅ Crea Brano' : '💾 Salva Modifiche' %>
+      </button>
+      <a href="/admin/repertoire" class="btn btn-secondary">
+        ← Annulla
+      </a>
+    </div>
+  </form>
+</div>
