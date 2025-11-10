@@ -408,31 +408,126 @@ class WorldGlobe {
   }
 
   showTooltip(data) {
-    if (!this.tooltip || !data) return;
-
-    // Popola tooltip con i nuovi dati
-    this.tooltip.querySelector('.tooltip-title').innerHTML = `${data.flag} ${data.country}`;
-    this.tooltip.querySelector('.tooltip-description').textContent = data.songs[0] || '';
-
-    const examplesList = this.tooltip.querySelector('.tooltip-examples');
-    examplesList.innerHTML = '';
-    data.songs.forEach(song => {
-      const li = document.createElement('li');
-      li.textContent = song;
-      examplesList.appendChild(li);
-    });
-
-    // Mostra tooltip
-    this.tooltip.classList.add('visible');
-
-    // Nascondi dopo 5 secondi
-    setTimeout(() => this.hideTooltip(), 5000);
+    // Apri il modal invece del tooltip
+    this.openModal(data);
   }
 
   hideTooltip() {
     if (this.tooltip) {
       this.tooltip.classList.remove('visible');
     }
+  }
+
+  openModal(countryData) {
+    const modal = document.getElementById('repertoireModal');
+    if (!modal) return;
+
+    // Popola header del modal
+    const modalFlag = modal.querySelector('.modal-flag');
+    const modalTitle = modal.querySelector('.modal-title');
+    const modalSubtitle = modal.querySelector('.modal-subtitle');
+    const songsList = modal.querySelector('#songsList');
+
+    modalFlag.textContent = countryData.flag;
+    modalTitle.textContent = countryData.country;
+    modalSubtitle.textContent = `${countryData.songs.length} brani nel repertorio`;
+
+    // Popola lista brani
+    songsList.innerHTML = '';
+
+    if (countryData.songs.length === 0) {
+      songsList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🎵</div>
+          <p>Nessun brano disponibile per questo paese</p>
+        </div>
+      `;
+    } else {
+      countryData.songs.forEach(song => {
+        const songCard = this.createSongCard(song);
+        songsList.appendChild(songCard);
+      });
+    }
+
+    // Mostra modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Setup close handlers
+    this.setupModalCloseHandlers(modal);
+  }
+
+  createSongCard(song) {
+    const card = document.createElement('div');
+    card.className = 'song-card';
+
+    const difficultyClass = song.difficulty || 'medium';
+    const difficultyLabel = {
+      easy: 'Facile',
+      medium: 'Medio',
+      hard: 'Difficile'
+    }[difficultyClass] || 'Medio';
+
+    card.innerHTML = `
+      <div class="song-header">
+        <h3 class="song-title">${song.title}</h3>
+        <div class="song-badges">
+          ${song.language ? `<span class="song-badge badge-language">${song.language}</span>` : ''}
+          ${song.difficulty ? `<span class="song-badge badge-difficulty ${difficultyClass}">${difficultyLabel}</span>` : ''}
+        </div>
+      </div>
+
+      ${song.description ? `<p class="song-description">${song.description}</p>` : ''}
+
+      <div class="song-actions">
+        ${song.audioUrl ? `
+          <a href="${song.audioUrl}" target="_blank" rel="noopener" class="song-btn">
+            🎵 Ascolta
+          </a>
+        ` : `
+          <button class="song-btn" disabled>
+            🎵 Audio non disponibile
+          </button>
+        `}
+
+        ${song.sheetMusicUrl ? `
+          <a href="${song.sheetMusicUrl}" target="_blank" rel="noopener" class="song-btn secondary">
+            📄 Spartito
+          </a>
+        ` : ''}
+
+        ${song.lyrics ? `
+          <button class="song-lyrics-toggle" onclick="this.nextElementSibling.classList.toggle('visible'); this.textContent = this.nextElementSibling.classList.contains('visible') ? '📖 Nascondi testo' : '📖 Mostra testo'">
+            📖 Mostra testo
+          </button>
+          <div class="song-lyrics">${song.lyrics}</div>
+        ` : ''}
+      </div>
+    `;
+
+    return card;
+  }
+
+  setupModalCloseHandlers(modal) {
+    const closeBtn = modal.querySelector('.modal-close');
+    const overlay = modal.querySelector('.modal-overlay');
+
+    const closeModal = () => {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    closeBtn.onclick = closeModal;
+    overlay.onclick = closeModal;
+
+    // Chiudi con ESC
+    const escHandler = (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+        document.removeEventListener('keydown', escHandler);
+      }
+    };
+    document.addEventListener('keydown', escHandler);
   }
 }
 
