@@ -32,7 +32,7 @@ module.exports = (db) => {
        ORDER BY r.created_at DESC
        LIMIT 5`,
       (err, recentSongs) => {
-        res.render('admin/dashboard', {
+        res.render('dashboard', {
           title: 'Dashboard',
           user: req.session,
           stats,
