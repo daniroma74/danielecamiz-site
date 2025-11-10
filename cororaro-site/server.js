@@ -6,6 +6,8 @@
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 
 const app = express();
 const PORT = process.env.PORT || 3120;
@@ -20,10 +22,30 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
   }
 });
 
+// View Engine Setup for Admin
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'admin/views'));
+
+// Session middleware
+app.use(session({
+  store: new SQLiteStore({
+    db: 'sessions.db',
+    dir: path.join(__dirname, 'db')
+  }),
+  secret: process.env.SESSION_SECRET || 'coro-raro-secret-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production'
+  }
+}));
+
 // Middleware
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // CORS
 app.use((req, res, next) => {
@@ -36,6 +58,27 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
+});
+
+// ============================================
+// ADMIN ROUTES
+// ============================================
+
+const authRoutes = require('./admin/routes/auth')(db);
+const dashboardRoutes = require('./admin/routes/dashboard')(db);
+const repertoireRoutes = require('./admin/routes/repertoire')(db);
+
+app.use('/admin', authRoutes);
+app.use('/admin', dashboardRoutes);
+app.use('/admin', repertoireRoutes);
+
+// Admin root redirect
+app.get('/admin', (req, res) => {
+  if (req.session && req.session.userId) {
+    res.redirect('/admin/dashboard');
+  } else {
+    res.redirect('/admin/login');
+  }
 });
 
 // ============================================
