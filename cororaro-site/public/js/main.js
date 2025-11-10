@@ -253,6 +253,148 @@ class LazyLoader {
 }
 
 // ============================================
+// WORLD MAP INTERACTIVE
+// ============================================
+
+class WorldMap {
+  constructor() {
+    this.tooltip = document.getElementById('mapTooltip');
+    this.markers = document.querySelectorAll('.repertoire-marker');
+
+    if (!this.tooltip || !this.markers.length) return;
+
+    // Dati delle regioni
+    this.regionsData = {
+      africa: {
+        title: 'Africa',
+        description: 'Canti tradizionali, polifonie tribali, ritmi ancestrali',
+        examples: [
+          'Zulu, Swahili, Yoruba',
+          'Canti di lavoro e celebrazione',
+          'Ritmi e polifonie tradizionali'
+        ]
+      },
+      europe: {
+        title: 'Europa',
+        description: 'Canti popolari, folklore, tradizioni regionali',
+        examples: [
+          'Italiano, Spagnolo, Balcanico',
+          'Musiche celtiche e mediterranee',
+          'Tradizioni popolari'
+        ]
+      },
+      asia: {
+        title: 'Asia',
+        description: 'Melodie orientali, canti spirituali, folklore',
+        examples: [
+          'Giapponese, Cinese, Indiano',
+          'Tradizioni millenarie',
+          'Canti spirituali e meditativi'
+        ]
+      },
+      americas: {
+        title: 'Americhe',
+        description: 'Spirituals, folk latino-americano',
+        examples: [
+          'Gospel, canti andini',
+          'Tradizioni indigene',
+          'Musiche afro-americane'
+        ]
+      }
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.markers.forEach(marker => {
+      // Hover effect
+      marker.addEventListener('mouseenter', (e) => this.handleMarkerHover(e));
+      marker.addEventListener('mouseleave', () => this.hideTooltip());
+
+      // Click effect per mobile
+      marker.addEventListener('click', (e) => this.handleMarkerClick(e));
+    });
+
+    // Animazioni d'entrata
+    this.animateMarkersEntrance();
+  }
+
+  handleMarkerHover(event) {
+    const marker = event.currentTarget;
+    const region = marker.dataset.region;
+    const data = this.regionsData[region];
+
+    if (!data) return;
+
+    this.showTooltip(marker, data);
+  }
+
+  handleMarkerClick(event) {
+    event.stopPropagation();
+    const marker = event.currentTarget;
+    const region = marker.dataset.region;
+    const data = this.regionsData[region];
+
+    if (!data) return;
+
+    // Toggle tooltip on mobile
+    if (this.tooltip.classList.contains('visible')) {
+      this.hideTooltip();
+    } else {
+      this.showTooltip(marker, data);
+    }
+  }
+
+  showTooltip(marker, data) {
+    // Popola il tooltip
+    this.tooltip.querySelector('.tooltip-title').textContent = data.title;
+    this.tooltip.querySelector('.tooltip-description').textContent = data.description;
+
+    const examplesList = this.tooltip.querySelector('.tooltip-examples');
+    examplesList.innerHTML = '';
+    data.examples.forEach(example => {
+      const li = document.createElement('li');
+      li.textContent = example;
+      examplesList.appendChild(li);
+    });
+
+    // Posiziona il tooltip
+    const markerRect = marker.getBoundingClientRect();
+    const containerRect = marker.closest('.world-map-container').getBoundingClientRect();
+
+    const left = markerRect.left - containerRect.left + markerRect.width / 2;
+    const top = markerRect.top - containerRect.top - 10;
+
+    this.tooltip.style.left = `${left}px`;
+    this.tooltip.style.top = `${top}px`;
+    this.tooltip.style.transform = 'translate(-50%, -100%)';
+
+    // Mostra il tooltip
+    this.tooltip.classList.add('visible');
+  }
+
+  hideTooltip() {
+    this.tooltip.classList.remove('visible');
+  }
+
+  animateMarkersEntrance() {
+    this.markers.forEach((marker, index) => {
+      if (marker.classList.contains('hidden')) return;
+
+      marker.style.opacity = '0';
+      marker.style.transform = 'translate(0, 20px)';
+
+      setTimeout(() => {
+        marker.style.transition = 'all 0.6s ease-out';
+        marker.style.opacity = '1';
+        marker.style.transform = 'translate(0, 0)';
+      }, 200 + index * 150);
+    });
+  }
+}
+
+// ============================================
 // ACCESSIBILITY
 // ============================================
 
@@ -320,6 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
   new BackToTop();
   new ContactForm();
   new LazyLoader();
+  new WorldMap();
 
   // Add loaded class
   document.body.classList.add('loaded');
