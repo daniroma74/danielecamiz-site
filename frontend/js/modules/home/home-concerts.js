@@ -1,3 +1,7 @@
+export function initHomeConcerts() {
+  console.log('[home-concerts] Concert lightbox initialized');
+}
+
 (function () {
   const root = document;
   const modal = root.getElementById('concert_lightbox');

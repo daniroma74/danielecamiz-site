@@ -117,7 +117,7 @@
          let s = (typeof src === 'string') ? src : '';
          if (s && s.charAt(0) !== '/') { s = '/js/' + s; }
     %>
-      <script src="<%= s %>" defer></script>
+      <script src="<%= s %>" type="module"></script>
     <% }) %>
   </body>
 </html>

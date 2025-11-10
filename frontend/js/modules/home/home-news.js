@@ -2,6 +2,11 @@
 // Requisiti DOM: #news_list, #news_modal, #news_modal_body, [data-close="1"]
 // Requisiti server: GET /news/:id?fragment=1 restituisce HTML (partial)
 
+export function initHomeNews() {
+  // News modal initialization - self-executing
+  console.log('[home-news] News modal initialized');
+}
+
 (function () {
   // Verifica ambiente
   const list  = document.getElementById('news_list');

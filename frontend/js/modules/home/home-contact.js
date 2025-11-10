@@ -1,3 +1,8 @@
+export function initHomeContact() {
+  // Contact già renderizzato SSR
+  console.log('[home-contact] Contact section initialized');
+}
+
 export function loadContact() {
   const contactTitleEl = document.getElementById('contact_title');
   const contactMailEl = document.getElementById('contact_mail');
