@@ -180,8 +180,219 @@
       </div>
 
       <div class="repertoire-map">
-        <div class="map-placeholder">
-          🗺️ [Qui andrà una mappa interattiva dei continenti]
+        <div class="world-map-container">
+          <svg class="world-map-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+            <!-- Sfondo Oceano -->
+            <defs>
+              <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#E8DDD0;stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:#DAA520;stop-opacity:0.1" />
+              </linearGradient>
+
+              <filter id="continentShadow">
+                <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+              </filter>
+
+              <filter id="markerGlow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Sfondo -->
+            <rect width="1000" height="500" fill="url(#oceanGradient)" rx="20"/>
+
+            <!-- AFRICA -->
+            <g class="continent" data-continent="africa">
+              <path class="continent-shape" d="
+                M 520 180
+                L 540 160
+                L 560 155
+                L 575 165
+                L 580 185
+                L 590 200
+                L 595 230
+                L 590 260
+                L 580 290
+                L 570 310
+                L 555 330
+                L 540 340
+                L 525 342
+                L 510 335
+                L 500 315
+                L 495 290
+                L 492 260
+                L 495 230
+                L 500 210
+                L 510 190
+                Z
+              " fill="#8B7355" filter="url(#continentShadow)"/>
+            </g>
+
+            <!-- EUROPA -->
+            <g class="continent" data-continent="europe">
+              <path class="continent-shape" d="
+                M 480 130
+                L 520 125
+                L 550 130
+                L 570 145
+                L 560 155
+                L 540 160
+                L 520 165
+                L 500 170
+                L 480 165
+                L 470 155
+                L 465 140
+                Z
+              " fill="#8B7355" filter="url(#continentShadow)"/>
+            </g>
+
+            <!-- ASIA -->
+            <g class="continent" data-continent="asia">
+              <path class="continent-shape" d="
+                M 580 120
+                L 650 115
+                L 720 125
+                L 780 140
+                L 820 160
+                L 840 180
+                L 845 205
+                L 835 230
+                L 810 250
+                L 780 260
+                L 740 265
+                L 700 258
+                L 660 245
+                L 630 225
+                L 610 200
+                L 595 175
+                L 585 150
+                Z
+              " fill="#8B7355" filter="url(#continentShadow)"/>
+            </g>
+
+            <!-- AMERICHE (Nord e Sud unite) -->
+            <g class="continent" data-continent="americas">
+              <!-- America del Nord -->
+              <path class="continent-shape" d="
+                M 180 130
+                L 220 120
+                L 260 125
+                L 290 140
+                L 310 160
+                L 315 185
+                L 305 210
+                L 285 225
+                L 260 230
+                L 240 225
+                L 220 215
+                L 200 200
+                L 185 180
+                L 175 155
+                Z
+              " fill="#8B7355" filter="url(#continentShadow)"/>
+
+              <!-- America del Sud -->
+              <path class="continent-shape" d="
+                M 270 240
+                L 290 245
+                L 305 260
+                L 315 285
+                L 320 315
+                L 315 345
+                L 305 370
+                L 290 385
+                L 270 390
+                L 250 385
+                L 235 365
+                L 230 335
+                L 235 305
+                L 245 275
+                L 255 255
+                Z
+              " fill="#8B7355" filter="url(#continentShadow)"/>
+            </g>
+
+            <!-- OCEANIA -->
+            <g class="continent" data-continent="oceania">
+              <path class="continent-shape" d="
+                M 780 310
+                L 820 305
+                L 860 315
+                L 885 330
+                L 895 350
+                L 890 370
+                L 870 385
+                L 840 390
+                L 810 385
+                L 785 370
+                L 770 350
+                L 765 330
+                Z
+              " fill="#8B7355" filter="url(#continentShadow)"/>
+            </g>
+
+            <!-- MARKERS / BANDIERINE -->
+
+            <!-- Africa Marker -->
+            <g class="repertoire-marker" data-region="africa" transform="translate(560, 260)">
+              <circle class="marker-pulse" cx="0" cy="0" r="12" fill="#D2691E" opacity="0.3"/>
+              <circle class="marker-dot" cx="0" cy="0" r="8" fill="#D2691E" filter="url(#markerGlow)"/>
+              <path class="marker-flag" d="M 0 -8 L 0 -28 L 15 -23 L 0 -18 Z" fill="#DAA520" stroke="#D2691E" stroke-width="1.5"/>
+              <line class="marker-pole" x1="0" y1="-8" x2="0" y2="-28" stroke="#5D4E37" stroke-width="2"/>
+            </g>
+
+            <!-- Europa Marker -->
+            <g class="repertoire-marker" data-region="europe" transform="translate(515, 150)">
+              <circle class="marker-pulse" cx="0" cy="0" r="12" fill="#D2691E" opacity="0.3"/>
+              <circle class="marker-dot" cx="0" cy="0" r="8" fill="#D2691E" filter="url(#markerGlow)"/>
+              <path class="marker-flag" d="M 0 -8 L 0 -28 L 15 -23 L 0 -18 Z" fill="#DAA520" stroke="#D2691E" stroke-width="1.5"/>
+              <line class="marker-pole" x1="0" y1="-8" x2="0" y2="-28" stroke="#5D4E37" stroke-width="2"/>
+            </g>
+
+            <!-- Asia Marker -->
+            <g class="repertoire-marker" data-region="asia" transform="translate(750, 200)">
+              <circle class="marker-pulse" cx="0" cy="0" r="12" fill="#D2691E" opacity="0.3"/>
+              <circle class="marker-dot" cx="0" cy="0" r="8" fill="#D2691E" filter="url(#markerGlow)"/>
+              <path class="marker-flag" d="M 0 -8 L 0 -28 L 15 -23 L 0 -18 Z" fill="#DAA520" stroke="#D2691E" stroke-width="1.5"/>
+              <line class="marker-pole" x1="0" y1="-8" x2="0" y2="-28" stroke="#5D4E37" stroke-width="2"/>
+            </g>
+
+            <!-- Americas Marker (Nord) -->
+            <g class="repertoire-marker" data-region="americas" transform="translate(250, 180)">
+              <circle class="marker-pulse" cx="0" cy="0" r="12" fill="#D2691E" opacity="0.3"/>
+              <circle class="marker-dot" cx="0" cy="0" r="8" fill="#D2691E" filter="url(#markerGlow)"/>
+              <path class="marker-flag" d="M 0 -8 L 0 -28 L 15 -23 L 0 -18 Z" fill="#DAA520" stroke="#D2691E" stroke-width="1.5"/>
+              <line class="marker-pole" x1="0" y1="-8" x2="0" y2="-28" stroke="#5D4E37" stroke-width="2"/>
+            </g>
+
+            <!-- Oceania Marker (opzionale, se hanno repertorio) -->
+            <g class="repertoire-marker hidden" data-region="oceania" transform="translate(840, 350)">
+              <circle class="marker-pulse" cx="0" cy="0" r="12" fill="#9B8B7E" opacity="0.2"/>
+              <circle class="marker-dot" cx="0" cy="0" r="6" fill="#9B8B7E"/>
+              <text x="0" y="25" text-anchor="middle" font-size="12" fill="#9B8B7E">?</text>
+            </g>
+
+          </svg>
+
+          <!-- Tooltip -->
+          <div class="map-tooltip" id="mapTooltip">
+            <h4 class="tooltip-title"></h4>
+            <p class="tooltip-description"></p>
+            <ul class="tooltip-examples"></ul>
+          </div>
+
+          <!-- Legenda -->
+          <div class="map-legend">
+            <div class="legend-item">
+              <div class="legend-marker"></div>
+              <span>Repertorio attivo</span>
+            </div>
+            <p class="legend-note">🎵 Clicca sui marker per scoprire di più</p>
+          </div>
         </div>
       </div>
 

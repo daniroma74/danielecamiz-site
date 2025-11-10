@@ -1488,3 +1488,221 @@ ul, ol {
     --text-secondary: #4A4A4A;
   }
 }
+
+/* ============================================
+   WORLD MAP INTERACTIVE
+   ============================================ */
+
+.world-map-container {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  background: var(--beige);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  border: 3px solid var(--oro-antico);
+}
+
+.world-map-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+}
+
+/* Continenti */
+.continent {
+  transition: all var(--transition-base);
+}
+
+.continent-shape {
+  transition: all var(--transition-base);
+}
+
+.continent:hover .continent-shape {
+  fill: #A0795D;
+  transform: scale(1.02);
+  transform-origin: center;
+}
+
+/* Markers / Bandierine */
+.repertoire-marker {
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.repertoire-marker:hover {
+  transform: translateY(-5px) scale(1.1);
+}
+
+.repertoire-marker.hidden {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.marker-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    r: 12;
+    opacity: 0.3;
+  }
+  50% {
+    r: 18;
+    opacity: 0;
+  }
+}
+
+.marker-flag {
+  animation: wave 2s ease-in-out infinite;
+  transform-origin: 0 0;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+}
+
+.marker-dot {
+  transition: all var(--transition-base);
+}
+
+.repertoire-marker:hover .marker-dot {
+  r: 10;
+}
+
+.repertoire-marker:hover .marker-flag {
+  animation-duration: 0.8s;
+}
+
+/* Tooltip */
+.map-tooltip {
+  position: absolute;
+  background: var(--avorio);
+  border: 3px solid var(--terracotta);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 300px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all var(--transition-base);
+  z-index: 100;
+}
+
+.map-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tooltip-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  color: var(--terracotta);
+  margin-bottom: var(--spacing-sm);
+}
+
+.tooltip-description {
+  font-size: var(--fs-base);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.5;
+}
+
+.tooltip-examples {
+  list-style: none;
+  padding-left: 0;
+}
+
+.tooltip-examples li {
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  padding: var(--spacing-xs) 0;
+  border-left: 3px solid var(--oro-antico);
+  padding-left: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Legenda */
+.map-legend {
+  margin-top: var(--spacing-xl);
+  text-align: center;
+  padding: var(--spacing-md);
+  background: rgba(255, 250, 240, 0.6);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--beige-dark);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.legend-marker {
+  width: 20px;
+  height: 20px;
+  background: var(--terracotta);
+  border-radius: var(--radius-full);
+  position: relative;
+  box-shadow: 0 0 10px rgba(210, 105, 30, 0.5);
+}
+
+.legend-marker::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  background: var(--terracotta);
+  opacity: 0.2;
+  border-radius: var(--radius-full);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.legend-item span {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.legend-note {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-sm);
+  font-style: italic;
+}
+
+/* Responsive Map */
+@media (max-width: 768px) {
+  .world-map-container {
+    padding: var(--spacing-md);
+  }
+
+  .map-tooltip {
+    max-width: 250px;
+    padding: var(--spacing-md);
+  }
+
+  .tooltip-title {
+    font-size: var(--fs-lg);
+  }
+
+  .tooltip-description {
+    font-size: var(--fs-sm);
+  }
+}
