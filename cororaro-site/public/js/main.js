@@ -253,17 +253,20 @@ class LazyLoader {
 }
 
 // ============================================
-// WORLD MAP INTERACTIVE
+// 3D GLOBE INTERACTIVE
 // ============================================
 
-class WorldMap {
+class WorldGlobe {
   constructor() {
-    this.tooltip = document.getElementById('mapTooltip');
-    this.markers = document.querySelectorAll('.repertoire-marker');
+    this.container = document.getElementById('globeViz');
+    this.tooltip = document.getElementById('globeTooltip');
 
-    if (!this.tooltip || !this.markers.length) return;
+    if (!this.container || typeof Globe === 'undefined') {
+      console.warn('Globe.gl not loaded or container not found');
+      return;
+    }
 
-    // Dati delle regioni
+    // Dati delle regioni con coordinate
     this.regionsData = {
       africa: {
         title: 'Africa',
@@ -272,7 +275,10 @@ class WorldMap {
           'Zulu, Swahili, Yoruba',
           'Canti di lavoro e celebrazione',
           'Ritmi e polifonie tradizionali'
-        ]
+        ],
+        lat: 0,
+        lng: 20,
+        color: '#D2691E'
       },
       europe: {
         title: 'Europa',
@@ -281,7 +287,10 @@ class WorldMap {
           'Italiano, Spagnolo, Balcanico',
           'Musiche celtiche e mediterranee',
           'Tradizioni popolari'
-        ]
+        ],
+        lat: 50,
+        lng: 10,
+        color: '#6B8E23'
       },
       asia: {
         title: 'Asia',
@@ -290,7 +299,10 @@ class WorldMap {
           'Giapponese, Cinese, Indiano',
           'Tradizioni millenarie',
           'Canti spirituali e meditativi'
-        ]
+        ],
+        lat: 35,
+        lng: 100,
+        color: '#DAA520'
       },
       americas: {
         title: 'Americhe',
@@ -299,7 +311,10 @@ class WorldMap {
           'Gospel, canti andini',
           'Tradizioni indigene',
           'Musiche afro-americane'
-        ]
+        ],
+        lat: 0,
+        lng: -70,
+        color: '#A0522D'
       }
     };
 
@@ -307,47 +322,80 @@ class WorldMap {
   }
 
   init() {
-    this.markers.forEach(marker => {
-      // Hover effect
-      marker.addEventListener('mouseenter', (e) => this.handleMarkerHover(e));
-      marker.addEventListener('mouseleave', () => this.hideTooltip());
+    // Crea array di punti per i marker
+    const markers = Object.entries(this.regionsData).map(([key, data]) => ({
+      lat: data.lat,
+      lng: data.lng,
+      size: 1.5,
+      color: data.color,
+      region: key,
+      ...data
+    }));
 
-      // Click effect per mobile
-      marker.addEventListener('click', (e) => this.handleMarkerClick(e));
+    // Inizializza il globo
+    this.globe = Globe()(this.container)
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+      .pointsData(markers)
+      .pointAltitude(0.01)
+      .pointRadius('size')
+      .pointColor('color')
+      .pointLabel(d => `
+        <div style="
+          background: rgba(255,250,240,0.95);
+          padding: 12px;
+          border-radius: 8px;
+          border: 2px solid ${d.color};
+          font-family: 'Open Sans', sans-serif;
+          max-width: 200px;
+        ">
+          <strong style="color: #D2691E; font-size: 16px;">${d.title}</strong><br/>
+          <span style="color: #6B5D4F; font-size: 13px;">${d.description}</span>
+        </div>
+      `)
+      .onPointClick(point => this.showTooltip(point))
+      .onPointHover(point => {
+        this.container.style.cursor = point ? 'pointer' : 'grab';
+      })
+      .atmosphereColor('#DAA520')
+      .atmosphereAltitude(0.2);
+
+    // Auto-rotazione lenta
+    this.globe.controls().autoRotate = true;
+    this.globe.controls().autoRotateSpeed = 0.5;
+
+    // Setup bottoni
+    this.setupButtons();
+
+    // Punto di vista iniziale
+    this.globe.pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
+  }
+
+  setupButtons() {
+    const buttons = document.querySelectorAll('.globe-btn');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const region = btn.dataset.region;
+        const data = this.regionsData[region];
+        if (data) {
+          // Anima verso la regione
+          this.globe.pointOfView({
+            lat: data.lat,
+            lng: data.lng,
+            altitude: 1.8
+          }, 1500);
+
+          // Mostra tooltip dopo animazione
+          setTimeout(() => this.showTooltip(data), 1600);
+        }
+      });
     });
-
-    // Animazioni d'entrata
-    this.animateMarkersEntrance();
   }
 
-  handleMarkerHover(event) {
-    const marker = event.currentTarget;
-    const region = marker.dataset.region;
-    const data = this.regionsData[region];
+  showTooltip(data) {
+    if (!this.tooltip || !data) return;
 
-    if (!data) return;
-
-    this.showTooltip(marker, data);
-  }
-
-  handleMarkerClick(event) {
-    event.stopPropagation();
-    const marker = event.currentTarget;
-    const region = marker.dataset.region;
-    const data = this.regionsData[region];
-
-    if (!data) return;
-
-    // Toggle tooltip on mobile
-    if (this.tooltip.classList.contains('visible')) {
-      this.hideTooltip();
-    } else {
-      this.showTooltip(marker, data);
-    }
-  }
-
-  showTooltip(marker, data) {
-    // Popola il tooltip
+    // Popola tooltip
     this.tooltip.querySelector('.tooltip-title').textContent = data.title;
     this.tooltip.querySelector('.tooltip-description').textContent = data.description;
 
@@ -359,38 +407,17 @@ class WorldMap {
       examplesList.appendChild(li);
     });
 
-    // Posiziona il tooltip
-    const markerRect = marker.getBoundingClientRect();
-    const containerRect = marker.closest('.world-map-container').getBoundingClientRect();
-
-    const left = markerRect.left - containerRect.left + markerRect.width / 2;
-    const top = markerRect.top - containerRect.top - 10;
-
-    this.tooltip.style.left = `${left}px`;
-    this.tooltip.style.top = `${top}px`;
-    this.tooltip.style.transform = 'translate(-50%, -100%)';
-
-    // Mostra il tooltip
+    // Mostra tooltip
     this.tooltip.classList.add('visible');
+
+    // Nascondi dopo 5 secondi
+    setTimeout(() => this.hideTooltip(), 5000);
   }
 
   hideTooltip() {
-    this.tooltip.classList.remove('visible');
-  }
-
-  animateMarkersEntrance() {
-    this.markers.forEach((marker, index) => {
-      if (marker.classList.contains('hidden')) return;
-
-      marker.style.opacity = '0';
-      marker.style.transform = 'translate(0, 20px)';
-
-      setTimeout(() => {
-        marker.style.transition = 'all 0.6s ease-out';
-        marker.style.opacity = '1';
-        marker.style.transform = 'translate(0, 0)';
-      }, 200 + index * 150);
-    });
+    if (this.tooltip) {
+      this.tooltip.classList.remove('visible');
+    }
   }
 }
 
@@ -462,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
   new BackToTop();
   new ContactForm();
   new LazyLoader();
-  new WorldMap();
+  new WorldGlobe();
 
   // Add loaded class
   document.body.classList.add('loaded');
