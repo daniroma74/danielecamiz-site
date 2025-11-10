@@ -266,75 +266,54 @@ class WorldGlobe {
       return;
     }
 
-    // Dati delle regioni con coordinate
-    this.regionsData = {
-      africa: {
-        title: 'Africa',
-        description: 'Canti tradizionali, polifonie tribali, ritmi ancestrali',
-        examples: [
-          'Zulu, Swahili, Yoruba',
-          'Canti di lavoro e celebrazione',
-          'Ritmi e polifonie tradizionali'
-        ],
-        lat: 0,
-        lng: 20,
-        color: '#D2691E'
-      },
-      europe: {
-        title: 'Europa',
-        description: 'Canti popolari, folklore, tradizioni regionali',
-        examples: [
-          'Italiano, Spagnolo, Balcanico',
-          'Musiche celtiche e mediterranee',
-          'Tradizioni popolari'
-        ],
-        lat: 50,
-        lng: 10,
-        color: '#6B8E23'
-      },
-      asia: {
-        title: 'Asia',
-        description: 'Melodie orientali, canti spirituali, folklore',
-        examples: [
-          'Giapponese, Cinese, Indiano',
-          'Tradizioni millenarie',
-          'Canti spirituali e meditativi'
-        ],
-        lat: 35,
-        lng: 100,
-        color: '#DAA520'
-      },
-      americas: {
-        title: 'Americhe',
-        description: 'Spirituals, folk latino-americano',
-        examples: [
-          'Gospel, canti andini',
-          'Tradizioni indigene',
-          'Musiche afro-americane'
-        ],
-        lat: 0,
-        lng: -70,
-        color: '#A0522D'
-      }
-    };
+    // Dati dei paesi con bandierine e brani specifici
+    this.countriesData = [
+      // EUROPA
+      { flag: '🇮🇹', country: 'Italia', lat: 41.9, lng: 12.5, songs: ['Canti popolari italiani', 'Tradizioni regionali'], color: '#228B22' },
+      { flag: '🇪🇸', country: 'Spagna', lat: 40.4, lng: -3.7, songs: ['Flamenco', 'Canti tradizionali spagnoli'], color: '#C41E3A' },
+      { flag: '🇫🇷', country: 'Francia', lat: 48.9, lng: 2.3, songs: ['Chansons françaises', 'Musica bretone'], color: '#0055A4' },
+      { flag: '🇩🇪', country: 'Germania', lat: 52.5, lng: 13.4, songs: ['Lieder tedeschi', 'Folklore bavarese'], color: '#000000' },
+      { flag: '🇷🇺', country: 'Russia', lat: 55.8, lng: 37.6, songs: ['Canti cosacchi', 'Musica ortodossa'], color: '#DA291C' },
+      { flag: '🇬🇧', country: 'Regno Unito', lat: 51.5, lng: -0.1, songs: ['Folk celtico', 'Madrigali inglesi'], color: '#012169' },
+      { flag: '🇬🇷', country: 'Grecia', lat: 38.0, lng: 23.7, songs: ['Musica bizantina', 'Canti tradizionali'], color: '#0D5EAF' },
+
+      // AFRICA
+      { flag: '🇿🇦', country: 'Sudafrica', lat: -26.2, lng: 28.0, songs: ['Canti Zulu', 'Gospel africano'], color: '#007A4D' },
+      { flag: '🇳🇬', country: 'Nigeria', lat: 9.1, lng: 7.4, songs: ['Canti Yoruba', 'Afrobeat tradizionale'], color: '#008751' },
+      { flag: '🇰🇪', country: 'Kenya', lat: -1.3, lng: 36.8, songs: ['Canti Swahili', 'Musica masai'], color: '#BB0000' },
+
+      // AMERICHE
+      { flag: '🇺🇸', country: 'Stati Uniti', lat: 38.9, lng: -77.0, songs: ['Spirituals', 'Gospel', 'Folk americano'], color: '#B22234' },
+      { flag: '🇧🇷', country: 'Brasile', lat: -15.8, lng: -47.9, songs: ['Bossa nova', 'Samba', 'Canti afro-brasiliani'], color: '#009739' },
+      { flag: '🇦🇷', country: 'Argentina', lat: -34.6, lng: -58.4, songs: ['Tango', 'Folk argentino'], color: '#74ACDF' },
+      { flag: '🇲🇽', country: 'Messico', lat: 19.4, lng: -99.1, songs: ['Mariachi', 'Son jarocho'], color: '#006847' },
+      { flag: '🇵🇪', country: 'Perù', lat: -12.0, lng: -77.0, songs: ['Musica andina', 'Canti quechua'], color: '#D91023' },
+
+      // ASIA
+      { flag: '🇨🇳', country: 'Cina', lat: 39.9, lng: 116.4, songs: ['Opera di Pechino', 'Canti tradizionali'], color: '#DE2910' },
+      { flag: '🇯🇵', country: 'Giappone', lat: 35.7, lng: 139.7, songs: ['Musica tradizionale', 'Canti shintoisti'], color: '#BC002D' },
+      { flag: '🇮🇳', country: 'India', lat: 28.6, lng: 77.2, songs: ['Bhajan', 'Musica carnatica'], color: '#FF9933' },
+      { flag: '🇮🇱', country: 'Israele', lat: 31.8, lng: 35.2, songs: ['Canti ebraici', 'Musica klezmer'], color: '#0038B8' }
+    ];
 
     this.init();
   }
 
   init() {
-    // Crea array di punti per i marker
-    const markers = Object.entries(this.regionsData).map(([key, data]) => ({
+    // Prepara i marker con bandierine
+    const markers = this.countriesData.map(data => ({
       lat: data.lat,
       lng: data.lng,
-      size: 1.5,
+      size: 1.2,
       color: data.color,
-      region: key,
-      ...data
+      flag: data.flag,
+      country: data.country,
+      songs: data.songs
     }));
 
-    // Inizializza il globo
+    // Inizializza il globo - VERSIONE DIURNA BLU
     this.globe = Globe()(this.container)
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
       .pointsData(markers)
       .pointAltitude(0.01)
@@ -342,51 +321,60 @@ class WorldGlobe {
       .pointColor('color')
       .pointLabel(d => `
         <div style="
-          background: rgba(255,250,240,0.95);
-          padding: 12px;
-          border-radius: 8px;
+          background: rgba(255,255,255,0.98);
+          padding: 10px 14px;
+          border-radius: 10px;
           border: 2px solid ${d.color};
           font-family: 'Open Sans', sans-serif;
-          max-width: 200px;
+          max-width: 220px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         ">
-          <strong style="color: #D2691E; font-size: 16px;">${d.title}</strong><br/>
-          <span style="color: #6B5D4F; font-size: 13px;">${d.description}</span>
+          <div style="font-size: 24px; margin-bottom: 4px;">${d.flag}</div>
+          <strong style="color: ${d.color}; font-size: 15px; display: block; margin-bottom: 6px;">${d.country}</strong>
+          <div style="color: #555; font-size: 12px; line-height: 1.4;">
+            ${d.songs.join('<br/>')}
+          </div>
         </div>
       `)
       .onPointClick(point => this.showTooltip(point))
       .onPointHover(point => {
         this.container.style.cursor = point ? 'pointer' : 'grab';
       })
-      .atmosphereColor('#DAA520')
-      .atmosphereAltitude(0.2);
+      .atmosphereColor('#4A90E2')
+      .atmosphereAltitude(0.25);
 
     // Auto-rotazione lenta
     this.globe.controls().autoRotate = true;
-    this.globe.controls().autoRotateSpeed = 0.5;
+    this.globe.controls().autoRotateSpeed = 0.3;
 
-    // Setup bottoni
+    // Setup bottoni per continenti
     this.setupButtons();
 
     // Punto di vista iniziale
-    this.globe.pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
+    this.globe.pointOfView({ lat: 30, lng: 0, altitude: 2.5 });
   }
 
   setupButtons() {
+    // Coordinate dei continenti per i bottoni
+    const continents = {
+      africa: { lat: -5, lng: 20, altitude: 2.0 },
+      europe: { lat: 50, lng: 10, altitude: 2.0 },
+      asia: { lat: 30, lng: 100, altitude: 2.0 },
+      americas: { lat: 0, lng: -70, altitude: 2.0 }
+    };
+
     const buttons = document.querySelectorAll('.globe-btn');
     buttons.forEach(btn => {
       btn.addEventListener('click', () => {
         const region = btn.dataset.region;
-        const data = this.regionsData[region];
-        if (data) {
-          // Anima verso la regione
+        const coords = continents[region];
+        if (coords) {
+          // Anima verso il continente
           this.globe.pointOfView({
-            lat: data.lat,
-            lng: data.lng,
-            altitude: 1.8
+            lat: coords.lat,
+            lng: coords.lng,
+            altitude: coords.altitude
           }, 1500);
-
-          // Mostra tooltip dopo animazione
-          setTimeout(() => this.showTooltip(data), 1600);
         }
       });
     });
@@ -395,15 +383,15 @@ class WorldGlobe {
   showTooltip(data) {
     if (!this.tooltip || !data) return;
 
-    // Popola tooltip
-    this.tooltip.querySelector('.tooltip-title').textContent = data.title;
-    this.tooltip.querySelector('.tooltip-description').textContent = data.description;
+    // Popola tooltip con i nuovi dati
+    this.tooltip.querySelector('.tooltip-title').innerHTML = `${data.flag} ${data.country}`;
+    this.tooltip.querySelector('.tooltip-description').textContent = data.songs[0] || '';
 
     const examplesList = this.tooltip.querySelector('.tooltip-examples');
     examplesList.innerHTML = '';
-    data.examples.forEach(example => {
+    data.songs.forEach(song => {
       const li = document.createElement('li');
-      li.textContent = example;
+      li.textContent = song;
       examplesList.appendChild(li);
     });
 
