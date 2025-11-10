@@ -1504,14 +1504,15 @@ ul, ol {
   box-shadow: var(--shadow-xl);
   border: 3px solid var(--oro-antico);
   gap: var(--spacing-lg);
+  min-height: 900px;
 }
 
 #globeViz {
   width: 100%;
-  height: 700px;
+  height: 800px;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  flex: 1;
+  margin: 0 auto;
 }
 
 /* Info Panel - ora sotto il globo, non copre */

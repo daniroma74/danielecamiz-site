@@ -314,10 +314,14 @@ app.get('/api/repertoire/:countryCode', (req, res) => {
 });
 
 // ============================================
-// SPA FALLBACK
+// SPA FALLBACK (only for frontend, not admin or api)
 // ============================================
 
-app.get('*', (req, res) => {
+app.get('*', (req, res, next) => {
+  // Skip admin and API routes
+  if (req.path.startsWith('/admin') || req.path.startsWith('/api')) {
+    return next();
+  }
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
