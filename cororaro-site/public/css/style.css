@@ -1494,7 +1494,8 @@ ul, ol {
    ============================================ */
 
 .world-map-container {
-  position: relative;
+  display: flex;
+  flex-direction: column;
   max-width: 100%;
   margin: 0 auto;
   padding: var(--spacing-xl);
@@ -1502,27 +1503,26 @@ ul, ol {
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-xl);
   border: 3px solid var(--oro-antico);
-  min-height: 600px;
+  gap: var(--spacing-lg);
 }
 
 #globeViz {
   width: 100%;
-  height: 600px;
+  height: 700px;
   border-radius: var(--radius-xl);
   overflow: hidden;
+  flex: 1;
 }
 
-/* Info Panel */
+/* Info Panel - ora sotto il globo, non copre */
 .globe-info-panel {
-  position: absolute;
-  top: var(--spacing-lg);
-  right: var(--spacing-lg);
+  position: relative;
   background: rgba(255, 250, 240, 0.95);
   backdrop-filter: blur(10px);
   padding: var(--spacing-lg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
-  max-width: 280px;
+  width: 100%;
   z-index: 10;
 }
 
@@ -1636,18 +1636,9 @@ ul, ol {
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
-  .globe-info-panel {
-    position: static;
-    max-width: 100%;
-    margin-bottom: var(--spacing-lg);
-  }
-}
-
 @media (max-width: 768px) {
   .world-map-container {
     padding: var(--spacing-md);
-    min-height: 500px;
   }
 
   #globeViz {
@@ -1656,6 +1647,16 @@ ul, ol {
 
   .globe-info-panel {
     padding: var(--spacing-md);
+  }
+
+  .globe-controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .globe-btn {
+    flex: 1 1 45%;
+    text-align: center;
   }
 
   .globe-tooltip {
@@ -1671,5 +1672,10 @@ ul, ol {
 @media (max-width: 480px) {
   #globeViz {
     height: 400px;
+  }
+
+  .globe-btn {
+    flex: 1 1 100%;
+    font-size: var(--fs-xs);
   }
 }

@@ -5,9 +5,20 @@
 
 const express = require('express');
 const path = require('path');
+const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const PORT = process.env.PORT || 3120;
+
+// Database connection
+const DB_PATH = path.join(__dirname, 'db', 'cororaro.db');
+const db = new sqlite3.Database(DB_PATH, (err) => {
+  if (err) {
+    console.error('❌ Error opening database:', err.message);
+  } else {
+    console.log('✅ Database connected');
+  }
+});
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
@@ -100,6 +111,162 @@ app.post('/api/newsletter', (req, res) => {
   res.json({
     success: true,
     message: 'Iscrizione completata!'
+  });
+});
+
+/**
+ * GET /api/repertoire
+ * Get all repertoire grouped by country
+ */
+app.get('/api/repertoire', (req, res) => {
+  const query = `
+    SELECT
+      c.id as country_id,
+      c.code,
+      c.flag,
+      c.name as country,
+      c.lat,
+      c.lng,
+      c.color,
+      r.id as song_id,
+      r.title,
+      r.description,
+      r.audio_url,
+      r.sheet_music_url,
+      r.lyrics,
+      r.language,
+      r.difficulty,
+      r.duration_seconds
+    FROM countries c
+    LEFT JOIN repertoire r ON c.id = r.country_id AND r.is_active = 1
+    ORDER BY c.name, r.sort_order, r.title
+  `;
+
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Errore durante il recupero del repertorio'
+      });
+    }
+
+    // Group songs by country
+    const countries = {};
+    rows.forEach(row => {
+      const countryCode = row.code;
+
+      if (!countries[countryCode]) {
+        countries[countryCode] = {
+          code: row.code,
+          flag: row.flag,
+          country: row.country,
+          lat: row.lat,
+          lng: row.lng,
+          color: row.color,
+          songs: []
+        };
+      }
+
+      if (row.song_id) {
+        countries[countryCode].songs.push({
+          id: row.song_id,
+          title: row.title,
+          description: row.description,
+          audioUrl: row.audio_url,
+          sheetMusicUrl: row.sheet_music_url,
+          lyrics: row.lyrics,
+          language: row.language,
+          difficulty: row.difficulty,
+          durationSeconds: row.duration_seconds
+        });
+      }
+    });
+
+    // Convert to array
+    const repertoire = Object.values(countries);
+
+    res.json({
+      success: true,
+      data: repertoire,
+      count: repertoire.length
+    });
+  });
+});
+
+/**
+ * GET /api/repertoire/:countryCode
+ * Get repertoire for a specific country
+ */
+app.get('/api/repertoire/:countryCode', (req, res) => {
+  const { countryCode } = req.params;
+
+  const query = `
+    SELECT
+      c.id as country_id,
+      c.code,
+      c.flag,
+      c.name as country,
+      c.lat,
+      c.lng,
+      c.color,
+      r.id as song_id,
+      r.title,
+      r.description,
+      r.audio_url,
+      r.sheet_music_url,
+      r.lyrics,
+      r.language,
+      r.difficulty,
+      r.duration_seconds
+    FROM countries c
+    LEFT JOIN repertoire r ON c.id = r.country_id AND r.is_active = 1
+    WHERE c.code = ?
+    ORDER BY r.sort_order, r.title
+  `;
+
+  db.all(query, [countryCode.toUpperCase()], (err, rows) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Errore durante il recupero del repertorio'
+      });
+    }
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Paese non trovato'
+      });
+    }
+
+    const country = {
+      code: rows[0].code,
+      flag: rows[0].flag,
+      country: rows[0].country,
+      lat: rows[0].lat,
+      lng: rows[0].lng,
+      color: rows[0].color,
+      songs: rows
+        .filter(row => row.song_id)
+        .map(row => ({
+          id: row.song_id,
+          title: row.title,
+          description: row.description,
+          audioUrl: row.audio_url,
+          sheetMusicUrl: row.sheet_music_url,
+          lyrics: row.lyrics,
+          language: row.language,
+          difficulty: row.difficulty,
+          durationSeconds: row.duration_seconds
+        }))
+    };
+
+    res.json({
+      success: true,
+      data: country
+    });
   });
 });
 

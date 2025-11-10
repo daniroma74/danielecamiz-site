@@ -266,80 +266,107 @@ class WorldGlobe {
       return;
     }
 
-    // Dati dei paesi con bandierine e brani specifici
-    this.countriesData = [
-      // EUROPA
-      { flag: '🇮🇹', country: 'Italia', lat: 41.9, lng: 12.5, songs: ['Canti popolari italiani', 'Tradizioni regionali'], color: '#228B22' },
-      { flag: '🇪🇸', country: 'Spagna', lat: 40.4, lng: -3.7, songs: ['Flamenco', 'Canti tradizionali spagnoli'], color: '#C41E3A' },
-      { flag: '🇫🇷', country: 'Francia', lat: 48.9, lng: 2.3, songs: ['Chansons françaises', 'Musica bretone'], color: '#0055A4' },
-      { flag: '🇩🇪', country: 'Germania', lat: 52.5, lng: 13.4, songs: ['Lieder tedeschi', 'Folklore bavarese'], color: '#000000' },
-      { flag: '🇷🇺', country: 'Russia', lat: 55.8, lng: 37.6, songs: ['Canti cosacchi', 'Musica ortodossa'], color: '#DA291C' },
-      { flag: '🇬🇧', country: 'Regno Unito', lat: 51.5, lng: -0.1, songs: ['Folk celtico', 'Madrigali inglesi'], color: '#012169' },
-      { flag: '🇬🇷', country: 'Grecia', lat: 38.0, lng: 23.7, songs: ['Musica bizantina', 'Canti tradizionali'], color: '#0D5EAF' },
+    this.countriesData = [];
+    this.loadData();
+  }
 
-      // AFRICA
-      { flag: '🇿🇦', country: 'Sudafrica', lat: -26.2, lng: 28.0, songs: ['Canti Zulu', 'Gospel africano'], color: '#007A4D' },
-      { flag: '🇳🇬', country: 'Nigeria', lat: 9.1, lng: 7.4, songs: ['Canti Yoruba', 'Afrobeat tradizionale'], color: '#008751' },
-      { flag: '🇰🇪', country: 'Kenya', lat: -1.3, lng: 36.8, songs: ['Canti Swahili', 'Musica masai'], color: '#BB0000' },
+  async loadData() {
+    try {
+      // Mostra loader
+      this.container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: white; font-size: 24px;">🌍 Caricamento...</div>';
 
-      // AMERICHE
-      { flag: '🇺🇸', country: 'Stati Uniti', lat: 38.9, lng: -77.0, songs: ['Spirituals', 'Gospel', 'Folk americano'], color: '#B22234' },
-      { flag: '🇧🇷', country: 'Brasile', lat: -15.8, lng: -47.9, songs: ['Bossa nova', 'Samba', 'Canti afro-brasiliani'], color: '#009739' },
-      { flag: '🇦🇷', country: 'Argentina', lat: -34.6, lng: -58.4, songs: ['Tango', 'Folk argentino'], color: '#74ACDF' },
-      { flag: '🇲🇽', country: 'Messico', lat: 19.4, lng: -99.1, songs: ['Mariachi', 'Son jarocho'], color: '#006847' },
-      { flag: '🇵🇪', country: 'Perù', lat: -12.0, lng: -77.0, songs: ['Musica andina', 'Canti quechua'], color: '#D91023' },
+      const response = await fetch('/api/repertoire');
+      const result = await response.json();
 
-      // ASIA
-      { flag: '🇨🇳', country: 'Cina', lat: 39.9, lng: 116.4, songs: ['Opera di Pechino', 'Canti tradizionali'], color: '#DE2910' },
-      { flag: '🇯🇵', country: 'Giappone', lat: 35.7, lng: 139.7, songs: ['Musica tradizionale', 'Canti shintoisti'], color: '#BC002D' },
-      { flag: '🇮🇳', country: 'India', lat: 28.6, lng: 77.2, songs: ['Bhajan', 'Musica carnatica'], color: '#FF9933' },
-      { flag: '🇮🇱', country: 'Israele', lat: 31.8, lng: 35.2, songs: ['Canti ebraici', 'Musica klezmer'], color: '#0038B8' }
-    ];
+      if (result.success && result.data) {
+        // Trasforma i dati dall'API nel formato per il globo
+        this.countriesData = result.data.map(country => ({
+          code: country.code,
+          flag: country.flag,
+          country: country.country,
+          lat: country.lat,
+          lng: country.lng,
+          color: country.color,
+          songs: country.songs  // Array completo con titoli, audio_url, etc
+        }));
 
-    this.init();
+        console.log(`✅ Loaded ${this.countriesData.length} countries from database`);
+
+        // Inizializza il globo con i dati
+        this.init();
+      } else {
+        throw new Error('Failed to load repertoire data');
+      }
+    } catch (error) {
+      console.error('❌ Error loading repertoire:', error);
+      this.container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ff4444; font-size: 18px;">❌ Errore caricamento dati</div>';
+    }
   }
 
   init() {
-    // Prepara i marker con bandierine
-    const markers = this.countriesData.map(data => ({
-      lat: data.lat,
-      lng: data.lng,
-      size: 1.2,
-      color: data.color,
-      flag: data.flag,
-      country: data.country,
-      songs: data.songs
-    }));
-
-    // Inizializza il globo - VERSIONE DIURNA BLU
+    // Inizializza il globo - VERSIONE DIURNA BLU CON BANDIERINE 3D
     this.globe = Globe()(this.container)
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
       .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-      .pointsData(markers)
-      .pointAltitude(0.01)
-      .pointRadius('size')
-      .pointColor('color')
-      .pointLabel(d => `
-        <div style="
-          background: rgba(255,255,255,0.98);
-          padding: 10px 14px;
-          border-radius: 10px;
-          border: 2px solid ${d.color};
-          font-family: 'Open Sans', sans-serif;
-          max-width: 220px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        ">
-          <div style="font-size: 24px; margin-bottom: 4px;">${d.flag}</div>
-          <strong style="color: ${d.color}; font-size: 15px; display: block; margin-bottom: 6px;">${d.country}</strong>
-          <div style="color: #555; font-size: 12px; line-height: 1.4;">
-            ${d.songs.join('<br/>')}
+      // Usa htmlElementsData per bandierine 3D vere
+      .htmlElementsData(this.countriesData)
+      .htmlElement(d => {
+        const el = document.createElement('div');
+        el.innerHTML = `
+          <div style="
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+          ">
+            <!-- Palo della bandierina -->
+            <div style="
+              width: 2px;
+              height: 30px;
+              background: linear-gradient(to bottom, #8B4513 0%, #654321 100%);
+              position: absolute;
+              left: 50%;
+              transform: translateX(-50%);
+              bottom: -5px;
+              box-shadow: 2px 0 4px rgba(0,0,0,0.3);
+            "></div>
+            <!-- Bandierina emoji -->
+            <div style="
+              font-size: 28px;
+              line-height: 1;
+              text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+              filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+              transform: translateY(-5px);
+            ">${d.flag}</div>
+            <!-- Badge con numero brani -->
+            <div style="
+              position: absolute;
+              top: -8px;
+              right: -8px;
+              background: ${d.color};
+              color: white;
+              font-size: 10px;
+              font-weight: bold;
+              padding: 2px 5px;
+              border-radius: 10px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              font-family: sans-serif;
+            ">${d.songs.length}</div>
           </div>
-        </div>
-      `)
-      .onPointClick(point => this.showTooltip(point))
-      .onPointHover(point => {
-        this.container.style.cursor = point ? 'pointer' : 'grab';
+        `;
+
+        // Click e hover handlers
+        el.style.pointerEvents = 'auto';
+        el.addEventListener('click', () => this.showTooltip(d));
+        el.addEventListener('mouseenter', () => {
+          el.querySelector('div').style.transform = 'scale(1.3)';
+        });
+        el.addEventListener('mouseleave', () => {
+          el.querySelector('div').style.transform = 'scale(1)';
+        });
+
+        return el;
       })
+      .htmlAltitude(0.01)
       .atmosphereColor('#4A90E2')
       .atmosphereAltitude(0.25);
 
