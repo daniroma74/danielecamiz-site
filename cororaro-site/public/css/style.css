@@ -360,14 +360,17 @@ ul, ol {
 
 .hero-logo-wrapper {
   margin-bottom: var(--spacing-xl);
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .hero-logo {
   max-width: 90%;
   width: 600px;
   height: auto;
-  position: center;
+  display: block;
+  margin: 0 auto;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
 }
 
