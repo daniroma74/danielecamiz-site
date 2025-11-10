@@ -8,6 +8,7 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
+const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 const PORT = process.env.PORT || 3120;
@@ -25,6 +26,8 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
 // View Engine Setup for Admin
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'admin/views'));
+app.use(expressLayouts);
+app.set('layout', 'layout');
 
 // Session middleware
 app.use(session({

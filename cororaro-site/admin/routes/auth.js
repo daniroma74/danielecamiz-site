@@ -12,7 +12,8 @@ module.exports = (db) => {
   router.get('/login', redirectIfAuthenticated, (req, res) => {
     res.render('login', {
       error: req.query.error,
-      title: 'Login Admin'
+      title: 'Login Admin',
+      layout: false
     });
   });
 
