@@ -3,6 +3,9 @@
  * Serves static files and handles contact form API
  */
 
+// Load environment variables
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
@@ -71,11 +74,13 @@ const authRoutes = require('./admin/routes/auth')(db);
 const dashboardRoutes = require('./admin/routes/dashboard')(db);
 const repertoireRoutes = require('./admin/routes/repertoire')(db);
 const countriesRoutes = require('./admin/routes/countries')(db);
+const uploadRoutes = require('./admin/routes/upload')();
 
 app.use('/admin', authRoutes);
 app.use('/admin', dashboardRoutes);
 app.use('/admin', repertoireRoutes);
 app.use('/admin', countriesRoutes);
+app.use('/admin', uploadRoutes);
 
 // Admin root redirect
 app.get('/admin', (req, res) => {
