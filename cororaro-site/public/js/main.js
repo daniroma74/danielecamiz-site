@@ -368,7 +368,9 @@ class WorldGlobe {
       })
       .htmlAltitude(0.01)
       .atmosphereColor('#4A90E2')
-      .atmosphereAltitude(0.25);
+      .atmosphereAltitude(0.25)
+      .width(this.container.offsetWidth)
+      .height(800);
 
     // Auto-rotazione lenta
     this.globe.controls().autoRotate = true;
@@ -379,6 +381,15 @@ class WorldGlobe {
 
     // Punto di vista iniziale
     this.globe.pointOfView({ lat: 30, lng: 0, altitude: 2.5 });
+
+    // Resize handler per adattare il globe alla finestra
+    window.addEventListener('resize', () => {
+      if (this.globe && this.container) {
+        this.globe
+          .width(this.container.offsetWidth)
+          .height(800);
+      }
+    });
   }
 
   setupButtons() {
