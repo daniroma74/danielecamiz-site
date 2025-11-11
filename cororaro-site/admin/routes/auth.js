@@ -10,9 +10,10 @@ const { redirectIfAuthenticated } = require('../middleware/auth');
 module.exports = (db) => {
   // GET /admin/login
   router.get('/login', redirectIfAuthenticated, (req, res) => {
-    res.render('admin/login', {
+    res.render('login', {
       error: req.query.error,
-      title: 'Login Admin'
+      title: 'Login Admin',
+      layout: false
     });
   });
 

@@ -57,7 +57,7 @@ module.exports = (db) => {
 
         // Get all countries for filter
         db.all('SELECT * FROM countries ORDER BY name', (err, countries) => {
-          res.render('admin/repertoire/list', {
+          res.render('repertoire/list', {
             title: 'Gestione Repertorio',
             user: req.session,
             songs: songs || [],
@@ -80,7 +80,7 @@ module.exports = (db) => {
   // GET /admin/repertoire/new - Show create form
   router.get('/repertoire/new', requireAuth, (req, res) => {
     db.all('SELECT * FROM countries ORDER BY name', (err, countries) => {
-      res.render('admin/repertoire/form', {
+      res.render('repertoire/form', {
         title: 'Nuovo Brano',
         user: req.session,
         song: {},
@@ -149,7 +149,7 @@ module.exports = (db) => {
       }
 
       db.all('SELECT * FROM countries ORDER BY name', (err, countries) => {
-        res.render('admin/repertoire/form', {
+        res.render('repertoire/form', {
           title: 'Modifica Brano',
           user: req.session,
           song,
