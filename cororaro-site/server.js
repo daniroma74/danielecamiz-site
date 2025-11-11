@@ -70,10 +70,12 @@ app.use((req, res, next) => {
 const authRoutes = require('./admin/routes/auth')(db);
 const dashboardRoutes = require('./admin/routes/dashboard')(db);
 const repertoireRoutes = require('./admin/routes/repertoire')(db);
+const countriesRoutes = require('./admin/routes/countries')(db);
 
 app.use('/admin', authRoutes);
 app.use('/admin', dashboardRoutes);
 app.use('/admin', repertoireRoutes);
+app.use('/admin', countriesRoutes);
 
 // Admin root redirect
 app.get('/admin', (req, res) => {
