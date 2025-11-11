@@ -4,31 +4,11 @@
 
 Vai su: **https://console.cloudinary.com/settings/upload**
 
-Crea questi 5 preset unsigned:
+Crea questi 4 preset unsigned:
 
 ---
 
-### 1️⃣ **cororaro_repertoire** (Copertine Brani)
-
-**Settings:**
-- **Preset name**: `cororaro_repertoire`
-- **Signing Mode**: ✅ **Unsigned**
-- **Folder**: `cororaro/repertoire`
-- **Use filename as Public ID**: ❌ No
-- **Unique filename**: ✅ Yes
-- **Overwrite**: ❌ No
-
-**Transformations:**
-- **Quality**: Auto
-- **Format**: Auto
-- **Width**: 1200px (limit)
-- **Crop**: Limit
-
-**Uso**: Immagini copertina per i brani del repertorio
-
----
-
-### 2️⃣ **cororaro_concerts** (Locandine Concerti)
+### 1️⃣ **cororaro_concerts** (Locandine Concerti)
 
 **Settings:**
 - **Preset name**: `cororaro_concerts`
@@ -48,7 +28,7 @@ Crea questi 5 preset unsigned:
 
 ---
 
-### 3️⃣ **cororaro_gallery** (Galleria Foto)
+### 2️⃣ **cororaro_gallery** (Galleria Foto)
 
 **Settings:**
 - **Preset name**: `cororaro_gallery`
@@ -64,31 +44,11 @@ Crea questi 5 preset unsigned:
 - **Width**: 2000px (limit)
 - **Crop**: Limit
 
-**Uso**: Foto della galleria eventi/concerti
+**Uso**: Foto di concerti, prove, eventi, backstage
 
 ---
 
-### 4️⃣ **cororaro_news** (Immagini News/Blog)
-
-**Settings:**
-- **Preset name**: `cororaro_news`
-- **Signing Mode**: ✅ **Unsigned**
-- **Folder**: `cororaro/news`
-- **Use filename as Public ID**: ❌ No
-- **Unique filename**: ✅ Yes
-- **Overwrite**: ❌ No
-
-**Transformations:**
-- **Quality**: Auto
-- **Format**: Auto
-- **Width**: 1200px (limit)
-- **Crop**: Limit
-
-**Uso**: Immagini per articoli/news/blog
-
----
-
-### 5️⃣ **cororaro_team** (Foto Membri Coro)
+### 3️⃣ **cororaro_team** (Foto Membri Coro)
 
 **Settings:**
 - **Preset name**: `cororaro_team`
@@ -106,7 +66,27 @@ Crea questi 5 preset unsigned:
 - **Crop**: Fill
 - **Gravity**: Faces (Auto)
 
-**Uso**: Foto profilo membri del coro
+**Uso**: Foto profilo di direttori, coristi, staff
+
+---
+
+### 4️⃣ **cororaro_general** (Immagini Generali)
+
+**Settings:**
+- **Preset name**: `cororaro_general`
+- **Signing Mode**: ✅ **Unsigned**
+- **Folder**: `cororaro/general`
+- **Use filename as Public ID**: ❌ No
+- **Unique filename**: ✅ Yes
+- **Overwrite**: ❌ No
+
+**Transformations:**
+- **Quality**: Auto
+- **Format**: Auto
+- **Width**: 1200px (limit)
+- **Crop**: Limit
+
+**Uso**: Logo coro, banner sito, immagini sezioni "Chi siamo", "Storia", foto sale prove/location, loghi sponsor
 
 ---
 
@@ -116,22 +96,23 @@ Dopo aver creato i preset, la struttura sarà:
 
 ```
 cororaro/
-├── repertoire/
-│   ├── 2024/
-│   └── 2025/
 ├── concerts/
 │   ├── 2024/
 │   └── 2025/
 ├── gallery/
 │   ├── 2024/
 │   └── 2025/
-├── news/
-│   ├── 2024/
-│   └── 2025/
-└── team/
+├── team/
+│   ├── direttori/
+│   ├── coristi/
+│   └── staff/
+└── general/
+    ├── logo/
+    ├── banner/
+    └── locations/
 ```
 
-Le sottocartelle per anno vengono create automaticamente dal sistema quando carichi file.
+Le sottocartelle vengono create automaticamente quando carichi file.
 
 ---
 
@@ -139,18 +120,18 @@ Le sottocartelle per anno vengono create automaticamente dal sistema quando cari
 
 1. Vai su https://console.cloudinary.com/settings/upload
 2. Click su **"Add upload preset"** (in alto a destra)
-3. Inserisci il nome (es: `cororaro_repertoire`)
+3. Inserisci il nome (es: `cororaro_concerts`)
 4. **Signing Mode**: Seleziona "Unsigned"
-5. **Folder**: Inserisci `cororaro/repertoire`
+5. **Folder**: Inserisci `cororaro/concerts`
 6. Scorri giù fino a **"Edit"** sotto "Eager transformations"
 7. Click **"+ Add eager transformation"**
 8. Imposta:
-   - Width: 1200 (o come da tabella sopra)
+   - Width: 1600 (o come da tabella sopra)
    - Crop: limit
    - Quality: auto
    - Format: auto
 9. Click **"Save"**
-10. Ripeti per tutti gli altri preset
+10. Ripeti per tutti gli altri 3 preset
 
 ---
 
@@ -159,7 +140,7 @@ Le sottocartelle per anno vengono create automaticamente dal sistema quando cari
 Dopo aver creato i preset, verifica su:
 **https://console.cloudinary.com/settings/upload**
 
-Dovresti vedere tutti e 5 i preset nella lista con badge **"Unsigned"**.
+Dovresti vedere tutti e 4 i preset nella lista con badge **"Unsigned"**.
 
 ---
 
@@ -169,10 +150,6 @@ I preset sono già configurati in `/public/js/cloudinary-config.js`:
 
 ```javascript
 const CORO_RARO_PRESETS = {
-  repertoire: {
-    preset: 'cororaro_repertoire',
-    folder: 'cororaro/repertoire'
-  },
   concerts: {
     preset: 'cororaro_concerts',
     folder: 'cororaro/concerts'
@@ -181,13 +158,13 @@ const CORO_RARO_PRESETS = {
     preset: 'cororaro_gallery',
     folder: 'cororaro/gallery'
   },
-  news: {
-    preset: 'cororaro_news',
-    folder: 'cororaro/news'
-  },
   team: {
     preset: 'cororaro_team',
     folder: 'cororaro/team'
+  },
+  general: {
+    preset: 'cororaro_general',
+    folder: 'cororaro/general'
   }
 };
 ```
@@ -195,12 +172,28 @@ const CORO_RARO_PRESETS = {
 Per usarlo nei form admin:
 
 ```javascript
-// Esempio: Upload immagine concerto
+// Esempio: Upload locandina concerto
 CloudinaryManager.showImageDialog((result) => {
   console.log('Immagine caricata:', result.url);
 }, {
   preset: 'cororaro_concerts',
   folder: 'cororaro/concerts'
+});
+
+// Esempio: Upload foto membro coro
+CloudinaryManager.showImageDialog((result) => {
+  console.log('Foto membro:', result.url);
+}, {
+  preset: 'cororaro_team',
+  folder: 'cororaro/team'
+});
+
+// Esempio: Upload logo/banner
+CloudinaryManager.showImageDialog((result) => {
+  console.log('Logo caricato:', result.url);
+}, {
+  preset: 'cororaro_general',
+  folder: 'cororaro/general'
 });
 ```
 

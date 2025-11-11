@@ -10,10 +10,6 @@
 
   // Preset Cloudinary per Coro Raro
   const CORO_RARO_PRESETS = {
-    repertoire: {
-      preset: 'cororaro_repertoire',
-      folder: `${CORO_RARO_BASE_FOLDER}/repertoire`
-    },
     concerts: {
       preset: 'cororaro_concerts',
       folder: `${CORO_RARO_BASE_FOLDER}/concerts`
@@ -22,19 +18,19 @@
       preset: 'cororaro_gallery',
       folder: `${CORO_RARO_BASE_FOLDER}/gallery`
     },
-    news: {
-      preset: 'cororaro_news',
-      folder: `${CORO_RARO_BASE_FOLDER}/news`
-    },
     team: {
       preset: 'cororaro_team',
       folder: `${CORO_RARO_BASE_FOLDER}/team`
+    },
+    general: {
+      preset: 'cororaro_general',
+      folder: `${CORO_RARO_BASE_FOLDER}/general`
     }
   };
 
   // Helper per ottenere config preset
-  window.getCoroRaroCloudinaryConfig = function(type = 'repertoire') {
-    const config = CORO_RARO_PRESETS[type] || CORO_RARO_PRESETS.repertoire;
+  window.getCoroRaroCloudinaryConfig = function(type = 'general') {
+    const config = CORO_RARO_PRESETS[type] || CORO_RARO_PRESETS.general;
     return {
       cloudName: CORO_RARO_CLOUD_NAME,
       ...config
