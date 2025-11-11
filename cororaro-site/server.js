@@ -79,6 +79,7 @@ const countriesRoutes = require('./admin/routes/countries')(db);
 const countriesApiRoutes = require('./admin/routes/countries-api')();
 const uploadRoutes = require('./admin/routes/upload')();
 const cloudinaryApiRoutes = require('./admin/routes/cloudinary-api')();
+const galleryRoutes = require('./admin/routes/gallery')(db);
 
 app.use('/admin', authRoutes);
 app.use('/admin', dashboardRoutes);
@@ -87,6 +88,7 @@ app.use('/admin', countriesRoutes);
 app.use('/admin', countriesApiRoutes);
 app.use('/admin', uploadRoutes);
 app.use('/admin', cloudinaryApiRoutes);
+app.use('/admin', galleryRoutes);
 
 // Admin root redirect
 app.get('/admin', (req, res) => {

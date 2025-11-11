@@ -196,8 +196,11 @@
         <a href="/admin/repertoire" class="<%= title.includes('Repertorio') ? 'active' : '' %>">
           🎼 Repertorio
         </a>
-        <a href="/admin/countries">
+        <a href="/admin/countries" class="<%= title === 'Paesi' ? 'active' : '' %>">
           🌍 Paesi
+        </a>
+        <a href="/admin/gallery" class="<%= title === 'Galleria' ? 'active' : '' %>">
+          📸 Galleria
         </a>
         <a href="/admin/settings">
           ⚙️ Impostazioni
