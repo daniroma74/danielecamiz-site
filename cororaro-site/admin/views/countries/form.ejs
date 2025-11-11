@@ -12,6 +12,36 @@
 <div class="form-container">
   <form method="POST" action="<%= action === 'new' ? '/admin/countries' : '/admin/countries/' + country.id %>" class="country-form">
 
+    <% if (action === 'new') { %>
+    <!-- Ricerca Rapida Paese -->
+    <div class="form-section" style="background: linear-gradient(135deg, #FFF9E6 0%, #FFE4B5 100%); border: 2px solid var(--oro);">
+      <h3>🔍 Ricerca Rapida Paese</h3>
+      <p style="color: #666; margin-bottom: 1rem;">
+        <strong>Inizia cercando il paese qui!</strong> Il sistema compilerà automaticamente tutti i campi sottostanti.
+      </p>
+
+      <div class="form-group">
+        <label for="country-search">
+          Cerca Paese
+          <span class="help-text">Scrivi almeno 2 lettere (es: "Italia", "France", "South Africa")</span>
+        </label>
+        <div style="position: relative;">
+          <input
+            type="text"
+            id="country-search"
+            placeholder="🔍 Inizia a digitare il nome del paese..."
+            class="form-input"
+            autocomplete="off"
+            style="font-size: 1.1rem; padding-right: 3rem;">
+          <div id="search-loading" style="display: none; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);">
+            ⏳
+          </div>
+        </div>
+        <div id="country-results" class="country-results"></div>
+      </div>
+    </div>
+    <% } %>
+
     <!-- Informazioni Base -->
     <div class="form-section">
       <h3>📋 Informazioni Base</h3>
@@ -28,7 +58,8 @@
           value="<%= country ? country.name : '' %>"
           required
           placeholder="Nome completo del paese"
-          class="form-input">
+          class="form-input"
+          <% if (action === 'new') { %>readonly style="background: #f0f0f0;"<% } %>>
       </div>
 
       <div class="form-row">
@@ -47,10 +78,13 @@
             pattern="[A-Za-z]{2}"
             placeholder="IT"
             class="form-input"
-            style="text-transform: uppercase;">
+            style="text-transform: uppercase;"
+            <% if (action === 'new') { %>readonly style="background: #f0f0f0; text-transform: uppercase;"<% } %>>
+          <% if (action === 'edit') { %>
           <small style="display: block; margin-top: 0.5rem; color: #666;">
             💡 <a href="https://it.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank" style="color: var(--terracotta);">Cerca il codice ISO su Wikipedia</a>
           </small>
+          <% } %>
         </div>
 
         <div class="form-group">
@@ -65,10 +99,13 @@
             value="<%= country ? country.flag : '' %>"
             placeholder="🌍"
             class="form-input"
-            style="font-size: 2rem; text-align: center;">
+            style="font-size: 2rem; text-align: center;"
+            <% if (action === 'new') { %>readonly style="background: #f0f0f0; font-size: 2rem; text-align: center;"<% } %>>
+          <% if (action === 'edit') { %>
           <small style="display: block; margin-top: 0.5rem; color: #666;">
             💡 <a href="https://emojipedia.org/flags" target="_blank" style="color: var(--terracotta);">Cerca bandiere su Emojipedia</a>
           </small>
+          <% } %>
         </div>
       </div>
     </div>
@@ -98,8 +135,11 @@
             min="-90"
             max="90"
             placeholder="41.9028"
-            class="form-input">
+            class="form-input"
+            <% if (action === 'new') { %>readonly style="background: #f0f0f0;"<% } %>>
+          <% if (action === 'edit') { %>
           <small style="color: #666;">Es: Roma = 41.9, Città del Capo = -33.9</small>
+          <% } %>
         </div>
 
         <div class="form-group">
@@ -117,8 +157,11 @@
             min="-180"
             max="180"
             placeholder="12.4964"
-            class="form-input">
+            class="form-input"
+            <% if (action === 'new') { %>readonly style="background: #f0f0f0;"<% } %>>
+          <% if (action === 'edit') { %>
           <small style="color: #666;">Es: Roma = 12.5, New York = -74.0</small>
+          <% } %>
         </div>
       </div>
 
@@ -342,4 +385,152 @@ function setCoords(lat, lng) {
     }, 1000);
   });
 }
+
+<% if (action === 'new') { %>
+// ============================================
+// AUTOCOMPLETE PAESI
+// ============================================
+(function() {
+  const searchInput = document.getElementById('country-search');
+  const resultsDiv = document.getElementById('country-results');
+  const loadingDiv = document.getElementById('search-loading');
+  let searchTimeout;
+
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const query = this.value.trim();
+
+    if (query.length < 2) {
+      resultsDiv.innerHTML = '';
+      resultsDiv.style.display = 'none';
+      return;
+    }
+
+    loadingDiv.style.display = 'block';
+
+    searchTimeout = setTimeout(async () => {
+      try {
+        const response = await fetch(`/admin/api/countries/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+
+        loadingDiv.style.display = 'none';
+
+        if (data.success && data.countries && data.countries.length > 0) {
+          resultsDiv.innerHTML = data.countries.map(country => `
+            <div class="country-result-item" data-country='${JSON.stringify(country)}'>
+              <div style="font-size: 2rem;">${country.flag}</div>
+              <div>
+                <div style="font-weight: 600; color: var(--text-primary);">${country.name}</div>
+                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                  ${country.code} • ${country.capital || 'N/D'} • ${country.region}
+                </div>
+              </div>
+            </div>
+          `).join('');
+          resultsDiv.style.display = 'block';
+
+          // Click handlers
+          resultsDiv.querySelectorAll('.country-result-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const country = JSON.parse(this.dataset.country);
+              fillCountryData(country);
+              resultsDiv.style.display = 'none';
+              searchInput.value = country.name;
+            });
+          });
+        } else {
+          resultsDiv.innerHTML = '<div style="padding: 1rem; text-align: center; color: #999;">Nessun paese trovato</div>';
+          resultsDiv.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+        loadingDiv.style.display = 'none';
+        resultsDiv.innerHTML = '<div style="padding: 1rem; text-align: center; color: #e74c3c;">Errore nella ricerca</div>';
+        resultsDiv.style.display = 'block';
+      }
+    }, 300);
+  });
+
+  function fillCountryData(country) {
+    // Abilita i campi temporaneamente
+    const fields = ['name', 'code', 'flag', 'lat', 'lng', 'color'];
+    fields.forEach(field => {
+      const el = document.getElementById(field);
+      if (el) {
+        el.removeAttribute('readonly');
+        el.style.background = '';
+      }
+    });
+
+    // Compila i campi
+    document.getElementById('name').value = country.name;
+    document.getElementById('code').value = country.code;
+    document.getElementById('flag').value = country.flag;
+    document.getElementById('lat').value = country.lat.toFixed(4);
+    document.getElementById('lng').value = country.lng.toFixed(4);
+    document.getElementById('color').value = country.color;
+    document.getElementById('colorText').value = country.color;
+
+    // Anima i campi compilati
+    fields.forEach(field => {
+      const el = document.getElementById(field);
+      if (el) {
+        el.style.background = '#d4edda';
+        setTimeout(() => {
+          el.style.transition = 'background 1s';
+          el.style.background = '';
+        }, 500);
+      }
+    });
+
+    // Scroll verso il basso per vedere i campi compilati
+    setTimeout(() => {
+      document.querySelector('.form-section:nth-child(2)').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+  }
+
+  // Nascondi risultati quando si clicca fuori
+  document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+      resultsDiv.style.display = 'none';
+    }
+  });
+})();
+<% } %>
 </script>
+
+<style>
+.country-results {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  max-height: 400px;
+  overflow-y: auto;
+  background: white;
+  border: 2px solid var(--oro);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.country-result-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid #eee;
+}
+
+.country-result-item:last-child {
+  border-bottom: none;
+}
+
+.country-result-item:hover {
+  background: var(--beige);
+}
+</style>
