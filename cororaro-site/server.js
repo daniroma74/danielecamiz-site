@@ -3,6 +3,9 @@
  * Serves static files and handles contact form API
  */
 
+// Load environment variables
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
@@ -49,6 +52,8 @@ app.use(session({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+// Serve shared resources (cloudinary, tinymce, etc)
+app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
 
 // CORS
 app.use((req, res, next) => {
@@ -70,10 +75,18 @@ app.use((req, res, next) => {
 const authRoutes = require('./admin/routes/auth')(db);
 const dashboardRoutes = require('./admin/routes/dashboard')(db);
 const repertoireRoutes = require('./admin/routes/repertoire')(db);
+const countriesRoutes = require('./admin/routes/countries')(db);
+const countriesApiRoutes = require('./admin/routes/countries-api')();
+const uploadRoutes = require('./admin/routes/upload')();
+const cloudinaryApiRoutes = require('./admin/routes/cloudinary-api')();
 
 app.use('/admin', authRoutes);
 app.use('/admin', dashboardRoutes);
 app.use('/admin', repertoireRoutes);
+app.use('/admin', countriesRoutes);
+app.use('/admin', countriesApiRoutes);
+app.use('/admin', uploadRoutes);
+app.use('/admin', cloudinaryApiRoutes);
 
 // Admin root redirect
 app.get('/admin', (req, res) => {

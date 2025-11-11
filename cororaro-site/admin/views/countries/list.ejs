@@ -1,0 +1,173 @@
+<div class="page-header">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1>🌍 Gestione Paesi</h1>
+      <p>Aggiungi paesi per far apparire i brani sul mappamondo</p>
+    </div>
+    <a href="/admin/countries/new" class="btn">➕ Aggiungi Paese</a>
+  </div>
+</div>
+
+<% if (message) { %>
+  <div class="alert alert-success">
+    <%= message %>
+  </div>
+<% } %>
+
+<!-- Ricerca -->
+<div style="margin-bottom: 2rem;">
+  <form method="GET" action="/admin/countries" style="display: flex; gap: 1rem;">
+    <input
+      type="text"
+      name="search"
+      placeholder="Cerca paese o codice..."
+      value="<%= search %>"
+      style="flex: 1; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+    <button type="submit" class="btn">🔍 Cerca</button>
+    <% if (search) { %>
+      <a href="/admin/countries" class="btn btn-secondary">✖️ Cancella</a>
+    <% } %>
+  </form>
+</div>
+
+<!-- Tabella Paesi -->
+<div class="card">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 80px;">Bandiera</th>
+        <th style="width: 80px;">Codice</th>
+        <th>Nome</th>
+        <th style="width: 120px;">Coordinate</th>
+        <th style="width: 80px;">Colore</th>
+        <th style="width: 100px; text-align: center;">Brani</th>
+        <th style="width: 200px; text-align: right;">Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (countries.length === 0) { %>
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 3rem; color: #999;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🌍</div>
+            <% if (search) { %>
+              <p>Nessun paese trovato per "<%= search %>"</p>
+            <% } else { %>
+              <p>Nessun paese presente. Inizia aggiungendone uno!</p>
+            <% } %>
+          </td>
+        </tr>
+      <% } else { %>
+        <% countries.forEach(country => { %>
+          <tr>
+            <td style="font-size: 2rem; text-align: center;"><%= country.flag %></td>
+            <td><strong><%= country.code %></strong></td>
+            <td><%= country.name %></td>
+            <td style="font-size: 0.875rem; color: #666;">
+              <%= country.lat.toFixed(2) %>, <%= country.lng.toFixed(2) %>
+            </td>
+            <td>
+              <div style="width: 30px; height: 30px; background: <%= country.color %>; border-radius: 4px; border: 1px solid #ddd;"></div>
+            </td>
+            <td style="text-align: center;">
+              <span class="badge" style="background: #0055A4;">
+                <%= country.songs_count || 0 %>
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <a href="/admin/countries/<%= country.id %>/edit" class="btn btn-small btn-secondary">✏️ Modifica</a>
+              <button
+                onclick="deleteCountry(<%= country.id %>, '<%= country.name %>')"
+                class="btn btn-small btn-danger">
+                🗑️ Elimina
+              </button>
+            </td>
+          </tr>
+        <% }); %>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Paginazione -->
+<% if (totalPages > 1) { %>
+  <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a
+        href="/admin/countries?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %>"
+        class="btn btn-small <%= i === currentPage ? '' : 'btn-secondary' %>"
+        style="<%= i === currentPage ? 'opacity: 0.6; cursor: default;' : '' %>">
+        <%= i %>
+      </a>
+    <% } %>
+  </div>
+<% } %>
+
+<style>
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead {
+  background: linear-gradient(180deg, var(--terracotta) 0%, var(--terracotta-dark) 100%);
+  color: white;
+}
+
+.data-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.data-table tbody tr:hover {
+  background: var(--beige);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+</style>
+
+<script>
+function deleteCountry(id, name) {
+  if (!confirm(`Sei sicuro di voler eliminare "${name}"?\n\nATTENZIONE: Puoi eliminare solo paesi che non hanno brani associati.`)) {
+    return;
+  }
+
+  fetch(`/admin/countries/${id}/delete`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert(data.message);
+      location.reload();
+    } else {
+      alert('ERRORE: ' + data.message);
+    }
+  })
+  .catch(err => {
+    alert('Errore di connessione');
+  });
+}
+</script>
