@@ -1,0 +1,409 @@
+<div class="page-header">
+  <h1>📸 Galleria Immagini</h1>
+  <p>Gestisci le immagini su Cloudinary</p>
+</div>
+
+<style>
+  .gallery-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .gallery-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--beige);
+  }
+
+  .folder-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  .folder-breadcrumb span {
+    cursor: pointer;
+    color: var(--terracotta);
+    font-weight: 600;
+  }
+
+  .folder-breadcrumb span:hover {
+    text-decoration: underline;
+  }
+
+  .gallery-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--terracotta);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .gallery-item {
+    position: relative;
+    background: var(--beige);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 3px solid transparent;
+  }
+
+  .gallery-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    border-color: var(--terracotta);
+  }
+
+  .gallery-item.folder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    background: linear-gradient(135deg, var(--oro) 0%, var(--terracotta) 100%);
+  }
+
+  .gallery-item.folder .folder-icon {
+    font-size: 4rem;
+    color: white;
+  }
+
+  .gallery-item.image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gallery-item-info {
+    padding: 0.75rem;
+    background: white;
+  }
+
+  .gallery-item-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gallery-item-meta {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text-secondary);
+  }
+
+  .loading-state .spinner {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text-secondary);
+  }
+
+  .empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Image Preview Modal */
+  .preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10001;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .preview-modal.active {
+    display: flex;
+  }
+
+  .preview-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    position: relative;
+  }
+
+  .preview-content img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+  }
+
+  .preview-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+
+  .preview-info {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+
+  .preview-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .preview-actions button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: var(--terracotta);
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+
+  .preview-actions button:hover {
+    background: var(--terracotta-dark);
+  }
+</style>
+
+<div class="gallery-container">
+  <div class="gallery-toolbar">
+    <div class="folder-breadcrumb">
+      📁 <span id="current-folder">cororaro</span>
+    </div>
+
+    <div class="gallery-actions">
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="🔍 Cerca immagini...">
+      </div>
+      <button class="btn" onclick="uploadNewImage()">
+        📤 Carica Immagine
+      </button>
+    </div>
+  </div>
+
+  <div id="gallery-grid" class="gallery-grid">
+    <div class="loading-state">
+      <div class="spinner">⏳</div>
+      <p>Caricamento immagini da Cloudinary...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div id="preview-modal" class="preview-modal">
+  <div class="preview-content">
+    <button class="preview-close" onclick="closePreview()">✖</button>
+    <img id="preview-image" src="" alt="Preview">
+    <div class="preview-info">
+      <h3 id="preview-name"></h3>
+      <p id="preview-meta"></p>
+      <div class="preview-actions">
+        <button onclick="copyImageUrl()">📋 Copia URL</button>
+        <button onclick="copyPublicId()">🔗 Copia Public ID</button>
+        <button onclick="downloadImage()">💾 Scarica</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFolder = 'cororaro';
+let currentImages = [];
+let selectedImage = null;
+
+// Load images from Cloudinary
+async function loadGallery(folder = 'cororaro') {
+  currentFolder = folder;
+  const grid = document.getElementById('gallery-grid');
+  const breadcrumb = document.getElementById('current-folder');
+
+  grid.innerHTML = '<div class="loading-state"><div class="spinner">⏳</div><p>Caricamento...</p></div>';
+
+  // Update breadcrumb
+  const parts = folder.split('/');
+  breadcrumb.innerHTML = parts.map((part, idx) => {
+    const path = parts.slice(0, idx + 1).join('/');
+    return `<span onclick="loadGallery('${path}')">${part}</span>`;
+  }).join(' / ');
+
+  try {
+    // Load subfolders
+    const subfoldersRes = await fetch(`/admin/cloudinary/subfolders?path=${encodeURIComponent(folder)}`);
+    const subfoldersData = await subfoldersRes.json();
+
+    // Load images
+    const imagesRes = await fetch(`/admin/cloudinary/images?folder=${encodeURIComponent(folder)}&maxResults=100`);
+    const imagesData = await imagesRes.json();
+
+    let html = '';
+
+    // Add folders
+    if (subfoldersData.success && subfoldersData.folders && subfoldersData.folders.length > 0) {
+      subfoldersData.folders.forEach(subfolder => {
+        html += `
+          <div class="gallery-item folder" onclick="loadGallery('${subfolder.path}')">
+            <div>
+              <div class="folder-icon">📁</div>
+              <div class="gallery-item-info">
+                <div class="gallery-item-name">${subfolder.name}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Add images
+    if (imagesData.success && imagesData.images && imagesData.images.length > 0) {
+      currentImages = imagesData.images;
+      imagesData.images.forEach(img => {
+        const sizeKB = (img.bytes / 1024).toFixed(1);
+        html += `
+          <div class="gallery-item image" onclick="showPreview('${img.publicId}')">
+            <img src="${img.thumbnail}" alt="${img.publicId}" loading="lazy">
+            <div class="gallery-item-info">
+              <div class="gallery-item-name">${img.publicId.split('/').pop()}</div>
+              <div class="gallery-item-meta">${img.width}×${img.height} • ${sizeKB} KB</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    if (html) {
+      grid.innerHTML = html;
+    } else {
+      grid.innerHTML = '<div class="empty-state"><div class="icon">📂</div><p>Nessuna immagine o cartella</p></div>';
+    }
+  } catch (error) {
+    console.error('Error loading gallery:', error);
+    grid.innerHTML = '<div class="empty-state"><div class="icon">❌</div><p>Errore caricamento galleria</p></div>';
+  }
+}
+
+// Upload new image
+function uploadNewImage() {
+  CloudinaryManager.showImageDialog((result) => {
+    console.log('Image uploaded:', result);
+    // Reload gallery
+    loadGallery(currentFolder);
+  }, {
+    folder: currentFolder,
+    preset: 'cororaro_general'
+  });
+}
+
+// Show image preview
+function showPreview(publicId) {
+  const img = currentImages.find(i => i.publicId === publicId);
+  if (!img) return;
+
+  selectedImage = img;
+  document.getElementById('preview-image').src = img.url;
+  document.getElementById('preview-name').textContent = img.publicId.split('/').pop();
+  document.getElementById('preview-meta').textContent = `${img.width}×${img.height} • ${img.format.toUpperCase()} • ${(img.bytes / 1024).toFixed(1)} KB`;
+  document.getElementById('preview-modal').classList.add('active');
+}
+
+// Close preview
+function closePreview() {
+  document.getElementById('preview-modal').classList.remove('active');
+  selectedImage = null;
+}
+
+// Copy image URL
+function copyImageUrl() {
+  if (!selectedImage) return;
+  navigator.clipboard.writeText(selectedImage.url).then(() => {
+    alert('✅ URL copiato negli appunti!');
+  });
+}
+
+// Copy public ID
+function copyPublicId() {
+  if (!selectedImage) return;
+  navigator.clipboard.writeText(selectedImage.publicId).then(() => {
+    alert('✅ Public ID copiato negli appunti!');
+  });
+}
+
+// Download image
+function downloadImage() {
+  if (!selectedImage) return;
+  window.open(selectedImage.url, '_blank');
+}
+
+// Search
+let searchTimeout;
+document.getElementById('search-input').addEventListener('input', (e) => {
+  clearTimeout(searchTimeout);
+  const query = e.target.value.toLowerCase();
+
+  searchTimeout = setTimeout(() => {
+    const items = document.querySelectorAll('.gallery-item.image');
+    items.forEach(item => {
+      const name = item.querySelector('.gallery-item-name').textContent.toLowerCase();
+      item.style.display = name.includes(query) ? 'block' : 'none';
+    });
+  }, 300);
+});
+
+// Close preview on ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePreview();
+});
+
+// Load gallery on page load
+loadGallery();
+</script>

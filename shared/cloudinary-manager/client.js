@@ -1,8 +1,39 @@
 // shared/cloudinary-manager/client.js
-// Client minimale per upload su Cloudinary (browser).
+// Client parametrico per upload su Cloudinary (browser).
+// Supporta multi-account tramite CloudinaryManager.init()
 
 (function () {
-  const CLOUD_NAME = 'dnwhnz2xy';
+  // ============================================
+  // CONFIGURAZIONE (con valori di default)
+  // ============================================
+  let CLOUD_NAME = 'dnwhnz2xy';           // Default: account Daniele Camiz
+  let DEFAULT_FOLDER = 'danielecamiz';    // Default: cartella root
+  let DEFAULT_PRESET = 'gallery_unsigned'; // Default: preset unsigned
+  let API_PREFIX = '/api/cloudinary';      // Default: prefix API per backend routes
+
+  /**
+   * Inizializza CloudinaryManager con parametri custom
+   * @param {Object} config - Configurazione
+   * @param {string} config.cloudName - Nome account Cloudinary (obbligatorio)
+   * @param {string} config.defaultFolder - Folder di default (opzionale)
+   * @param {string} config.defaultPreset - Upload preset di default (opzionale)
+   * @param {string} config.apiPrefix - Prefix per API routes backend (default: '/api/cloudinary')
+   */
+  function init(config = {}) {
+    if (config.cloudName) {
+      CLOUD_NAME = config.cloudName;
+    }
+    if (config.defaultFolder) {
+      DEFAULT_FOLDER = config.defaultFolder;
+    }
+    if (config.defaultPreset) {
+      DEFAULT_PRESET = config.defaultPreset;
+    }
+    if (config.apiPrefix) {
+      API_PREFIX = config.apiPrefix;
+    }
+    console.log(`✅ CloudinaryManager initialized: ${CLOUD_NAME} / ${DEFAULT_FOLDER} (API: ${API_PREFIX})`);
+  }
 
   function withYear(base) {
     const y = new Date().getFullYear();
@@ -73,7 +104,7 @@
 
   function showImageDialog(callback, options = {}) {
     const folder = options.folder || '';
-    const preset = options.preset || 'gallery_unsigned';
+    const preset = options.preset || DEFAULT_PRESET;
 
     const modal = document.createElement('div');
     modal.id = 'cloudinary-picker-modal';
@@ -107,7 +138,7 @@
           <div id="cloudinary-browse-view" style="display: block;">
             <div id="cloudinary-folder-nav" style="margin-bottom: 12px; padding: 8px 12px; background: #f8f9fa; border-radius: 8px; font-size: 13px; color: #7f8c8d; display: flex; align-items: center; gap: 6px;">
               <span style="font-weight: 600;">📁</span>
-              <span id="folder-breadcrumb" style="flex: 1;">danielecamiz</span>
+              <span id="folder-breadcrumb" style="flex: 1;">${DEFAULT_FOLDER}</span>
             </div>
             <div style="margin-bottom: 12px;">
               <input type="text" id="cloudinary-search-field" placeholder="🔍 Cerca immagini..." style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px; font-size: 14px;">
@@ -121,7 +152,7 @@
 
           <div id="cloudinary-url-input" style="display: none;">
             <label style="display: block; margin-bottom: 8px; font-weight: 500;">URL Cloudinary o Public ID:</label>
-            <input type="text" id="cloudinary-url-field" placeholder="https://res.cloudinary.com/... o danielecamiz/..." style="width: 100%; padding: 12px; border: 1px solid #e1e8ed; border-radius: 8px; font-size: 14px;">
+            <input type="text" id="cloudinary-url-field" placeholder="https://res.cloudinary.com/... o ${DEFAULT_FOLDER}/..." style="width: 100%; padding: 12px; border: 1px solid #e1e8ed; border-radius: 8px; font-size: 14px;">
             <small style="display: block; margin-top: 8px; color: #7f8c8d;">Incolla l'URL completo o il public_id dell'immagine</small>
           </div>
           
@@ -140,10 +171,10 @@
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
 
-    let currentFolder = folder || 'danielecamiz';
+    let currentFolder = folder || DEFAULT_FOLDER;
     let selectedImage = null;
 
     // ============================================
@@ -172,12 +203,12 @@
 
       try {
         // Load subfolders
-        const subfoldersUrl = `/api/cloudinary/subfolders?path=${encodeURIComponent(folderPath)}`;
+        const subfoldersUrl = `${API_PREFIX}/subfolders?path=${encodeURIComponent(folderPath)}`;
         const subfoldersResponse = await fetch(subfoldersUrl);
         const subfoldersData = await subfoldersResponse.json();
 
         // Load images
-        const imagesUrl = `/api/cloudinary/images?folder=${encodeURIComponent(folderPath)}&maxResults=100`;
+        const imagesUrl = `${API_PREFIX}/images?folder=${encodeURIComponent(folderPath)}&maxResults=100`;
         const imagesResponse = await fetch(imagesUrl);
         const imagesData = await imagesResponse.json();
 
@@ -351,11 +382,11 @@
     
     async function handleUpload(file) {
       dropzone.innerHTML = '<div style="font-size: 48px;">⏳</div><p style="color: #7f8c8d;">Caricamento in corso...</p>';
-      
+
       try {
         const result = await upload(file, {
-          preset: 'gallery_unsigned',
-          folder: folder || 'danielecamiz/newsletter'
+          preset: preset || DEFAULT_PRESET,
+          folder: folder || DEFAULT_FOLDER
         });
         
         if (result.success) {
@@ -412,8 +443,11 @@
     });
   }
 
-  // ✅ EXPORT COMPLETO
+  // ============================================
+  // EXPORT COMPLETO
+  // ============================================
   window.CloudinaryManager = {
+    init: init,                             // ✨ NUOVO: Inizializzazione multi-account
     upload: upload,
     buildUrl: buildUrl,
     getTransformedUrl: getTransformedUrl,
