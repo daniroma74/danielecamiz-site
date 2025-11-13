@@ -3,6 +3,12 @@
 // Factory pattern per supportare configurazioni multi-account
 
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Crea un'istanza dell'API Cloudinary con credenziali specifiche
@@ -282,5 +288,20 @@ export function createCloudinaryAPI(config) {
   };
 }
 
-// Export per retrocompatibilità (se qualcuno chiama direttamente senza factory)
-export default createCloudinaryAPI;
+// ========================================
+// ISTANZA DEFAULT per retrocompatibilità
+// Carica credenziali da cms/.env (account condiviso)
+// ========================================
+
+// Carica variabili d'ambiente dal cms/.env
+dotenv.config({ path: path.join(__dirname, '../../cms/.env') });
+
+// Crea istanza API default con credenziali condivise
+const defaultCloudinaryAPI = createCloudinaryAPI({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dnwhnz2xy',
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Export default per moduli che usano account condiviso
+export default defaultCloudinaryAPI;

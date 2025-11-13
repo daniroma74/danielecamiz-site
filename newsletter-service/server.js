@@ -9,8 +9,7 @@ import { connectDB } from './config/database.js';
 import adminRoutes from './routes/admin.js';
 import apiRoutes from './routes/api.js';
 import { ensureAuthenticated, handleLogin, handleLogout } from './middleware/hybridAuth.js';
-import { createCloudinaryAPI } from '../shared/cloudinary-manager/api-service.js';
-import { createCloudinaryRoutes } from '../shared/cloudinary-manager/routes.js';
+import cloudinaryRoutes from '../shared/cloudinary-manager/routes.js';
 
 // === Using HybridAuth (Hub JWT + Local Session) ===
 
@@ -63,20 +62,8 @@ app.get('/gestione-iscrizione', (req, res) => {
 // ====== API ROUTES (pubbliche) ======
 app.use('/api', apiRoutes);
 
-// Cloudinary API routes - configured with factory pattern
-if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-  const cloudinaryAPI = createCloudinaryAPI({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-  });
-  const cloudinaryRoutes = createCloudinaryRoutes(cloudinaryAPI);
-  app.use('/api/cloudinary', cloudinaryRoutes);
-  console.log('✅ Cloudinary routes loaded from shared/cloudinary-manager');
-} else {
-  console.warn('⚠️  Cloudinary credentials not found in .env - API routes disabled');
-  console.warn('⚠️  Add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET to enable');
-}
+// Cloudinary API routes (uses shared credentials from cms/.env)
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 // ====== LOGIN ROUTES ======
 app.get('/login', (req, res) => {

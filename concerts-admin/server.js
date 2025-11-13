@@ -15,8 +15,7 @@ import adminRoutes from './routes/admin.js';
 import apiRoutes from './routes/api.js';
 import authRoutes from './routes/auth.js';
 import errorHandler from './middleware/errorHandler.js';
-import { createCloudinaryAPI } from '../shared/cloudinary-manager/api-service.js';
-import { createCloudinaryRoutes } from '../shared/cloudinary-manager/routes.js';
+import cloudinaryRoutes from '../shared/cloudinary-manager/routes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3004;
@@ -68,20 +67,8 @@ app.use('/auth', authRoutes);
 // API routes (public)
 app.use('/api', apiRoutes);
 
-// Cloudinary API routes (🔐 Protected - require authentication) - configured with factory pattern
-if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-  const cloudinaryAPI = createCloudinaryAPI({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-  });
-  const cloudinaryRoutes = createCloudinaryRoutes(cloudinaryAPI);
-  app.use('/api/cloudinary', cloudinaryRoutes);
-  console.log('✅ Cloudinary routes loaded from shared/cloudinary-manager');
-} else {
-  console.warn('⚠️  Cloudinary credentials not found in .env - API routes disabled');
-  console.warn('⚠️  Add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET to enable');
-}
+// Cloudinary API routes (uses shared credentials from cms/.env)
+app.use('/api/cloudinary', cloudinaryRoutes);
 
 // Admin routes (🔐 Protected - auth inside routes)
 app.use('/admin', adminRoutes);
