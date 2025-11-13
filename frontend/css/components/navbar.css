@@ -205,13 +205,16 @@ nav.navbar.navbar--fixed{
   .nav-dropdown-menu {
     position: static;
     transform: none;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
+    margin-left: 0;
     box-shadow: none;
     border: none;
-    border-left: 2px solid var(--accent-color);
-    padding-left: 1rem;
-    background: transparent;
+    border-left: 3px solid var(--accent-color);
+    padding-left: 0.75rem;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 4px;
     min-width: auto;
+    width: 100%;
   }
 
   .nav-item-dropdown .nav-dropdown-menu {
@@ -231,14 +234,17 @@ nav.navbar.navbar--fixed{
   }
 
   .nav-dropdown-item {
-    padding: 0.5rem 0;
-    font-size: 0.85em;
+    display: block;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.9em;
     border-left: none;
+    text-align: left;
+    width: 100%;
   }
 
   .nav-dropdown-item:hover {
-    background: transparent;
-    padding-left: 0.5rem;
+    background: rgba(212, 175, 55, 0.1);
+    padding-left: 0.75rem;
   }
 }
 
