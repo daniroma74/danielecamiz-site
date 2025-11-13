@@ -3,6 +3,7 @@
 // Factory pattern per supportare configurazioni multi-account
 
 import express from 'express';
+import defaultCloudinaryAPI from './api-service.js';
 
 /**
  * Crea router Express per Cloudinary API con configurazione specifica
@@ -172,4 +173,12 @@ export function createCloudinaryRoutes(cloudinaryAPI) {
   return router;
 }
 
-export default createCloudinaryRoutes;
+// ========================================
+// ROUTER DEFAULT per retrocompatibilità
+// Usa l'istanza API default (account condiviso da cms/.env)
+// ========================================
+
+const defaultRouter = createCloudinaryRoutes(defaultCloudinaryAPI);
+
+// Export default per moduli che usano account condiviso
+export default defaultRouter;
