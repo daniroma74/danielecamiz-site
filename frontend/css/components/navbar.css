@@ -202,21 +202,21 @@ nav.navbar.navbar--fixed{
     padding: 6px 0;
   }
 
+  /* APPROCCIO COMPLETAMENTE NUOVO: dropdown full-width senza indent */
   .nav-dropdown-menu {
     position: static;
     transform: none;
-    margin-top: 0.25rem;
-    margin-left: 0;
-    margin-right: 0;
+    margin: 0.5rem -12px 0 -12px; /* Negativo per compensare il padding del parent .nav-center */
+    padding: 0.75rem 12px;
     box-shadow: none;
     border: none;
-    border-left: 3px solid var(--accent-color);
-    padding: 0.5rem 0 0.5rem 0.5rem;
-    background: rgba(212, 175, 55, 0.05);
-    border-radius: 4px;
+    border-top: 2px solid var(--accent-color);
+    border-bottom: 2px solid var(--accent-color);
+    background: rgba(212, 175, 55, 0.08);
     min-width: auto;
-    width: 100%;
+    width: calc(100% + 24px); /* +24px per compensare i -12px margin */
     box-sizing: border-box;
+    list-style: none;
   }
 
   .nav-item-dropdown .nav-dropdown-menu {
@@ -225,6 +225,10 @@ nav.navbar.navbar--fixed{
     max-height: 0;
     overflow: hidden;
     transition: all 0.3s ease;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .nav-item-dropdown.dropdown-open .nav-dropdown-menu {
@@ -233,22 +237,27 @@ nav.navbar.navbar--fixed{
     max-height: 80vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
   .nav-dropdown-item {
     display: block;
-    padding: 0.4rem 0.5rem;
-    font-size: 0.9em;
+    padding: 0.5rem 0;
+    font-size: 0.85em;
     border-left: none;
     text-align: left;
     width: 100%;
     box-sizing: border-box;
     color: #fff;
+    text-decoration: none;
   }
 
   .nav-dropdown-item:hover {
-    background: rgba(212, 175, 55, 0.1);
-    padding-left: 0.75rem;
+    background: rgba(212, 175, 55, 0.15);
+    padding-left: 0.5rem;
   }
 }
 
