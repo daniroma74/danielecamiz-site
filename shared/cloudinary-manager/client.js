@@ -504,19 +504,27 @@
    * @param {Function} callback - Callback(result) chiamato al completamento
    */
   function promptCreateFolder(currentFolder, callback) {
-    const folderName = prompt(`Crea nuova cartella dentro "${currentFolder}":\n\nInserisci il nome della cartella:`);
+    const folderName = prompt(`Crea nuova cartella dentro "${currentFolder}":\n\nInserisci il nome della cartella (solo lettere, numeri, - e _):`);
 
     if (!folderName || folderName.trim() === '') {
       return;
     }
 
-    const newFolderPath = currentFolder ? `${currentFolder}/${folderName.trim()}` : folderName.trim();
+    // Validazione: solo caratteri alfanumerici, trattini e underscore
+    const sanitizedName = folderName.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+
+    if (sanitizedName !== folderName.trim().toLowerCase()) {
+      const confirm = window.confirm(`Il nome sarà sanitizzato in: "${sanitizedName}"\n\nContinuare?`);
+      if (!confirm) return;
+    }
+
+    const newFolderPath = currentFolder ? `${currentFolder}/${sanitizedName}` : sanitizedName;
 
     createFolder(newFolderPath, (result) => {
       if (result.success) {
-        alert(`✅ Cartella "${folderName}" creata con successo!`);
+        alert(`✅ Cartella "${sanitizedName}" creata con successo!`);
       } else {
-        alert(`❌ Errore: ${result.error}`);
+        alert(`❌ Errore: ${result.error}\n\nPath tentato: ${newFolderPath}`);
       }
       if (callback) callback(result);
     });
