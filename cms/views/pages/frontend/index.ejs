@@ -93,7 +93,7 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
       <% }) %>
     </div>
     <p class="section-cta">
-      <a class="btn btn-link" href="/video"><%= _t('home.all_videos', 'Tutti i video', 'All videos') %></a>
+      <a class="btn btn-link" href="/gallery/videos"><%= _t('home.all_videos', 'Tutti i video', 'All videos') %></a>
     </p>
   <% } else { %>
     <p class="empty-state"><%= (lang === 'en') ? 'No videos available.' : 'Nessun video disponibile.' %></p>
