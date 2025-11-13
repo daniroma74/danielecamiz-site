@@ -2,7 +2,7 @@
 // Express routes per Cloudinary API
 
 import express from 'express';
-import { listImages, searchImages, listFolders, listSubFolders } from './api-service.js';
+import { listImages, searchImages, listFolders, listSubFolders, createFolder, moveImage } from './api-service.js';
 
 const router = express.Router();
 
@@ -96,6 +96,66 @@ router.get('/subfolders', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error in /cloudinary/subfolders:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * POST /cloudinary/create-folder
+ * Crea una nuova cartella
+ * Body: { path: "cororaro/eventi" }
+ */
+router.post('/create-folder', async (req, res) => {
+  try {
+    const { path } = req.body;
+    if (!path) {
+      return res.status(400).json({
+        success: false,
+        error: 'Path parameter required'
+      });
+    }
+    const result = await createFolder(path);
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error in /cloudinary/create-folder:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * POST /cloudinary/move-image
+ * Sposta un'immagine da una cartella all'altra
+ * Body: { publicId: "cororaro/foto1", toFolder: "cororaro/eventi" }
+ */
+router.post('/move-image', async (req, res) => {
+  try {
+    const { publicId, toFolder } = req.body;
+    if (!publicId || !toFolder) {
+      return res.status(400).json({
+        success: false,
+        error: 'publicId and toFolder parameters required'
+      });
+    }
+    const result = await moveImage(publicId, toFolder);
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error in /cloudinary/move-image:', error);
     res.status(500).json({
       success: false,
       error: error.message
