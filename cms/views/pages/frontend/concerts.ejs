@@ -102,7 +102,14 @@
                         <ul style="margin:.25rem 0 1rem 0;line-height:1.5;list-style:none;padding:0;">
                           <% if (c.orchestra) { %><li><strong><%= _t('concerts.orchestra','Orchestra') %>:</strong> <%= c.orchestra %></li><% } %>
                           <% if (c.conductor) { %><li><strong><%= _t('concerts.conductor','Direttore') %>:</strong> <%= c.conductor %></li><% } %>
-                          <% if (c.soloists) { %><li><strong><%= _t('concerts.soloist','Solista') %>:</strong> <%= c.soloists %></li><% } %>
+                          <%
+                            if (c.soloists) {
+                              const soloistLabel = (c.soloists && (c.soloists.includes(',') || c.soloists.includes(' e ') || c.soloists.includes(' and ')))
+                                ? (lang==='en' ? 'Soloists' : 'Solisti')
+                                : _t('concerts.soloist','Solista');
+                          %>
+                            <li><strong><%= soloistLabel %>:</strong> <%= c.soloists %></li>
+                          <% } %>
                         </ul>
                       <% } %>
 
@@ -191,7 +198,14 @@
                             <ul class="concert-facts">
                               <% if (c.orchestra) { %><li><strong><%= _t('concerts.orchestra','Orchestra') %>:</strong> <%= c.orchestra %></li><% } %>
                               <% if (c.conductor) { %><li><strong><%= _t('concerts.conductor','Direttore') %>:</strong> <%= c.conductor %></li><% } %>
-                              <% if (c.soloists) { %><li><strong><%= _t('concerts.soloist','Solista') %>:</strong> <%= c.soloists %></li><% } %>
+                              <%
+                                if (c.soloists) {
+                                  const soloistLabel = (c.soloists && (c.soloists.includes(',') || c.soloists.includes(' e ') || c.soloists.includes(' and ')))
+                                    ? (lang==='en' ? 'Soloists' : 'Solisti')
+                                    : _t('concerts.soloist','Solista');
+                              %>
+                                <li><strong><%= soloistLabel %>:</strong> <%= c.soloists %></li>
+                              <% } %>
                               <% if (c.notes)     { %><li><strong>Note:</strong> <%= c.notes %></li><% } %>
                             </ul>
                           </div>

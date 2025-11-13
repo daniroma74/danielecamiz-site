@@ -76,3 +76,45 @@
 .btn-return:hover img.icon {
   filter: none !important;
 }
+
+/* ======= VARIANTI PULSANTI ======= */
+
+/* Primary button - filled */
+.btn-primary {
+  background: var(--accent-color);
+  color: #181818;
+  border-color: var(--accent-color);
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background: var(--light-accent);
+  border-color: var(--light-accent);
+  color: #181818;
+}
+
+/* Secondary button - outlined (same as base, for clarity) */
+.btn-secondary {
+  background: transparent;
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.btn-secondary:hover {
+  background: rgba(203, 161, 53, 0.6);
+  color: #181818;
+}
+
+/* Link button - no border, underline on hover */
+.btn-link {
+  border: none;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s, color 0.2s;
+}
+
+.btn-link:hover {
+  background: transparent;
+  text-decoration-color: var(--accent-color);
+  color: var(--accent-color);
+}

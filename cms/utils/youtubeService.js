@@ -85,7 +85,10 @@ export async function getLatestVideos(max = 3) {
   if (!API_KEY || !CHANNEL) return [];
 
   const now = Date.now();
-  if (CACHE.items.length && CACHE.max === max && CACHE.channel === CHANNEL && (now - CACHE.ts) < TTL_MS) {
+  // Extend cache to 24h when quota is exceeded
+  const cacheExtended = 24 * 60 * 60 * 1000;
+  if (CACHE.items.length && CACHE.max === max && CACHE.channel === CHANNEL && (now - CACHE.ts) < cacheExtended) {
+    console.log('[YouTube] Returning cached items (age: ' + Math.round((now - CACHE.ts) / 1000 / 60) + ' min)');
     return CACHE.items;
   }
 
@@ -98,14 +101,21 @@ export async function getLatestVideos(max = 3) {
   try {
     const json = await fetchJson(url);
     if (json?.error) {
+      const isQuotaError = json.error.message?.includes('quota') || json.error.code === 403;
+      if (isQuotaError) {
+        console.warn('[YouTube] API quota exceeded, using cache if available');
+        // Return old cache even if expired, better than nothing
+        if (CACHE.items.length) return CACHE.items;
+      }
       console.error('YouTube API error:', json.error);
-      return [];
+      return CACHE.items.length ? CACHE.items : [];
     }
     const items = normalizeItems(json);
     CACHE = { ts: now, max, channel: CHANNEL, items };
     return items;
   } catch (err) {
     console.error('YouTube fetch error:', err.message || err);
-    return [];
+    // Return cached items if available, even if expired
+    return CACHE.items.length ? CACHE.items : [];
   }
 }

@@ -16,7 +16,10 @@
       <main class="content-area">
         <div class="page-header">
           <h2>Press Kit Assets</h2>
-          <button onclick="addNewAsset()" class="btn btn-primary">Nuovo Asset</button>
+          <div style="display: flex; gap: 10px;">
+            <button onclick="CloudinaryManager.promptCreateFolder('danielecamiz/presskit', () => alert('Cartella creata! Ricarica la pagina.'))" class="btn btn-secondary">📁 Crea Cartella</button>
+            <button onclick="addNewAsset()" class="btn btn-primary">Nuovo Asset</button>
+          </div>
         </div>
 
         <% if (assets && assets.length > 0) { %>

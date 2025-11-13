@@ -225,7 +225,9 @@ nav.navbar.navbar--fixed{
   .nav-item-dropdown.dropdown-open .nav-dropdown-menu {
     opacity: 1;
     visibility: visible;
-    max-height: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .nav-dropdown-item {
