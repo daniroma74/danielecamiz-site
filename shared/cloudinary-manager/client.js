@@ -444,6 +444,85 @@
   }
 
   // ============================================
+  // GESTIONE CARTELLE
+  // ============================================
+
+  /**
+   * Crea una nuova cartella su Cloudinary
+   * @param {string} folderPath - Path della cartella (es: "cororaro/eventi")
+   * @param {Function} callback - Callback(result) chiamato al completamento
+   */
+  async function createFolder(folderPath, callback) {
+    try {
+      const response = await fetch(`${API_PREFIX}/create-folder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: folderPath })
+      });
+
+      const result = await response.json();
+
+      if (callback) callback(result);
+      return result;
+    } catch (error) {
+      console.error('Error creating folder:', error);
+      const errorResult = { success: false, error: error.message };
+      if (callback) callback(errorResult);
+      return errorResult;
+    }
+  }
+
+  /**
+   * Sposta un'immagine da una cartella all'altra
+   * @param {string} publicId - Public ID dell'immagine (es: "cororaro/foto1")
+   * @param {string} toFolder - Cartella di destinazione (es: "cororaro/eventi")
+   * @param {Function} callback - Callback(result) chiamato al completamento
+   */
+  async function moveImage(publicId, toFolder, callback) {
+    try {
+      const response = await fetch(`${API_PREFIX}/move-image`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ publicId, toFolder })
+      });
+
+      const result = await response.json();
+
+      if (callback) callback(result);
+      return result;
+    } catch (error) {
+      console.error('Error moving image:', error);
+      const errorResult = { success: false, error: error.message };
+      if (callback) callback(errorResult);
+      return errorResult;
+    }
+  }
+
+  /**
+   * Mostra un prompt per creare una nuova cartella
+   * @param {string} currentFolder - Cartella corrente (parent folder)
+   * @param {Function} callback - Callback(result) chiamato al completamento
+   */
+  function promptCreateFolder(currentFolder, callback) {
+    const folderName = prompt(`Crea nuova cartella dentro "${currentFolder}":\n\nInserisci il nome della cartella:`);
+
+    if (!folderName || folderName.trim() === '') {
+      return;
+    }
+
+    const newFolderPath = currentFolder ? `${currentFolder}/${folderName.trim()}` : folderName.trim();
+
+    createFolder(newFolderPath, (result) => {
+      if (result.success) {
+        alert(`✅ Cartella "${folderName}" creata con successo!`);
+      } else {
+        alert(`❌ Errore: ${result.error}`);
+      }
+      if (callback) callback(result);
+    });
+  }
+
+  // ============================================
   // EXPORT COMPLETO
   // ============================================
   window.CloudinaryManager = {
@@ -452,6 +531,10 @@
     buildUrl: buildUrl,
     getTransformedUrl: getTransformedUrl,
     insertIntoEditor: insertIntoEditor,
-    showImageDialog: showImageDialog
+    showImageDialog: showImageDialog,
+    // ✨ NUOVO: Gestione cartelle
+    createFolder: createFolder,
+    moveImage: moveImage,
+    promptCreateFolder: promptCreateFolder
   };
 })();

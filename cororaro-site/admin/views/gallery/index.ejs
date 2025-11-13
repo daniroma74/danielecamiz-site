@@ -226,6 +226,9 @@
       <div class="search-box">
         <input type="text" id="search-input" placeholder="🔍 Cerca immagini...">
       </div>
+      <button class="btn btn-secondary" onclick="createNewFolder()">
+        ➕ Nuova Cartella
+      </button>
       <button class="btn" onclick="uploadNewImage()">
         📤 Carica Immagine
       </button>
@@ -251,6 +254,7 @@
       <div class="preview-actions">
         <button onclick="copyImageUrl()">📋 Copia URL</button>
         <button onclick="copyPublicId()">🔗 Copia Public ID</button>
+        <button onclick="moveImageToFolder()">📂 Sposta</button>
         <button onclick="downloadImage()">💾 Scarica</button>
       </div>
     </div>
@@ -403,6 +407,37 @@ document.getElementById('search-input').addEventListener('input', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closePreview();
 });
+
+// Create new folder
+function createNewFolder() {
+  CloudinaryManager.promptCreateFolder(currentFolder, (result) => {
+    if (result.success) {
+      // Reload gallery to show new folder
+      loadGallery(currentFolder);
+    }
+  });
+}
+
+// Move image to another folder
+function moveImageToFolder() {
+  if (!selectedImage) return;
+
+  const targetFolder = prompt(`Sposta l'immagine in quale cartella?\n\nCartella corrente: ${currentFolder}\n\nInserisci il path della cartella di destinazione:`);
+
+  if (!targetFolder || targetFolder.trim() === '') {
+    return;
+  }
+
+  CloudinaryManager.moveImage(selectedImage.publicId, targetFolder.trim(), (result) => {
+    if (result.success) {
+      alert(`✅ Immagine spostata con successo in "${targetFolder}"!`);
+      closePreview();
+      loadGallery(currentFolder);
+    } else {
+      alert(`❌ Errore: ${result.error}`);
+    }
+  });
+}
 
 // Load gallery on page load
 loadGallery();

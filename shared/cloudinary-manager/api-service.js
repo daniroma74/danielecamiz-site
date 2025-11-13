@@ -180,9 +180,83 @@ export async function listSubFolders(folder) {
   }
 }
 
+/**
+ * Crea una nuova cartella su Cloudinary
+ * @param {string} folderPath - Path della cartella da creare (es: "cororaro/eventi")
+ * @returns {Promise<Object>} Risultato operazione
+ */
+export async function createFolder(folderPath) {
+  try {
+    if (!folderPath || folderPath.trim() === '') {
+      return {
+        success: false,
+        error: 'Folder path is required'
+      };
+    }
+
+    await cloudinary.api.create_folder(folderPath);
+
+    return {
+      success: true,
+      message: `Folder "${folderPath}" created successfully`,
+      folder: { path: folderPath, name: folderPath.split('/').pop() }
+    };
+  } catch (error) {
+    console.error('Error creating folder:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+/**
+ * Sposta un'immagine da una cartella all'altra
+ * @param {string} publicId - Public ID dell'immagine (es: "cororaro/foto1")
+ * @param {string} toFolder - Cartella di destinazione (es: "cororaro/eventi")
+ * @returns {Promise<Object>} Risultato operazione
+ */
+export async function moveImage(publicId, toFolder) {
+  try {
+    if (!publicId || !toFolder) {
+      return {
+        success: false,
+        error: 'publicId and toFolder are required'
+      };
+    }
+
+    // Estrae il nome del file dal public_id
+    const fileName = publicId.split('/').pop();
+
+    // Costruisce il nuovo public_id
+    const newPublicId = `${toFolder}/${fileName}`;
+
+    // Rename (che di fatto sposta l'immagine)
+    const result = await cloudinary.uploader.rename(publicId, newPublicId, {
+      overwrite: false,
+      invalidate: true
+    });
+
+    return {
+      success: true,
+      message: `Image moved from "${publicId}" to "${newPublicId}"`,
+      newPublicId: result.public_id,
+      url: result.secure_url
+    };
+  } catch (error) {
+    console.error('Error moving image:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
 export default {
   listImages,
   searchImages,
   listFolders,
-  listSubFolders
+  listSubFolders,
+  createFolder,
+  moveImage
 };
