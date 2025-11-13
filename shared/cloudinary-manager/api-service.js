@@ -194,7 +194,24 @@ export async function createFolder(folderPath) {
       };
     }
 
-    await cloudinary.api.create_folder(folderPath);
+    // Crea tutte le parent folders in sequenza se non esistono
+    const parts = folderPath.split('/');
+    for (let i = 1; i <= parts.length; i++) {
+      const partialPath = parts.slice(0, i).join('/');
+      try {
+        await cloudinary.api.create_folder(partialPath);
+        console.log(`✓ Created folder: ${partialPath}`);
+      } catch (error) {
+        // Ignora l'errore se la folder esiste già
+        if (error.http_code === 400 && error.message.includes('already exists')) {
+          console.log(`✓ Folder already exists: ${partialPath}`);
+        } else if (i === parts.length) {
+          // Se è l'ultima cartella (quella target) e fallisce, lancia l'errore
+          throw error;
+        }
+        // Per le parent folders, continua anche se ci sono altri errori
+      }
+    }
 
     return {
       success: true,
