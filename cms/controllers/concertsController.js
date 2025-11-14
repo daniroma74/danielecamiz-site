@@ -267,35 +267,85 @@ async function fetchPrograms(ids) {
   try {
     const rows = await new Promise((resolve, reject) => {
       db.all(
-        `SELECT * FROM view_concert_program_detailed WHERE concert_id IN (${placeholders(ids.length)})`,
+        `SELECT cp.concert_id, cp.work_id, cp.movement_id, cp.position,
+                w.title as work_title, w.catalogue as work_catalogue, w.work_key as work_key,
+                comp.full_name as composer_full_name,
+                m.title as movement_title, m.movement_number, m.tempo
+         FROM concert_program cp
+         JOIN works w ON w.id = cp.work_id
+         JOIN composers comp ON comp.id = w.composer_id
+         LEFT JOIN movements m ON m.id = cp.movement_id
+         WHERE cp.concert_id IN (${placeholders(ids.length)})
+         ORDER BY cp.concert_id, cp.position`,
         ids,
         (err, r) => (err ? reject(err) : resolve(r))
       );
     });
-    // Tolleranza su nomi colonne: composer_full_name|composer_name|composer, work_title|title, position
+
+    // Raggruppa per concert_id
+    const byConcert = new Map();
     for (const r of rows) {
-      const cid = r.concert_id;
-      const comp = firstText(r.composer_full_name, r.composer_name, r.composer);
-      const work = firstText(r.work_title, r.title, r.work);
-      const subtitle = firstText(r.work_subtitle, r.subtitle);
-      const cat  = firstText(r.work_catalogue, r.work_catalog, r.catalog, r.catno);
-      const pos  = Number(r.position || r.pos || r.order || 0) || 0;
-
-      // Costruisce: Compositore — Titolo Cat Sottotitolo (senza parentesi)
-      let workParts = [work];
-      if (cat) workParts.push(cat);
-      if (subtitle) workParts.push(subtitle);
-      const workStr = workParts.join(' ');
-
-      const line = joinNonEmpty([comp, workStr], ' — ');
-      if (!byId.has(cid)) byId.set(cid, []);
-      byId.get(cid).push({ pos, line });
+      if (!byConcert.has(r.concert_id)) byConcert.set(r.concert_id, []);
+      byConcert.get(r.concert_id).push({
+        position: Number(r.position || 0),
+        workId: r.work_id,
+        movementId: r.movement_id,
+        composer: r.composer_full_name || '',
+        work: r.work_title || '',
+        catalogue: r.work_catalogue || '',
+        movementTitle: r.movement_title || '',
+        movementNumber: r.movement_number,
+        tempo: r.tempo || ''
+      });
     }
-    // Ordina per posizione se disponibile e unisci in testo multilinea
-    for (const [cid, arr] of byId.entries()) {
-      arr.sort((a, b) => a.pos - b.pos);
-      const text = arr.map(x => x.line).join('\n');
-      byId.set(cid, text);
+
+    // Per ogni concerto, raggruppa movimenti consecutivi della stessa opera
+    for (const [cid, items] of byConcert.entries()) {
+      const grouped = [];
+      let i = 0;
+
+      while (i < items.length) {
+        const current = items[i];
+        const workLine = `${current.composer} — ${current.work}${current.catalogue ? ' ' + current.catalogue : ''}`;
+
+        // Se non ha movimento, o è un movimento singolo non consecutivo
+        if (!current.movementId) {
+          grouped.push(workLine);
+          i++;
+          continue;
+        }
+
+        // Controlla se ci sono movimenti consecutivi della stessa opera
+        const movements = [current];
+        let j = i + 1;
+
+        while (j < items.length &&
+               items[j].workId === current.workId &&
+               items[j].position === items[j-1].position + 1 &&
+               items[j].movementId) {
+          movements.push(items[j]);
+          j++;
+        }
+
+        // Se c'è solo un movimento non consecutivo, mostra come linea singola
+        if (movements.length === 1) {
+          const mv = movements[0];
+          const mvTitle = mv.movementTitle || mv.tempo || `${mv.movementNumber || ''}`;
+          grouped.push(`${workLine}${mvTitle ? ' - ' + mvTitle : ''}`);
+        } else {
+          // Movimenti consecutivi: raggruppa
+          grouped.push(workLine);
+          for (const mv of movements) {
+            const mvNum = mv.movementNumber ? `${mv.movementNumber}. ` : '';
+            const mvTitle = mv.movementTitle || mv.tempo || '';
+            grouped.push(`  ${mvNum}${mvTitle}`);
+          }
+        }
+
+        i = j;
+      }
+
+      byId.set(cid, grouped.join('\n'));
     }
   } catch (e) {
     console.warn('[concertsController] program view not available:', e?.message || e);
