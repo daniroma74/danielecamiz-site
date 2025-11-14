@@ -1,0 +1,371 @@
+================================================================================
+                     ARCHIVE CONCERTS MODAL - FINDINGS
+================================================================================
+
+RESEARCH COMPLETED: Found all code for archive concerts modal system
+
+================================================================================
+1. MODAL HTML/TEMPLATE LOCATION
+================================================================================
+
+PRIMARY LOCATION:
+  /home/daniele/danielecamiz-site/cms/views/pages/frontend/concerts.ejs
+
+STRUCTURE:
+  - Year Selector Pills (lines 155-162): 
+    Buttons for each year in archive (2024, 2023, 2022, etc.)
+    
+  - Year Content Panels (lines 164-273):
+    Hidden <div> elements containing concert listings for each year
+    ID format: #year_<YEAR> (e.g., #year_2024)
+    
+  - Concert Item Structure:
+    Each concert is a <li class="concert-item"> with:
+    - data-concert-id attribute (e.g., "concert_2024_0")
+    - concert-top-section: Poster + Title + Date + Location
+    - concert-bottom-section: Program + Orchestra + Conductor + Soloists
+    - concert-full-details: Hidden detailed view for lightbox
+    
+  - Lightbox Container (lines 284-298):
+    Empty <div id="concert_lightbox"> shell for dynamic content
+
+
+================================================================================
+2. JAVASCRIPT - MODAL DISPLAY HANDLING
+================================================================================
+
+THREE MAIN JAVASCRIPT FILES:
+
+A. YEAR ARCHIVE MODAL (/frontend/js/concerts-year-toggle.js)
+   Purpose: Manages the year-based filter modal
+   
+   Key Functions:
+   - buildOverlay(): Creates #year_modal DOM structure dynamically
+   - openYear(year): Shows concerts for selected year
+   - openModalWithHtml(html): Populates and displays year's concerts
+   - toggleYear(year): Opens/closes modal based on click
+   - closeModal(): Hides modal and resets state
+   
+   Event Listeners:
+   - Year pill clicks → toggleYear()
+   - ESC key → closeModal()
+   - Backdrop clicks → closeModal()
+   
+   IMPORTANT: Modal is created dynamically by JavaScript, NOT pre-rendered in HTML
+
+
+B. CONCERT DETAILS LIGHTBOX (/frontend/js/concerts-lightbox.js)
+   Purpose: Shows individual concert details in lightbox overlay
+   
+   Key Functions:
+   - openConcertFromDOM(concertId): Finds hidden details and shows in lightbox
+   - closeConcertLightbox(): Hides lightbox
+   - openConcertPreview(url): Shows iframe for upcoming concerts with booking
+   
+   Data Retrieval:
+   - Finds #details_<CONCERT_ID> in hidden DOM
+   - Copies HTML content to #concert_poster_container
+   - Displays lightbox overlay (#concert_lightbox)
+   
+   Event Listeners:
+   - Concert item clicks → openConcertFromDOM()
+   - ESC key → closeConcertLightbox()
+   - Backdrop clicks → closeConcertLightbox()
+
+
+C. GLUE MODULE (/frontend/js/modules/concerts/concerts.js)
+   Purpose: Bridges template events to lightbox functions
+   
+   Key Functions:
+   - bindDetailsLabels(): Toggles "Mostra di più" / "Mostra di meno" labels
+   - bindSummaryToLightbox(): Intercepts <summary> clicks
+   - Prevents double-opening when in year modal
+   
+   Integration:
+   - Listens for all summary clicks
+   - Delegates to openConcertFromDOM() from lightbox module
+   - Checks if inside #year_modal to avoid conflicts
+
+
+EXECUTION FLOW:
+  User clicks year pill
+    → Year toggle JS builds modal
+    → Modal content copied from hidden year panel
+    → Details <summary> elements automatically opened
+    → User clicks concert card
+    → Glue module intercepts click
+    → Calls lightbox openConcertFromDOM()
+    → Lightbox copies details to display
+    → Lightbox modal appears above year modal
+
+
+================================================================================
+3. CONCERT DISPLAY - INDIVIDUAL vs GROUPED
+================================================================================
+
+CURRENT BEHAVIOR: STRICTLY INDIVIDUAL CONCERTS
+
+Each concert is displayed as a single unit:
+  1. One <li class="concert-item"> per concert
+  2. One poster image per concert
+  3. One program text block per concert
+  4. No grouping of movements or sub-concerts
+
+PROGRAM DISPLAY:
+  - Format: Single "program" field from database
+  - Rendering: <pre> tag preserves multi-line formatting
+  - Example:
+    I. Allegro con brio
+    II. Andante cantabile
+    III. Minuetto - Trio
+    IV. Finale - Presto
+  
+  - This is UNSTRUCTURED TEXT - no way to:
+    - Link specific movements to movement data
+    - Display movement durations separately
+    - Show movement tempi as structured data
+    - Search/filter by movement
+
+
+GROUPING LOGIC:
+  - Concerts grouped by YEAR only
+  - grouping in controller: buildPastByYear()
+  - grouping in template: concertsByYear array
+  - NO grouping by work, composer, or movements
+
+
+================================================================================
+4. DATA STRUCTURE - CONCERTS WITH MOVEMENTS
+================================================================================
+
+CURRENT DATABASE TABLES:
+
+concerts table:
+  - id, title, date, location
+  - poster_cloudinary_id, poster_local_filename
+  - is_future, program_notes
+  - Single "program" field stores all program info
+
+concert_program table:
+  - concert_id → work_id relationship
+  - Stores complete works, NOT individual movements
+  - No way to reference specific movements
+
+works table:
+  - id, composer_id, category_id
+  - title, subtitle, catalogue, work_key
+  - No movement information
+
+concert_performers table:
+  - concert_id, role (orchestra/conductor/soloist), name, instrument
+  - Aggregated into view_concert_personnel_agg for display
+
+concert_extra table:
+  - concert_id, notes, youtube_url
+
+
+PROBLEM:
+  - concert_program links concerts to ENTIRE works
+  - No table exists for movements within a work
+  - Program information stored as single text string
+  - No structured way to represent multi-movement pieces
+
+
+================================================================================
+5. CSS STYLING - MODAL ARCHITECTURE
+================================================================================
+
+LOCATION: /home/daniele/danielecamiz-site/frontend/css/components/modal.css
+
+BASE MODAL CLASSES (Lines 1-145):
+  .modal-overlay    - Fixed overlay, z-index: 9999, dark background
+  .modal-box        - Centered box, max-width: 900px, flex column
+  .modal-close      - Sticky close button (top-right)
+  .modal-content    - Scrollable content area (overflow-y: auto)
+  .modal-title      - Centered title styling
+  .modal-buttons    - Action buttons row
+
+CONCERT LIGHTBOX (Lines 146-263):
+  #concert_lightbox .modal-box
+    - max-width: 980px (larger than base)
+  
+  #concert_lightbox .concert-lightbox-poster-view
+    - Grid layout: 200px poster | 1fr details (desktop)
+    - Single column on mobile
+    - Poster image sticky positioned
+  
+  Responsive:
+    - 2-column on desktop
+    - 1-column on tablets/mobile
+
+YEAR ARCHIVE MODAL (Lines 310-449):
+  #year_modal
+    - z-index: 9990 (below lightbox at 9999)
+    - max-width: 1200px
+  
+  #year_modal .concerts-year-list
+    - Grid: repeat(auto-fill, minmax(320px, 1fr))
+    - Card-based layout
+  
+  #year_modal .concert-item
+    - Card with border, background, 3/4 aspect ratio posters
+  
+  Special CSS:
+    - #year_modal .concert-details summary { display: none !important; }
+    - Forces all details to be shown in modal (no "Mostra di più" button)
+
+
+Z-INDEX STACKING:
+  9999 - #concert_lightbox (individual concert details)
+  9990 - #year_modal (year archive browser)
+  0    - Page content (year pills always visible)
+
+
+================================================================================
+6. MOVEMENT SUPPORT - INFRASTRUCTURE READY BUT UNUSED
+================================================================================
+
+LOCATION: /home/daniele/danielecamiz-site/concerts-admin/migrations/001_add_movements.sql
+
+STATUS: Migration exists but NOT applied to main database
+
+PROPOSED SCHEMA:
+
+movements table:
+  - id, work_id, movement_number
+  - title, tempo, duration_minutes
+  - notes_it, notes_en
+  - UNIQUE(work_id, movement_number)
+
+concert_program_items table (replacement for concert_program):
+  - id, concert_id
+  - work_id (nullable)
+  - movement_id (nullable)
+  - position, notes
+  
+  Constraint:
+    Must have EITHER work_id OR movement_id (not both, not neither)
+
+BENEFIT:
+  - Allows concerts to reference individual movements
+  - Stores movement metadata: tempo, duration, notes
+  - Structured program data instead of text
+  - Future: Display movements with tempo/duration info
+  - Future: Search/filter by movement
+  - Future: Show work groupings with movements under them
+
+
+CURRENT WORKAROUND:
+  - All movement data stored in single "program" text field
+  - No structured movement information in database
+  - Example program text:
+    I. Allegro con brio (♩=108)
+    II. Andante cantabile (♩=84)
+    III. Minuetto - Trio
+    IV. Finale - Presto
+
+
+================================================================================
+7. COMPLETE FILE REFERENCE
+================================================================================
+
+TEMPLATE (HTML/EJS):
+  /home/daniele/danielecamiz-site/cms/views/pages/frontend/concerts.ejs
+
+JAVASCRIPT:
+  /home/daniele/danielecamiz-site/frontend/js/concerts-year-toggle.js (year modal)
+  /home/daniele/danielecamiz-site/frontend/js/concerts-lightbox.js (lightbox)
+  /home/daniele/danielecamiz-site/frontend/js/modules/concerts/concerts.js (glue)
+
+CSS:
+  /home/daniele/danielecamiz-site/frontend/css/components/modal.css
+
+CONTROLLER:
+  /home/daniele/danielecamiz-site/cms/controllers/concertsController.js
+
+DATABASE SCHEMA:
+  /home/daniele/danielecamiz-site/cms/db/schema/main.sql
+
+MOVEMENT SCHEMA (Not Applied):
+  /home/daniele/danielecamiz-site/concerts-admin/migrations/001_add_movements.sql
+
+ROUTES:
+  /home/daniele/danielecamiz-site/cms/routes/concertsRoutes.js
+
+LOCALIZATION:
+  /home/daniele/danielecamiz-site/cms/data/i18n/labels-concerts-it.json
+  /home/daniele/danielecamiz-site/cms/data/i18n/labels-concerts-en.json
+
+
+================================================================================
+8. KEY INSIGHTS
+================================================================================
+
+1. TWO-MODAL SYSTEM:
+   - Year modal (z-index 9990): Filters concerts by year
+   - Lightbox modal (z-index 9999): Shows individual concert details
+   - Lightbox overlays year modal for detailed viewing
+
+2. DYNAMIC YEAR MODAL:
+   - Not pre-rendered in HTML
+   - Created by JavaScript when year pill is clicked
+   - Content copied from hidden DOM year panels
+   - Allows interactive browsing without page reload
+
+3. PRE-RENDERED DETAILS:
+   - All concert details embedded in hidden DOM
+   - concert-full-details divs populated at page load (SSR)
+   - Copied to lightbox on demand (no server call needed)
+   - Fast UI interactions, good for performance
+
+4. SERVER-SIDE ENRICHMENT:
+   - Controller fetches and enriches all data before templating
+   - Merges: concerts + personnel + extras + programs
+   - No API calls for details (all pre-loaded)
+   - Good for SEO, potentially heavy initial payload
+
+5. MOVEMENT LIMITATION:
+   - No structured movement data currently
+   - All program info stored as plain text in "program" field
+   - Migration for movement support exists but unused
+   - Concerts with multi-movement works not properly modeled
+
+6. RESPONSIVE DESIGN:
+   - Modals adapt to mobile with CSS media queries
+   - Poster layout: 2-column desktop → 1-column mobile
+   - Grid-based card system scales automatically
+   - Touch-friendly close button and pill navigation
+
+7. ACCESSIBILITY FEATURES:
+   - role="dialog", aria-modal="true" on modals
+   - aria-label and aria-labelledby on elements
+   - Focus management (focus moved to modal on open)
+   - ESC key support for closing modals
+   - Keyboard navigation for pill buttons (Enter/Space)
+
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+FOR MOVEMENT SUPPORT:
+1. Apply the movement schema migration to main database
+2. Create movement records for works with multiple movements
+3. Add migration script to link existing concert_program entries to movements
+4. Update controller to fetch movement data
+5. Update template to display movements with metadata (tempo, duration)
+6. Update CSS for movement-specific styling
+7. Consider grouping movements under work titles in display
+
+FOR PERFORMANCE:
+1. Current SSR approach loads all concert data at page start
+2. Consider lazy-loading details for large concert archives
+3. Or implement paginated year views with AJAX loading
+
+FOR UX IMPROVEMENTS:
+1. Consider keyboard shortcuts for modal navigation
+2. Add "next/previous" buttons in lightbox
+3. Consider search/filter across all concerts
+4. Add calendar view option alongside year view
+
+================================================================================

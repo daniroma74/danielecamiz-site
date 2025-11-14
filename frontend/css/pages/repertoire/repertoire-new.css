@@ -216,6 +216,171 @@
   border-color: rgba(212, 175, 55, 0.3);
 }
 
+/* ===== TOP COMPOSERS SECTION ===== */
+.rep-top-composers {
+  background: #0f0f0f;
+  padding: 4rem 0;
+  border-bottom: 1px solid #222;
+}
+
+.rep-section-title-center {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+}
+
+.rep-section-subtitle-center {
+  text-align: center;
+  color: #999;
+  font-size: 1.1rem;
+  margin: 0 0 3rem 0;
+}
+
+.rep-top-composers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rep-top-composer-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: visible;
+}
+
+.rep-top-composer-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: translateY(-8px) scale(1.05);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(212, 175, 55, 0.3);
+}
+
+.rep-top-composer-card[data-rank="1"] {
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+.rep-top-composer-card[data-rank="1"]:hover {
+  border-color: rgba(255, 215, 0, 0.7);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(255, 215, 0, 0.4);
+}
+
+.rep-top-composer-rank {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #d4af37 0%, #f0d478 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #000;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+}
+
+.rep-top-composer-card[data-rank="1"] .rep-top-composer-rank {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  width: 40px;
+  height: 40px;
+  font-size: 1.1rem;
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.6);
+}
+
+.rep-top-composer-avatar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4af37 0%, #f0d478 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid rgba(212, 175, 55, 0.3);
+  transition: all 0.4s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.rep-top-composer-card[data-rank="1"] .rep-top-composer-avatar {
+  width: 140px;
+  height: 140px;
+  border-width: 5px;
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+.rep-top-composer-card:hover .rep-top-composer-avatar {
+  border-color: rgba(212, 175, 55, 0.8);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+  transform: scale(1.1);
+}
+
+.rep-top-composer-avatar.has-portrait {
+  background: #1a1a1a;
+  padding: 0;
+}
+
+.rep-top-composer-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.rep-top-composer-card:hover .rep-top-composer-portrait {
+  transform: scale(1.15);
+}
+
+.rep-top-composer-initials {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.rep-top-composer-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
+
+.rep-top-composer-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rep-top-composer-stat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.rep-top-composer-stat i {
+  color: #d4af37;
+  font-size: 0.85rem;
+}
+
 /* ===== TABS ===== */
 .rep-tabs {
   display: flex;
@@ -544,11 +709,345 @@
 
 .rep-work-item-cat {
   font-size: 0.85rem;
-  color: #999;
+  color: #fff;
   background: rgba(255, 255, 255, 0.05);
   padding: 0.25rem 0.75rem;
   border-radius: 6px;
   margin-left: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Badge colorati per categoria */
+.rep-work-item-cat[data-category="1"],
+.rep-work-row-cat[data-category="1"] {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.rep-work-item-cat[data-category="2"],
+.rep-work-row-cat[data-category="2"] {
+  background: rgba(251, 146, 60, 0.15);
+  color: #fb923c;
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.rep-work-item-cat[data-category="3"],
+.rep-work-row-cat[data-category="3"] {
+  background: rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.rep-work-item-cat[data-category="4"],
+.rep-work-row-cat[data-category="4"] {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.rep-work-item-cat[data-category="5"],
+.rep-work-row-cat[data-category="5"] {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.rep-work-item-cat[data-category="6"],
+.rep-work-row-cat[data-category="6"] {
+  background: rgba(156, 163, 175, 0.15);
+  color: #9ca3af;
+  border-color: rgba(156, 163, 175, 0.3);
+}
+
+/* ===== TIMELINE VIEW ===== */
+.rep-timeline {
+  padding: 2rem 0;
+}
+
+.rep-timeline-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.rep-timeline-container {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.rep-timeline-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, #d4af37 10%, #d4af37 90%, transparent);
+  transform: translateX(-50%);
+}
+
+.rep-timeline-item {
+  position: relative;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  animation: fadeInTimeline 0.6s ease-out;
+}
+
+@keyframes fadeInTimeline {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rep-timeline-item:nth-child(even) .rep-timeline-content {
+  margin-left: auto;
+}
+
+.rep-timeline-dot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background: #d4af37;
+  border: 4px solid #0a0a0a;
+  border-radius: 50%;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.rep-timeline-item:hover .rep-timeline-dot {
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+}
+
+.rep-timeline-item.current .rep-timeline-dot {
+  background: #22c55e;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.2); }
+}
+
+.rep-timeline-item.future .rep-timeline-dot {
+  background: #64c8ff;
+  border-color: rgba(100, 200, 255, 0.3);
+}
+
+.rep-timeline-content {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  width: 45%;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.rep-timeline-item:hover .rep-timeline-content {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.rep-timeline-item.current .rep-timeline-content {
+  border-color: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.rep-timeline-item.future .rep-timeline-content {
+  opacity: 0.7;
+  border-color: rgba(100, 200, 255, 0.3);
+}
+
+.rep-timeline-period-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #d4af37;
+  margin-bottom: 0.5rem;
+}
+
+.rep-timeline-years {
+  font-size: 0.95rem;
+  color: #999;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* Colori periodi storici */
+.rep-timeline-item.period-baroque .rep-timeline-dot {
+  background: #8b4513;
+  box-shadow: 0 0 20px rgba(139, 69, 19, 0.4);
+}
+
+.rep-timeline-item.period-baroque .rep-timeline-period-name {
+  color: #cd853f;
+}
+
+.rep-timeline-item.period-classical .rep-timeline-dot {
+  background: #d4af37;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+}
+
+.rep-timeline-item.period-classical .rep-timeline-period-name {
+  color: #d4af37;
+}
+
+.rep-timeline-item.period-romantic .rep-timeline-dot {
+  background: #dc143c;
+  box-shadow: 0 0 20px rgba(220, 20, 60, 0.4);
+}
+
+.rep-timeline-item.period-romantic .rep-timeline-period-name {
+  color: #ff6b6b;
+}
+
+.rep-timeline-item.period-modern .rep-timeline-dot {
+  background: #3b82f6;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+.rep-timeline-item.period-modern .rep-timeline-period-name {
+  color: #60a5fa;
+}
+
+.rep-timeline-stats {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.rep-timeline-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #999;
+  font-size: 0.95rem;
+}
+
+.rep-timeline-stat i {
+  color: #d4af37;
+  font-size: 1rem;
+}
+
+/* Timeline expand button */
+.rep-timeline-expand-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 8px;
+  color: #d4af37;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.rep-timeline-expand-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.rep-timeline-expand-btn i {
+  transition: transform 0.3s ease;
+}
+
+/* Timeline details (expanded content) */
+.rep-timeline-details {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rep-timeline-decade {
+  margin-bottom: 2rem;
+}
+
+.rep-timeline-decade:last-child {
+  margin-bottom: 0;
+}
+
+.rep-timeline-decade-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #d4af37;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rep-timeline-decade-count {
+  font-size: 0.9rem;
+  color: #999;
+  font-weight: 400;
+}
+
+.rep-timeline-works-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rep-timeline-work-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.rep-timeline-work-item:hover {
+  background: rgba(212, 175, 55, 0.05);
+  border-color: rgba(212, 175, 55, 0.2);
+  transform: translateX(4px);
+}
+
+.rep-timeline-work-year {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #d4af37;
+  min-width: 45px;
+  padding: 0.25rem 0.5rem;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.rep-timeline-work-info {
+  flex: 1;
+}
+
+.rep-timeline-work-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+
+.rep-timeline-work-composer {
+  font-size: 0.85rem;
+  color: #999;
 }
 
 /* ===== ALL WORKS VIEW ===== */
@@ -631,11 +1130,15 @@
 
 .rep-work-row-cat {
   font-size: 0.85rem;
-  color: #999;
+  color: #fff;
   background: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 1rem;
   border-radius: 8px;
   white-space: nowrap;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -708,5 +1211,72 @@
 
   .rep-work-row-cat {
     align-self: flex-start;
+  }
+
+  /* Timeline mobile */
+  .rep-timeline-line {
+    left: 2rem;
+  }
+
+  .rep-timeline-dot {
+    left: 2rem;
+  }
+
+  .rep-timeline-content {
+    width: calc(100% - 5rem);
+    margin-left: 5rem !important;
+  }
+
+  .rep-timeline-period-name {
+    font-size: 1.4rem;
+  }
+
+  .rep-timeline-years {
+    font-size: 0.85rem;
+  }
+
+  .rep-timeline-stats {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* Top composers mobile */
+  .rep-top-composers {
+    padding: 3rem 0;
+  }
+
+  .rep-section-title-center {
+    font-size: 2rem;
+  }
+
+  .rep-section-subtitle-center {
+    font-size: 1rem;
+  }
+
+  .rep-top-composers-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .rep-top-composer-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .rep-top-composer-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .rep-top-composer-card[data-rank="1"] .rep-top-composer-avatar {
+    width: 110px;
+    height: 110px;
+  }
+
+  .rep-top-composer-name {
+    font-size: 1rem;
+  }
+
+  .rep-top-composer-stat {
+    font-size: 0.85rem;
   }
 }

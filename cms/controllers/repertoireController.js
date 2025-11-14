@@ -197,6 +197,20 @@ export async function getRepertoirePage(req, res) {
       ORDER BY c.full_name, w.title
     `).catch(e => { console.error('[Repertoire] works:', e); return []; });
 
+    // Top composers by works count (for featured section)
+    const topComposers = composers
+      .filter(c => c.works_count > 0)
+      .sort((a, b) => {
+        if (b.works_count !== a.works_count) return b.works_count - a.works_count;
+        return b.concerts_count - a.concerts_count;
+      })
+      .slice(0, 6)
+      .map(c => ({
+        ...c,
+        name: c.full_name,
+        portrait_url: c.portrait_url || null
+      }));
+
     // Build composers with their works
     const composersWithWorks = composers.map(composer => {
       const composerWorks = works.filter(w => w.composer_id === composer.id);
@@ -208,6 +222,7 @@ export async function getRepertoirePage(req, res) {
         name: composer.full_name,
         birth_year: composer.birth_year || null,
         death_year: composer.death_year || null,
+        portrait_url: composer.portrait_url || null,
         works: composerWorks,
         frequently_performed_count: frequentCount
       };
@@ -222,6 +237,61 @@ export async function getRepertoirePage(req, res) {
         works: genreWorks
       };
     }).filter(g => g.count > 0);
+
+    // Timeline data: works grouped by composition period
+    const timeline = await qAll(db, `
+      SELECT
+        CASE
+          WHEN year < 1750 THEN 'Barocco'
+          WHEN year >= 1750 AND year < 1820 THEN 'Classicismo'
+          WHEN year >= 1820 AND year < 1910 THEN 'Romanticismo'
+          WHEN year >= 1910 THEN 'Novecento'
+        END as period,
+        CASE
+          WHEN year < 1750 THEN 1
+          WHEN year >= 1750 AND year < 1820 THEN 2
+          WHEN year >= 1820 AND year < 1910 THEN 3
+          WHEN year >= 1910 THEN 4
+        END as period_order,
+        COUNT(*) as works_count,
+        MIN(year) as first_year,
+        MAX(year) as last_year,
+        COUNT(DISTINCT composer_id) as composers_count
+      FROM works
+      WHERE year IS NOT NULL AND year > 0
+      GROUP BY period
+      ORDER BY period_order
+    `).catch(e => { console.error('[Repertoire] timeline:', e); return []; });
+
+    // Get detailed works for timeline with decade grouping
+    const timelineWorks = await qAll(db, `
+      SELECT
+        w.*,
+        c.full_name as composer_name,
+        CASE
+          WHEN w.year < 1750 THEN 'Barocco'
+          WHEN w.year >= 1750 AND w.year < 1820 THEN 'Classicismo'
+          WHEN w.year >= 1820 AND w.year < 1910 THEN 'Romanticismo'
+          WHEN w.year >= 1910 THEN 'Novecento'
+        END as period,
+        (w.year / 10) * 10 as decade
+      FROM works w
+      JOIN composers c ON w.composer_id = c.id
+      WHERE w.year IS NOT NULL AND w.year > 0
+      ORDER BY w.year, c.full_name, w.title
+    `).catch(e => { console.error('[Repertoire] timelineWorks:', e); return []; });
+
+    // Group works by period and decade
+    const timelineByPeriod = {};
+    timelineWorks.forEach(work => {
+      if (!timelineByPeriod[work.period]) {
+        timelineByPeriod[work.period] = {};
+      }
+      if (!timelineByPeriod[work.period][work.decade]) {
+        timelineByPeriod[work.period][work.decade] = [];
+      }
+      timelineByPeriod[work.period][work.decade].push(work);
+    });
 
     return res.renderPage('pages/frontend/repertoire', {
       title: lang === 'it' ? 'Repertorio' : 'Repertoire',
@@ -242,6 +312,9 @@ export async function getRepertoirePage(req, res) {
       frequentlyPerformed: topWorks,
       comingSoon: upcomingWorks,
       collaborators,
+      topComposers,
+      timeline,
+      timelineByPeriod,
       pageStyles: [
         '/css/pages/repertoire/repertoire-new.css',
       ],

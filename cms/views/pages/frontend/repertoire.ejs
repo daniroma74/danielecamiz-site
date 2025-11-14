@@ -126,6 +126,48 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
     </section>
   <% } %>
 
+  <!-- Top Composers Section -->
+  <% if (topComposers && topComposers.length > 0) { %>
+    <section class="rep-top-composers">
+      <div class="rep-container">
+        <h2 class="rep-section-title-center">
+          <%= lang === 'en' ? 'Featured Composers' : 'Compositori in Evidenza' %>
+        </h2>
+        <p class="rep-section-subtitle-center">
+          <%= lang === 'en' ? 'The composers I perform most frequently' : 'I compositori che eseguo più frequentemente' %>
+        </p>
+
+        <div class="rep-top-composers-grid">
+          <% topComposers.forEach((composer, index) => { %>
+            <div class="rep-top-composer-card" data-rank="<%= index + 1 %>">
+              <div class="rep-top-composer-rank"><%= index + 1 %></div>
+              <div class="rep-top-composer-avatar <%= composer.portrait_url ? 'has-portrait' : '' %>">
+                <% if (composer.portrait_url) { %>
+                  <img src="<%= composer.portrait_url %>" alt="<%= composer.name %>" class="rep-top-composer-portrait">
+                <% } else { %>
+                  <span class="rep-top-composer-initials">
+                    <%= composer.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() %>
+                  </span>
+                <% } %>
+              </div>
+              <h3 class="rep-top-composer-name"><%= composer.name %></h3>
+              <div class="rep-top-composer-stats">
+                <div class="rep-top-composer-stat">
+                  <i class="fas fa-music"></i>
+                  <span><%= composer.works_count %> <%= lang === 'en' ? 'works' : 'brani' %></span>
+                </div>
+                <div class="rep-top-composer-stat">
+                  <i class="fas fa-calendar"></i>
+                  <span><%= composer.concerts_count %> <%= lang === 'en' ? 'concerts' : 'concerti' %></span>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
   <!-- Main Content -->
   <div class="rep-container">
     <!-- Navigation Tabs -->
@@ -137,6 +179,10 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
       <button class="rep-tab" data-view="composers">
         <i class="fas fa-user-tie"></i>
         <%= lang === 'en' ? 'By Composer' : 'Per Compositore' %>
+      </button>
+      <button class="rep-tab" data-view="timeline">
+        <i class="fas fa-clock"></i>
+        <%= lang === 'en' ? 'Timeline' : 'Periodi' %>
       </button>
       <button class="rep-tab" data-view="all">
         <i class="fas fa-th"></i>
@@ -244,7 +290,7 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
                     <% } %>
                   </span>
                   <% if (work.category_name) { %>
-                    <span class="rep-work-item-cat"><%= work.category_name %></span>
+                    <span class="rep-work-item-cat" data-category="<%= work.category_id %>"><%= work.category_name %></span>
                   <% } %>
                 </div>
               <% }) %>
@@ -252,6 +298,89 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
           </div>
         <% }) %>
       </div>
+    </div>
+
+    <!-- Timeline View -->
+    <div id="timelineView" class="rep-view">
+      <% if (timeline && timeline.length > 0) { %>
+        <div class="rep-timeline">
+          <div class="rep-timeline-header">
+            <h3 class="rep-subsection-title">
+              <%= lang === 'en' ? 'Repertoire by Historical Period' : 'Repertorio per Periodo Storico' %>
+            </h3>
+            <p style="color: #999; margin-bottom: 2rem;">
+              <%= lang === 'en' ? 'From Baroque to 20th Century' : 'Dal Barocco al Novecento' %>
+            </p>
+          </div>
+
+          <div class="rep-timeline-container">
+            <div class="rep-timeline-line"></div>
+            <%
+            const periodLabels = {
+              'Barocco': { en: 'Baroque', color: 'baroque' },
+              'Classicismo': { en: 'Classical', color: 'classical' },
+              'Romanticismo': { en: 'Romantic', color: 'romantic' },
+              'Novecento': { en: '20th Century', color: 'modern' }
+            };
+
+            timeline.forEach((item, index) => {
+              const periodInfo = periodLabels[item.period] || { en: item.period, color: 'default' };
+              const displayName = lang === 'en' ? periodInfo.en : item.period;
+              const periodWorks = timelineByPeriod[item.period] || {};
+              const decades = Object.keys(periodWorks).sort((a, b) => parseInt(a) - parseInt(b));
+            %>
+              <div class="rep-timeline-item period-<%= periodInfo.color %>">
+                <div class="rep-timeline-dot"></div>
+                <div class="rep-timeline-content">
+                  <div class="rep-timeline-period-name"><%= displayName %></div>
+                  <div class="rep-timeline-years"><%= item.first_year %> - <%= item.last_year %></div>
+                  <div class="rep-timeline-stats">
+                    <div class="rep-timeline-stat">
+                      <i class="fas fa-music"></i>
+                      <span><%= item.works_count %> <%= lang === 'en' ? 'works' : 'brani' %></span>
+                    </div>
+                    <div class="rep-timeline-stat">
+                      <i class="fas fa-user-tie"></i>
+                      <span><%= item.composers_count %> <%= lang === 'en' ? 'composers' : 'compositori' %></span>
+                    </div>
+                  </div>
+
+                  <% if (decades.length > 0) { %>
+                    <button class="rep-timeline-expand-btn" data-period="<%= item.period %>">
+                      <i class="fas fa-chevron-down"></i>
+                      <%= lang === 'en' ? 'View works' : 'Vedi brani' %>
+                    </button>
+
+                    <div class="rep-timeline-details" id="timeline-<%= item.period %>" style="display: none;">
+                      <% decades.forEach(decade => {
+                        const decadeWorks = periodWorks[decade];
+                      %>
+                        <div class="rep-timeline-decade">
+                          <h4 class="rep-timeline-decade-title">
+                            <%= decade %>s
+                            <span class="rep-timeline-decade-count">(<%= decadeWorks.length %>)</span>
+                          </h4>
+                          <div class="rep-timeline-works-list">
+                            <% decadeWorks.forEach(work => { %>
+                              <div class="rep-timeline-work-item">
+                                <span class="rep-timeline-work-year"><%= work.year %></span>
+                                <div class="rep-timeline-work-info">
+                                  <div class="rep-timeline-work-title"><%= work.title %></div>
+                                  <div class="rep-timeline-work-composer"><%= work.composer_name %></div>
+                                </div>
+                              </div>
+                            <% }) %>
+                          </div>
+                        </div>
+                      <% }) %>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
     </div>
 
     <!-- All Works View -->
@@ -268,7 +397,7 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
               <p class="rep-work-row-composer"><%= work.composer_name %></p>
             </div>
             <% if (work.category_name) { %>
-              <span class="rep-work-row-cat"><%= work.category_name %></span>
+              <span class="rep-work-row-cat" data-category="<%= work.category_id %>"><%= work.category_name %></span>
             <% } %>
           </div>
         <% }) %>
@@ -357,4 +486,25 @@ if (searchInput) {
     });
   });
 }
+
+// Timeline expand/collapse
+document.querySelectorAll('.rep-timeline-expand-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const period = btn.dataset.period;
+    const details = document.getElementById('timeline-' + period);
+    const icon = btn.querySelector('i');
+
+    if (details.style.display === 'none') {
+      details.style.display = 'block';
+      icon.style.transform = 'rotate(180deg)';
+      btn.textContent = btn.textContent.includes('View') ? 'Hide works' : 'Nascondi brani';
+      btn.prepend(icon);
+    } else {
+      details.style.display = 'none';
+      icon.style.transform = 'rotate(0deg)';
+      btn.textContent = btn.textContent.includes('Hide') ? 'View works' : 'Vedi brani';
+      btn.prepend(icon);
+    }
+  });
+});
 </script>

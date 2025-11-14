@@ -1,0 +1,222 @@
+ARCHIVE CONCERTS - MODAL SYSTEM ARCHITECTURE
+
+================================================================================
+                              PAGE LOAD (SSR)
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ concerts.ejs (Server-Side Rendering)                                        │
+│                                                                             │
+│  DATA INPUT from Controller:                                               │
+│  - concertsByYear[]: { year, concerts[] }                                  │
+│  - upcomingConcerts[]                                                      │
+│  - yearsList: ["2024", "2023", "2022", ...]                               │
+│                                                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐ │
+│  │ Year Pills (always visible)                                          │ │
+│  │ ─────────────────────────────────────────────────────────────────── │ │
+│  │ <button class="year-pill" data-year="2024">2024</button>            │ │
+│  │ <button class="year-pill" data-year="2023">2023</button>            │ │
+│  │ <button class="year-pill" data-year="2022">2022</button>            │ │
+│  └──────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐ │
+│  │ Year Content Panels (hidden in DOM, copied to modal)                 │ │
+│  │ ─────────────────────────────────────────────────────────────────── │ │
+│  │                                                                      │ │
+│  │ <div id="year_2024" class="year-content" hidden>                   │ │
+│  │   <ul class="concerts-year-list">                                   │ │
+│  │     <!-- Loop through concerts of year 2024 -->                     │ │
+│  │                                                                      │ │
+│  │     <li class="concert-item" data-concert-id="concert_2024_0">     │ │
+│  │       <div class="concert-top-section">                            │ │
+│  │         [Poster Image] | Title | Date | Location                   │ │
+│  │       </div>                                                        │ │
+│  │       <div class="concert-bottom-section">                         │ │
+│  │         Program | Orchestra | Conductor | Soloists | YouTube       │ │
+│  │       </div>                                                        │ │
+│  │       <!-- FULL DETAILS - HIDDEN -->                                │ │
+│  │       <div id="details_concert_2024_0" class="concert-full-details" │ │
+│  │            style="display: none;">                                 │ │
+│  │         [Complete concert data - copied to lightbox when clicked]   │ │
+│  │       </div>                                                        │ │
+│  │     </li>                                                           │ │
+│  │     <!-- More concerts... -->                                       │ │
+│  │   </ul>                                                             │ │
+│  │ </div>                                                              │ │
+│  │                                                                      │ │
+│  │ <div id="year_2023" class="year-content" hidden>                   │ │
+│  │   <!-- Similar structure -->                                        │ │
+│  │ </div>                                                              │ │
+│  │ <!-- More years... -->                                              │ │
+│  └──────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+                            JAVASCRIPT LAYER
+================================================================================
+
+┌──────────────────────────────────┐
+│ concerts-year-toggle.js          │  Creates & manages YEAR MODAL
+├──────────────────────────────────┤
+│                                  │
+│ Year Pill Click Event            │
+│   └─> toggleYear(year)           │
+│       ├─> closeModal()           │
+│       └─> openYear(year)         │
+│           ├─ Get year content    │
+│           └─ openModalWithHtml() │
+│               └─ Build #year_modal overlay
+│                  Show modal with year's concerts
+│                  Open all <details> auto
+│                                  │
+│ Modal Structure Created:         │
+│ <div id="year_modal" class=      │
+│      "modal-overlay">            │
+│   <div class="modal-box">        │
+│     <button class=               │
+│      "modal-close">×</button>     │
+│     <div class=                  │
+│      "modal-content">            │
+│       [Copy of year's HTML here] │
+│     </div>                       │
+│   </div>                         │
+│ </div>                           │
+└──────────────────────────────────┘
+         │
+         │ (Concerts in modal)
+         │
+         └─────────────────────────────────┐
+                                           │
+                      ┌────────────────────┴─────────────────┐
+                      │                                       │
+        ┌─────────────────────────┐      ┌─────────────────────────┐
+        │ concerts-lightbox.js    │      │ concerts.js (glue)      │
+        ├─────────────────────────┤      ├─────────────────────────┤
+        │                         │      │                         │
+        │ Manages LIGHTBOX MODAL  │      │ Intercepts events       │
+        │                         │      │                         │
+        │ openConcertFromDOM()    │      │ Details <summary> click  │
+        │  └─ Get concert ID      │      │  └─ Prevent default     │
+        │  └─ Find details in DOM │      │  └─ Call                │
+        │  └─ Copy to lightbox    │      │     openConcertFromDOM()│
+        │  └─ Show #concert_      │      │                         │
+        │     lightbox overlay    │      │ Prevents double-open:   │
+        │                         │      │ if (in #year_modal)      │
+        │ closeConcertLightbox()  │      │   return;               │
+        │  └─ Hide overlay        │      │                         │
+        │  └─ Clear poster        │      │ bindDetailsLabels()     │
+        │                         │      │ - Toggle "Mostra di più"│
+        │ #concert_lightbox       │      │   / "Mostra di meno"    │
+        │  structure:             │      │                         │
+        │  <div id="concert_      │      │                         │
+        │   lightbox"             │      │                         │
+        │   role="dialog">        │      │                         │
+        │   <div class=           │      │                         │
+        │    "concert-lightbox-   │      │                         │
+        │     content">           │      │                         │
+        │    [Close button]       │      │                         │
+        │    <div class=          │      │                         │
+        │     "concert-lightbox-  │      │                         │
+        │      body">             │      │                         │
+        │     [Poster + details]  │      │                         │
+        │    </div>               │      │                         │
+        │   </div>                │      │                         │
+        │  </div>                 │      │                         │
+        └─────────────────────────┘      └─────────────────────────┘
+
+================================================================================
+                              CSS LAYERS
+================================================================================
+
+modal.css (Lines 1-449)
+│
+├─ .modal-overlay          (z-index: 9999, fixed, dark background)
+│  ├─ .modal-box           (centered, flexbox, max-width: 900px)
+│  │  ├─ .modal-close      (sticky, top-right)
+│  │  └─ .modal-content    (overflow-y: auto, flex: 1)
+│  └─ .modal-overlay.show  (display: flex)
+│
+├─ #concert_lightbox       (scoped to lightbox modal)
+│  ├─ .concert-lightbox-poster-view
+│  │  (grid: 200px | 1fr on desktop, 1 column on mobile)
+│  ├─ .concert-lightbox-img (sticky, 200px width)
+│  └─ .concert-lightbox-info (overflow-y: auto, max-height: 70vh)
+│
+└─ #year_modal             (z-index: 9990, below lightbox)
+   ├─ .concerts-year-list  (grid: repeat(auto-fill, minmax(320px, 1fr)))
+   ├─ .concert-item        (card with border, background)
+   │  ├─ .concert-block    (flex column)
+   │  ├─ .concert-top-section (grid: 40% poster | 1fr info)
+   │  └─ .concert-bottom-section (full width)
+   └─ .concert-details     (display: none !important for summary in modal)
+
+================================================================================
+                         DATA FLOW - SUMMARY
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 1. Page Load (SSR)                                              │
+│    ├─ getConcertsPageData() called in controller                │
+│    ├─ Fetches: upcoming + past concerts                         │
+│    ├─ Enriches with: personnel + extras + programs             │
+│    └─ Groups past by year: concertsByYear                      │
+│                                                                 │
+│ 2. Template Rendering (concerts.ejs)                            │
+│    ├─ Renders year pills from yearsList                         │
+│    ├─ Renders year panels with concert cards                   │
+│    ├─ Embeds hidden concert-full-details for each              │
+│    └─ Includes 2 empty modal shells:                           │
+│        - #concert_lightbox (for individual details)             │
+│        - (no pre-rendered #year_modal, JS creates it)          │
+│                                                                 │
+│ 3. JavaScript Initialization                                    │
+│    ├─ concerts-year-toggle.js:                                 │
+│    │  ├─ Finds .year-pill buttons                              │
+│    │  ├─ Attaches click listeners                              │
+│    │  └─ buildOverlay() ready to create modal on demand        │
+│    ├─ concerts-lightbox.js:                                    │
+│    │  ├─ Finds #concert_lightbox                               │
+│    │  ├─ Attaches close button listener                        │
+│    │  └─ Waits for openConcertFromDOM() calls                 │
+│    └─ concerts.js (glue):                                       │
+│       ├─ Binds details label toggles                           │
+│       ├─ Intercepts summary clicks                             │
+│       └─ Delegates to openConcertFromDOM()                    │
+│                                                                 │
+│ 4. User Interaction                                             │
+│    ├─ Click year pill                                          │
+│    │  └─> buildOverlay() + openYear(year)                      │
+│    │      └─> Modal appears with that year's concerts          │
+│    ├─ Click concert card in modal                              │
+│    │  └─> openConcertFromDOM(concertId)                        │
+│    │      ├─ Find details_<ID> in DOM                          │
+│    │      ├─ Copy to #concert_poster_container                 │
+│    │      └─> Lightbox appears over year modal (z-index stacking)
+│    └─ ESC or click backdrop                                     │
+│        └─> closeConcertLightbox() / closeModal()               │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+================================================================================
+                      Z-INDEX STACKING ORDER
+================================================================================
+
+     9999 ┌─────────────────────────────────────┐
+          │  #concert_lightbox (individual)     │
+          │  .modal-overlay.show                │
+          │  (Above year modal)                 │
+          └─────────────────────────────────────┘
+
+     9990 ┌─────────────────────────────────────┐
+          │  #year_modal (archive by year)      │
+          │  .modal-overlay                     │
+          │  (Below lightbox)                   │
+          └─────────────────────────────────────┘
+
+        0 ┌─────────────────────────────────────┐
+          │  Page content (pills visible)       │
+          └─────────────────────────────────────┘
+
+================================================================================
