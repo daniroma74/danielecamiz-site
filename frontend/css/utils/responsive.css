@@ -15,7 +15,7 @@
     left: 0; right: 0;
     width: 100%;
     background-color: #000; /* fallback */
-    padding: 1rem 1.25rem;
+    padding: 10px 12px; /* RIDOTTO da 1rem 1.25rem per evitare offset sui dropdown */
     gap: 0.75rem;
     flex-direction: column;
     box-shadow: 0 8px 24px rgba(0,0,0,0.25);
@@ -24,6 +24,53 @@
 
   /* Show when the hidden checkbox is checked */
   nav.navbar .nav-toggle:checked ~ .nav-center .menu { display: flex; }
+
+  /* DROPDOWN MOBILE - accordion style */
+  nav.navbar .nav-item-dropdown {
+    width: 100%;
+  }
+
+  nav.navbar .menu .nav-dropdown-toggle {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    margin: 0;
+    text-align: left;
+  }
+
+  nav.navbar .nav-dropdown-menu {
+    position: static;
+    transform: none;
+    margin: 0;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  nav.navbar .nav-item-dropdown.dropdown-open .nav-dropdown-menu {
+    opacity: 1;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 0.5rem 0 0.5rem 1rem;
+    margin: 0.25rem 0;
+    background: rgba(212, 175, 55, 0.05);
+    border-left: 2px solid var(--accent-color);
+  }
+
+  nav.navbar .nav-dropdown-item {
+    display: block;
+    padding: 0.5rem 0;
+    font-size: 0.9em;
+    width: 100%;
+    text-align: left;
+  }
 
   /* Hamburger visible on mobile */
   nav.navbar .hamburger {
