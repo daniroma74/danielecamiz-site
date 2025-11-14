@@ -59,9 +59,8 @@
     padding: 6px 4px !important; /* Stesso padding laterale degli <a> */
     margin: 0 !important;
     justify-content: flex-end !important; /* ALLINEATO A DESTRA */
-    align-items: center;
-    gap: 0.5rem !important; /* Spazio tra testo e icona */
-    flex-direction: row-reverse !important; /* Icona a sinistra del testo */
+    align-items: center !important;
+    gap: 0.375rem !important; /* Spazio tra testo e icona */
     background: none !important;
     border: none !important;
     color: #fff !important;
@@ -72,6 +71,12 @@
     letter-spacing: 0.06em !important;
     cursor: pointer;
     box-sizing: border-box !important;
+  }
+
+  /* Icona chevron nel button - piccola e allineata */
+  nav.navbar .menu button.nav-dropdown-toggle i {
+    font-size: 0.7em !important;
+    margin-left: 0 !important;
   }
 
   /* DROPDOWN MOBILE - accordion style */
