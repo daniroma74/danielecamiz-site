@@ -85,8 +85,11 @@
   }
 
   nav.navbar .nav-dropdown-menu {
-    position: static;
-    transform: none;
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
     margin: 0;
     padding: 0;
     max-height: 0;
@@ -96,6 +99,7 @@
     background: transparent;
     border: none;
     box-shadow: none;
+    visibility: visible !important;
   }
 
   nav.navbar .nav-item-dropdown.dropdown-open .nav-dropdown-menu {
