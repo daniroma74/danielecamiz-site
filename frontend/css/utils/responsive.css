@@ -25,34 +25,50 @@
   /* Show when the hidden checkbox is checked */
   nav.navbar .nav-toggle:checked ~ .nav-center .menu { display: flex; }
 
-  /* Menu links - inclusi button dropdown */
-  nav.navbar .menu a,
-  nav.navbar .menu button {
+  /* Menu links - tutti allineati uguale */
+  nav.navbar .menu li {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav.navbar .menu a {
     display: block;
     width: 100%;
     padding: 6px 0;
     margin: 0;
     text-align: left;
-    background: none;
-    border: none;
     color: #fff;
     font-family: var(--font-ui);
     font-weight: 300;
     font-size: inherit;
     text-transform: uppercase;
     letter-spacing: 0.06em;
+  }
+
+  /* Button dropdown - STESSI stili ma con flex per icona */
+  nav.navbar .menu button.nav-dropdown-toggle {
+    display: flex !important;
+    width: 100% !important;
+    padding: 6px 0 !important;
+    margin: 0 !important;
+    text-align: left;
+    justify-content: space-between;
+    align-items: center;
+    background: none !important;
+    border: none !important;
+    color: #fff !important;
+    font-family: var(--font-ui) !important;
+    font-weight: 300 !important;
+    font-size: inherit !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
     cursor: pointer;
   }
 
   /* DROPDOWN MOBILE - accordion style */
   nav.navbar .nav-item-dropdown {
     width: 100%;
-  }
-
-  nav.navbar .menu .nav-dropdown-toggle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 
   nav.navbar .nav-dropdown-menu {
