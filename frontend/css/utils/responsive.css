@@ -102,19 +102,19 @@
     opacity: 1;
     max-height: 500px;
     overflow-y: auto;
-    padding: 0.5rem 0; /* Nessun indent - allineato come gli altri */
+    padding: 0.5rem 0 !important; /* Nessun indent - allineato come gli altri */
     margin: 0.25rem 0;
-    background: transparent; /* Nessuno sfondo separato */
-    border: none; /* Nessun bordo laterale */
+    background: transparent !important; /* Nessuno sfondo separato */
+    border: none !important; /* Nessun bordo laterale */
     box-sizing: border-box;
   }
 
   nav.navbar .nav-dropdown-item {
     display: block;
-    padding: 0.5rem 4px; /* Stesso padding degli altri link */
-    font-size: 0.85em; /* Leggermente più piccolo per distinguerli */
+    padding: 0.5rem 4px !important; /* Stesso padding degli altri link */
+    font-size: 0.85em !important; /* Leggermente più piccolo per distinguerli */
     width: 100%;
-    text-align: right; /* ALLINEATO A DESTRA */
+    text-align: right !important; /* ALLINEATO A DESTRA */
     box-sizing: border-box;
   }
 
