@@ -190,73 +190,71 @@ nav.navbar.navbar--fixed{
   border-left-color: var(--accent-color);
 }
 
-/* Mobile dropdown styles */
+/* Mobile dropdown styles - ACCORDION STYLE */
 @media (max-width: 1024px) {
+  /* L'item dropdown deve comportarsi come gli altri list items */
   .nav-item-dropdown {
     width: 100%;
   }
 
+  /* Il toggle deve essere allineato esattamente come gli altri link */
   .nav-dropdown-toggle {
     width: 100%;
     justify-content: space-between;
     padding: 6px 0;
+    text-align: left;
+    /* Rimuovo qualsiasi offset che potrebbe spostarlo */
+    margin: 0;
+    position: static;
   }
 
-  /* APPROCCIO COMPLETAMENTE NUOVO: dropdown full-width senza indent */
+  /* ACCORDION: il menu si espande SOTTO il toggle, tra gli altri elementi */
   .nav-dropdown-menu {
     position: static;
     transform: none;
-    margin: 0.5rem -12px 0 -12px; /* Negativo per compensare il padding del parent .nav-center */
-    padding: 0.75rem 12px;
+    margin: 0;
+    padding: 0;
     box-shadow: none;
     border: none;
-    border-top: 2px solid var(--accent-color);
-    border-bottom: 2px solid var(--accent-color);
-    background: rgba(212, 175, 55, 0.08);
+    border-radius: 0;
+    background: transparent;
     min-width: auto;
-    width: calc(100% + 24px); /* +24px per compensare i -12px margin */
+    width: 100%;
     box-sizing: border-box;
     list-style: none;
-  }
-
-  .nav-item-dropdown .nav-dropdown-menu {
-    opacity: 0;
-    visibility: hidden;
+    /* Nascosto di default */
     max-height: 0;
     overflow: hidden;
+    opacity: 0;
     transition: all 0.3s ease;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    margin-bottom: 0;
   }
 
+  /* Quando aperto: si espande verso il basso */
   .nav-item-dropdown.dropdown-open .nav-dropdown-menu {
     opacity: 1;
-    visibility: visible;
-    max-height: 80vh;
+    max-height: 500px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    padding: 0.5rem 0 0.5rem 1rem; /* Indent leggero per distinguere le sotto-voci */
+    background: rgba(212, 175, 55, 0.05);
+    border-left: 2px solid var(--accent-color);
+    margin: 0.25rem 0;
   }
 
   .nav-dropdown-item {
     display: block;
     padding: 0.5rem 0;
-    font-size: 0.85em;
-    border-left: none;
+    font-size: 0.9em;
     text-align: left;
     width: 100%;
     box-sizing: border-box;
     color: #fff;
     text-decoration: none;
+    border: none;
   }
 
   .nav-dropdown-item:hover {
-    background: rgba(212, 175, 55, 0.15);
+    color: var(--accent-color);
     padding-left: 0.5rem;
   }
 }
