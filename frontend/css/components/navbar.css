@@ -80,14 +80,14 @@ nav.navbar.navbar--fixed{
 /* L’hamburger di default è nascosto (desktop); i suoi dettagli grafici sono in hamburger.css */
 .hamburger{ display:none; }
 
-@media (max-width: 1024px){
+@media (max-width: 1199px){
   /* Navbar più sottile su mobile */
   nav.navbar{ padding: 4px 10px; min-height: var(--navbar-h, 48px); letter-spacing: 0.05em; }
   .nav-right{ gap: .5rem; }
   .nav-left .logo{ font-size: 1rem; }
   .lang-switch button{ font-size: .85rem; padding: 0 .2rem; }
 
-  /* Su mobile/tablet: nascondo il menu inline e mostro l’hamburger */
+  /* Su mobile/tablet: nascondo il menu inline e mostro l'hamburger */
   .nav-center{ display:none; }
   .hamburger{ display:inline-flex; line-height: 1; }
 
@@ -192,7 +192,7 @@ nav.navbar.navbar--fixed{
 }
 
 /* Mobile dropdown styles - ACCORDION STYLE */
-@media (max-width: 1024px) {
+@media (max-width: 1199px) {
   /* L'item dropdown deve comportarsi come gli altri list items */
   .nav-item-dropdown {
     width: 100%;
