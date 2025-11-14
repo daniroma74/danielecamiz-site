@@ -247,17 +247,17 @@ nav.navbar.navbar--fixed{
     max-height: 500px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0.5rem 0 0.5rem 1rem; /* Indent leggero per distinguere le sotto-voci */
-    background: rgba(212, 175, 55, 0.05);
-    border-left: 2px solid var(--accent-color);
+    padding: 0.5rem 0; /* Nessun indent - allineato come gli altri */
+    background: transparent; /* Nessuno sfondo separato */
+    border: none; /* Nessun bordo separato */
     margin: 0.25rem 0;
   }
 
   .nav-dropdown-item {
     display: block;
     padding: 0.5rem 0;
-    font-size: 0.9em;
-    text-align: left;
+    font-size: 0.85em; /* Leggermente più piccolo per distinguerli */
+    text-align: right; /* Allineato a destra come gli altri link */
     width: 100%;
     box-sizing: border-box;
     color: #fff;
@@ -267,7 +267,6 @@ nav.navbar.navbar--fixed{
 
   .nav-dropdown-item:hover {
     color: var(--accent-color);
-    padding-left: 0.5rem;
   }
 }
 
