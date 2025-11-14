@@ -66,12 +66,12 @@
       const RESP    = '/frontend/css/utils/responsive.css';
     %>
     <% comps.forEach(href => { %>
-      <link rel="stylesheet" href="<%= href %>">
+      <link rel="stylesheet" href="<%= href %>?v=<%= Date.now() %>">
     <% }) %>
     <% others.forEach(href => { %>
-      <link rel="stylesheet" href="<%= href %>">
+      <link rel="stylesheet" href="<%= href %>?v=<%= Date.now() %>">
     <% }) %>
-    <link rel="stylesheet" href="<%= RESP %>"><!-- responsive.css sempre ultimo -->
+    <link rel="stylesheet" href="<%= RESP %>?v=<%= Date.now() %>"><!-- responsive.css sempre ultimo -->
 
     <!-- CSS PER-PAGINA (pageStyles preferito; compat: cssFiles) -->
     <%
