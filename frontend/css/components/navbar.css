@@ -105,7 +105,8 @@ nav.navbar.navbar--fixed{
   }
 
   .nav-toggle:checked ~ .nav-center .menu{ display:flex; flex-direction: column; gap:10px; }
-  .nav-toggle:checked ~ .nav-center .menu a{ padding: 6px 0; }
+  .nav-toggle:checked ~ .nav-center .menu a,
+  .nav-toggle:checked ~ .nav-center .menu .nav-dropdown-toggle { padding: 6px 0; }
 }
 
 /* ===== Dropdown Menu ===== */
@@ -199,13 +200,24 @@ nav.navbar.navbar--fixed{
 
   /* Il toggle deve essere allineato esattamente come gli altri link */
   .nav-dropdown-toggle {
+    display: flex !important;
     width: 100%;
     justify-content: space-between;
-    padding: 6px 0;
+    align-items: center;
+    padding: 6px 0 !important;
     text-align: left;
     /* Rimuovo qualsiasi offset che potrebbe spostarlo */
-    margin: 0;
+    margin: 0 !important;
     position: static;
+    /* Stesso stile degli altri link */
+    color: #fff;
+    font-weight: 300;
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: none;
+    border: none;
+    cursor: pointer;
   }
 
   /* ACCORDION: il menu si espande SOTTO il toggle, tra gli altri elementi */
