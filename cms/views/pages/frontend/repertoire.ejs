@@ -207,8 +207,12 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
         <% composers.forEach(composer => { %>
           <div class="rep-composer-card">
             <div class="rep-composer-header">
-              <div class="rep-composer-avatar">
-                <%= composer.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() %>
+              <div class="rep-composer-avatar <% if (composer.portrait_url) { %>has-portrait<% } %>">
+                <% if (composer.portrait_url) { %>
+                  <img src="<%= composer.portrait_url %>" alt="<%= composer.name %>" class="rep-composer-portrait">
+                <% } else { %>
+                  <%= composer.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() %>
+                <% } %>
               </div>
               <div class="rep-composer-info">
                 <h3 class="rep-composer-name"><%= composer.name %></h3>

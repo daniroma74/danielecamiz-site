@@ -266,3 +266,48 @@
   }
 
 })();
+
+  // Count-up animation for stats
+  function animateCountUp(element, target, duration = 1500) {
+    const start = 0;
+    const increment = target / (duration / 16); // 60fps
+    let current = start;
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        element.textContent = target;
+        clearInterval(timer);
+      } else {
+        element.textContent = Math.floor(current);
+      }
+    }, 16);
+  }
+
+  // Initialize count-up when stats come into view
+  function initStatsAnimation() {
+    const statNumbers = document.querySelectorAll('.rep-stat-number');
+    if (!statNumbers.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.dataset.animated) {
+          const target = parseInt(entry.target.textContent, 10);
+          entry.target.dataset.animated = 'true';
+          animateCountUp(entry.target, target, 2000);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    statNumbers.forEach(stat => observer.observe(stat));
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStatsAnimation);
+  } else {
+    initStatsAnimation();
+  }
+
+})();
