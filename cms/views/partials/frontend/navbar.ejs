@@ -38,7 +38,7 @@
       <% items.forEach(item => { %>
         <li role="none"<% if (item.dropdown) { %> class="nav-item-dropdown"<% } %>>
           <% if (item.dropdown) { %>
-            <button class="nav-link nav-dropdown-toggle"
+            <button class="nav-dropdown-toggle"
                     role="menuitem"
                     tabindex="-1"
                     aria-haspopup="true"
@@ -68,7 +68,6 @@
             <a href="<%= item.path %>"
                role="menuitem"
                tabindex="-1"
-               class="nav-link"
                <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>>
               <%= t(item.key) %>
             </a>
