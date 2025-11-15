@@ -4,14 +4,14 @@
 </div>
 
 <style>
-  .riepilogo-grid {
+  .contenitori-statistiche {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
   }
 
-  .card-numero {
+  .box-conteggio {
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
@@ -19,36 +19,36 @@
     border-left: 4px solid var(--terracotta);
   }
 
-  .card-numero h3 {
+  .box-conteggio h3 {
     font-size: 1rem;
     color: var(--text-secondary);
     margin-bottom: 0.5rem;
     font-weight: 600;
   }
 
-  .card-numero .valore {
+  .box-conteggio .numero-grande {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--terracotta);
   }
 
-  .sezione-recenti {
+  .sezione-ultimi-brani {
     background: white;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .sezione-recenti h2 {
+  .sezione-ultimi-brani h2 {
     margin-bottom: 1.5rem;
     color: var(--terracotta);
   }
 
-  .lista-recenti {
+  .lista-brani {
     list-style: none;
   }
 
-  .elemento-recente {
+  .riga-brano {
     padding: 1rem;
     border-bottom: 1px solid var(--beige);
     display: flex;
@@ -56,66 +56,66 @@
     align-items: center;
   }
 
-  .elemento-recente:last-child {
+  .riga-brano:last-child {
     border-bottom: none;
   }
 
-  .info-elemento {
+  .info-brano {
     flex: 1;
   }
 
-  .titolo-elemento {
+  .titolo-brano {
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 0.25rem;
   }
 
-  .meta-elemento {
+  .dettagli-brano {
     font-size: 0.875rem;
     color: var(--text-secondary);
   }
 
-  .stato-vuoto {
+  .messaggio-vuoto {
     text-align: center;
     padding: 3rem;
     color: var(--text-secondary);
   }
 </style>
 
-<div class="riepilogo-grid">
-  <div class="card-numero">
+<div class="contenitori-statistiche">
+  <div class="box-conteggio">
     <h3>🌍 Paesi</h3>
-    <div class="valore"><%= stats.countries || 0 %></div>
+    <div class="numero-grande"><%= stats.countries || 0 %></div>
     <a href="/admin/countries" style="font-size: 0.95rem; color: #666;">Gestisci Paesi →</a>
   </div>
 
-  <div class="card-numero">
+  <div class="box-conteggio">
     <h3>🎵 Brani Attivi</h3>
-    <div class="valore"><%= stats.activeSongs || 0 %></div>
+    <div class="numero-grande"><%= stats.activeSongs || 0 %></div>
     <a href="/admin/repertoire" style="font-size: 0.95rem; color: #666;">Gestisci Repertorio →</a>
   </div>
 
-  <div class="card-numero">
+  <div class="box-conteggio">
     <h3>🎤 Concerti</h3>
-    <div class="valore"><%= stats.concerts || 0 %></div>
+    <div class="numero-grande"><%= stats.concerts || 0 %></div>
     <a href="/admin/concerts" style="font-size: 0.95rem; color: #666;">Gestisci Concerti →</a>
   </div>
 
-  <div class="card-numero">
+  <div class="box-conteggio">
     <h3>💚 Progetti Solidali</h3>
-    <div class="valore"><%= stats.projects || 0 %></div>
+    <div class="numero-grande"><%= stats.projects || 0 %></div>
     <a href="/admin/projects" style="font-size: 0.95rem; color: #666;">Gestisci Progetti →</a>
   </div>
 
-  <div class="card-numero">
+  <div class="box-conteggio">
     <h3>🎭 Maestri</h3>
-    <div class="valore"><%= stats.maestri || 0 %></div>
+    <div class="numero-grande"><%= stats.maestri || 0 %></div>
     <a href="/admin/maestri" style="font-size: 0.95rem; color: #666;">Gestisci Maestri →</a>
   </div>
 
-  <div class="card-numero">
+  <div class="box-conteggio">
     <h3>📸 Foto Galleria</h3>
-    <div class="valore"><%= stats.galleryImages || 0 %></div>
+    <div class="numero-grande"><%= stats.galleryImages || 0 %></div>
     <a href="/admin/gallery-images" style="font-size: 0.95rem; color: #666;">Gestisci Galleria →</a>
   </div>
 </div>
@@ -133,18 +133,18 @@
   </div>
 </div>
 
-<div class="sezione-recenti">
+<div class="sezione-ultimi-brani">
   <h2>📝 Ultimi Brani Aggiunti al Repertorio</h2>
 
   <% if (recentSongs && recentSongs.length > 0) { %>
-    <ul class="lista-recenti">
+    <ul class="lista-brani">
       <% recentSongs.forEach(song => { %>
-        <li class="elemento-recente">
-          <div class="info-elemento">
-            <div class="titolo-elemento">
+        <li class="riga-brano">
+          <div class="info-brano">
+            <div class="titolo-brano">
               <%= song.flag %> <%= song.title %>
             </div>
-            <div class="meta-elemento">
+            <div class="dettagli-brano">
               <%= song.country_name %> • <%= song.language || 'N/D' %>
             </div>
           </div>
@@ -155,7 +155,7 @@
       <% }) %>
     </ul>
   <% } else { %>
-    <div class="stato-vuoto">
+    <div class="messaggio-vuoto">
       <p>Nessun brano nel repertorio</p>
       <a href="/admin/repertoire/new" class="btn" style="margin-top: 1rem;">
         + Aggiungi Primo Brano
