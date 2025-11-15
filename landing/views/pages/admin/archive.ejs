@@ -9,30 +9,11 @@
   <link rel="stylesheet" href="/public/css/admin-dashboard.css">
 </head>
 <body>
-  <%- include('../../../shared/partials/admin-header') %>
-
-  <nav class="top-nav">
-    <div class="nav-brand">
-      <i class="fas fa-archive"></i>
-      <span>Archivio Eventi</span>
-    </div>
-    <div class="nav-actions">
-      <a href="/dashboard" class="btn-icon" title="Dashboard">
-        <i class="fas fa-home"></i>
-      </a>
-      <a href="https://archive.danielecamiz.com" class="btn-icon" title="Concerts Admin">
-        <i class="fas fa-music"></i>
-      </a>
-    </div>
-  </nav>
+  <%- include('../../partials/admin-header') %>
 
   <div class="dashboard-container">
-    
+
     <header class="dashboard-header">
-      <div class="header-content">
-        <h1>Archivio Eventi Passati</h1>
-        <p class="subtitle">Concerti conclusi con landing page conservate</p>
-      </div>
       <div class="header-stats">
         <div class="stat-pill">
           <i class="fas fa-history"></i>

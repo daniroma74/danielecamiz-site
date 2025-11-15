@@ -1,6 +1,7 @@
 // shared/cloudinary-manager/client.js
 // Client parametrico per upload su Cloudinary (browser).
 // Supporta multi-account tramite CloudinaryManager.init()
+// Richiede: ui-notifications.js, ui-loading.js
 
 (function () {
   // ============================================
@@ -106,6 +107,10 @@
     const folder = options.folder || '';
     const preset = options.preset || DEFAULT_PRESET;
 
+    // Multi-select state
+    let multiSelectMode = false;
+    let selectedImages = new Set(); // Store publicId of selected images
+
     const modal = document.createElement('div');
     modal.id = 'cloudinary-picker-modal';
     modal.style.cssText = `
@@ -139,6 +144,14 @@
             <div id="cloudinary-folder-nav" style="margin-bottom: 12px; padding: 8px 12px; background: #f8f9fa; border-radius: 8px; font-size: 13px; color: #7f8c8d; display: flex; align-items: center; gap: 6px;">
               <span style="font-weight: 600;">📁</span>
               <span id="folder-breadcrumb" style="flex: 1;">${DEFAULT_FOLDER}</span>
+              <button id="multiselect-toggle-btn" style="background: #9b59b6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap;">☑️ Multi-Select</button>
+              <button id="create-folder-btn" style="background: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; white-space: nowrap;">➕ Nuova Cartella</button>
+            </div>
+            <div id="batch-actions-bar" style="display: none; margin-bottom: 12px; padding: 10px; background: #e8f5e9; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+              <span id="selected-count" style="flex: 1; font-weight: 600; color: #27ae60;">0 immagini selezionate</span>
+              <button id="batch-move-btn" style="background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">↔️ Sposta Tutte</button>
+              <button id="batch-delete-btn" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">🗑️ Elimina Tutte</button>
+              <button id="deselect-all-btn" style="background: #95a5a6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">✕ Deseleziona</button>
             </div>
             <div style="margin-bottom: 12px;">
               <input type="text" id="cloudinary-search-field" placeholder="🔍 Cerca immagini..." style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px; font-size: 14px;">
@@ -159,9 +172,14 @@
           <div id="cloudinary-upload-zone" style="display: none;">
             <div id="upload-dropzone" style="border: 2px dashed #e1e8ed; border-radius: 8px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s;">
               <div style="font-size: 48px; margin-bottom: 12px;">📸</div>
-              <p style="margin: 0; color: #7f8c8d;">Trascina un'immagine qui o clicca per selezionare</p>
+              <p style="margin: 0; color: #7f8c8d;">Trascina immagini qui o clicca per selezionare</p>
+              <p style="margin: 8px 0 0 0; color: #95a5a6; font-size: 12px;">Supporta caricamento multiplo</p>
             </div>
-            <input type="file" id="cloudinary-file-input" accept="image/*" style="display: none;">
+            <input type="file" id="cloudinary-file-input" accept="image/*" multiple style="display: none;">
+            <div id="upload-progress-container" style="margin-top: 20px; display: none;">
+              <h4 style="margin: 0 0 12px 0; color: #333;">Caricamento in corso...</h4>
+              <div id="upload-files-list"></div>
+            </div>
           </div>
         </div>
         
@@ -202,6 +220,9 @@
       });
 
       try {
+        // Show loading
+        window.CloudinaryLoading?.inline(grid, 'Caricamento immagini...');
+
         // Load subfolders
         const subfoldersUrl = `${API_PREFIX}/subfolders?path=${encodeURIComponent(folderPath)}`;
         const subfoldersResponse = await fetch(subfoldersUrl);
@@ -237,10 +258,25 @@
                  data-public-id="${img.publicId}"
                  data-url="${img.url}"
                  style="cursor: pointer; border: 2px solid transparent; border-radius: 8px; overflow: hidden; transition: all 0.2s; position: relative;">
+              <input type="checkbox" class="cloudinary-multiselect-checkbox"
+                     data-public-id="${img.publicId}"
+                     style="position: absolute; top: 8px; left: 8px; width: 20px; height: 20px; cursor: pointer; z-index: 11; display: none;">
               <img src="${img.thumbnail}"
                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
                    alt="${img.publicId}"
                    loading="lazy">
+              <button class="cloudinary-move-btn"
+                      data-public-id="${img.publicId}"
+                      style="position: absolute; top: 4px; left: 4px; background: rgba(52, 152, 219, 0.9); color: white; border: none; border-radius: 4px; width: 28px; height: 28px; font-size: 14px; cursor: pointer; display: none; z-index: 10; transition: all 0.2s;"
+                      title="Sposta immagine">
+                ↔️
+              </button>
+              <button class="cloudinary-delete-btn"
+                      data-public-id="${img.publicId}"
+                      style="position: absolute; top: 4px; right: 4px; background: rgba(231, 76, 60, 0.9); color: white; border: none; border-radius: 4px; width: 28px; height: 28px; font-size: 16px; cursor: pointer; display: none; z-index: 10; transition: all 0.2s;"
+                      title="Elimina immagine">
+                🗑️
+              </button>
               <div style="padding: 6px; font-size: 10px; text-align: center; color: #7f8c8d; background: #f8f9fa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                 ${img.publicId.split('/').pop()}
               </div>
@@ -271,7 +307,37 @@
 
           // Image click handlers
           grid.querySelectorAll('.cloudinary-image-item').forEach(item => {
-            item.addEventListener('click', function() {
+            const checkbox = item.querySelector('.cloudinary-multiselect-checkbox');
+
+            // Checkbox change handler
+            if (checkbox) {
+              checkbox.addEventListener('change', function(e) {
+                e.stopPropagation();
+                const publicId = this.dataset.publicId;
+                if (this.checked) {
+                  selectedImages.add(publicId);
+                } else {
+                  selectedImages.delete(publicId);
+                }
+                updateSelectedCount();
+              });
+            }
+
+            // Click su immagine per selezionare
+            item.addEventListener('click', function(e) {
+              // Se è il bottone delete/move o checkbox, non selezionare
+              if (e.target.classList.contains('cloudinary-delete-btn')) return;
+              if (e.target.classList.contains('cloudinary-move-btn')) return;
+              if (e.target.classList.contains('cloudinary-multiselect-checkbox')) return;
+
+              // In multi-select mode, toggle checkbox
+              if (multiSelectMode && checkbox) {
+                checkbox.checked = !checkbox.checked;
+                checkbox.dispatchEvent(new Event('change'));
+                return;
+              }
+
+              // Modalità single select normale
               // Deseleziona tutti
               grid.querySelectorAll('.cloudinary-image-item').forEach(i => {
                 i.style.border = '2px solid transparent';
@@ -288,15 +354,173 @@
                 url: this.dataset.url
               };
             });
+
+            // Mostra bottoni action al hover
+            const deleteBtn = item.querySelector('.cloudinary-delete-btn');
+            const moveBtn = item.querySelector('.cloudinary-move-btn');
+            item.addEventListener('mouseenter', function() {
+              if (deleteBtn) deleteBtn.style.display = 'block';
+              if (moveBtn) moveBtn.style.display = 'block';
+            });
+            item.addEventListener('mouseleave', function() {
+              if (deleteBtn) deleteBtn.style.display = 'none';
+              if (moveBtn) moveBtn.style.display = 'none';
+            });
+          });
+
+          // Move button handlers
+          grid.querySelectorAll('.cloudinary-move-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+              e.stopPropagation();  // Previeni selezione immagine
+              const publicId = this.dataset.publicId;
+              const fileName = publicId.split('/').pop();
+              const currentPath = publicId.substring(0, publicId.lastIndexOf('/'));
+
+              // Chiedi cartella destinazione
+              const toFolder = prompt(`Sposta "${fileName}" in quale cartella?\n\nCartella attuale: ${currentPath}\n\nEsempio: danielecamiz/gallery\ndanielecamiz/news/2025`);
+              if (!toFolder) return;
+
+              moveImage(publicId, toFolder, (result) => {
+                if (result.success) {
+                  window.CloudinaryNotifications?.success(`Immagine spostata in "${toFolder}"`);
+                  loadCloudinaryImages(currentFolder); // Reload
+                } else {
+                  window.CloudinaryNotifications?.error(`Errore spostamento: ${result.error}`);
+                }
+              });
+            });
+          });
+
+          // Delete button handlers
+          grid.querySelectorAll('.cloudinary-delete-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+              e.stopPropagation();  // Previeni selezione immagine
+              const publicId = this.dataset.publicId;
+              const fileName = publicId.split('/').pop();
+
+              // Conferma eliminazione
+              if (confirm(`Eliminare definitivamente l'immagine "${fileName}"?\n\nQuesta azione non può essere annullata.`)) {
+                deleteImage(publicId, (result) => {
+                  if (result.success) {
+                    // Ricarica la griglia
+                    loadCloudinaryImages(currentFolder);
+                  }
+                });
+              }
+            });
           });
         } else {
           grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #7f8c8d;"><div style="font-size: 32px; margin-bottom: 12px;">📂</div>Nessuna immagine o cartella in questo percorso</div>';
         }
       } catch (error) {
         console.error('Error loading images:', error);
+        window.CloudinaryNotifications?.error('Errore caricamento immagini');
         grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #e74c3c;"><div style="font-size: 32px; margin-bottom: 12px;">❌</div>Errore caricamento immagini</div>';
       }
     }
+
+    // Multi-Select Toggle
+    const multiselectToggleBtn = modal.querySelector('#multiselect-toggle-btn');
+    const batchActionsBar = modal.querySelector('#batch-actions-bar');
+    const selectedCountSpan = modal.querySelector('#selected-count');
+
+    function updateSelectedCount() {
+      const count = selectedImages.size;
+      selectedCountSpan.textContent = `${count} ${count === 1 ? 'immagine selezionata' : 'immagini selezionate'}`;
+      batchActionsBar.style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    multiselectToggleBtn.addEventListener('click', () => {
+      multiSelectMode = !multiSelectMode;
+      selectedImages.clear();
+
+      if (multiSelectMode) {
+        multiselectToggleBtn.style.background = '#e74c3c';
+        multiselectToggleBtn.textContent = '☑️ Esci Multi-Select';
+        // Mostra tutte le checkbox
+        modal.querySelectorAll('.cloudinary-multiselect-checkbox').forEach(cb => {
+          cb.style.display = 'block';
+        });
+      } else {
+        multiselectToggleBtn.style.background = '#9b59b6';
+        multiselectToggleBtn.textContent = '☑️ Multi-Select';
+        // Nascondi tutte le checkbox
+        modal.querySelectorAll('.cloudinary-multiselect-checkbox').forEach(cb => {
+          cb.style.display = 'none';
+          cb.checked = false;
+        });
+        batchActionsBar.style.display = 'none';
+      }
+    });
+
+    // Batch Actions
+    modal.querySelector('#deselect-all-btn').addEventListener('click', () => {
+      selectedImages.clear();
+      modal.querySelectorAll('.cloudinary-multiselect-checkbox').forEach(cb => cb.checked = false);
+      updateSelectedCount();
+    });
+
+    modal.querySelector('#batch-delete-btn').addEventListener('click', () => {
+      if (selectedImages.size === 0) return;
+      if (!confirm(`Eliminare definitivamente ${selectedImages.size} immagini?\n\nQuesta azione non può essere annullata.`)) return;
+
+      const imagesToDelete = Array.from(selectedImages);
+      let deleted = 0;
+
+      imagesToDelete.forEach(publicId => {
+        deleteImage(publicId, (result) => {
+          if (result.success) deleted++;
+          if (deleted === imagesToDelete.length) {
+            window.CloudinaryNotifications?.success(`${deleted} immagini eliminate!`);
+            selectedImages.clear();
+            loadCloudinaryImages(currentFolder);
+          }
+        });
+      });
+    });
+
+    modal.querySelector('#batch-move-btn').addEventListener('click', () => {
+      if (selectedImages.size === 0) return;
+      const toFolder = prompt(`Sposta ${selectedImages.size} immagini in quale cartella?\n\nEsempio: danielecamiz/gallery`);
+      if (!toFolder) return;
+
+      const imagesToMove = Array.from(selectedImages);
+      let moved = 0;
+
+      imagesToMove.forEach(publicId => {
+        moveImage(publicId, toFolder, (result) => {
+          if (result.success) moved++;
+          if (moved === imagesToMove.length) {
+            window.CloudinaryNotifications?.success(`${moved} immagini spostate in "${toFolder}"!`);
+            selectedImages.clear();
+            loadCloudinaryImages(currentFolder);
+          }
+        });
+      });
+    });
+
+    // Create Folder Button
+    const createFolderBtn = modal.querySelector('#create-folder-btn');
+    createFolderBtn.addEventListener('click', () => {
+      const folderName = prompt('Nome della nuova cartella:\n(solo lettere, numeri, - e _)');
+      if (!folderName) return;
+
+      const sanitized = folderName.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+      if (sanitized !== folderName.trim().toLowerCase()) {
+        if (!confirm(`Il nome sarà sanitizzato in: "${sanitized}"\n\nContinuare?`)) return;
+      }
+
+      const newPath = currentFolder ? `${currentFolder}/${sanitized}` : sanitized;
+
+      createFolder(newPath, (result) => {
+        if (result.success) {
+          window.CloudinaryNotifications?.success(`Cartella "${sanitized}" creata!`);
+          loadCloudinaryImages(currentFolder); // Reload per mostrare nuova cartella
+        } else {
+          window.CloudinaryNotifications?.error(`Errore: ${result.error}`);
+        }
+      });
+    });
 
     // Search con debounce
     const searchField = modal.querySelector('#cloudinary-search-field');
@@ -371,17 +595,109 @@
       e.preventDefault();
       dropzone.style.borderColor = '#e1e8ed';
       dropzone.style.background = 'transparent';
-      const file = e.dataTransfer.files[0];
-      if (file) handleUpload(file);
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) handleMultipleUpload(files);
     });
-    
+
     fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) handleUpload(file);
+      const files = Array.from(e.target.files);
+      if (files.length > 0) handleMultipleUpload(files);
     });
-    
+
+    // Handle multiple file upload with progress bars
+    async function handleMultipleUpload(files) {
+      const progressContainer = modal.querySelector('#upload-progress-container');
+      const filesList = modal.querySelector('#upload-files-list');
+
+      // Hide dropzone, show progress
+      dropzone.style.display = 'none';
+      progressContainer.style.display = 'block';
+      filesList.innerHTML = '';
+
+      const uploadedResults = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Create progress item
+        const progressItem = document.createElement('div');
+        progressItem.style.cssText = 'margin-bottom: 16px; padding: 12px; background: #f8f9fa; border-radius: 8px;';
+        progressItem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-weight: 600; color: #333; font-size: 13px;">${file.name}</span>
+            <span class="upload-status" style="color: #3498db; font-size: 12px;">Caricamento...</span>
+          </div>
+          <div class="upload-progress-bar"></div>
+        `;
+        filesList.appendChild(progressItem);
+
+        const statusSpan = progressItem.querySelector('.upload-status');
+        const progressBarContainer = progressItem.querySelector('.upload-progress-bar');
+
+        // Create progress bar
+        const progressBar = window.CloudinaryLoading?.progressBar({ height: 6, color: '#3498db' });
+        if (progressBar) {
+          progressBarContainer.appendChild(progressBar.element);
+          progressBar.update(10); // Inizio
+        }
+
+        try {
+          // Upload file
+          const result = await upload(file, {
+            preset: preset || DEFAULT_PRESET,
+            folder: folder || DEFAULT_FOLDER
+          });
+
+          if (progressBar) progressBar.update(100);
+
+          if (result.success) {
+            statusSpan.textContent = '✅ Completato';
+            statusSpan.style.color = '#27ae60';
+            if (progressBar) progressBar.setColor('#27ae60');
+            uploadedResults.push(result);
+          } else {
+            statusSpan.textContent = '❌ Errore';
+            statusSpan.style.color = '#e74c3c';
+            if (progressBar) progressBar.setColor('#e74c3c');
+          }
+        } catch (error) {
+          statusSpan.textContent = '❌ Errore';
+          statusSpan.style.color = '#e74c3c';
+          if (progressBar) progressBar.setColor('#e74c3c');
+        }
+      }
+
+      // All uploads complete
+      setTimeout(() => {
+        if (uploadedResults.length > 0) {
+          window.CloudinaryNotifications?.success(`${uploadedResults.length} ${uploadedResults.length === 1 ? 'immagine caricata' : 'immagini caricate'}!`);
+
+          // Se single upload, ritorna subito
+          if (uploadedResults.length === 1) {
+            callback({ url: uploadedResults[0].url, publicId: uploadedResults[0].publicId });
+            modal.remove();
+          } else {
+            // Multiple: mostra messaggio e torna a browse
+            window.CloudinaryNotifications?.info('Vai su "Sfoglia Esistenti" per vedere le immagini caricate');
+            progressContainer.style.display = 'none';
+            dropzone.style.display = 'block';
+            fileInput.value = ''; // Reset
+          }
+        } else {
+          window.CloudinaryNotifications?.error('Nessuna immagine caricata correttamente');
+          progressContainer.style.display = 'none';
+          dropzone.style.display = 'block';
+        }
+      }, 1000);
+    }
+
     async function handleUpload(file) {
-      dropzone.innerHTML = '<div style="font-size: 48px;">⏳</div><p style="color: #7f8c8d;">Caricamento in corso...</p>';
+      // Show loading with spinner
+      if (window.CloudinaryLoading) {
+        window.CloudinaryLoading.inline(dropzone, 'Caricamento in corso...');
+      } else {
+        dropzone.innerHTML = '<div style="font-size: 48px;">⏳</div><p style="color: #7f8c8d;">Caricamento in corso...</p>';
+      }
 
       try {
         const result = await upload(file, {
@@ -390,14 +706,15 @@
         });
         
         if (result.success) {
+          window.CloudinaryNotifications?.success('✅ Upload completato!');
           callback({ url: result.url, publicId: result.publicId });
           modal.remove();
         } else {
-          alert('Errore upload: ' + result.error);
+          window.CloudinaryNotifications?.error('Errore upload: ' + result.error);
           dropzone.innerHTML = '<div style="font-size: 48px;">❌</div><p style="color: #e74c3c;">Errore caricamento</p>';
         }
       } catch (error) {
-        alert('Errore: ' + error.message);
+        window.CloudinaryNotifications?.error('Errore: ' + error.message);
         dropzone.innerHTML = '<div style="font-size: 48px;">❌</div><p style="color: #e74c3c;">Errore caricamento</p>';
       }
     }
@@ -409,7 +726,7 @@
       if (activeMethod === 'browse') {
         // Selezione da browser di immagini
         if (!selectedImage) {
-          alert('Seleziona un\'immagine dalla griglia');
+          window.CloudinaryNotifications?.warning('Seleziona un\'immagine dalla griglia');
           return;
         }
 
@@ -425,7 +742,7 @@
         let input = urlField.value.trim();
 
         if (!input) {
-          alert('Inserisci un URL o public_id');
+          window.CloudinaryNotifications?.warning('Inserisci un URL o public_id');
           return;
         }
 
@@ -466,6 +783,38 @@
       return result;
     } catch (error) {
       console.error('Error creating folder:', error);
+      const errorResult = { success: false, error: error.message };
+      if (callback) callback(errorResult);
+      return errorResult;
+    }
+  }
+
+  /**
+   * Elimina un'immagine da Cloudinary
+   * @param {string} publicId - Public ID dell'immagine (es: "cororaro/foto1")
+   * @param {Function} callback - Callback(result) chiamato al completamento
+   */
+  async function deleteImage(publicId, callback) {
+    try {
+      const response = await fetch(`${API_PREFIX}/delete-image`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ publicId })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        window.CloudinaryNotifications?.success('Immagine eliminata con successo');
+      } else {
+        window.CloudinaryNotifications?.error(`Errore eliminazione: ${result.error}`);
+      }
+
+      if (callback) callback(result);
+      return result;
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      window.CloudinaryNotifications?.error(`Errore: ${error.message}`);
       const errorResult = { success: false, error: error.message };
       if (callback) callback(errorResult);
       return errorResult;
@@ -522,9 +871,9 @@
 
     createFolder(newFolderPath, (result) => {
       if (result.success) {
-        alert(`✅ Cartella "${sanitizedName}" creata con successo!`);
+        window.CloudinaryNotifications?.success(`Cartella "${sanitizedName}" creata con successo!`);
       } else {
-        alert(`❌ Errore: ${result.error}\n\nPath tentato: ${newFolderPath}`);
+        window.CloudinaryNotifications?.error(`Errore: ${result.error}\n\nPath tentato: ${newFolderPath}`);
       }
       if (callback) callback(result);
     });
@@ -540,9 +889,10 @@
     getTransformedUrl: getTransformedUrl,
     insertIntoEditor: insertIntoEditor,
     showImageDialog: showImageDialog,
-    // ✨ NUOVO: Gestione cartelle
+    // ✨ NUOVO: Gestione cartelle e immagini
     createFolder: createFolder,
     moveImage: moveImage,
+    deleteImage: deleteImage,               // ✨ NUOVO: Elimina immagini
     promptCreateFolder: promptCreateFolder
   };
 })();

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test CloudinaryManager v2.0</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      border-bottom: 3px solid #d4af37;
+      padding-bottom: 10px;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 5px;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+    }
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 CloudinaryManager v2.0 - Test Suite</h1>
+
+  <!-- Test Notifications -->
+  <div class="test-section">
+    <h2>1. Sistema Notifiche Toast</h2>
+    <p>Testa le nuove notifiche al posto degli alert()</p>
+    <button onclick="testSuccess()">✅ Success</button>
+    <button onclick="testError()">❌ Error</button>
+    <button onclick="testWarning()">⚠️ Warning</button>
+    <button onclick="testInfo()">ℹ️ Info</button>
+    <button onclick="testLoading()">⏳ Loading</button>
+    <button onclick="CloudinaryNotifications.clear()">🗑️ Clear All</button>
+  </div>
+
+  <!-- Test Loading States -->
+  <div class="test-section">
+    <h2>2. Loading States</h2>
+    <p>Testa spinner, progress bar e overlay</p>
+    <button onclick="testSpinner()">🔄 Spinner</button>
+    <button onclick="testOverlay()">📱 Overlay Fullscreen</button>
+    <button onclick="testProgressBar()">📊 Progress Bar</button>
+    <button onclick="testInlineLoading()">⏺️ Inline Loading</button>
+    <div id="spinner-container" style="margin-top: 20px;"></div>
+    <div id="progress-container" style="margin-top: 20px;"></div>
+    <div id="inline-container" style="margin-top: 20px; min-height: 100px; border: 2px dashed #ddd; border-radius: 8px;"></div>
+  </div>
+
+  <!-- Test CloudinaryManager -->
+  <div class="test-section">
+    <h2>3. CloudinaryManager Core</h2>
+    <p>Testa upload, browse e delete</p>
+    <button onclick="testBrowseDialog()">🖼️ Browse & Select Image</button>
+    <button onclick="testUploadDialog()">📤 Upload Dialog (3-in-1)</button>
+    <button onclick="testDeleteImage()">🗑️ Delete Image (demo)</button>
+    <div class="status" id="status">Pronto per il test...</div>
+  </div>
+
+  <!-- Test API Availability -->
+  <div class="test-section">
+    <h2>4. API Availability Check</h2>
+    <pre id="api-check" style="background: #f9f9f9; padding: 15px; border-radius: 4px; overflow-x: auto;"></pre>
+  </div>
+
+  <!-- Include CloudinaryManager -->
+  <script src="ui-notifications.js"></script>
+  <script src="ui-loading.js"></script>
+  <script src="client.js"></script>
+
+  <script>
+    // Test Notifications
+    function testSuccess() {
+      CloudinaryNotifications.success('Upload completato con successo! 🎉');
+    }
+
+    function testError() {
+      CloudinaryNotifications.error('Errore durante l\'upload. Riprova.');
+    }
+
+    function testWarning() {
+      CloudinaryNotifications.warning('Attenzione: file troppo grande (max 5MB)');
+    }
+
+    function testInfo() {
+      CloudinaryNotifications.info('Le modifiche sono state salvate automaticamente');
+    }
+
+    let loadingId;
+    function testLoading() {
+      if (loadingId) {
+        CloudinaryNotifications.hide(loadingId);
+        loadingId = null;
+      } else {
+        loadingId = CloudinaryNotifications.loading('Caricamento in corso...');
+      }
+    }
+
+    // Test Loading States
+    function testSpinner() {
+      const container = document.getElementById('spinner-container');
+      container.innerHTML = '';
+      const spinner = CloudinaryLoading.spinner({ size: 48, color: '#667eea' });
+      container.appendChild(spinner);
+      setTimeout(() => {
+        container.innerHTML = '<p style="color: #27ae60;">✓ Spinner test completato</p>';
+      }, 3000);
+    }
+
+    function testOverlay() {
+      CloudinaryLoading.overlay.show('Caricamento dati dal server...');
+      setTimeout(() => {
+        CloudinaryLoading.overlay.hide();
+        CloudinaryNotifications.success('Overlay test completato!');
+      }, 3000);
+    }
+
+    let progressBar;
+    function testProgressBar() {
+      const container = document.getElementById('progress-container');
+      container.innerHTML = '<p>Simulazione upload:</p>';
+      progressBar = CloudinaryLoading.progressBar({ height: 8, color: '#667eea' });
+      container.appendChild(progressBar.element);
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        progressBar.update(progress);
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            container.innerHTML = '<p style="color: #27ae60;">✓ Progress bar test completato (100%)</p>';
+          }, 500);
+        }
+      }, 200);
+    }
+
+    function testInlineLoading() {
+      const container = document.getElementById('inline-container');
+      CloudinaryLoading.inline(container, 'Caricamento contenuti...');
+      setTimeout(() => {
+        container.innerHTML = '<p style="padding: 40px; text-align: center; color: #27ae60;">✓ Contenuti caricati!</p>';
+      }, 3000);
+    }
+
+    // Test CloudinaryManager
+    function testBrowseDialog() {
+      if (typeof CloudinaryManager === 'undefined') {
+        alert('CloudinaryManager non caricato!');
+        return;
+      }
+
+      CloudinaryManager.showImageDialog((result) => {
+        document.getElementById('status').innerHTML = `
+          <strong>✓ Immagine selezionata:</strong><br>
+          URL: ${result.url}<br>
+          Public ID: ${result.publicId}
+        `;
+        CloudinaryNotifications.success('Immagine selezionata con successo!');
+      }, {
+        folder: 'danielecamiz/news',
+        preset: 'gallery_unsigned'
+      });
+    }
+
+    function testUploadDialog() {
+      if (typeof CloudinaryManager === 'undefined') {
+        alert('CloudinaryManager non caricato!');
+        return;
+      }
+
+      CloudinaryManager.showImageDialog((result) => {
+        document.getElementById('status').innerHTML = `
+          <strong>✓ Upload completato:</strong><br>
+          URL: ${result.url}<br>
+          Public ID: ${result.publicId}
+        `;
+      }, {
+        folder: 'danielecamiz/news',
+        preset: 'gallery_unsigned'
+      });
+    }
+
+    function testDeleteImage() {
+      CloudinaryNotifications.warning('Demo: usa il dialog Browse per vedere il bottone Delete su ogni immagine (hover)');
+      testBrowseDialog();
+    }
+
+    // Check API Availability
+    window.addEventListener('DOMContentLoaded', () => {
+      const check = {
+        'CloudinaryNotifications': typeof CloudinaryNotifications !== 'undefined',
+        'CloudinaryLoading': typeof CloudinaryLoading !== 'undefined',
+        'CloudinaryManager': typeof CloudinaryManager !== 'undefined'
+      };
+
+      if (check.CloudinaryNotifications) {
+        check['CloudinaryNotifications.methods'] = Object.keys(CloudinaryNotifications);
+      }
+      if (check.CloudinaryLoading) {
+        check['CloudinaryLoading.methods'] = Object.keys(CloudinaryLoading);
+      }
+      if (check.CloudinaryManager) {
+        check['CloudinaryManager.methods'] = Object.keys(CloudinaryManager);
+      }
+
+      document.getElementById('api-check').textContent = JSON.stringify(check, null, 2);
+
+      // Auto-test: mostra notifica di benvenuto
+      setTimeout(() => {
+        CloudinaryNotifications.info('CloudinaryManager v2.0 caricato correttamente! 🎉');
+      }, 500);
+    });
+
+    // Init CloudinaryManager con config di test
+    if (typeof CloudinaryManager !== 'undefined') {
+      CloudinaryManager.init({
+        cloudName: 'dnwhnz2xy',
+        defaultFolder: 'danielecamiz',
+        apiPrefix: '/api/cloudinary'
+      });
+    }
+  </script>
+</body>
+</html>

@@ -277,6 +277,52 @@ export function createCloudinaryAPI(config) {
     }
   }
 
+  /**
+   * Elimina un'immagine da Cloudinary
+   * @param {string} publicId - Public ID dell'immagine da eliminare (es: "cororaro/foto1")
+   * @returns {Promise<Object>} Risultato operazione
+   */
+  async function deleteImage(publicId) {
+    try {
+      if (!publicId || publicId.trim() === '') {
+        return {
+          success: false,
+          error: 'publicId is required'
+        };
+      }
+
+      // Elimina l'immagine
+      const result = await cloudinaryInstance.uploader.destroy(publicId, {
+        invalidate: true,  // Invalida CDN cache
+        resource_type: 'image'
+      });
+
+      if (result.result === 'ok') {
+        return {
+          success: true,
+          message: `Image "${publicId}" deleted successfully`,
+          publicId: publicId
+        };
+      } else if (result.result === 'not found') {
+        return {
+          success: false,
+          error: 'Image not found'
+        };
+      } else {
+        return {
+          success: false,
+          error: `Delete failed: ${result.result}`
+        };
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
   // Ritorna tutte le funzioni API
   return {
     listImages,
@@ -284,7 +330,8 @@ export function createCloudinaryAPI(config) {
     listFolders,
     listSubFolders,
     createFolder,
-    moveImage
+    moveImage,
+    deleteImage
   };
 }
 
