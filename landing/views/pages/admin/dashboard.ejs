@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/public/css/admin-dashboard.css">
 </head>
 <body>
-  <%- include('../../partials/admin-header') %>
+  <%- include('../../../../shared/partials/admin-header') %>
 
   <div class="dashboard-container">
     
@@ -29,23 +30,39 @@
       </div>
     </header>
 
-    <div class="filters-bar">
-      <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchEvents" placeholder="Cerca evento...">
-      </div>
-      <div class="filter-group">
-        <button class="filter-btn active" data-filter="all">
-          Tutti <span class="badge"><%= events.length %></span>
-        </button>
-        <button class="filter-btn" data-filter="with-bookings">
-          Con Prenotazioni <span class="badge"><%= events.filter(e => e.booking_count > 0).length %></span>
-        </button>
-        <button class="filter-btn" data-filter="upcoming">
-          Prossimi 30gg <span class="badge"><%= events.filter(e => new Date(e.date) <= new Date(Date.now() + 30*24*60*60*1000)).length %></span>
-        </button>
-      </div>
-    </div>
+    <%- include('../../../../shared/partials/admin-filters', {
+      search: {
+        id: 'searchEvents',
+        placeholder: 'Cerca evento...',
+        value: ''
+      },
+      filterGroups: [{
+        label: null,
+        filters: [
+          {
+            label: 'Tutti',
+            url: '#',
+            active: true,
+            icon: 'list',
+            count: events.length
+          },
+          {
+            label: 'Con Prenotazioni',
+            url: '#',
+            active: false,
+            icon: 'ticket-alt',
+            count: events.filter(e => e.booking_count > 0).length
+          },
+          {
+            label: 'Prossimi 30gg',
+            url: '#',
+            active: false,
+            icon: 'calendar-day',
+            count: events.filter(e => new Date(e.date) <= new Date(Date.now() + 30*24*60*60*1000)).length
+          }
+        ]
+      }]
+    }) %>
 
     <div class="events-grid" id="eventsGrid">
       <% if (events.length === 0) { %>
@@ -146,22 +163,29 @@
       const filterBtns = document.querySelectorAll('.filter-btn');
       const eventsGrid = document.getElementById('eventsGrid');
       const eventCards = document.querySelectorAll('.event-card');
-      
+
       let currentFilter = 'all';
       let searchTerm = '';
-      
+
       if (searchInput) {
         searchInput.addEventListener('input', function() {
           searchTerm = this.value.toLowerCase();
           filterEvents();
         });
       }
-      
+
       filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
           filterBtns.forEach(b => b.classList.remove('active'));
           this.classList.add('active');
-          currentFilter = this.dataset.filter;
+
+          // Extract filter from label
+          const label = this.textContent.trim().split('\n')[0].trim();
+          if (label.includes('Tutti')) currentFilter = 'all';
+          else if (label.includes('Prenotazioni')) currentFilter = 'with-bookings';
+          else if (label.includes('Prossimi')) currentFilter = 'upcoming';
+
           filterEvents();
         });
       });

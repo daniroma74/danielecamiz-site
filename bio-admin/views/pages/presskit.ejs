@@ -6,21 +6,34 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/bio-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="/shared/cloudinary-manager/client.js"></script>
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
-        <div class="page-header">
-          <h2>Press Kit Assets</h2>
-          <div style="display: flex; gap: 10px;">
-            <button onclick="CloudinaryManager.promptCreateFolder('danielecamiz/presskit', () => alert('Cartella creata! Ricarica la pagina.'))" class="btn btn-secondary">📁 Crea Cartella</button>
-            <button onclick="addNewAsset()" class="btn btn-primary">Nuovo Asset</button>
-          </div>
-        </div>
+  <%- include('../partials/header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/bio', icon: 'home' },
+        { label: 'Biografia', url: '/bio/biography', icon: 'file-alt' },
+        { label: 'Curriculum', url: '/bio/curriculum', icon: 'graduation-cap' },
+        { label: 'Storia', url: '/bio/story', icon: 'book' },
+        { label: 'Press Kit', url: '/bio/presskit', icon: 'box-open' }
+      ],
+      currentPath: '/bio/presskit',
+      baseUrl: 'bio'
+    }) %>
+
+    <!-- Content -->
+    <div class="page-header">
+      <h2>Press Kit Assets</h2>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="CloudinaryManager.promptCreateFolder('danielecamiz/presskit', () => alert('Cartella creata! Ricarica la pagina.'))" class="btn btn-secondary"><i class="fas fa-folder-plus"></i> Crea Cartella</button>
+        <button onclick="addNewAsset()" class="btn btn-primary">Nuovo Asset</button>
+      </div>
+    </div>
 
         <% if (assets && assets.length > 0) { %>
           <table class="data-table">
@@ -39,7 +52,7 @@
                   <td><%= asset.type %></td>
                   <td><%= asset.title_it || '-' %></td>
                   <td><%= asset.cloudinary_id %></td>
-                  <td><%= asset.is_included_in_kit ? '✅' : '❌' %></td>
+                  <td><%= asset.is_included_in_kit ? '<i class="fas fa-check-circle" style="color: green;"></i>' : '<i class="fas fa-times-circle" style="color: red;"></i>' %></td>
                   <td>
                     <button onclick="deleteAsset(<%= asset.id %>)" class="btn btn-sm btn-danger">Elimina</button>
                   </td>
@@ -50,9 +63,7 @@
         <% } else { %>
           <p>Nessun asset nel press kit. <button onclick="addNewAsset()" class="btn btn-primary">Aggiungi primo asset</button></p>
         <% } %>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script>
     async function deleteAsset(id) {

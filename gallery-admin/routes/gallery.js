@@ -429,4 +429,69 @@ router.delete('/api/audios/:id', async (req, res) => {
   }
 });
 
+// ============= CATEGORIE =============
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await allQuery(`
+      SELECT * FROM gallery_categories
+      ORDER BY display_order ASC, name_it ASC
+    `);
+
+    res.render('pages/categories', {
+      title: 'Categorie - Gallery Admin',
+      categories
+    });
+  } catch (error) {
+    console.error('Error loading categories:', error);
+    res.status(500).send('Errore caricamento categorie');
+  }
+});
+
+// API: Create category
+router.post('/api/categories', async (req, res) => {
+  try {
+    const { name_it, name_en, slug, description_it, description_en, is_active, display_order } = req.body;
+
+    const result = await runQuery(`
+      INSERT INTO gallery_categories (name_it, name_en, slug, description_it, description_en, is_active, display_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `, [name_it, name_en, slug, description_it, description_en, is_active ? 1 : 0, display_order || 0]);
+
+    res.json({ success: true, id: result.lastID });
+  } catch (error) {
+    console.error('Error creating category:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API: Update category
+router.put('/api/categories/:id', async (req, res) => {
+  try {
+    const { name_it, name_en, slug, description_it, description_en, is_active, display_order } = req.body;
+
+    await runQuery(`
+      UPDATE gallery_categories
+      SET name_it = ?, name_en = ?, slug = ?, description_it = ?, description_en = ?,
+          is_active = ?, display_order = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `, [name_it, name_en, slug, description_it, description_en, is_active ? 1 : 0, display_order || 0, req.params.id]);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating category:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API: Delete category
+router.delete('/api/categories/:id', async (req, res) => {
+  try {
+    await runQuery('DELETE FROM gallery_categories WHERE id = ?', [req.params.id]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

@@ -63,9 +63,34 @@ const setupRoutes = async () => {
     res.redirect('/dashboard');
   });
 
-  // Dashboard with quick links
-  app.get('/dashboard', ensureAuthenticated, (req, res) => {
-    res.render('dashboard', { title: 'Dashboard - Contact Admin' });
+  // Dashboard with quick links and stats
+  app.get('/dashboard', ensureAuthenticated, async (req, res) => {
+    try {
+      const { db } = await import('./config/database.js');
+
+      // Get stats from database
+      const linksCount = db.prepare('SELECT COUNT(*) as count FROM contact_links').get().count;
+      const groupsCount = db.prepare('SELECT COUNT(*) as count FROM link_groups').get().count;
+      const lastUpdate = db.prepare('SELECT MAX(updated_at) as last FROM contact_links').get().last;
+
+      const stats = {
+        links: linksCount,
+        groups: groupsCount,
+        lastUpdate: lastUpdate || new Date().toISOString()
+      };
+
+      res.render('dashboard', {
+        title: 'Dashboard - Contact Admin',
+        stats
+      });
+    } catch (error) {
+      console.error('Error loading dashboard stats:', error);
+      // Fallback to empty stats
+      res.render('dashboard', {
+        title: 'Dashboard - Contact Admin',
+        stats: { links: 0, groups: 0, lastUpdate: null }
+      });
+    }
   });
 
   // Protected routes

@@ -6,22 +6,31 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/press-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <%- include('../../../shared/partials/back-to-hub') %>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
+  <%- include('../../../shared/partials/admin-header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/press', icon: 'home' },
+        { label: 'Articoli', url: '/press/articles', icon: 'newspaper' },
+        { label: 'Citazioni', url: '/press/quotes', icon: 'quote-right' }
+      ],
+      currentPath: '/press',
+      baseUrl: 'press'
+    }) %>
+
         <div class="stats-grid">
           <div class="stat-card">
-            <h3>Articoli</h3>
+            <h3><i class="fas fa-file-alt"></i> Articoli</h3>
             <p class="stat-number"><%= stats.articles %></p>
             <a href="/press/articles" class="stat-link">Visualizza tutti</a>
           </div>
           <div class="stat-card">
-            <h3>Citazioni</h3>
+            <h3><i class="fas fa-quote-right"></i> Citazioni</h3>
             <p class="stat-number"><%= stats.quotes %></p>
             <a href="/press/quotes" class="stat-link">Visualizza tutti</a>
           </div>
@@ -64,9 +73,7 @@
             <a href="/press/quotes" class="btn btn-primary">Gestisci Citazioni</a>
           </div>
         </div>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script src="/static/js/press-admin.js"></script>
 </body>

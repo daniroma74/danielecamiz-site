@@ -7,7 +7,9 @@
   <title>Newsletter Digest - News Admin</title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/news-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    .admin-container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
     .digest-container { max-width: 1200px; margin: 0 auto; }
     .digest-hero {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -132,15 +134,18 @@
   </style>
 </head>
 <body>
-  <%- include('../../shared/partials/back-to-hub') %>
   <%- include('partials/header') %>
 
-  <div class="container digest-container">
-    <!-- Hero -->
-    <div class="digest-hero">
-      <h1>📧 Newsletter Digest</h1>
-      <p>Gestisci e invia il digest bimestrale/trimestrale con le news selezionate</p>
-    </div>
+  <main class="admin-container">
+    <!-- Tabs -->
+    <%- include('../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'News', url: '/news', icon: 'newspaper' },
+        { label: 'Newsletter Digest', url: '/news/newsletter', icon: 'envelope' }
+      ],
+      currentPath: '/news/newsletter',
+      baseUrl: 'news'
+    }) %>
 
     <!-- Statistics -->
     <div class="stats-grid">
@@ -164,9 +169,9 @@
 
       <% if (selectedPosts.length === 0) { %>
         <div class="empty-state">
-          <p>📭 Nessun articolo selezionato</p>
+          <p><i class="fas fa-inbox"></i> Nessun articolo selezionato</p>
           <p><small>Vai nella lista news e spunta "Includi nella prossima newsletter" negli articoli che vuoi inviare</small></p>
-          <a href="/news" class="btn btn-primary" style="margin-top: 1rem;">📰 Vai alla Lista News</a>
+          <a href="/news" class="btn btn-primary" style="margin-top: 1rem;"><i class="fas fa-newspaper"></i> Vai alla Lista News</a>
         </div>
       <% } else { %>
         <% selectedPosts.forEach(post => { %>
@@ -175,7 +180,7 @@
               <img src="<%= post.cover_image %>" alt="" class="post-item__thumb">
             <% } else { %>
               <div class="post-item__thumb" style="display: flex; align-items: center; justify-content: center; background: #e0e0e0;">
-                <span style="font-size: 2rem;">📰</span>
+                <span style="font-size: 2rem;"><i class="fas fa-newspaper"></i></span>
               </div>
             <% } %>
             <div class="post-item__content">
@@ -190,7 +195,7 @@
             </div>
             <div class="post-item__actions">
               <a href="/news/<%= post.id %>/edit" class="btn btn-sm btn-secondary" title="Modifica">
-                ✏️
+                <i class="fas fa-edit"></i>
               </a>
             </div>
           </div>
@@ -212,17 +217,17 @@
       <!-- Action Buttons -->
       <div class="action-buttons">
         <button type="button" class="btn btn-secondary" onclick="window.location.href='/news'">
-          ← Torna alla Lista
+          <i class="fas fa-arrow-left"></i> Torna alla Lista
         </button>
         <button type="button" class="btn btn-info" onclick="refreshPreview()">
-          🔄 Aggiorna Anteprima
+          <i class="fas fa-sync"></i> Aggiorna Anteprima
         </button>
         <button type="button" class="btn btn-success" onclick="sendDigest()" id="sendBtn">
-          📤 Invia Newsletter (<%= subscribersCount %> iscritti)
+          <i class="fas fa-paper-plane"></i> Invia Newsletter (<%= subscribersCount %> iscritti)
         </button>
       </div>
     <% } %>
-  </div>
+  </main>
 
   <%- include('partials/footer') %>
 

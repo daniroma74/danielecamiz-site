@@ -6,15 +6,29 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/gallery-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
-        <div class="content-header">
-          <h1>Gestione Foto</h1>
+  <%- include('../../../shared/partials/admin-header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/gallery', icon: 'home' },
+        { label: 'Collezioni', url: '/gallery/collections', icon: 'folder-open' },
+        { label: 'Foto', url: '/gallery/photos', icon: 'camera' },
+        { label: 'Video', url: '/gallery/videos', icon: 'video' },
+        { label: 'Audio', url: '/gallery/audios', icon: 'music' },
+        { label: 'Categorie', url: '/gallery/categories', icon: 'tags' }
+      ],
+      currentPath: '/gallery/photos',
+      baseUrl: 'gallery'
+    }) %>
+
+    <!-- Content -->
+    <div class="content-header">
+      <h2>Gestione Foto</h2>
           <div class="header-actions">
             <select id="collection-filter" class="filter-select">
               <option value="">Tutte le collezioni</option>
@@ -38,7 +52,7 @@
                          alt="<%= photo.alt_it || photo.title_it %>">
                   <% } else { %>
                     <div class="no-preview">
-                      <span class="icon-large">📷</span>
+                      <span class="icon-large"><i class="fas fa-camera"></i></span>
                     </div>
                   <% } %>
 
@@ -68,15 +82,12 @@
           </div>
         <% } else { %>
           <div class="empty-state">
-            <span class="icon-large">📷</span>
+            <span class="icon-large"><i class="fas fa-camera"></i></span>
             <h2>Nessuna foto caricata</h2>
             <p>Carica le tue prime foto dalla libreria Cloudinary</p>
             <button id="upload-first-photo-btn" class="btn btn-primary">Carica Foto</button>
           </div>
         <% } %>
-      </main>
-    </div>
-  </div>
 
   <!-- Upload Modal -->
   <div id="upload-modal" class="modal" style="display: none;">
@@ -252,7 +263,7 @@
         <button id="update-photo-btn" class="btn btn-primary">Aggiorna</button>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- Cloudinary Manager -->
   <script src="/shared/cloudinary-manager/client.js"></script>

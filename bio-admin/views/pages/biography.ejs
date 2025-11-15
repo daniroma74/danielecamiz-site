@@ -6,21 +6,34 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/bio-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
   <script src="/shared/config/editor-config.js"></script>
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
-        <div class="lang-tabs">
-          <button class="tab-btn active" onclick="switchLang('it')">Italiano</button>
-          <button class="tab-btn" onclick="switchLang('en')">English</button>
-        </div>
+  <%- include('../partials/header') %>
 
-        <form id="formIt" class="lang-form active">
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/bio', icon: 'home' },
+        { label: 'Biografia', url: '/bio/biography', icon: 'file-alt' },
+        { label: 'Curriculum', url: '/bio/curriculum', icon: 'graduation-cap' },
+        { label: 'Storia', url: '/bio/story', icon: 'book' },
+        { label: 'Press Kit', url: '/bio/presskit', icon: 'box-open' }
+      ],
+      currentPath: '/bio/biography',
+      baseUrl: 'bio'
+    }) %>
+
+    <!-- Content -->
+    <div class="lang-tabs">
+      <button class="tab-btn active" onclick="switchLang('it')">Italiano</button>
+      <button class="tab-btn" onclick="switchLang('en')">English</button>
+    </div>
+
+    <form id="formIt" class="lang-form active">
           <input type="hidden" name="section" value="biography">
           <input type="hidden" name="lang" value="it">
 
@@ -63,9 +76,7 @@
 
           <button type="submit" class="btn btn-primary">Save English</button>
         </form>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script>
     if (window.SharedEditor) {

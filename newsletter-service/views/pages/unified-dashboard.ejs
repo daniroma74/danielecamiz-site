@@ -6,15 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Newsletter - Dashboard Unificata</title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/css/newsletter-light.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body { background: #f5f7fa; }
     .hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #d4af37 0%, #c4941f 100%);
       color: white;
       padding: 2.5rem 2rem;
       margin: -2rem -2rem 2rem;
       border-radius: 0 0 16px 16px;
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
     }
     .hero h1 { margin: 0 0 0.5rem; font-size: 2.5rem; font-weight: 300; }
     .hero p { margin: 0; opacity: 0.95; font-size: 1.1rem; }
@@ -37,10 +39,10 @@
       transition: all 0.3s;
       font-weight: 500;
     }
-    .tab-button:hover { color: #667eea; background: #f0f0f0; }
+    .tab-button:hover { color: var(--primary); background: #f0f0f0; }
     .tab-button.active {
-      color: #667eea;
-      border-bottom-color: #667eea;
+      color: var(--primary);
+      border-bottom-color: var(--primary);
       background: white;
     }
 
@@ -68,7 +70,7 @@
     .stat-card__number {
       font-size: 2.5rem;
       font-weight: 700;
-      color: #667eea;
+      color: var(--primary);
       margin: 0;
     }
     .stat-card__label {
@@ -135,13 +137,13 @@
       transition: all 0.3s;
     }
     .btn-primary {
-      background: #667eea;
+      background: var(--primary);
       color: white;
     }
     .btn-primary:hover {
-      background: #5568d3;
+      background: var(--primary-dark);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
     }
     .btn-secondary {
       background: #e0e0e0;
@@ -176,19 +178,9 @@
   </style>
 </head>
 <body>
-  <%- include('../../../shared/partials/back-to-hub') %>
-
-  <nav style="background: #1a1a1a; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
-    <div style="font-size: 1.2rem; font-weight: 600;">📧 Newsletter Service</div>
-    <a href="/logout" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 4px;">Logout</a>
-  </nav>
+  <%- include('../partials/admin-header') %>
 
   <div class="container">
-    <div class="hero">
-      <h1>📧 Newsletter Dashboard</h1>
-      <p>Gestione unificata newsletter Daniele Camiz e ICNT</p>
-    </div>
-
     <!-- Stats Overview -->
     <div class="stats-grid">
       <div class="stat-card">

@@ -7,40 +7,60 @@
   <title>Gestione News - Admin</title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/news-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <%- include('../../shared/partials/back-to-hub') %>
   <%- include('partials/header') %>
-  
-  <div class="container">
-    <div class="page-header">
-      <h1>📰 Gestione News</h1>
-      <div class="actions">
-        <a href="/news/newsletter" class="btn btn-info" style="margin-right: 0.5rem;">
-          📧 Newsletter Digest
-        </a>
-        <a href="/news/new" class="btn btn-primary">✍️ Nuovo Articolo</a>
-      </div>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'News', url: '/news', icon: 'newspaper' },
+        { label: 'Newsletter Digest', url: '/news/newsletter', icon: 'envelope' }
+      ],
+      currentPath: '/news',
+      baseUrl: 'news'
+    }) %>
+
+    <!-- Action Button -->
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+      <a href="/news/new" class="btn btn-primary"><i class="fas fa-plus"></i> Nuovo Articolo</a>
     </div>
 
     <!-- Filtri -->
-    <div class="filters">
-      <div class="filter-group">
-        <label>Stato:</label>
-        <a href="?status=all" class="filter-btn <%= status === 'all' ? 'active' : '' %>">
-          Tutti (<%= total %>)
-        </a>
-        <a href="?status=published" class="filter-btn <%= status === 'published' ? 'active' : '' %>">
-          Pubblicati
-        </a>
-        <a href="?status=draft" class="filter-btn <%= status === 'draft' ? 'active' : '' %>">
-          Bozze
-        </a>
-        <a href="?status=scheduled" class="filter-btn <%= status === 'scheduled' ? 'active' : '' %>">
-          Programmati
-        </a>
-      </div>
-    </div>
+    <%- include('../../shared/partials/admin-filters', {
+      filterGroups: [{
+        label: 'Stato',
+        filters: [
+          {
+            label: 'Tutti',
+            url: '?status=all',
+            active: status === 'all',
+            icon: 'list',
+            count: total
+          },
+          {
+            label: 'Pubblicati',
+            url: '?status=published',
+            active: status === 'published',
+            icon: 'check-circle'
+          },
+          {
+            label: 'Bozze',
+            url: '?status=draft',
+            active: status === 'draft',
+            icon: 'edit'
+          },
+          {
+            label: 'Programmati',
+            url: '?status=scheduled',
+            active: status === 'scheduled',
+            icon: 'calendar'
+          }
+        ]
+      }]
+    }) %>
 
     <!-- Lista news -->
     <div class="news-list">
@@ -106,20 +126,20 @@
                 <td>
                   <div class="action-buttons">
                     <a href="/news/<%= post.id %>/edit" class="btn btn-sm btn-secondary" title="Modifica">
-                      ✏️ Modifica
+                      <i class="fas fa-edit"></i> Modifica
                     </a>
                     <% if (post.status === 'published') { %>
-                      <a href="<%= config.frontendUrl %>/news/<%= post.slug %>" 
-                         target="_blank" 
-                         class="btn btn-sm btn-info" 
+                      <a href="<%= config.frontendUrl %>/news/<%= post.slug %>"
+                         target="_blank"
+                         class="btn btn-sm btn-info"
                          title="Visualizza su staging">
-                        👁️ Staging
+                        <i class="fas fa-eye"></i> Staging
                       </a>
                     <% } %>
-                    <button onclick="deletePost(<%= post.id %>)" 
-                            class="btn btn-sm btn-danger" 
+                    <button onclick="deletePost(<%= post.id %>)"
+                            class="btn btn-sm btn-danger"
                             title="Elimina">
-                      🗑️
+                      <i class="fas fa-trash"></i>
                     </button>
                   </div>
                 </td>
@@ -143,12 +163,12 @@
 
       <% } else { %>
         <div class="empty-state">
-          <p>📭 Nessun articolo trovato</p>
+          <p><i class="fas fa-inbox"></i> Nessun articolo trovato</p>
           <a href="/news/new" class="btn btn-primary">Crea il primo articolo</a>
         </div>
       <% } %>
     </div>
-  </div>
+  </main>
 
   <%- include('partials/footer') %>
 

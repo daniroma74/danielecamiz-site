@@ -6,13 +6,12 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/gallery-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
+  <%- include('../../../shared/partials/admin-header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
         <div class="content-header">
           <h1><%= isNew ? 'Nuova Collezione' : 'Modifica Collezione' %></h1>
           <div class="header-actions">
@@ -128,9 +127,7 @@
             </div>
           </div>
         </form>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <!-- Cloudinary Manager -->
   <script src="/shared/cloudinary-manager/client.js"></script>

@@ -6,17 +6,30 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/gallery-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
+  <%- include('../../../shared/partials/admin-header') %>
 
-        <!-- Help text -->
-        <div class="help-banner">
-          <div class="help-icon">📚</div>
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/gallery', icon: 'home' },
+        { label: 'Collezioni', url: '/gallery/collections', icon: 'folder-open' },
+        { label: 'Foto', url: '/gallery/photos', icon: 'camera' },
+        { label: 'Video', url: '/gallery/videos', icon: 'video' },
+        { label: 'Audio', url: '/gallery/audios', icon: 'music' },
+        { label: 'Categorie', url: '/gallery/categories', icon: 'tags' }
+      ],
+      currentPath: '/gallery/collections',
+      baseUrl: 'gallery'
+    }) %>
+
+    <!-- Content -->
+    <!-- Help text -->
+    <div class="help-banner">
+      <div class="help-icon"><i class="fas fa-folder-open"></i></div>
           <div class="help-content">
             <strong>Le collezioni sono raccolte tematiche di media.</strong>
             <p>Organizza foto, video e audio per concerti, eventi, portfolio ufficiale o prove. Ogni collezione può essere pubblicata o tenuta in bozza.</p>
@@ -47,10 +60,10 @@
                   <% } else { %>
                     <div class="no-cover">
                       <span class="icon-large">
-                        <% if (collection.type === 'photo') { %>📷
-                        <% } else if (collection.type === 'video') { %>🎬
-                        <% } else if (collection.type === 'audio') { %>🎵
-                        <% } else { %>📚<% } %>
+                        <% if (collection.type === 'photo') { %><i class="fas fa-camera"></i>
+                        <% } else if (collection.type === 'video') { %><i class="fas fa-video"></i>
+                        <% } else if (collection.type === 'audio') { %><i class="fas fa-music"></i>
+                        <% } else { %><i class="fas fa-folder-open"></i><% } %>
                       </span>
                     </div>
                   <% } %>
@@ -72,7 +85,7 @@
                       <%= collection.items_count || 0 %> elementi
                     </span>
                     <span class="meta-item">
-                      <%= collection.is_published ? '✅ Pubblicata' : '⚠️ Bozza' %>
+                      <%= collection.is_published ? '<i class="fas fa-check-circle" style="color: green;"></i> Pubblicata' : '<i class="fas fa-exclamation-circle" style="color: orange;"></i> Bozza' %>
                     </span>
                   </div>
                 </div>
@@ -87,15 +100,13 @@
           </div>
         <% } else { %>
           <div class="empty-state">
-            <span class="icon-large">📚</span>
+            <span class="icon-large"><i class="fas fa-folder-open"></i></span>
             <h2>Nessuna collezione trovata</h2>
             <p>Crea la tua prima collezione per organizzare foto, video e audio</p>
             <a href="/gallery/collections/new" class="btn btn-primary">Crea prima collezione</a>
           </div>
         <% } %>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script>
     // Filter collections by type

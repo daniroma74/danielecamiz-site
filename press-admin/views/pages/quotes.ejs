@@ -6,17 +6,28 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/press-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
-        <div class="page-header">
-          <h2>Citazioni</h2>
-          <button onclick="showQuoteModal()" class="btn btn-primary">Nuova Citazione</button>
-        </div>
+  <%- include('../../../shared/partials/admin-header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/press', icon: 'home' },
+        { label: 'Articoli', url: '/press/articles', icon: 'newspaper' },
+        { label: 'Citazioni', url: '/press/quotes', icon: 'quote-right' }
+      ],
+      currentPath: '/press/quotes',
+      baseUrl: 'press'
+    }) %>
+
+    <!-- Content -->
+    <div class="page-header">
+      <h2>Citazioni</h2>
+      <button onclick="showQuoteModal()" class="btn btn-primary">Nuova Citazione</button>
+    </div>
 
         <% if (quotes && quotes.length > 0) { %>
           <table class="data-table">
@@ -47,9 +58,7 @@
         <% } else { %>
           <p>Nessuna citazione presente.</p>
         <% } %>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <div id="quoteModal" class="modal" style="display: none;">
     <div class="modal-content">

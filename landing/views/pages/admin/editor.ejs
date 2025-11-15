@@ -6,7 +6,13 @@
   <title>Editor - <%= event.title || 'Nuovo Evento' %></title>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/public/css/admin-editor.css">
+
+  <style>
+    /* Hide admin header for this full-screen editor */
+    .admin-header { display: none; }
+  </style>
   
   <!-- Cloudinary Upload Widget -->
   <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
@@ -17,7 +23,8 @@
   <script src="/shared/config/editor-config.js"></script>
 </head>
 <body>
-  
+  <%- include('../../../shared/partials/admin-header') %>
+
   <!-- Top Nav -->
   <nav class="top-nav">
     <div class="nav-brand">

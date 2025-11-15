@@ -6,13 +6,25 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/bio-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <%- include('../partials/header') %>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <main class="content-area">
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs Navigation -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/bio', icon: 'home' },
+        { label: 'Biografia', url: '/bio/biography', icon: 'file-alt' },
+        { label: 'Curriculum', url: '/bio/curriculum', icon: 'graduation-cap' },
+        { label: 'Storia', url: '/bio/story', icon: 'book' },
+        { label: 'Press Kit', url: '/bio/presskit', icon: 'box-open' }
+      ],
+      currentPath: '/bio',
+      baseUrl: 'bio'
+    }) %>
+
         <div class="stats-grid">
           <div class="stat-card">
             <h3>Biografia</h3>
@@ -49,26 +61,24 @@
           <h2>Azioni Rapide</h2>
           <div class="link-grid">
             <a href="/bio/biography" class="quick-link-card">
-              <span class="icon">📝</span>
+              <span class="icon"><i class="fas fa-file-alt"></i></span>
               <span>Modifica Biografia</span>
             </a>
             <a href="/bio/curriculum" class="quick-link-card">
-              <span class="icon">📄</span>
+              <span class="icon"><i class="fas fa-graduation-cap"></i></span>
               <span>Modifica Curriculum</span>
             </a>
             <a href="/bio/story" class="quick-link-card">
-              <span class="icon">📖</span>
+              <span class="icon"><i class="fas fa-book"></i></span>
               <span>Modifica Storia</span>
             </a>
             <a href="/bio/presskit" class="quick-link-card">
-              <span class="icon">📦</span>
+              <span class="icon"><i class="fas fa-box-open"></i></span>
               <span>Gestisci Press Kit</span>
             </a>
           </div>
         </div>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script src="/static/js/bio-admin.js"></script>
 </body>

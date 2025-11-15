@@ -6,19 +6,33 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/gallery-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
-        <div class="content-header">
-          <h1>Gestione Audio</h1>
-          <div class="header-actions">
-            <button id="add-audio-btn" class="btn btn-primary">Aggiungi Audio</button>
-          </div>
-        </div>
+  <%- include('../../../shared/partials/admin-header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/gallery', icon: 'home' },
+        { label: 'Collezioni', url: '/gallery/collections', icon: 'folder-open' },
+        { label: 'Foto', url: '/gallery/photos', icon: 'camera' },
+        { label: 'Video', url: '/gallery/videos', icon: 'video' },
+        { label: 'Audio', url: '/gallery/audios', icon: 'music' },
+        { label: 'Categorie', url: '/gallery/categories', icon: 'tags' }
+      ],
+      currentPath: '/gallery/audios',
+      baseUrl: 'gallery'
+    }) %>
+
+    <!-- Content -->
+    <div class="content-header">
+      <h2>Gestione Audio</h2>
+      <div class="header-actions">
+        <button id="add-audio-btn" class="btn btn-primary">Aggiungi Audio</button>
+      </div>
+    </div>
 
         <% if (audios && audios.length > 0) { %>
           <div class="audios-list">
@@ -31,7 +45,7 @@
                     </div>
                   <% } else { %>
                     <div class="audio-placeholder">
-                      <span class="icon-large">🎵</span>
+                      <span class="icon-large"><i class="fas fa-music"></i></span>
                       <% if (audio.bandcamp_url) { %>
                         <a href="<%= audio.bandcamp_url %>" target="_blank" class="btn btn-sm">
                           Apri su Bandcamp
@@ -82,15 +96,13 @@
           </div>
         <% } else { %>
           <div class="empty-state">
-            <span class="icon-large">🎵</span>
+            <span class="icon-large"><i class="fas fa-music"></i></span>
             <h2>Nessun audio caricato</h2>
             <p>Aggiungi audio dalla tua libreria Bandcamp</p>
             <button id="add-first-audio-btn" class="btn btn-primary">Aggiungi Audio</button>
           </div>
         <% } %>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <!-- Add/Edit Audio Modal -->
   <div id="audio-modal" class="modal" style="display: none;">

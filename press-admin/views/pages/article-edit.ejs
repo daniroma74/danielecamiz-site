@@ -6,16 +6,15 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/press-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
   <script src="/shared/cloudinary-manager/client.js"></script>
   <script src="/shared/config/editor-config.js"></script>
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
+  <%- include('../../../shared/partials/admin-header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
         <form id="articleForm" class="form-container">
           <% if (!isNew) { %>
             <input type="hidden" name="id" value="<%= article.id %>">
@@ -84,9 +83,7 @@
             <button type="submit" class="btn btn-primary">Salva Articolo</button>
           </div>
         </form>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script>
     if (window.SharedEditor) {

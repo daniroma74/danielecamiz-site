@@ -6,22 +6,36 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/gallery-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
-        <div class="content-header">
-          <h1>Gestione Video</h1>
-          <div class="header-actions">
-            <button id="sync-youtube-btn" class="btn btn-outline">
-              🔄 Sincronizza YouTube
-            </button>
-            <button id="add-video-btn" class="btn btn-primary">Aggiungi Video</button>
-          </div>
-        </div>
+  <%- include('../../../shared/partials/admin-header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/gallery', icon: 'home' },
+        { label: 'Collezioni', url: '/gallery/collections', icon: 'folder-open' },
+        { label: 'Foto', url: '/gallery/photos', icon: 'camera' },
+        { label: 'Video', url: '/gallery/videos', icon: 'video' },
+        { label: 'Audio', url: '/gallery/audios', icon: 'music' },
+        { label: 'Categorie', url: '/gallery/categories', icon: 'tags' }
+      ],
+      currentPath: '/gallery/videos',
+      baseUrl: 'gallery'
+    }) %>
+
+    <!-- Content -->
+    <div class="content-header">
+      <h2>Gestione Video</h2>
+      <div class="header-actions">
+        <button id="sync-youtube-btn" class="btn btn-outline">
+          <i class="fas fa-sync"></i> Sincronizza YouTube
+        </button>
+        <button id="add-video-btn" class="btn btn-primary">Aggiungi Video</button>
+      </div>
+    </div>
 
         <% if (lastSync) { %>
           <div class="sync-info">
@@ -115,9 +129,7 @@
             </div>
           </div>
         <% } %>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <!-- Add/Edit Video Modal -->
   <div id="video-modal" class="modal" style="display: none;">

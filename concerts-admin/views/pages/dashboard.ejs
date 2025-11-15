@@ -17,52 +17,76 @@
   <script src="/shared/js/cloudinary-widget.js"></script>
 </head>
 <body>
-  <%- include('../partials/header') %>
+  <%- include('../../../shared/partials/admin-header') %>
 
   <!-- MAIN CONTENT -->
   <main class="admin-main">
-    
-    <!-- PAGE HEADER -->
-    <div class="page-header">
-      <div class="page-title-section">
-        <h1><i class="fas fa-calendar-alt"></i> Gestione Concerti</h1>
-        <p class="page-subtitle">Archivio completo dei concerti</p>
-      </div>
-      <div class="header-actions">
-        <a href="/admin/concert/new" class="btn btn-primary">
-          <i class="fas fa-plus"></i> Nuovo Concerto
-        </a>
-      </div>
+
+    <!-- TABS -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Concerti', url: '/admin/dashboard', icon: 'calendar-alt' },
+        { label: 'Repertorio', url: '/admin/repertoire', icon: 'music' },
+        { label: 'Performers', url: '/admin/performers', icon: 'users' }
+      ],
+      currentPath: '/admin/dashboard',
+      baseUrl: 'admin'
+    }) %>
+
+    <!-- ACTION BUTTON -->
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
+      <a href="/admin/concert/new" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nuovo Concerto
+      </a>
     </div>
 
     <!-- FILTERS BAR -->
-    <div class="filters-bar">
-      <div class="filter-buttons">
-        <a href="/admin/dashboard?filter=all" class="filter-btn <%= filter === 'all' ? 'active' : '' %>">
-          <i class="fas fa-list"></i> Tutti (<%= futureConcerts.length + yearGroups.reduce((sum, g) => sum + g.concerts.length, 0) %>)
-        </a>
-        <a href="/admin/dashboard?filter=future" class="filter-btn <%= filter === 'future' ? 'active' : '' %>">
-          <i class="fas fa-calendar-plus"></i> Futuri (<%= futureConcerts.length %>)
-        </a>
-        <a href="/admin/dashboard?filter=past" class="filter-btn <%= filter === 'past' ? 'active' : '' %>">
-          <i class="fas fa-calendar-check"></i> Passati (<%= yearGroups.reduce((sum, g) => sum + g.concerts.length, 0) %>)
-        </a>
-      </div>
-      
-      <form method="GET" action="/admin/dashboard" class="search-form">
-        <input type="hidden" name="filter" value="<%= filter %>">
-        <input
-          type="search"
-          name="search"
-          placeholder="Cerca per titolo o luogo..."
-          value="<%= search %>"
-          class="search-input"
-        >
-        <button type="submit" class="btn-search">
-          <i class="fas fa-search"></i>
-        </button>
-      </form>
-    </div>
+    <%- include('../../../shared/partials/admin-filters', {
+      search: {
+        id: 'concertSearch',
+        placeholder: 'Cerca per titolo o luogo...',
+        value: search,
+        onInput: "document.getElementById('searchForm').submit()"
+      },
+      filterGroups: [{
+        label: null,
+        filters: [
+          {
+            label: 'Tutti',
+            url: '/admin/dashboard?filter=all' + (search ? '&search=' + encodeURIComponent(search) : ''),
+            active: filter === 'all',
+            icon: 'list',
+            count: futureConcerts.length + yearGroups.reduce((sum, g) => sum + g.concerts.length, 0)
+          },
+          {
+            label: 'Futuri',
+            url: '/admin/dashboard?filter=future' + (search ? '&search=' + encodeURIComponent(search) : ''),
+            active: filter === 'future',
+            icon: 'calendar-plus',
+            count: futureConcerts.length
+          },
+          {
+            label: 'Passati',
+            url: '/admin/dashboard?filter=past' + (search ? '&search=' + encodeURIComponent(search) : ''),
+            active: filter === 'past',
+            icon: 'calendar-check',
+            count: yearGroups.reduce((sum, g) => sum + g.concerts.length, 0)
+          }
+        ]
+      }]
+    }) %>
+    <form id="searchForm" method="GET" action="/admin/dashboard" style="display: none;">
+      <input type="hidden" name="filter" value="<%= filter %>">
+      <input type="hidden" name="search" id="searchValue">
+    </form>
+    <script>
+      const searchInput = document.getElementById('concertSearch');
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          document.getElementById('searchValue').value = this.value;
+        });
+      }
+    </script>
 
     <!-- CONCERTI GRID -->
     <% if (futureConcerts.length > 0 || yearGroups.length > 0) { %>

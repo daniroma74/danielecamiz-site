@@ -1,0 +1,184 @@
+<!-- shared/partials/admin-modal.ejs -->
+<!-- Shared Modal Component -->
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
+  }
+
+  .modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: <%= locals.modalSize === 'large' ? '900px' : locals.modalSize === 'small' ? '500px' : '700px' %>;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: linear-gradient(to bottom, #fafafa, white);
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .modal-header h2 i {
+    color: var(--primary);
+  }
+
+  .modal-close {
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: #999;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+
+  .modal-close:hover {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .modal-body {
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e0e0e0;
+    background: #fafafa;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .modal-content {
+      width: 95%;
+      max-height: 95vh;
+      margin: 1rem;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+      padding: 1.25rem;
+    }
+  }
+</style>
+
+<div id="<%= modalId %>" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>
+        <% if (locals.icon) { %>
+          <i class="fas fa-<%= icon %>"></i>
+        <% } %>
+        <span id="<%= modalId %>-title"><%= title %></span>
+      </h2>
+      <button class="modal-close" onclick="<%= closeFunction || 'close' + modalId.charAt(0).toUpperCase() + modalId.slice(1) + '()' %>">&times;</button>
+    </div>
+
+    <div class="modal-body" id="<%= modalId %>-body">
+      <%- body %>
+    </div>
+
+    <% if (locals.footer !== false) { %>
+      <div class="modal-footer" id="<%= modalId %>-footer">
+        <% if (locals.footerContent) { %>
+          <%- footerContent %>
+        <% } else { %>
+          <button type="button" onclick="<%= closeFunction || 'close' + modalId.charAt(0).toUpperCase() + modalId.slice(1) + '()' %>" class="btn btn-outline">
+            Annulla
+          </button>
+          <button type="submit" form="<%= locals.formId || modalId + '-form' %>" class="btn btn-primary">
+            <%= locals.submitLabel || 'Salva' %>
+          </button>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  // Close modal when clicking outside
+  document.getElementById('<%= modalId %>').addEventListener('click', function(event) {
+    if (event.target === this) {
+      <% if (closeFunction) { %>
+        <%= closeFunction %>();
+      <% } else { %>
+        close<%= modalId.charAt(0).toUpperCase() + modalId.slice(1) %>();
+      <% } %>
+    }
+  });
+
+  // Close modal with ESC key
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      const modal = document.getElementById('<%= modalId %>');
+      if (modal && modal.classList.contains('show')) {
+        <% if (closeFunction) { %>
+          <%= closeFunction %>();
+        <% } else { %>
+          close<%= modalId.charAt(0).toUpperCase() + modalId.slice(1) %>();
+        <% } %>
+      }
+    }
+  });
+</script>

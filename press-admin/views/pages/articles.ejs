@@ -6,17 +6,28 @@
   <title><%= title %></title>
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/press-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="admin-layout">
-    <%- include('../partials/sidebar') %>
-    <div class="main-content">
-      <%- include('../partials/header') %>
-      <main class="content-area">
-        <div class="page-header">
-          <h2>Articoli Stampa</h2>
-          <a href="/press/articles/new" class="btn btn-primary">Nuovo Articolo</a>
-        </div>
+  <%- include('../../../shared/partials/admin-header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/press', icon: 'home' },
+        { label: 'Articoli', url: '/press/articles', icon: 'newspaper' },
+        { label: 'Citazioni', url: '/press/quotes', icon: 'quote-right' }
+      ],
+      currentPath: '/press/articles',
+      baseUrl: 'press'
+    }) %>
+
+    <!-- Content -->
+    <div class="page-header">
+      <h2>Articoli Stampa</h2>
+      <a href="/press/articles/new" class="btn btn-primary">Nuovo Articolo</a>
+    </div>
 
         <% if (articles && articles.length > 0) { %>
           <table class="data-table">
@@ -45,9 +56,7 @@
         <% } else { %>
           <p>Nessun articolo presente. <a href="/press/articles/new">Creane uno nuovo</a></p>
         <% } %>
-      </main>
-    </div>
-  </div>
+  </main>
 
   <script>
     async function deleteArticle(id) {

@@ -105,52 +105,20 @@
   </style>
 </head>
 <body>
-  <!-- Back to Hub Button -->
-  <div style="position: fixed; top: 90px; right: 30px; z-index: 10000;">
-    <a href="https://hub.danielecamiz.com/dashboard" title="Torna all'Admin HUB" style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: white; padding: 0.6rem 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); transition: all 0.3s ease;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      <span>Hub</span>
-    </a>
-  </div>
-
-  <!-- NAVBAR -->
-  <nav class="admin-nav">
-    <div class="nav-container">
-      <a href="/admin" class="nav-brand">
-        <i class="fas fa-music"></i> Concerts Admin
-      </a>
-      <div class="nav-links">
-        <a href="/admin/dashboard" class="<%= currentPage === 'dashboard' ? 'active' : '' %>">
-          <i class="fas fa-calendar"></i> Concerti
-        </a>
-        <a href="/admin/repertoire" class="<%= currentPage === 'repertoire' ? 'active' : '' %>">
-          <i class="fas fa-book"></i> Repertorio
-        </a>
-        <a href="/admin/performers" class="<%= currentPage === 'performers' ? 'active' : '' %>">
-          <i class="fas fa-users"></i> Solisti & Ensemble
-        </a>
-        <a href="<%= stagingUrl || 'https://www.danielecamiz.com' %>/concerts" target="_blank" class="nav-link-external">
-          <i class="fas fa-external-link-alt"></i> Frontend
-        </a>
-        <a href="/auth/logout" class="btn-logout">
-          <i class="fas fa-sign-out-alt"></i> Esci
-        </a>
-      </div>
-    </div>
-  </nav>
+  <%- include('../../../shared/partials/admin-header') %>
 
   <!-- MAIN CONTENT -->
   <main class="admin-main">
-
-    <!-- PAGE HEADER -->
-    <div class="page-header">
-      <div class="page-title-section">
-        <h1><i class="fas fa-users"></i> Solisti & Ensemble</h1>
-        <p class="page-subtitle">Artisti e formazioni collaboratori</p>
-      </div>
-    </div>
+    <!-- TABS -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Concerti', url: '/admin/dashboard', icon: 'calendar-alt' },
+        { label: 'Repertorio', url: '/admin/repertoire', icon: 'music' },
+        { label: 'Performers', url: '/admin/performers', icon: 'users' }
+      ],
+      currentPath: '/admin/performers',
+      baseUrl: 'admin'
+    }) %>
 
     <!-- STATS CARDS -->
     <div class="stats-cards">
