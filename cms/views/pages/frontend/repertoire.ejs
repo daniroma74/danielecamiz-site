@@ -160,6 +160,18 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
                   <i class="fas fa-calendar"></i>
                   <span><%= composer.concerts_count %> <%= lang === 'en' ? 'concerts' : 'concerti' %></span>
                 </div>
+                <% if (composer.total_performances > 0) { %>
+                  <div class="rep-top-composer-stat">
+                    <i class="fas fa-repeat"></i>
+                    <span><%= composer.total_performances %> <%= lang === 'en' ? 'performances' : 'esecuzioni' %></span>
+                  </div>
+                <% } %>
+                <% if (composer.total_performed_minutes > 0) { %>
+                  <div class="rep-top-composer-stat" style="opacity: 0.8; font-size: 0.85em;">
+                    <i class="fas fa-clock"></i>
+                    <span><%= Math.round(composer.total_performed_minutes / 60) %>h <%= lang === 'en' ? 'performed' : 'sul palco' %></span>
+                  </div>
+                <% } %>
               </div>
             </div>
           <% }) %>

@@ -44,6 +44,27 @@
     <p id="concerts_claim" class="page-claim"><%- claim %></p>
   </header>
 
+  <!-- Stats Hero -->
+  <% if (stats && stats.totalConcerts > 0) { %>
+    <section class="concerts-stats-hero">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number"><%= stats.totalConcerts %></div>
+          <div class="stat-label"><%= lang === 'en' ? 'Concerts' : 'Concerti' %></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number"><%= stats.yearsCount %></div>
+          <div class="stat-label"><%= lang === 'en' ? 'Years' : 'Anni' %></div>
+          <div class="stat-sublabel"><%= stats.startYear %> - <%= stats.endYear %></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number"><%= stats.uniqueVenues %></div>
+          <div class="stat-label"><%= lang === 'en' ? 'Venues' : 'Location' %></div>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
   <div class="layout-grid">
     <!-- Colonna sinistra -->
     <div class="left-col">
@@ -69,9 +90,14 @@
                   <div class="up-day"><%= day %></div>
                 </div>
                 <div class="up-main">
-                  <h3 class="up-title"><%= c.title || (lang==='en'?'Concert':'Concerto') %></h3>
-                  <% if (c.location) { %><div class="up-place"><%= c.location %></div><% } %>
-                  <% if (c.orchestra) { %><div class="up-line"><%= c.orchestra %></div><% } %>
+                  <div class="up-title-row">
+                    <h3 class="up-title"><%= c.title || (lang==='en'?'Concert':'Concerto') %></h3>
+                    <% if (upIdx === 0) { %>
+                      <span class="badge badge-upcoming"><%= lang === 'en' ? 'NEXT' : 'PROSSIMO' %></span>
+                    <% } %>
+                  </div>
+                  <% if (c.location) { %><div class="up-place"><i class="fas fa-map-marker-alt"></i> <%= c.location %></div><% } %>
+                  <% if (c.orchestra) { %><div class="up-line"><i class="fas fa-users"></i> <%= c.orchestra %></div><% } %>
                 </div>
                 <div class="up-cta">
                   <% if (hasLandingPage) { %>
@@ -184,9 +210,12 @@
                         <% } %>
 
                         <div class="concert-info">
-                          <h4 class="concert-title"><%= c.title || (lang==='en'?'Concert':'Concerto') %></h4>
-                          <% if (c.date)     { %><p class="concert-date"><%= c.date %></p><% } %>
-                          <% if (c.location) { %><p class="concert-place"><%= c.location %></p><% } %>
+                          <div class="concert-title-row">
+                            <h4 class="concert-title"><%= c.title || (lang==='en'?'Concert':'Concerto') %></h4>
+                            <span class="badge badge-year"><%= g.year %></span>
+                          </div>
+                          <% if (c.date)     { %><p class="concert-date"><i class="fas fa-calendar"></i> <%= c.date %></p><% } %>
+                          <% if (c.location) { %><p class="concert-place"><i class="fas fa-map-marker-alt"></i> <%= c.location %></p><% } %>
                         </div>
                       </div>
 

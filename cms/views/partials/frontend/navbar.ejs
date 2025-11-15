@@ -48,15 +48,21 @@
             </button>
             <ul class="nav-dropdown-menu" role="menu">
               <li role="none">
-                <a href="<%= item.path %>"
+                <%
+                  let mainHref = item.path + (item.path.includes('?') ? '&' : '?') + 'lng=' + lang;
+                %>
+                <a href="<%= mainHref %>"
                    role="menuitem"
                    class="nav-dropdown-item">
                   <%= t(item.key + '_all') || 'Tutte le gallerie' %>
                 </a>
               </li>
               <% item.dropdown.forEach(sub => { %>
+                <%
+                  let subHref = sub.path + (sub.path.includes('?') ? '&' : '?') + 'lng=' + lang;
+                %>
                 <li role="none">
-                  <a href="<%= sub.path %>"
+                  <a href="<%= subHref %>"
                      role="menuitem"
                      class="nav-dropdown-item">
                     <%= sub.key ? t(sub.key) : sub.label %>
@@ -65,7 +71,14 @@
               <% }) %>
             </ul>
           <% } else { %>
-            <a href="<%= item.path %>"
+            <%
+              // Add ?lng= parameter to internal links
+              let href = item.path;
+              if (!item.external && lang) {
+                href += (href.includes('?') ? '&' : '?') + 'lng=' + lang;
+              }
+            %>
+            <a href="<%= href %>"
                role="menuitem"
                tabindex="-1"
                <% if (item.external) { %>target="_blank" rel="noopener noreferrer"<% } %>>

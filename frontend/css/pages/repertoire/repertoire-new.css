@@ -364,7 +364,7 @@
 .rep-top-composer-stats {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem; /* Ridotto per gestire 4 righe */
 }
 
 .rep-top-composer-stat {
@@ -372,13 +372,14 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem; /* Ridotto leggermente */
   color: #999;
+  line-height: 1.3;
 }
 
 .rep-top-composer-stat i {
   color: #d4af37;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 /* ===== TABS ===== */

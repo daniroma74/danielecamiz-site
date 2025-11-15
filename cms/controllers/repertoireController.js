@@ -75,12 +75,44 @@ export async function getRepertoirePage(req, res) {
     ]);
 
     const composers = await qAll(db, `
+      WITH work_performances AS (
+        SELECT
+          cp.work_id,
+          cp.concert_id,
+          w.duration_minutes as work_duration,
+          w.composer_id,
+          -- If movement_id is NULL = complete work, else estimate from movements
+          CASE
+            WHEN COUNT(cp.movement_id) = 0 THEN w.duration_minutes
+            WHEN SUM(m.duration_minutes) > 0 THEN SUM(m.duration_minutes)
+            -- Fallback: estimate duration as (work_duration / total_movements) * performed_movements
+            ELSE ROUND(w.duration_minutes * COUNT(cp.movement_id) * 1.0 /
+                 COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = w.id), 1))
+          END as actual_duration
+        FROM concert_program cp
+        JOIN works w ON cp.work_id = w.id
+        LEFT JOIN movements m ON cp.movement_id = m.id
+        GROUP BY cp.work_id, cp.concert_id
+      )
       SELECT c.*,
-             COUNT(DISTINCT w.id)          AS works_count,
-             COUNT(DISTINCT cp.concert_id) AS concerts_count
+             COUNT(DISTINCT w.id) AS works_count,
+             COUNT(DISTINCT wp.concert_id) AS concerts_count,
+             -- Count unique work-concert combinations (not individual movements)
+             COUNT(DISTINCT wp.work_id || '-' || wp.concert_id) AS total_performances,
+             SUM(w.duration_minutes) AS total_minutes,
+             (SELECT SUM(actual_duration) FROM work_performances WHERE composer_id = c.id) AS total_performed_minutes,
+             -- Advanced ranking score:
+             -- unique_performances × 100 (most important: actual use)
+             -- + performed_minutes × 0.5 (stage time)
+             -- + num_works × 10 (repertoire breadth)
+             -- + num_concerts × 20 (concert frequency)
+             (COUNT(DISTINCT wp.work_id || '-' || wp.concert_id) * 100) +
+             ((SELECT SUM(actual_duration) FROM work_performances WHERE composer_id = c.id) * 0.5) +
+             (COUNT(DISTINCT w.id) * 10) +
+             (COUNT(DISTINCT wp.concert_id) * 20) AS ranking_score
       FROM composers c
-      LEFT JOIN works w            ON w.composer_id = c.id
-      LEFT JOIN concert_program cp ON cp.work_id = w.id
+      LEFT JOIN works w ON w.composer_id = c.id
+      LEFT JOIN work_performances wp ON wp.work_id = w.id
       GROUP BY c.id
       ORDER BY ${composersOrder}
     `).catch(e => { console.error('[Repertoire] composers:', e); return []; });
@@ -197,18 +229,23 @@ export async function getRepertoirePage(req, res) {
       ORDER BY c.full_name, w.title
     `).catch(e => { console.error('[Repertoire] works:', e); return []; });
 
-    // Top composers by works count (for featured section)
+    // Top composers by advanced ranking score (for featured section)
     const topComposers = composers
       .filter(c => c.works_count > 0)
       .sort((a, b) => {
+        // Primary sort: ranking_score (considers performances, duration, works, concerts)
+        if (b.ranking_score !== a.ranking_score) return b.ranking_score - a.ranking_score;
+        // Fallback: works count
         if (b.works_count !== a.works_count) return b.works_count - a.works_count;
+        // Final fallback: concerts count
         return b.concerts_count - a.concerts_count;
       })
       .slice(0, 6)
       .map(c => ({
         ...c,
         name: c.full_name,
-        portrait_url: c.portrait_url || null
+        portrait_url: c.portrait_url || null,
+        ranking_score: Math.round(c.ranking_score || 0)
       }));
 
     // Build composers with their works

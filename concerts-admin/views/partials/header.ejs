@@ -1,0 +1,24 @@
+<%- include('../../../shared/partials/admin-header.ejs', {
+  panelName: 'Concerts Admin',
+  panelIcon: '🎵',
+  user: locals.user,
+  hubUrl: process.env.HUB_URL || 'https://hub.danielecamiz.com'
+}) %>
+
+<!-- Navbar Interna Concerts -->
+<nav class="admin-subnav">
+  <div class="subnav-container">
+    <a href="/admin/dashboard" class="subnav-link <%= currentPage === 'dashboard' ? 'active' : '' %>">
+      <i class="fas fa-calendar"></i> Concerti
+    </a>
+    <a href="/admin/repertoire" class="subnav-link <%= currentPage === 'repertoire' ? 'active' : '' %>">
+      <i class="fas fa-book"></i> Repertorio
+    </a>
+    <a href="/admin/performers" class="subnav-link <%= currentPage === 'performers' ? 'active' : '' %>">
+      <i class="fas fa-users"></i> Solisti & Ensemble
+    </a>
+    <a href="<%= stagingUrl || 'https://www.danielecamiz.com' %>/concerts" target="_blank" class="subnav-link">
+      <i class="fas fa-external-link-alt"></i> Frontend
+    </a>
+  </div>
+</nav>

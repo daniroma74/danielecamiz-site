@@ -490,6 +490,12 @@ export async function getConcertsPage(req, res) {
     const endYear   = (yearsList && yearsList.length) ? String(yearsList[0]) : '';
     const startYear = (yearsList && yearsList.length) ? String(yearsList[yearsList.length - 1]) : '';
 
+    // Stats per hero section (solo concerti passati)
+    const totalConcerts = pastCount;
+    const yearsCount = yearsList.length;
+    const uniqueVenues = new Set(concertsByYear.flatMap(y => y.concerts)
+      .map(c => c.location).filter(Boolean)).size;
+
     const claimTemplate = firstText(
       fileLabels?.claim2,
       fileLabels?.claim,
@@ -562,6 +568,14 @@ export async function getConcertsPage(req, res) {
       upcomingConcerts,
       concertsByYear,
       yearsList,
+      // Stats per hero section
+      stats: {
+        totalConcerts,
+        yearsCount,
+        uniqueVenues,
+        startYear,
+        endYear
+      }
     });
   } catch (err) {
     console.error('[concertsController] getConcertsPage error:', err);
