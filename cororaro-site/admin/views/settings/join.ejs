@@ -1,115 +1,283 @@
 <div class="page-header">
-  <h1>⚙️ Unisciti a Noi</h1>
-  <p>Gestisci la sezione per nuovi coristi</p>
+  <h1>🎤 Unisciti a Noi - Informazioni per Nuovi Coristi</h1>
+  <p style="color: #666; font-size: 1.1rem;">Gestisci tutte le informazioni per chi vuole entrare nel coro</p>
 </div>
 
 <!-- Navigation Tabs -->
 <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; padding-bottom: 0;">
-  <a href="/admin/settings" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Impostazioni Generali</a>
-  <a href="/admin/settings/values" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Valori del Coro</a>
-  <a href="/admin/settings/join" style="padding: 0.75rem 1.5rem; text-decoration: none; color: white; background: var(--terracotta, #8B4513); border-radius: 8px 8px 0 0;">Unisciti a Noi</a>
+  <a href="/admin/settings" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">📋 Impostazioni Generali</a>
+  <a href="/admin/settings/values" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">💎 Valori del Coro</a>
+  <a href="/admin/settings/join" style="padding: 0.75rem 1.5rem; text-decoration: none; color: white; background: var(--terracotta, #8B4513); border-radius: 8px 8px 0 0; font-weight: 600;">🎤 Unisciti a Noi</a>
 </div>
 
-<div class="form-container" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 1000px;">
+<div class="form-container" style="background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 1000px;">
+
+  <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196f3;">
+    <h3 style="margin: 0 0 0.5rem 0; color: #1976d2;">💡 Come funziona?</h3>
+    <p style="margin: 0; color: #555;">
+      Queste informazioni appaiono nella sezione "Unisciti a Noi" dove le persone possono scoprire come diventare coristi.
+      <br>Compila tutti i campi per dare tutte le informazioni utili a chi vuole cantare con voi!
+    </p>
+  </div>
+
   <form method="POST" action="/admin/settings/join">
 
-    <!-- Titolo e Sottotitolo -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Titolo Sezione</label>
-      <input type="text" id="title" name="title" value="<%= joinInfo.title || 'Unisciti a Noi' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
-      <small style="color: #666;">Es: Unisciti a Noi, Diventa Corista</small>
-    </div>
+    <!-- ========== TITOLI PRINCIPALI ========== -->
+    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📝 Titoli della Sezione</h2>
 
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="subtitle" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Sottotitolo</label>
-      <input type="text" id="subtitle" name="subtitle" value="<%= joinInfo.subtitle || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <small style="color: #666;">Es: Canta con passione, aiuta il mondo</small>
-    </div>
-
-    <!-- Testo Introduttivo -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="intro_text" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Testo Introduttivo</label>
-      <textarea id="intro_text" name="intro_text"><%= joinInfo.intro_text || '' %></textarea>
-      <small style="color: #666;">Introduzione e invito ai potenziali nuovi coristi</small>
-    </div>
-
-    <!-- Benefici -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="benefits_html" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Benefici di Unirsi al Coro</label>
-      <textarea id="benefits_html" name="benefits_html"><%= joinInfo.benefits_html || '' %></textarea>
-      <small style="color: #666;">Elenco puntato dei vantaggi e benefici</small>
-    </div>
-
-    <!-- Informazioni Prove -->
-    <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-      <h3 style="margin-bottom: 1rem; color: var(--terracotta, #8B4513);">📅 Informazioni Prove</h3>
-
-      <div class="form-group" style="margin-bottom: 1rem;">
-        <label for="rehearsal_day" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Giorno Prove</label>
-        <input type="text" id="rehearsal_day" name="rehearsal_day" value="<%= joinInfo.rehearsal_day || '' %>" placeholder="Es: Ogni Martedì" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <div style="margin-bottom: 1.5rem;">
+        <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          📌 Titolo Principale
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value="<%= joinInfo.title || 'Unisciti a Noi' %>"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Il titolo grande della sezione (es: "Unisciti a Noi", "Diventa Corista", "Canta con Noi")
+        </small>
       </div>
 
-      <div class="form-group" style="margin-bottom: 1rem;">
-        <label for="rehearsal_time" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Orario Prove</label>
-        <input type="text" id="rehearsal_time" name="rehearsal_time" value="<%= joinInfo.rehearsal_time || '' %>" placeholder="Es: 20:00 - 22:00" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      </div>
-
-      <div class="form-group" style="margin-bottom: 0;">
-        <label for="rehearsal_location" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Luogo Prove</label>
-        <input type="text" id="rehearsal_location" name="rehearsal_location" value="<%= joinInfo.rehearsal_location || '' %>" placeholder="Es: Chiesa di San Francesco, Prati Fiscali" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <div style="margin-bottom: 1.5rem;">
+        <label for="subtitle" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          📄 Sottotitolo (facoltativo)
+        </label>
+        <input
+          type="text"
+          id="subtitle"
+          name="subtitle"
+          value="<%= joinInfo.subtitle || '' %>"
+          placeholder="Es: Canta con passione, aiuta il mondo"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Una frase che accompagna il titolo principale
+        </small>
       </div>
     </div>
 
-    <!-- Contatti -->
-    <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-      <h3 style="margin-bottom: 1rem; color: var(--terracotta, #8B4513);">📧 Contatti</h3>
+    <!-- ========== TESTO INTRODUTTIVO ========== -->
+    <div style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #ff9800;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">💬 Messaggio di Benvenuto</h2>
 
-      <div class="form-group" style="margin-bottom: 1rem;">
-        <label for="contact_email" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email di Contatto</label>
-        <input type="email" id="contact_email" name="contact_email" value="<%= joinInfo.contact_email || '' %>" placeholder="info@cororaro.it" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      </div>
-
-      <div class="form-group" style="margin-bottom: 0;">
-        <label for="contact_phone" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Telefono di Contatto</label>
-        <input type="tel" id="contact_phone" name="contact_phone" value="<%= joinInfo.contact_phone || '' %>" placeholder="+39 XXX XXX XXXX" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <div style="margin-bottom: 1.5rem;">
+        <label for="intro_text" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          📝 Testo Introduttivo (puoi formattare)
+        </label>
+        <p style="margin: 0 0 1rem 0; padding: 0.75rem; background: #fffde7; border-radius: 4px; border-left: 3px solid #fbc02d;">
+          <strong>📝 Qui puoi formattare il testo!</strong> Usa i bottoni per fare grassetto, elenchi, ecc. come in Word.
+        </p>
+        <textarea
+          id="intro_text"
+          name="intro_text"
+          class="tinymce-editor"
+        ><%= joinInfo.intro_text || '' %></textarea>
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Un'introduzione calorosa per chi vuole unirsi. Spiega chi siete e cosa fate insieme!
+        </small>
       </div>
     </div>
 
-    <!-- Call to Action -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="cta_text" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Testo Call to Action</label>
-      <input type="text" id="cta_text" name="cta_text" value="<%= joinInfo.cta_text || 'Contattaci Ora' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <small style="color: #666;">Testo del pulsante principale (es: Contattaci Ora, Unisciti Oggi)</small>
+    <!-- ========== BENEFICI ========== -->
+    <div style="background: #f3e5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #9c27b0;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">⭐ Perché Unirsi al Coro?</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="benefits_html" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🎁 Benefici e Vantaggi (puoi formattare)
+        </label>
+        <p style="margin: 0 0 1rem 0; padding: 0.75rem; background: #fffde7; border-radius: 4px; border-left: 3px solid #fbc02d;">
+          <strong>📝 Qui puoi formattare il testo!</strong> Usa elenchi puntati per i benefici!
+        </p>
+        <textarea
+          id="benefits_html"
+          name="benefits_html"
+          class="tinymce-editor"
+        ><%= joinInfo.benefits_html || '' %></textarea>
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Elenca i vantaggi: crescita musicale, amicizie, aiutare gli altri, divertimento... Usa elenchi puntati!
+        </small>
+      </div>
     </div>
 
-    <!-- Actions -->
-    <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f0f0f0;">
-      <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">
-        💾 Salva Modifiche
+    <!-- ========== INFORMAZIONI PROVE ========== -->
+    <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #4caf50;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📅 Quando e Dove Proviamo?</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="rehearsal_day" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          📆 Giorno delle Prove
+        </label>
+        <input
+          type="text"
+          id="rehearsal_day"
+          name="rehearsal_day"
+          value="<%= joinInfo.rehearsal_day || '' %>"
+          placeholder="Es: Ogni Martedì"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 In quale giorno della settimana provate? (es: "Ogni Martedì", "Martedì e Giovedì")
+        </small>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="rehearsal_time" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🕐 Orario delle Prove
+        </label>
+        <input
+          type="text"
+          id="rehearsal_time"
+          name="rehearsal_time"
+          value="<%= joinInfo.rehearsal_time || '' %>"
+          placeholder="Es: 20:00 - 22:00"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 A che ora iniziano e finiscono le prove? (es: "20:00 - 22:00", "Dalle 20 alle 22")
+        </small>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="rehearsal_location" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          📍 Dove Proviamo
+        </label>
+        <input
+          type="text"
+          id="rehearsal_location"
+          name="rehearsal_location"
+          value="<%= joinInfo.rehearsal_location || '' %>"
+          placeholder="Es: Chiesa di San Francesco, Prati Fiscali - Roma"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Indirizzo completo del luogo delle prove (aiuta le persone a trovarvi!)
+        </small>
+      </div>
+    </div>
+
+    <!-- ========== CONTATTI ========== -->
+    <div style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #e91e63;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📧 Come Contattarvi?</h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+        <div>
+          <label for="contact_email" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            📧 Email
+          </label>
+          <input
+            type="email"
+            id="contact_email"
+            name="contact_email"
+            value="<%= joinInfo.contact_email || '' %>"
+            placeholder="info@cororaro.it"
+            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+          >
+          <small style="display: block; margin-top: 0.5rem; color: #666;">
+            💬 Email a cui scrivere per info
+          </small>
+        </div>
+
+        <div>
+          <label for="contact_phone" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            📱 Telefono
+          </label>
+          <input
+            type="tel"
+            id="contact_phone"
+            name="contact_phone"
+            value="<%= joinInfo.contact_phone || '' %>"
+            placeholder="+39 333 123 4567"
+            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+          >
+          <small style="display: block; margin-top: 0.5rem; color: #666;">
+            💬 Numero di telefono per info
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== CALL TO ACTION ========== -->
+    <div style="background: #fff; padding: 1.5rem; border: 2px solid #2196f3; border-radius: 8px; margin-bottom: 2rem;">
+      <h2 style="margin-top: 0; color: #1976d2; font-size: 1.3rem;">🔘 Bottone Principale</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="cta_text" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🎯 Testo del Pulsante
+        </label>
+        <input
+          type="text"
+          id="cta_text"
+          name="cta_text"
+          value="<%= joinInfo.cta_text || 'Contattaci Ora' %>"
+          placeholder="Es: Contattaci Ora, Unisciti Oggi, Scrivici"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Il testo che appare sul pulsante principale (call-to-action). Deve invitare all'azione!
+        </small>
+      </div>
+    </div>
+
+    <!-- ========== BOTTONE SALVA ========== -->
+    <div style="display: flex; gap: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid #ddd;">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="padding: 1.25rem 3rem; font-size: 1.2rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;"
+      >
+        💾 Salva Tutte le Informazioni
       </button>
     </div>
   </form>
 </div>
 
-<!-- TinyMCE -->
+<!-- Scripts -->
 <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
 <script src="/shared/config/editor-config.js"></script>
 
 <script>
-  // Init TinyMCE
-  if (window.SharedEditor) {
+// ========== INIZIALIZZA TINYMCE ==========
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof tinymce !== 'undefined' && window.SharedEditor) {
+
     // Intro Text
-    window.SharedEditor.init('#intro_text', 'join', {
+    window.SharedEditor.init('#intro_text', 'default', {
       height: 250,
-      toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link',
-      menubar: false
+      menubar: false,
+      language: 'it',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link',
+      content_style: `
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 16px;
+          line-height: 1.6;
+          color: #333;
+          padding: 20px;
+        }
+      `
     });
 
     // Benefits HTML
-    window.SharedEditor.init('#benefits_html', 'join', {
+    window.SharedEditor.init('#benefits_html', 'default', {
       height: 300,
-      toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link',
-      menubar: false
+      menubar: false,
+      language: 'it',
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link',
+      content_style: `
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 16px;
+          line-height: 1.6;
+          color: #333;
+          padding: 20px;
+        }
+      `
     });
   }
+});
 </script>
