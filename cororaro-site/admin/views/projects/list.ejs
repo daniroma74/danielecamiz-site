@@ -1,0 +1,92 @@
+<div class="page-header">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1>🌍 Gestione Progetti Solidarietà</h1>
+      <p><%= projects.length %> progetti totali</p>
+    </div>
+    <a href="/admin/projects/new" class="btn">+ Nuovo Progetto</a>
+  </div>
+</div>
+
+<div class="filters" style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+  <form method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <input type="text" name="search" placeholder="Cerca per titolo, paese, descrizione..." value="<%= filters.search %>" style="flex: 1; min-width: 200px; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+    <select name="status" style="padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <option value="">Tutti gli stati</option>
+      <option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>Attivi</option>
+      <option value="inactive" <%= filters.status === 'inactive' ? 'selected' : '' %>>Non attivi</option>
+      <option value="featured" <%= filters.status === 'featured' ? 'selected' : '' %>>In evidenza</option>
+    </select>
+    <button type="submit" class="btn">Cerca</button>
+    <% if (filters.search || filters.status) { %>
+      <a href="/admin/projects" class="btn btn-secondary">Reset</a>
+    <% } %>
+  </form>
+</div>
+
+<div class="table-container" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Progetto</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Paese</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Anno</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Fondi Raccolti</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Stato</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (projects.length === 0) { %>
+        <tr>
+          <td colspan="6" style="padding: 2rem; text-align: center; color: #999;">
+            Nessun progetto trovato. <a href="/admin/projects/new">Aggiungi il primo progetto</a>
+          </td>
+        </tr>
+      <% } else { %>
+        <% projects.forEach(project => { %>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <% if (project.image_url) { %>
+                  <img src="<%= project.image_url %>" alt="<%= project.title %>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                <% } else if (project.icon) { %>
+                  <span style="font-size: 2rem;"><%= project.icon %></span>
+                <% } %>
+                <div>
+                  <strong><%= project.title %></strong>
+                  <% if (project.is_featured) { %><span style="color: gold;">⭐</span><% } %>
+                  <% if (project.description) { %>
+                    <br><small style="color: #666;"><%= project.description.substring(0, 60) %>...</small>
+                  <% } %>
+                </div>
+              </div>
+            </td>
+            <td style="padding: 1rem;"><%= project.country || 'N/A' %></td>
+            <td style="padding: 1rem;"><%= project.year || 'N/A' %></td>
+            <td style="padding: 1rem;">
+              <% if (project.amount_raised) { %>
+                <strong><%= project.amount_raised %>€</strong>
+              <% } else { %>
+                N/A
+              <% } %>
+            </td>
+            <td style="padding: 1rem;">
+              <span style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; <%= project.is_active ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;' %>">
+                <%= project.is_active ? '✅ Attivo' : '❌ Non attivo' %>
+              </span>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; gap: 0.5rem;">
+                <a href="/admin/projects/<%= project.id %>/edit" class="btn btn-small">Modifica</a>
+                <form method="POST" action="/admin/projects/<%= project.id %>/delete" style="display: inline;" onsubmit="return confirm('Sei sicuro di voler eliminare questo progetto?');">
+                  <button type="submit" class="btn btn-small btn-danger">Elimina</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>

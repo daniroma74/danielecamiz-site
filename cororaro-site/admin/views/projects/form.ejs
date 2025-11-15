@@ -1,0 +1,138 @@
+<div class="page-header">
+  <h1><%= action === 'create' ? '+ Nuovo Progetto Solidarietà' : 'Modifica Progetto' %></h1>
+</div>
+
+<div class="form-container" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 900px;">
+  <form method="POST" action="<%= action === 'create' ? '/admin/projects' : '/admin/projects/' + project.id %>">
+
+    <!-- Icon -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="icon" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Icona Emoji</label>
+      <input type="text" id="icon" name="icon" value="<%= project.icon || '' %>" placeholder="🏥" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+      <small style="color: #666;">Emoji che rappresenta il progetto (es: 🏥, 🏫, 💧)</small>
+    </div>
+
+    <!-- Titolo -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Titolo *</label>
+      <input type="text" id="title" name="title" value="<%= project.title || '' %>" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+      <small style="color: #666;">Es: Ospedale Pediatrico in Kenya</small>
+    </div>
+
+    <!-- Descrizione Breve -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="description" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Descrizione Breve *</label>
+      <textarea id="description" name="description" rows="3" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= project.description || '' %></textarea>
+      <small style="color: #666;">Breve descrizione per lista e card (max 150 caratteri)</small>
+    </div>
+
+    <!-- Descrizione Dettagliata con TinyMCE -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="long_description" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Descrizione Dettagliata</label>
+      <textarea id="long_description" name="long_description"><%= project.long_description || '' %></textarea>
+      <small style="color: #666;">Storia completa del progetto, impatto, risultati raggiunti</small>
+    </div>
+
+    <!-- Paese e Anno -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+      <div class="form-group">
+        <label for="country" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Paese</label>
+        <input type="text" id="country" name="country" value="<%= project.country || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+        <small style="color: #666;">Es: Kenya, Tanzania, Etiopia</small>
+      </div>
+      <div class="form-group">
+        <label for="year" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Anno</label>
+        <input type="number" id="year" name="year" value="<%= project.year || '' %>" min="2000" max="2100" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      </div>
+    </div>
+
+    <!-- Fondi Raccolti -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="amount_raised" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Fondi Raccolti (€)</label>
+      <input type="number" id="amount_raised" name="amount_raised" value="<%= project.amount_raised || '' %>" min="0" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <small style="color: #666;">Importo totale raccolto per questo progetto</small>
+    </div>
+
+    <!-- Immagine -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="image_url" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Immagine del Progetto</label>
+      <div style="display: flex; gap: 1rem; align-items: flex-start;">
+        <input type="text" id="image_url" name="image_url" value="<%= project.image_url || '' %>" placeholder="URL immagine" style="flex: 1; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+        <button type="button" onclick="openImagePicker()" class="btn">📸 Scegli da Cloudinary</button>
+      </div>
+      <% if (project.image_url) { %>
+        <img src="<%= project.image_url %>" alt="Project Image" style="max-width: 400px; margin-top: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      <% } %>
+      <div id="image-preview" style="margin-top: 1rem;"></div>
+    </div>
+
+    <!-- Sort Order -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Ordinamento</label>
+      <input type="number" id="sort_order" name="sort_order" value="<%= project.sort_order || 0 %>" min="0" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <small style="color: #666;">Numero più basso = appare prima (0 = primo)</small>
+    </div>
+
+    <!-- Flags -->
+    <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" name="is_featured" value="1" <%= project.is_featured ? 'checked' : '' %>>
+        <span>⭐ In evidenza</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" name="is_active" value="1" <%= project.is_active ? 'checked' : '' %>>
+        <span>✅ Attivo</span>
+      </label>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+      <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">
+        <%= action === 'create' ? 'Crea Progetto' : 'Salva Modifiche' %>
+      </button>
+      <a href="/admin/projects" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1rem;">Annulla</a>
+    </div>
+  </form>
+</div>
+
+<!-- TinyMCE -->
+<script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+<script src="/shared/config/editor-config.js"></script>
+
+<!-- Cloudinary Widget -->
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+<script src="/shared/js/cloudinary-widget.js"></script>
+
+<script>
+  // Init TinyMCE
+  if (window.SharedEditor) {
+    window.SharedEditor.init('#long_description', 'projects', {
+      getUploadOptions: () => ({
+        preset: 'cororaro_projects',
+        folder: 'cororaro/projects'
+      })
+    });
+  }
+
+  // Cloudinary Image Picker
+  function openImagePicker() {
+    const config = {
+      cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME || "your-cloud-name" %>',
+      uploadPreset: 'cororaro_projects',
+      folder: 'cororaro/projects'
+    };
+
+    if (typeof openCloudinaryPicker !== 'undefined') {
+      openCloudinaryPicker(config, (result) => {
+        document.getElementById('image_url').value = result.url;
+        document.getElementById('image-preview').innerHTML =
+          `<img src="${result.url}" alt="Project Image" style="max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`;
+      }, {
+        multiple: false,
+        cropping: false
+      });
+    } else {
+      alert('Cloudinary widget non disponibile');
+    }
+  }
+</script>

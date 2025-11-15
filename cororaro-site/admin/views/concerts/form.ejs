@@ -1,0 +1,141 @@
+<div class="page-header">
+  <h1><%= action === 'create' ? '+ Nuovo Concerto' : 'Modifica Concerto' %></h1>
+</div>
+
+<div class="form-container" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 900px;">
+  <form method="POST" action="<%= action === 'create' ? '/admin/concerts' : '/admin/concerts/' + concert.id %>">
+
+    <!-- Titolo -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Titolo *</label>
+      <input type="text" id="title" name="title" value="<%= concert.title || '' %>" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+      <small style="color: #666;">Es: Concerto di Natale Solidale</small>
+    </div>
+
+    <!-- Data e Ora -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+      <div class="form-group">
+        <label for="date" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Data *</label>
+        <input type="date" id="date" name="date" value="<%= concert.date || '' %>" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      </div>
+      <div class="form-group">
+        <label for="time" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Orario</label>
+        <input type="time" id="time" name="time" value="<%= concert.time || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      </div>
+    </div>
+
+    <!-- Location e Indirizzo -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="location" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Location *</label>
+      <input type="text" id="location" name="location" value="<%= concert.location || '' %>" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <small style="color: #666;">Es: Chiesa di San Francesco</small>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="address" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Indirizzo completo</label>
+      <input type="text" id="address" name="address" value="<%= concert.address || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <small style="color: #666;">Es: Prati Fiscali, Roma</small>
+    </div>
+
+    <!-- Causa benefica -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="cause" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Causa Benefica</label>
+      <input type="text" id="cause" name="cause" value="<%= concert.cause || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <small style="color: #666;">Es: Ospedale pediatrico in Kenya</small>
+    </div>
+
+    <!-- Programma -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="program" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Programma Musicale</label>
+      <textarea id="program" name="program" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= concert.program || '' %></textarea>
+      <small style="color: #666;">Es: Canti di Natale dal mondo, spirituals, tradizioni europee</small>
+    </div>
+
+    <!-- Descrizione con TinyMCE -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="description" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Descrizione Dettagliata</label>
+      <textarea id="description" name="description"><%= concert.description || '' %></textarea>
+    </div>
+
+    <!-- Poster -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="poster_url" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Locandina (URL)</label>
+      <div style="display: flex; gap: 1rem; align-items: flex-start;">
+        <input type="text" id="poster_url" name="poster_url" value="<%= concert.poster_url || '' %>" placeholder="URL immagine locandina" style="flex: 1; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+        <button type="button" onclick="openPosterPicker()" class="btn">📸 Scegli da Cloudinary</button>
+      </div>
+      <% if (concert.poster_url) { %>
+        <img src="<%= concert.poster_url %>" alt="Poster" style="max-width: 300px; margin-top: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      <% } %>
+      <div id="poster-preview" style="margin-top: 1rem;"></div>
+    </div>
+
+    <!-- Link prenotazioni -->
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label for="ticket_url" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Link Prenotazioni</label>
+      <input type="url" id="ticket_url" name="ticket_url" value="<%= concert.ticket_url || '' %>" placeholder="https://..." style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+    </div>
+
+    <!-- Flags -->
+    <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" name="is_featured" value="1" <%= concert.is_featured ? 'checked' : '' %>>
+        <span>⭐ In evidenza</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" name="is_published" value="1" <%= concert.is_published ? 'checked' : '' %>>
+        <span>✅ Pubblicato</span>
+      </label>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+      <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">
+        <%= action === 'create' ? 'Crea Concerto' : 'Salva Modifiche' %>
+      </button>
+      <a href="/admin/concerts" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1rem;">Annulla</a>
+    </div>
+  </form>
+</div>
+
+<!-- TinyMCE -->
+<script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+<script src="/shared/config/editor-config.js"></script>
+
+<!-- Cloudinary Widget -->
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+<script src="/shared/js/cloudinary-widget.js"></script>
+
+<script>
+  // Init TinyMCE
+  if (window.SharedEditor) {
+    window.SharedEditor.init('#description', 'concerts', {
+      getUploadOptions: () => ({
+        preset: 'cororaro_concerts',
+        folder: 'cororaro/concerts'
+      })
+    });
+  }
+
+  // Cloudinary Poster Picker
+  function openPosterPicker() {
+    const config = {
+      cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME || "your-cloud-name" %>',
+      uploadPreset: 'cororaro_concerts',
+      folder: 'cororaro/concerts'
+    };
+
+    if (typeof openCloudinaryPicker !== 'undefined') {
+      openCloudinaryPicker(config, (result) => {
+        document.getElementById('poster_url').value = result.url;
+        document.getElementById('poster-preview').innerHTML =
+          `<img src="${result.url}" alt="Poster" style="max-width: 300px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`;
+      }, {
+        multiple: false,
+        cropping: false
+      });
+    } else {
+      alert('Cloudinary widget non disponibile');
+    }
+  }
+</script>

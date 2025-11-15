@@ -1,0 +1,156 @@
+<div class="page-header">
+  <h1>⚙️ Impostazioni Sito</h1>
+  <p>Configura i contenuti principali del sito Cororaro</p>
+</div>
+
+<div class="form-container" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 1200px;">
+
+  <!-- Navigation Tabs -->
+  <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; padding-bottom: 1rem;">
+    <a href="/admin/settings" style="padding: 0.75rem 1.5rem; text-decoration: none; color: white; background: var(--terracotta, #8B4513); border-radius: 8px 8px 0 0;">Impostazioni Generali</a>
+    <a href="/admin/settings/values" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Valori del Coro</a>
+    <a href="/admin/settings/join" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Unisciti a Noi</a>
+  </div>
+
+  <form method="POST" action="/admin/settings">
+
+    <!-- Hero Section -->
+    <div class="settings-section" style="margin-bottom: 3rem;">
+      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
+        🎭 Sezione Hero
+      </h2>
+
+      <% settings.hero.forEach(setting => { %>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            <%= setting.setting_key.replace('hero_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+          </label>
+          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('description')) { %>
+            <textarea id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" class="tinymce-field" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= setting.setting_value || '' %></textarea>
+          <% } else { %>
+            <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- About Section -->
+    <div class="settings-section" style="margin-bottom: 3rem;">
+      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
+        ℹ️ Sezione Chi Siamo
+      </h2>
+
+      <% settings.about.forEach(setting => { %>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            <%= setting.setting_key.replace('about_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+          </label>
+          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('description') || setting.setting_key.includes('story')) { %>
+            <textarea id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" class="tinymce-field" rows="6" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= setting.setting_value || '' %></textarea>
+          <% } else { %>
+            <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="settings-section" style="margin-bottom: 3rem;">
+      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
+        🌍 Sezione Progetti
+      </h2>
+
+      <% settings.projects.forEach(setting => { %>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            <%= setting.setting_key.replace('projects_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+          </label>
+          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('description')) { %>
+            <textarea id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" class="tinymce-field" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= setting.setting_value || '' %></textarea>
+          <% } else { %>
+            <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="settings-section" style="margin-bottom: 3rem;">
+      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
+        📧 Sezione Contatti
+      </h2>
+
+      <% settings.contact.forEach(setting => { %>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            <%= setting.setting_key.replace('contact_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+          </label>
+          <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Social Section -->
+    <div class="settings-section" style="margin-bottom: 3rem;">
+      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
+        📱 Social Media
+      </h2>
+
+      <% settings.social.forEach(setting => { %>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            <%= setting.setting_key.replace('social_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+          </label>
+          <input type="url" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" placeholder="https://..." style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="settings-section" style="margin-bottom: 3rem;">
+      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
+        🦶 Footer
+      </h2>
+
+      <% settings.footer.forEach(setting => { %>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            <%= setting.setting_key.replace('footer_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+          </label>
+          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('copyright')) { %>
+            <textarea id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= setting.setting_value || '' %></textarea>
+          <% } else { %>
+            <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f0f0f0;">
+      <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">
+        💾 Salva Tutte le Impostazioni
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- TinyMCE -->
+<script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+<script src="/shared/config/editor-config.js"></script>
+
+<script>
+  // Init TinyMCE for all HTML fields
+  if (window.SharedEditor) {
+    document.querySelectorAll('.tinymce-field').forEach(field => {
+      const isSimple = field.rows <= 4;
+      window.SharedEditor.init(`#${field.id}`, 'settings', {
+        height: isSimple ? 200 : 300,
+        toolbar: isSimple ?
+          'undo redo | bold italic | link' :
+          'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link',
+        menubar: false
+      });
+    });
+  }
+</script>

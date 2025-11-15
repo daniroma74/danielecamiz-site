@@ -85,23 +85,52 @@
 
 <div class="stats-grid">
   <div class="stat-card">
-    <h3>Paesi</h3>
+    <h3>🌍 Paesi</h3>
     <div class="stat-value"><%= stats.countries || 0 %></div>
+    <a href="/admin/countries" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
   </div>
 
   <div class="stat-card">
-    <h3>Brani Attivi</h3>
+    <h3>🎵 Brani Attivi</h3>
     <div class="stat-value"><%= stats.activeSongs || 0 %></div>
+    <a href="/admin/repertoire" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
   </div>
 
   <div class="stat-card">
-    <h3>Brani Inattivi</h3>
-    <div class="stat-value"><%= stats.inactiveSongs || 0 %></div>
+    <h3>🎤 Concerti</h3>
+    <div class="stat-value"><%= stats.concerts || 0 %></div>
+    <a href="/admin/concerts" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
   </div>
 
   <div class="stat-card">
-    <h3>Totale Brani</h3>
-    <div class="stat-value"><%= (stats.activeSongs || 0) + (stats.inactiveSongs || 0) %></div>
+    <h3>💚 Progetti</h3>
+    <div class="stat-value"><%= stats.projects || 0 %></div>
+    <a href="/admin/projects" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+  </div>
+
+  <div class="stat-card">
+    <h3>👥 Membri Team</h3>
+    <div class="stat-value"><%= stats.teamMembers || 0 %></div>
+    <a href="/admin/team" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+  </div>
+
+  <div class="stat-card">
+    <h3>📸 Immagini</h3>
+    <div class="stat-value"><%= stats.galleryImages || 0 %></div>
+    <a href="/admin/gallery-images" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div style="margin: 2rem 0;">
+  <h2 style="margin-bottom: 1rem;">⚡ Azioni Rapide</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+    <a href="/admin/settings" class="btn" style="padding: 1rem; text-align: center;">⚙️ Impostazioni Sito</a>
+    <a href="/admin/concerts/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuovo Concerto</a>
+    <a href="/admin/projects/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuovo Progetto</a>
+    <a href="/admin/team/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuovo Membro</a>
+    <a href="/admin/gallery-images/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuova Foto</a>
+    <a href="/admin/repertoire/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuovo Brano</a>
   </div>
 </div>
 

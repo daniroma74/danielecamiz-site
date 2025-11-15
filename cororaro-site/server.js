@@ -80,6 +80,12 @@ const countriesApiRoutes = require('./admin/routes/countries-api')();
 const uploadRoutes = require('./admin/routes/upload')();
 const cloudinaryApiRoutes = require('./admin/routes/cloudinary-api')();
 const galleryRoutes = require('./admin/routes/gallery')(db);
+// New content management routes
+const concertsRoutes = require('./admin/routes/concerts')(db);
+const projectsRoutes = require('./admin/routes/projects')(db);
+const teamRoutes = require('./admin/routes/team')(db);
+const settingsRoutes = require('./admin/routes/settings')(db);
+const galleryImagesRoutes = require('./admin/routes/gallery-images')(db);
 
 app.use('/admin', authRoutes);
 app.use('/admin', dashboardRoutes);
@@ -89,6 +95,11 @@ app.use('/admin', countriesApiRoutes);
 app.use('/admin', uploadRoutes);
 app.use('/admin', cloudinaryApiRoutes);
 app.use('/admin', galleryRoutes);
+app.use('/admin', concertsRoutes);
+app.use('/admin', projectsRoutes);
+app.use('/admin', teamRoutes);
+app.use('/admin', settingsRoutes);
+app.use('/admin', galleryImagesRoutes);
 
 // Admin root redirect
 app.get('/admin', (req, res) => {
@@ -341,6 +352,187 @@ app.get('*', (req, res, next) => {
     return next();
   }
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+/**
+ * GET /api/concerts
+ * Get all published future concerts
+ */
+app.get('/api/concerts', (req, res) => {
+  const query = `
+    SELECT * FROM concerts
+    WHERE is_published = 1
+    ORDER BY date ASC
+  `;
+
+  db.all(query, [], (err, concerts) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({ success: false, message: 'Errore database' });
+    }
+
+    res.json({
+      success: true,
+      data: concerts,
+      count: concerts.length
+    });
+  });
+});
+
+/**
+ * GET /api/projects
+ * Get all active solidarity projects
+ */
+app.get('/api/projects', (req, res) => {
+  const query = `
+    SELECT * FROM solidarity_projects
+    WHERE is_active = 1
+    ORDER BY sort_order ASC, title ASC
+  `;
+
+  db.all(query, [], (err, projects) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({ success: false, message: 'Errore database' });
+    }
+
+    res.json({
+      success: true,
+      data: projects,
+      count: projects.length
+    });
+  });
+});
+
+/**
+ * GET /api/team
+ * Get all active team members
+ */
+app.get('/api/team', (req, res) => {
+  const query = `
+    SELECT * FROM team_members
+    WHERE is_active = 1
+    ORDER BY sort_order ASC, full_name ASC
+  `;
+
+  db.all(query, [], (err, members) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({ success: false, message: 'Errore database' });
+    }
+
+    // Group by role
+    const grouped = {
+      directors: members.filter(m => m.role === 'director' || m.role === 'co-director'),
+      choristers: members.filter(m => m.role === 'chorister'),
+      staff: members.filter(m => m.role === 'staff')
+    };
+
+    res.json({
+      success: true,
+      data: grouped,
+      total: members.length
+    });
+  });
+});
+
+/**
+ * GET /api/settings
+ * Get all site settings
+ */
+app.get('/api/settings', (req, res) => {
+  db.all('SELECT * FROM site_settings', [], (err, settings) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({ success: false, message: 'Errore database' });
+    }
+
+    // Convert to object
+    const settingsObj = {};
+    settings.forEach(s => {
+      settingsObj[s.setting_key] = s.setting_value;
+    });
+
+    res.json({
+      success: true,
+      data: settingsObj
+    });
+  });
+});
+
+/**
+ * GET /api/values
+ * Get core values
+ */
+app.get('/api/values', (req, res) => {
+  const query = `
+    SELECT * FROM core_values
+    WHERE is_active = 1
+    ORDER BY sort_order ASC
+  `;
+
+  db.all(query, [], (err, values) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({ success: false, message: 'Errore database' });
+    }
+
+    res.json({
+      success: true,
+      data: values
+    });
+  });
+});
+
+/**
+ * GET /api/gallery
+ * Get published gallery images
+ */
+app.get('/api/gallery', (req, res) => {
+  const category = req.query.category;
+  let query = `
+    SELECT * FROM gallery_images
+    WHERE is_published = 1
+  `;
+  const params = [];
+
+  if (category) {
+    query += ' AND category = ?';
+    params.push(category);
+  }
+
+  query += ' ORDER BY sort_order ASC, created_at DESC';
+
+  db.all(query, params, (err, images) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({ success: false, message: 'Errore database' });
+    }
+
+    res.json({
+      success: true,
+      data: images,
+      count: images.length
+    });
+  });
+});
+
+/**
+ * GET /api/join-info
+ * Get "Unisciti a Noi" section info
+ */
+app.get('/api/join-info', (req, res) => {
+  db.get('SELECT * FROM join_info WHERE id = 1', [], (err, info) => {
+    if (err) {
+      console.error('❌ Database error:', err.message);
+      return res.status(500).json({ success: false, message: 'Errore database' });
+    }
+
+    res.json({
+      success: true,
+      data: info || {}
+    });
+  });
 });
 
 // ============================================

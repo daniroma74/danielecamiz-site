@@ -1,0 +1,106 @@
+<div class="page-header">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1>👥 Gestione Team</h1>
+      <p><%= members.length %> membri totali</p>
+    </div>
+    <a href="/admin/team/new" class="btn">+ Nuovo Membro</a>
+  </div>
+</div>
+
+<div class="filters" style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+  <form method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <input type="text" name="search" placeholder="Cerca per nome, bio, email..." value="<%= filters.search %>" style="flex: 1; min-width: 200px; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+    <select name="role" style="padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <option value="">Tutti i ruoli</option>
+      <option value="director" <%= filters.role === 'director' ? 'selected' : '' %>>Direttore</option>
+      <option value="co-director" <%= filters.role === 'co-director' ? 'selected' : '' %>>Vice Direttore</option>
+      <option value="chorister" <%= filters.role === 'chorister' ? 'selected' : '' %>>Corista</option>
+      <option value="staff" <%= filters.role === 'staff' ? 'selected' : '' %>>Staff</option>
+    </select>
+    <button type="submit" class="btn">Cerca</button>
+    <% if (filters.search || filters.role) { %>
+      <a href="/admin/team" class="btn btn-secondary">Reset</a>
+    <% } %>
+  </form>
+</div>
+
+<div class="table-container" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Membro</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Ruolo</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Contatti</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Stato</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (members.length === 0) { %>
+        <tr>
+          <td colspan="5" style="padding: 2rem; text-align: center; color: #999;">
+            Nessun membro trovato. <a href="/admin/team/new">Aggiungi il primo membro</a>
+          </td>
+        </tr>
+      <% } else { %>
+        <% members.forEach(member => { %>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <% if (member.photo_url) { %>
+                  <img src="<%= member.photo_url %>" alt="<%= member.full_name %>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                <% } else { %>
+                  <div style="width: 50px; height: 50px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    👤
+                  </div>
+                <% } %>
+                <div>
+                  <strong><%= member.full_name %></strong>
+                  <% if (member.bio) { %>
+                    <br><small style="color: #666;"><%= member.bio.substring(0, 50).replace(/<[^>]*>/g, '') %>...</small>
+                  <% } %>
+                </div>
+              </div>
+            </td>
+            <td style="padding: 1rem;">
+              <%
+                let roleIcon = '🎤';
+                let roleLabel = member.role;
+                if (member.role === 'director') { roleIcon = '🎭'; roleLabel = 'Direttore'; }
+                else if (member.role === 'co-director') { roleIcon = '🎼'; roleLabel = 'Vice Direttore'; }
+                else if (member.role === 'chorister') { roleIcon = '🎤'; roleLabel = 'Corista'; }
+                else if (member.role === 'staff') { roleIcon = '⚙️'; roleLabel = 'Staff'; }
+              %>
+              <span><%= roleIcon %> <%= roleLabel %></span>
+            </td>
+            <td style="padding: 1rem;">
+              <% if (member.email) { %>
+                <div><small>📧 <%= member.email %></small></div>
+              <% } %>
+              <% if (member.phone) { %>
+                <div><small>📱 <%= member.phone %></small></div>
+              <% } %>
+              <% if (!member.email && !member.phone) { %>
+                <small style="color: #999;">N/A</small>
+              <% } %>
+            </td>
+            <td style="padding: 1rem;">
+              <span style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; <%= member.is_active ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;' %>">
+                <%= member.is_active ? '✅ Attivo' : '❌ Non attivo' %>
+              </span>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; gap: 0.5rem;">
+                <a href="/admin/team/<%= member.id %>/edit" class="btn btn-small">Modifica</a>
+                <form method="POST" action="/admin/team/<%= member.id %>/delete" style="display: inline;" onsubmit="return confirm('Sei sicuro di voler eliminare questo membro?');">
+                  <button type="submit" class="btn btn-small btn-danger">Elimina</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>

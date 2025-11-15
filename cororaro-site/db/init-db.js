@@ -11,6 +11,7 @@ const path = require('path');
 const DB_PATH = path.join(__dirname, 'cororaro.db');
 const SQL_REPERTOIRE = path.join(__dirname, 'init-repertoire.sql');
 const SQL_ADMIN = path.join(__dirname, 'migrations', '002_create_admin_users.sql');
+const SQL_CONTENT = path.join(__dirname, 'migrations', '003_create_content_tables.sql');
 
 console.log('🎵 Coro Raro - Database Initialization\n');
 
@@ -25,8 +26,14 @@ if (!fs.existsSync(SQL_ADMIN)) {
   process.exit(1);
 }
 
+if (!fs.existsSync(SQL_CONTENT)) {
+  console.error(`❌ SQL file not found: ${SQL_CONTENT}`);
+  process.exit(1);
+}
+
 const sqlRepertoire = fs.readFileSync(SQL_REPERTOIRE, 'utf8');
 const sqlAdmin = fs.readFileSync(SQL_ADMIN, 'utf8');
+const sqlContent = fs.readFileSync(SQL_CONTENT, 'utf8');
 
 // Create database
 const db = new sqlite3.Database(DB_PATH, (err) => {
@@ -57,8 +64,18 @@ db.exec(sqlRepertoire, (err) => {
 
     console.log('✅ Admin tables created');
 
-    // Verify data
-    db.get('SELECT COUNT(*) as count FROM countries', (err, row) => {
+    // Execute Content SQL
+    db.exec(sqlContent, (err) => {
+      if (err) {
+        console.error('❌ Error executing content SQL:', err.message);
+        db.close();
+        process.exit(1);
+      }
+
+      console.log('✅ Content tables created');
+
+      // Verify data
+      db.get('SELECT COUNT(*) as count FROM countries', (err, row) => {
       if (err) {
         console.error('❌ Error counting countries:', err.message);
       } else {
@@ -81,17 +98,18 @@ db.exec(sqlRepertoire, (err) => {
         console.log(`✅ Admin users created: ${row.count}`);
       }
 
-      // Close database
-      db.close((err) => {
-        if (err) {
-          console.error('❌ Error closing database:', err.message);
-        } else {
-          console.log('\n✅ Database initialization complete!');
-          console.log(`📁 Database location: ${DB_PATH}`);
-          console.log('\n🔐 Default admin credentials:');
-          console.log('   Username: admin');
-          console.log('   Password: admin123\n');
-        }
+        // Close database
+        db.close((err) => {
+          if (err) {
+            console.error('❌ Error closing database:', err.message);
+          } else {
+            console.log('\n✅ Database initialization complete!');
+            console.log(`📁 Database location: ${DB_PATH}`);
+            console.log('\n🔐 Default admin credentials:');
+            console.log('   Username: admin');
+            console.log('   Password: admin123\n');
+          }
+        });
       });
     });
   });

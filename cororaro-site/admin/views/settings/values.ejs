@@ -1,0 +1,107 @@
+<div class="page-header">
+  <h1>⚙️ Valori del Coro</h1>
+  <p>Gestisci i valori fondamentali di Cororaro</p>
+</div>
+
+<!-- Navigation Tabs -->
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; padding-bottom: 0;">
+  <a href="/admin/settings" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Impostazioni Generali</a>
+  <a href="/admin/settings/values" style="padding: 0.75rem 1.5rem; text-decoration: none; color: white; background: var(--terracotta, #8B4513); border-radius: 8px 8px 0 0;">Valori del Coro</a>
+  <a href="/admin/settings/join" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Unisciti a Noi</a>
+</div>
+
+<!-- Add New Value Form -->
+<div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+  <h3 style="margin-bottom: 1.5rem;">➕ Aggiungi Nuovo Valore</h3>
+  <form method="POST" action="/admin/settings/values" style="display: grid; grid-template-columns: 100px 1fr 2fr 100px auto; gap: 1rem; align-items: end;">
+    <div>
+      <label for="new_icon" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Icona</label>
+      <input type="text" id="new_icon" name="icon" placeholder="❤️" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 1.5rem;">
+    </div>
+    <div>
+      <label for="new_title" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Titolo</label>
+      <input type="text" id="new_title" name="title" placeholder="Passione" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+    </div>
+    <div>
+      <label for="new_description" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Descrizione</label>
+      <input type="text" id="new_description" name="description" placeholder="Cantare con il cuore..." required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+    </div>
+    <div>
+      <label for="new_sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Ordine</label>
+      <input type="number" id="new_sort_order" name="sort_order" value="0" min="0" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Aggiungi</button>
+    </div>
+  </form>
+</div>
+
+<!-- Existing Values List -->
+<div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left; width: 80px;">Icona</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Titolo</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Descrizione</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left; width: 100px;">Ordine</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left; width: 100px;">Stato</th>
+        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left; width: 200px;">Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (values.length === 0) { %>
+        <tr>
+          <td colspan="6" style="padding: 2rem; text-align: center; color: #999;">
+            Nessun valore configurato. Aggiungi il primo valore usando il form sopra.
+          </td>
+        </tr>
+      <% } else { %>
+        <% values.forEach(value => { %>
+          <tr style="border-bottom: 1px solid #f0f0f0;" id="value-row-<%= value.id %>">
+            <td style="padding: 1rem;">
+              <form method="POST" action="/admin/settings/values/<%= value.id %>" class="inline-edit-form">
+                <input type="text" name="icon" value="<%= value.icon || '' %>" style="width: 60px; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px; text-align: center; font-size: 1.5rem;">
+            </td>
+            <td style="padding: 1rem;">
+                <input type="text" name="title" value="<%= value.title || '' %>" required style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px;">
+            </td>
+            <td style="padding: 1rem;">
+                <input type="text" name="description" value="<%= value.description || '' %>" required style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px;">
+            </td>
+            <td style="padding: 1rem;">
+                <input type="number" name="sort_order" value="<%= value.sort_order || 0 %>" min="0" style="width: 80px; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px;">
+            </td>
+            <td style="padding: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                  <input type="checkbox" name="is_active" value="1" <%= value.is_active ? 'checked' : '' %>>
+                  <span style="font-size: 0.85rem;">Attivo</span>
+                </label>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="btn btn-small">Salva</button>
+              </form>
+                <form method="POST" action="/admin/settings/values/<%= value.id %>/delete" style="display: inline;" onsubmit="return confirm('Sei sicuro di voler eliminare questo valore?');">
+                  <button type="submit" class="btn btn-small btn-danger">Elimina</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .inline-edit-form input[type="text"],
+  .inline-edit-form input[type="number"] {
+    transition: border-color 0.2s;
+  }
+  .inline-edit-form input[type="text"]:focus,
+  .inline-edit-form input[type="number"]:focus {
+    outline: none;
+    border-color: var(--terracotta, #8B4513);
+  }
+</style>
