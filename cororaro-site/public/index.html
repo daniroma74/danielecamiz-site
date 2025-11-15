@@ -65,28 +65,28 @@
     <div class="hero-content">
       <div class="hero-text">
         <div class="hero-logo-wrapper">
-          <img src="assets/images/cororaro_logo-completo.png" alt="Coro Raro - Musica dal mondo" class="hero-logo">
+          <img id="hero-logo" src="assets/images/cororaro_logo-completo.png" alt="Coro Raro - Musica dal mondo" class="hero-logo">
         </div>
-        <p class="hero-claim">
+        <p class="hero-claim" id="hero-claim">
           20 anni di musica, solidarietà e cultura a Prati Fiscali, Roma
         </p>
         <div class="hero-stats">
           <div class="stat-item">
-            <span class="stat-number">20</span>
+            <span class="stat-number" id="hero-stat-years">20</span>
             <span class="stat-label">Anni</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">5</span>
+            <span class="stat-number" id="hero-stat-continents">5</span>
             <span class="stat-label">Continenti</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">∞</span>
+            <span class="stat-number" id="hero-stat-emotions">∞</span>
             <span class="stat-label">Emozioni</span>
           </div>
         </div>
         <div class="hero-cta">
-          <a href="#concerti" class="btn btn-primary">Prossimi Concerti</a>
-          <a href="#unisciti" class="btn btn-outline">Canta con Noi</a>
+          <a href="#concerti" class="btn btn-primary" id="hero-cta-concerts">Prossimi Concerti</a>
+          <a href="#unisciti" class="btn btn-outline" id="hero-cta-join">Canta con Noi</a>
         </div>
       </div>
     </div>
@@ -96,29 +96,15 @@
   <section class="section about-section" id="chi-siamo">
     <div class="container">
       <div class="section-header">
-        <span class="section-label">La Nostra Storia</span>
-        <h2 class="section-title">Chi Siamo</h2>
+        <span class="section-label" id="about-label">La Nostra Storia</span>
+        <h2 class="section-title" id="about-title">Chi Siamo</h2>
       </div>
 
       <div class="about-content">
         <div class="about-text">
-          <p class="about-lead">
-            Il <strong>Coro Raro</strong> è un coro polifonico nato circa 20 anni fa nel quartiere
-            <strong>Prati Fiscali</strong> di Roma, con la missione di unire l'amore per la musica
-            alla solidarietà verso chi ha bisogno.
-          </p>
-
-          <p>
-            Non siamo professionisti, ma coristi appassionati di tutte le età che condividono
-            la gioia di cantare insieme. La nostra età media è avanzata, ma il nostro spirito
-            è giovane e il nostro cuore grande.
-          </p>
-
-          <p>
-            Guidati dai nostri direttori, esploriamo un <strong>repertorio unico</strong> fatto di
-            musiche dal mondo: canti africani, asiatici, europei, folkloristici e tradizionali
-            in decine di lingue diverse. Ogni brano è un viaggio, ogni concerto un'esperienza.
-          </p>
+          <div id="about-lead"></div>
+          <div id="about-text-1"></div>
+          <div id="about-text-2"></div>
 
           <div class="directors-box">
             <h3>I Nostri Maestri</h3>
@@ -129,10 +115,10 @@
         </div>
 
         <div class="about-image">
-          <img src="assets/images/coro-gruppo.png" alt="Il Coro Raro" loading="lazy">
+          <img id="about-image" src="assets/images/coro-gruppo.png" alt="Il Coro Raro" loading="lazy">
           <div class="about-badge">
-            <span>Dal 2005</span>
-            <span>Prati Fiscali</span>
+            <span id="about-badge-year">Dal 2005</span>
+            <span id="about-badge-location">Prati Fiscali</span>
           </div>
         </div>
       </div>
@@ -256,23 +242,15 @@
   <section class="section projects-section" id="progetti">
     <div class="container">
       <div class="section-header">
-        <span class="section-label">La Nostra Missione</span>
-        <h2 class="section-title">Progetti di Solidarietà</h2>
-        <p class="section-subtitle">
+        <span class="section-label" id="projects-label">La Nostra Missione</span>
+        <h2 class="section-title" id="projects-title">Progetti di Solidarietà</h2>
+        <p class="section-subtitle" id="projects-subtitle">
           Cantiamo per aiutare comunità in difficoltà in tutto il mondo
         </p>
       </div>
 
-      <div class="projects-intro">
-        <p class="projects-lead">
-          Ogni nostro concerto ha uno <strong>scopo benefico</strong>. I fondi raccolti
-          vengono destinati a progetti concreti: medicinali, cure mediche, sostegno
-          ad economie locali, istruzione, e molto altro.
-        </p>
-        <p>
-          In 20 anni abbiamo portato il nostro piccolo contributo in molte parti del mondo,
-          sempre con l'obiettivo di fare la differenza nella vita di chi ha più bisogno.
-        </p>
+      <div class="projects-intro" id="projects-intro">
+        <!-- Intro caricata dinamicamente da API -->
       </div>
 
       <div class="projects-grid" id="progetti-container">
@@ -287,15 +265,15 @@
           </p>
           <div class="impact-stats">
             <div class="impact-stat">
-              <span class="impact-number">€50k+</span>
+              <span class="impact-number" id="projects-stat-funds">€50k+</span>
               <span class="impact-label">Raccolti</span>
             </div>
             <div class="impact-stat">
-              <span class="impact-number">20+</span>
+              <span class="impact-number" id="projects-stat-projects">20+</span>
               <span class="impact-label">Progetti</span>
             </div>
             <div class="impact-stat">
-              <span class="impact-number">15+</span>
+              <span class="impact-number" id="projects-stat-countries">15+</span>
               <span class="impact-label">Paesi</span>
             </div>
           </div>

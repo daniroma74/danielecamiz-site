@@ -601,6 +601,48 @@ class Accessibility {
 // ============================================
 
 class ContentLoader {
+  static async loadSettings() {
+    try {
+      const response = await fetch('/api/settings');
+      const result = await response.json();
+
+      if (!result.success || !result.data) return;
+
+      const s = result.data;
+
+      // Hero section
+      if (s.hero_logo) document.getElementById('hero-logo').src = s.hero_logo;
+      if (s.hero_claim) document.getElementById('hero-claim').textContent = s.hero_claim;
+      if (s.hero_stat_years) document.getElementById('hero-stat-years').textContent = s.hero_stat_years;
+      if (s.hero_stat_continents) document.getElementById('hero-stat-continents').textContent = s.hero_stat_continents;
+      if (s.hero_stat_emotions) document.getElementById('hero-stat-emotions').textContent = s.hero_stat_emotions;
+      if (s.hero_cta_concerts) document.getElementById('hero-cta-concerts').textContent = s.hero_cta_concerts;
+      if (s.hero_cta_join) document.getElementById('hero-cta-join').textContent = s.hero_cta_join;
+
+      // About section
+      if (s.about_label) document.getElementById('about-label').textContent = s.about_label;
+      if (s.about_title) document.getElementById('about-title').textContent = s.about_title;
+      if (s.about_lead) document.getElementById('about-lead').innerHTML = s.about_lead;
+      if (s.about_text_1) document.getElementById('about-text-1').innerHTML = s.about_text_1;
+      if (s.about_text_2) document.getElementById('about-text-2').innerHTML = s.about_text_2;
+      if (s.about_image) document.getElementById('about-image').src = s.about_image;
+      if (s.about_badge_year) document.getElementById('about-badge-year').textContent = s.about_badge_year;
+      if (s.about_badge_location) document.getElementById('about-badge-location').textContent = s.about_badge_location;
+
+      // Projects section
+      if (s.projects_label) document.getElementById('projects-label').textContent = s.projects_label;
+      if (s.projects_title) document.getElementById('projects-title').textContent = s.projects_title;
+      if (s.projects_subtitle) document.getElementById('projects-subtitle').textContent = s.projects_subtitle;
+      if (s.projects_intro) document.getElementById('projects-intro').innerHTML = s.projects_intro;
+      if (s.projects_stat_funds) document.getElementById('projects-stat-funds').textContent = s.projects_stat_funds;
+      if (s.projects_stat_projects) document.getElementById('projects-stat-projects').textContent = s.projects_stat_projects;
+      if (s.projects_stat_countries) document.getElementById('projects-stat-countries').textContent = s.projects_stat_countries;
+
+    } catch (error) {
+      console.error('Errore caricamento settings:', error);
+    }
+  }
+
   static async loadMaestri() {
     try {
       const response = await fetch('/api/maestri');
@@ -769,6 +811,9 @@ class ContentLoader {
   }
 
   static async loadAll() {
+    // Carica prima i settings, poi tutto il resto in parallelo
+    await this.loadSettings();
+
     await Promise.all([
       this.loadMaestri(),
       this.loadValori(),
