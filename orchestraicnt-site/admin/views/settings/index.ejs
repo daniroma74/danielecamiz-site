@@ -1,0 +1,809 @@
+<%- include('../partials/header') %>
+
+<div class="admin-container">
+  <div class="section-header">
+    <h2>Impostazioni Sito</h2>
+    <p>Modifica tutti i contenuti del sito Orchestra ICNT</p>
+  </div>
+
+  <!-- Alert messages -->
+  <div id="alert" class="alert"></div>
+
+  <form id="settings-form">
+    <!-- HERO SECTION -->
+    <div class="card">
+      <div class="card-header">
+        <h3>🎯 Hero Section (Intestazione)</h3>
+      </div>
+
+      <div class="form-group">
+        <label for="hero_background">
+          🖼️ Immagine di Sfondo
+          <span class="hint">L'immagine principale visualizzata in alto nella homepage</span>
+        </label>
+        <div class="image-upload-container">
+          <input
+            type="text"
+            id="hero_background"
+            name="hero_background"
+            value="<%= sections.hero.find(s => s.setting_key === 'hero_background')?.setting_value || '' %>"
+            class="form-control"
+            readonly
+            placeholder="Nessuna immagine caricata"
+          >
+          <button type="button" class="btn btn-primary cloudinary-upload-btn" data-target="hero_background">
+            📷 Carica Immagine
+          </button>
+        </div>
+        <% if (sections.hero.find(s => s.setting_key === 'hero_background')?.setting_value) { %>
+          <img src="<%= sections.hero.find(s => s.setting_key === 'hero_background').setting_value %>"
+               alt="Preview" class="image-preview" id="hero_background_preview">
+        <% } %>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="hero_title">
+            📌 Titolo Principale
+            <span class="hint">Es: "Orchestra ICNT"</span>
+          </label>
+          <input
+            type="text"
+            id="hero_title"
+            name="hero_title"
+            value="<%= sections.hero.find(s => s.setting_key === 'hero_title')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="hero_subtitle">
+            📄 Sottotitolo
+            <span class="hint">Es: "Musica Sinfonica a Roma"</span>
+          </label>
+          <input
+            type="text"
+            id="hero_subtitle"
+            name="hero_subtitle"
+            value="<%= sections.hero.find(s => s.setting_key === 'hero_subtitle')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="hero_claim">
+          💬 Frase Claim
+          <span class="hint">La frase principale che descrive l'orchestra</span>
+        </label>
+        <textarea
+          id="hero_claim"
+          name="hero_claim"
+          class="form-control"
+        ><%= sections.hero.find(s => s.setting_key === 'hero_claim')?.setting_value || '' %></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="hero_cta_primary_text">
+            🎯 Testo Pulsante Primario
+            <span class="hint">Es: "Prossimi Concerti"</span>
+          </label>
+          <input
+            type="text"
+            id="hero_cta_primary_text"
+            name="hero_cta_primary_text"
+            value="<%= sections.hero.find(s => s.setting_key === 'hero_cta_primary_text')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="hero_cta_secondary_text">
+            🔗 Testo Pulsante Secondario
+            <span class="hint">Es: "Scopri di più"</span>
+          </label>
+          <input
+            type="text"
+            id="hero_cta_secondary_text"
+            name="hero_cta_secondary_text"
+            value="<%= sections.hero.find(s => s.setting_key === 'hero_cta_secondary_text')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- CHI SIAMO SECTION -->
+    <div class="card">
+      <div class="card-header">
+        <h3>👥 Chi Siamo</h3>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="about_label">
+            🏷️ Etichetta Sezione
+            <span class="hint">Es: "La nostra storia"</span>
+          </label>
+          <input
+            type="text"
+            id="about_label"
+            name="about_label"
+            value="<%= sections.about.find(s => s.setting_key === 'about_label')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="about_title">
+            📌 Titolo Sezione
+            <span class="hint">Es: "Chi Siamo"</span>
+          </label>
+          <input
+            type="text"
+            id="about_title"
+            name="about_title"
+            value="<%= sections.about.find(s => s.setting_key === 'about_title')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="about_image">
+          🖼️ Foto del Gruppo
+          <span class="hint">Immagine dell'orchestra</span>
+        </label>
+        <div class="image-upload-container">
+          <input
+            type="text"
+            id="about_image"
+            name="about_image"
+            value="<%= sections.about.find(s => s.setting_key === 'about_image')?.setting_value || '' %>"
+            class="form-control"
+            readonly
+            placeholder="Nessuna immagine caricata"
+          >
+          <button type="button" class="btn btn-primary cloudinary-upload-btn" data-target="about_image">
+            📷 Carica Immagine
+          </button>
+        </div>
+        <% if (sections.about.find(s => s.setting_key === 'about_image')?.setting_value) { %>
+          <img src="<%= sections.about.find(s => s.setting_key === 'about_image').setting_value %>"
+               alt="Preview" class="image-preview" id="about_image_preview">
+        <% } %>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="about_badge_number">
+            🔢 Badge Numero
+            <span class="hint">Es: "50+"</span>
+          </label>
+          <input
+            type="text"
+            id="about_badge_number"
+            name="about_badge_number"
+            value="<%= sections.about.find(s => s.setting_key === 'about_badge_number')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="about_badge_label">
+            🏷️ Badge Etichetta
+            <span class="hint">Es: "Musicisti"</span>
+          </label>
+          <input
+            type="text"
+            id="about_badge_label"
+            name="about_badge_label"
+            value="<%= sections.about.find(s => s.setting_key === 'about_badge_label')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="about_intro">
+          📝 Testo Introduttivo
+          <span class="hint">Il primo paragrafo della sezione Chi Siamo (con formattazione)</span>
+        </label>
+        <textarea
+          id="about_intro"
+          name="about_intro"
+          class="form-control tinymce-editor"
+        ><%= sections.about.find(s => s.setting_key === 'about_intro')?.setting_value || '' %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="about_description">
+          📖 Descrizione Completa
+          <span class="hint">Il secondo paragrafo con descrizione dettagliata (con formattazione)</span>
+        </label>
+        <textarea
+          id="about_description"
+          name="about_description"
+          class="form-control tinymce-editor"
+        ><%= sections.about.find(s => s.setting_key === 'about_description')?.setting_value || '' %></textarea>
+      </div>
+
+      <!-- Features -->
+      <h4 style="margin: 2rem 0 1rem; font-size: 1rem; font-weight: 600; color: var(--gray-700);">
+        ⭐ Caratteristiche (3 box sotto la descrizione)
+      </h4>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="about_feature_1_icon">
+            Feature 1 - Icona
+            <span class="hint">Emoji, es: 🎵</span>
+          </label>
+          <input
+            type="text"
+            id="about_feature_1_icon"
+            name="about_feature_1_icon"
+            value="<%= sections.about.find(s => s.setting_key === 'about_feature_1_icon')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="about_feature_1_title">
+            Feature 1 - Titolo
+            <span class="hint">Es: "Repertorio Classico"</span>
+          </label>
+          <input
+            type="text"
+            id="about_feature_1_title"
+            name="about_feature_1_title"
+            value="<%= sections.about.find(s => s.setting_key === 'about_feature_1_title')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="about_feature_1_text">
+          Feature 1 - Testo
+        </label>
+        <textarea
+          id="about_feature_1_text"
+          name="about_feature_1_text"
+          class="form-control"
+        ><%= sections.about.find(s => s.setting_key === 'about_feature_1_text')?.setting_value || '' %></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="about_feature_2_icon">
+            Feature 2 - Icona
+          </label>
+          <input
+            type="text"
+            id="about_feature_2_icon"
+            name="about_feature_2_icon"
+            value="<%= sections.about.find(s => s.setting_key === 'about_feature_2_icon')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="about_feature_2_title">
+            Feature 2 - Titolo
+          </label>
+          <input
+            type="text"
+            id="about_feature_2_title"
+            name="about_feature_2_title"
+            value="<%= sections.about.find(s => s.setting_key === 'about_feature_2_title')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="about_feature_2_text">
+          Feature 2 - Testo
+        </label>
+        <textarea
+          id="about_feature_2_text"
+          name="about_feature_2_text"
+          class="form-control"
+        ><%= sections.about.find(s => s.setting_key === 'about_feature_2_text')?.setting_value || '' %></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="about_feature_3_icon">
+            Feature 3 - Icona
+          </label>
+          <input
+            type="text"
+            id="about_feature_3_icon"
+            name="about_feature_3_icon"
+            value="<%= sections.about.find(s => s.setting_key === 'about_feature_3_icon')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="about_feature_3_title">
+            Feature 3 - Titolo
+          </label>
+          <input
+            type="text"
+            id="about_feature_3_title"
+            name="about_feature_3_title"
+            value="<%= sections.about.find(s => s.setting_key === 'about_feature_3_title')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="about_feature_3_text">
+          Feature 3 - Testo
+        </label>
+        <textarea
+          id="about_feature_3_text"
+          name="about_feature_3_text"
+          class="form-control"
+        ><%= sections.about.find(s => s.setting_key === 'about_feature_3_text')?.setting_value || '' %></textarea>
+      </div>
+    </div>
+
+    <!-- CONCERTI SECTION -->
+    <div class="card">
+      <div class="card-header">
+        <h3>🎵 Sezione Concerti</h3>
+      </div>
+
+      <div class="alert alert-info" style="background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; display: block; margin-bottom: 1.5rem;">
+        ℹ️ <strong>I concerti sono gestiti centralmente</strong> - Questa sezione controlla solo l'aspetto della pagina.
+        I dati dei concerti provengono automaticamente dal database condiviso (concerts-admin).
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="concerts_label">
+            🏷️ Etichetta Sezione
+            <span class="hint">Es: "Stagione 2024/25"</span>
+          </label>
+          <input
+            type="text"
+            id="concerts_label"
+            name="concerts_label"
+            value="<%= sections.concerts.find(s => s.setting_key === 'concerts_label')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="concerts_title">
+            📌 Titolo Sezione
+            <span class="hint">Es: "Prossimi Concerti"</span>
+          </label>
+          <input
+            type="text"
+            id="concerts_title"
+            name="concerts_title"
+            value="<%= sections.concerts.find(s => s.setting_key === 'concerts_title')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="concerts_subtitle">
+          📄 Sottotitolo
+          <span class="hint">Es: "Non perdere i nostri eventi musicali"</span>
+        </label>
+        <input
+          type="text"
+          id="concerts_subtitle"
+          name="concerts_subtitle"
+          value="<%= sections.concerts.find(s => s.setting_key === 'concerts_subtitle')?.setting_value || '' %>"
+          class="form-control"
+        >
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="concerts_cta_text">
+            🔗 Testo Pulsante "Vedi tutta la stagione"
+            <span class="hint">Es: "Vedi tutta la stagione"</span>
+          </label>
+          <input
+            type="text"
+            id="concerts_cta_text"
+            name="concerts_cta_text"
+            value="<%= sections.concerts.find(s => s.setting_key === 'concerts_cta_text')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="concerts_cta_link">
+            🌐 Link Pulsante (URL completo)
+            <span class="hint">Es: https://icnt.danielecamiz.com</span>
+          </label>
+          <input
+            type="url"
+            id="concerts_cta_link"
+            name="concerts_cta_link"
+            value="<%= sections.concerts.find(s => s.setting_key === 'concerts_cta_link')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="https://icnt.danielecamiz.com"
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- MEDIA SECTION -->
+    <div class="card">
+      <div class="card-header">
+        <h3>📹 Sezione Media</h3>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="media_label">
+            🏷️ Etichetta Sezione
+            <span class="hint">Es: "Ascoltaci"</span>
+          </label>
+          <input
+            type="text"
+            id="media_label"
+            name="media_label"
+            value="<%= sections.media.find(s => s.setting_key === 'media_label')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="media_title">
+            📌 Titolo Sezione
+            <span class="hint">Es: "Video e Registrazioni"</span>
+          </label>
+          <input
+            type="text"
+            id="media_title"
+            name="media_title"
+            value="<%= sections.media.find(s => s.setting_key === 'media_title')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="media_subtitle">
+          📄 Sottotitolo
+          <span class="hint">Es: "Scopri le nostre performance"</span>
+        </label>
+        <input
+          type="text"
+          id="media_subtitle"
+          name="media_subtitle"
+          value="<%= sections.media.find(s => s.setting_key === 'media_subtitle')?.setting_value || '' %>"
+          class="form-control"
+        >
+      </div>
+    </div>
+
+    <!-- CONTATTI SECTION -->
+    <div class="card">
+      <div class="card-header">
+        <h3>📧 Contatti</h3>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="contact_title">
+            📌 Titolo Sezione
+            <span class="hint">Es: "Contattaci"</span>
+          </label>
+          <input
+            type="text"
+            id="contact_title"
+            name="contact_title"
+            value="<%= sections.contact.find(s => s.setting_key === 'contact_title')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="contact_subtitle">
+            📄 Sottotitolo
+          </label>
+          <input
+            type="text"
+            id="contact_subtitle"
+            name="contact_subtitle"
+            value="<%= sections.contact.find(s => s.setting_key === 'contact_subtitle')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="contact_email">
+            📧 Email
+            <span class="hint">Email di contatto pubblico</span>
+          </label>
+          <input
+            type="email"
+            id="contact_email"
+            name="contact_email"
+            value="<%= sections.contact.find(s => s.setting_key === 'contact_email')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="contact_phone">
+            📞 Telefono
+          </label>
+          <input
+            type="tel"
+            id="contact_phone"
+            name="contact_phone"
+            value="<%= sections.contact.find(s => s.setting_key === 'contact_phone')?.setting_value || '' %>"
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contact_address">
+          📍 Indirizzo
+        </label>
+        <input
+          type="text"
+          id="contact_address"
+          name="contact_address"
+          value="<%= sections.contact.find(s => s.setting_key === 'contact_address')?.setting_value || '' %>"
+          class="form-control"
+        >
+      </div>
+    </div>
+
+    <!-- FOOTER & SOCIAL -->
+    <div class="card">
+      <div class="card-header">
+        <h3>🔗 Footer & Social Media</h3>
+      </div>
+
+      <div class="form-group">
+        <label for="footer_copyright">
+          © Copyright
+          <span class="hint">Il testo del copyright nel footer</span>
+        </label>
+        <input
+          type="text"
+          id="footer_copyright"
+          name="footer_copyright"
+          value="<%= sections.footer.find(s => s.setting_key === 'footer_copyright')?.setting_value || '' %>"
+          class="form-control"
+        >
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="social_facebook">
+            📘 Facebook URL
+            <span class="hint">Link completo alla pagina Facebook</span>
+          </label>
+          <input
+            type="url"
+            id="social_facebook"
+            name="social_facebook"
+            value="<%= sections.footer.find(s => s.setting_key === 'social_facebook')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="https://facebook.com/..."
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="social_instagram">
+            📷 Instagram URL
+          </label>
+          <input
+            type="url"
+            id="social_instagram"
+            name="social_instagram"
+            value="<%= sections.footer.find(s => s.setting_key === 'social_instagram')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="https://instagram.com/..."
+          >
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="social_youtube">
+            📹 YouTube URL
+          </label>
+          <input
+            type="url"
+            id="social_youtube"
+            name="social_youtube"
+            value="<%= sections.footer.find(s => s.setting_key === 'social_youtube')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="https://youtube.com/..."
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="social_twitter">
+            🐦 Twitter/X URL
+          </label>
+          <input
+            type="url"
+            id="social_twitter"
+            name="social_twitter"
+            value="<%= sections.footer.find(s => s.setting_key === 'social_twitter')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="https://twitter.com/..."
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO -->
+    <div class="card">
+      <div class="card-header">
+        <h3>🔍 SEO (Meta Tags)</h3>
+      </div>
+
+      <div class="form-group">
+        <label for="site_title">
+          📌 Titolo Sito
+          <span class="hint">Titolo che appare nei risultati Google e nel tab del browser</span>
+        </label>
+        <input
+          type="text"
+          id="site_title"
+          name="site_title"
+          value="<%= sections.seo.find(s => s.setting_key === 'site_title')?.setting_value || '' %>"
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="site_description">
+          📝 Descrizione Sito
+          <span class="hint">Descrizione breve che appare nei risultati Google</span>
+        </label>
+        <textarea
+          id="site_description"
+          name="site_description"
+          class="form-control"
+        ><%= sections.seo.find(s => s.setting_key === 'site_description')?.setting_value || '' %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="site_keywords">
+          🔑 Keywords
+          <span class="hint">Parole chiave separate da virgola</span>
+        </label>
+        <input
+          type="text"
+          id="site_keywords"
+          name="site_keywords"
+          value="<%= sections.seo.find(s => s.setting_key === 'site_keywords')?.setting_value || '' %>"
+          class="form-control"
+        >
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Save Bar -->
+<div class="save-bar">
+  <button type="button" class="btn btn-outline" onclick="window.location.reload()">
+    🔄 Annulla
+  </button>
+  <button type="button" class="btn btn-success" id="save-btn">
+    💾 Salva Modifiche
+  </button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Inizializza TinyMCE per i campi HTML
+  if (typeof window.SharedEditor !== 'undefined') {
+    document.querySelectorAll('.tinymce-editor').forEach(textarea => {
+      window.SharedEditor.init(`#${textarea.id}`, 'settings', {
+        height: 300,
+        toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link',
+        menubar: false,
+        language: 'it'
+      });
+    });
+  }
+
+  // CloudinaryManager per upload immagini
+  document.querySelectorAll('.cloudinary-upload-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const inputField = document.getElementById(targetId);
+
+      if (typeof CloudinaryManager === 'undefined') {
+        alert('❌ CloudinaryManager non disponibile.');
+        return;
+      }
+
+      CloudinaryManager.showImageDialog(function(imageUrl, publicId) {
+        inputField.value = imageUrl;
+
+        // Aggiorna o crea preview
+        let preview = document.getElementById(targetId + '_preview');
+        if (preview) {
+          preview.src = imageUrl;
+        } else {
+          preview = document.createElement('img');
+          preview.id = targetId + '_preview';
+          preview.src = imageUrl;
+          preview.alt = 'Preview';
+          preview.className = 'image-preview';
+          inputField.parentElement.parentElement.appendChild(preview);
+        }
+
+        btn.textContent = '📷 Cambia Immagine';
+      }, {
+        folder: 'orchestra-icnt',
+        preset: 'icnt_settings'
+      });
+    });
+  });
+
+  // Salva impostazioni
+  document.getElementById('save-btn').addEventListener('click', async function() {
+    const btn = this;
+    const alert = document.getElementById('alert');
+
+    // Sincronizza TinyMCE prima del submit
+    if (typeof tinymce !== 'undefined') {
+      tinymce.triggerSave();
+    }
+
+    // Raccogli tutti i valori del form
+    const formData = new FormData(document.getElementById('settings-form'));
+    const data = Object.fromEntries(formData.entries());
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Salvataggio...';
+
+    try {
+      const response = await fetch('/admin/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert.className = 'alert alert-success show';
+        alert.textContent = result.message;
+        setTimeout(() => alert.classList.remove('show'), 5000);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      alert.className = 'alert alert-error show';
+      alert.textContent = '❌ ' + error.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '💾 Salva Modifiche';
+    }
+  });
+});
+</script>
+
+<%- include('../partials/footer') %>

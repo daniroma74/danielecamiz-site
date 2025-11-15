@@ -1,16 +1,21 @@
 /**
- * Orchestra ICNT - Simple Express Server
- * Serves static files and handles basic routing
+ * Orchestra ICNT - Express Server with Admin Panel
  */
 
 const express = require('express');
 const path = require('path');
+const { initLocalDB } = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 3110;
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, 'public')));
+// View engine setup
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname));
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS for development
 app.use((req, res, next) => {
@@ -19,16 +24,32 @@ app.use((req, res, next) => {
   next();
 });
 
-// Parse JSON bodies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Serve /shared directory (for CloudinaryManager, TinyMCE, etc.)
+app.use('/shared', express.static(path.join(__dirname, '../shared'), {
+  setHeaders: (res, filepath) => {
+    if (filepath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    } else if (filepath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
 
-// API Routes
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
-/**
- * Contact form endpoint
- * TODO: Implement email sending (nodemailer, sendgrid, etc.)
- */
+// Routes
+const adminRoutes = require('./admin/routes/admin');
+const apiRoutes = require('./routes/api');
+
+// Cloudinary routes (from shared)
+const cloudinaryRoutes = require('../shared/cloudinary-manager/routes');
+
+app.use('/admin', adminRoutes);
+app.use('/api', apiRoutes);
+app.use('/admin/cloudinary', cloudinaryRoutes);
+
+// Contact form endpoint (existing)
 app.post('/api/contact', (req, res) => {
   const { name, email, subject, message } = req.body;
 
@@ -52,17 +73,13 @@ app.post('/api/contact', (req, res) => {
   // TODO: Send email
   console.log('Contact form submission:', { name, email, subject, message });
 
-  // For now, just return success
   res.json({
     success: true,
     message: 'Messaggio inviato con successo'
   });
 });
 
-/**
- * Newsletter subscription endpoint
- * TODO: Implement newsletter service integration
- */
+// Newsletter subscription endpoint (existing)
 app.post('/api/newsletter', (req, res) => {
   const { email } = req.body;
 
@@ -84,6 +101,10 @@ app.post('/api/newsletter', (req, res) => {
 
 // Catch-all route - serve index.html for client-side routing
 app.get('*', (req, res) => {
+  // Exclude admin routes
+  if (req.path.startsWith('/admin')) {
+    return res.status(404).send('Admin route not found');
+  }
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
@@ -96,18 +117,31 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`
+// Initialize database and start server
+async function start() {
+  try {
+    console.log('[Database] Initializing...');
+    await initLocalDB();
+    console.log('[Database] ✅ Initialized successfully');
+
+    app.listen(PORT, () => {
+      console.log(`
   🎵 Orchestra ICNT Website
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Server running on port ${PORT}
 
-  🌐 Local:   http://localhost:${PORT}
-  📁 Public:  ${path.join(__dirname, 'public')}
+  🌐 Public:  http://localhost:${PORT}
+  🔧 Admin:   http://localhost:${PORT}/admin
 
   Press Ctrl+C to stop
-  `);
-});
+      `);
+    });
+  } catch (error) {
+    console.error('[Server] Fatal error during initialization:', error);
+    process.exit(1);
+  }
+}
+
+start();
 
 module.exports = app;

@@ -38,3 +38,9 @@ build/
 tmp/
 temp/
 *.tmp
+
+# Database
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+admin/db/*.sqlite

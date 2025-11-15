@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'Admin - Orchestra ICNT' %></title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Admin Styles -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      line-height: 1.6;
+    }
+
+    .admin-header {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .admin-header .subtitle {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      margin-top: 0.25rem;
+    }
+
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-header p {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .card-header h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group .hint {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      margin-top: 0.25rem;
+      font-weight: normal;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--gray-700);
+      border: 1px solid var(--gray-300);
+    }
+
+    .btn-outline:hover {
+      background: var(--gray-50);
+    }
+
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .image-upload-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .image-upload-container input {
+      flex: 1;
+    }
+
+    .image-upload-container .btn {
+      flex-shrink: 0;
+    }
+
+    .image-preview {
+      max-width: 300px;
+      margin-top: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .save-bar {
+      position: sticky;
+      bottom: 0;
+      background: white;
+      border-top: 1px solid var(--gray-200);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-container {
+        padding: 1rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="admin-header">
+  <h1>🎵 Orchestra ICNT - Admin</h1>
+  <div class="subtitle">Gestione contenuti sito web</div>
+</header>

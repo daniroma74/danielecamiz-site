@@ -510,11 +510,282 @@ class HeroParallax {
 }
 
 // ============================================
+// CONTENT LOADER (Dynamic content from CMS)
+// ============================================
+
+class ContentLoader {
+  /**
+   * Carica tutte le impostazioni del sito dall'API
+   */
+  static async loadSettings() {
+    try {
+      const response = await fetch('/api/settings');
+      const result = await response.json();
+
+      if (!result.success || !result.data) {
+        console.warn('No settings data received');
+        return;
+      }
+
+      const s = result.data;
+
+      // Hero Section
+      if (s.hero_background) {
+        const heroImage = document.querySelector('.hero-image');
+        if (heroImage) {
+          heroImage.style.backgroundImage = `url('${s.hero_background}')`;
+        }
+      }
+
+      if (s.hero_title) {
+        const heroTitle = document.querySelector('.hero-title-main');
+        if (heroTitle) heroTitle.textContent = s.hero_title;
+      }
+
+      if (s.hero_subtitle) {
+        const heroSubtitle = document.querySelector('.hero-title-sub');
+        if (heroSubtitle) heroSubtitle.textContent = s.hero_subtitle;
+      }
+
+      if (s.hero_claim) {
+        const heroClaim = document.querySelector('.hero-claim');
+        if (heroClaim) heroClaim.textContent = s.hero_claim;
+      }
+
+      if (s.hero_cta_primary_text) {
+        const primaryBtn = document.querySelector('.hero-cta .btn-primary');
+        if (primaryBtn) primaryBtn.textContent = s.hero_cta_primary_text;
+      }
+
+      if (s.hero_cta_secondary_text) {
+        const secondaryBtn = document.querySelector('.hero-cta .btn-outline');
+        if (secondaryBtn) secondaryBtn.textContent = s.hero_cta_secondary_text;
+      }
+
+      // About Section
+      if (s.about_label) {
+        const aboutLabel = document.querySelector('.about-text .section-label');
+        if (aboutLabel) aboutLabel.textContent = s.about_label;
+      }
+
+      if (s.about_title) {
+        const aboutTitle = document.querySelector('.about-text .section-title');
+        if (aboutTitle) aboutTitle.textContent = s.about_title;
+      }
+
+      if (s.about_image) {
+        const aboutImage = document.querySelector('.about-image img');
+        if (aboutImage) aboutImage.src = s.about_image;
+      }
+
+      if (s.about_badge_number) {
+        const badgeNumber = document.querySelector('.badge-number');
+        if (badgeNumber) badgeNumber.textContent = s.about_badge_number;
+      }
+
+      if (s.about_badge_label) {
+        const badgeLabel = document.querySelector('.badge-label');
+        if (badgeLabel) badgeLabel.textContent = s.about_badge_label;
+      }
+
+      if (s.about_intro) {
+        const aboutIntro = document.querySelector('.about-description:first-of-type');
+        if (aboutIntro) aboutIntro.innerHTML = s.about_intro;
+      }
+
+      if (s.about_description) {
+        const aboutDesc = document.querySelector('.about-description:last-of-type');
+        if (aboutDesc) aboutDesc.innerHTML = s.about_description;
+      }
+
+      // About Features
+      const features = document.querySelectorAll('.feature-item');
+      for (let i = 0; i < 3 && i < features.length; i++) {
+        const num = i + 1;
+        const icon = s[`about_feature_${num}_icon`];
+        const title = s[`about_feature_${num}_title`];
+        const text = s[`about_feature_${num}_text`];
+
+        if (icon) {
+          const iconEl = features[i].querySelector('.feature-icon');
+          if (iconEl) iconEl.textContent = icon;
+        }
+
+        if (title) {
+          const titleEl = features[i].querySelector('h4');
+          if (titleEl) titleEl.textContent = title;
+        }
+
+        if (text) {
+          const textEl = features[i].querySelector('p');
+          if (textEl) textEl.textContent = text;
+        }
+      }
+
+      // Concerts Section
+      if (s.concerts_label) {
+        const concertsLabel = document.querySelector('.concerts-section .section-label');
+        if (concertsLabel) concertsLabel.textContent = s.concerts_label;
+      }
+
+      if (s.concerts_title) {
+        const concertsTitle = document.querySelector('.concerts-section .section-title');
+        if (concertsTitle) concertsTitle.textContent = s.concerts_title;
+      }
+
+      if (s.concerts_subtitle) {
+        const concertsSubtitle = document.querySelector('.concerts-section .section-subtitle');
+        if (concertsSubtitle) concertsSubtitle.textContent = s.concerts_subtitle;
+      }
+
+      if (s.concerts_cta_text) {
+        const concertsCTA = document.querySelector('.section-footer .btn-outline');
+        if (concertsCTA) concertsCTA.textContent = s.concerts_cta_text;
+      }
+
+      if (s.concerts_cta_link) {
+        const concertsCTA = document.querySelector('.section-footer .btn-outline');
+        if (concertsCTA) concertsCTA.href = s.concerts_cta_link;
+      }
+
+      // Media Section
+      if (s.media_label) {
+        const mediaLabel = document.querySelector('.media-section .section-label');
+        if (mediaLabel) mediaLabel.textContent = s.media_label;
+      }
+
+      if (s.media_title) {
+        const mediaTitle = document.querySelector('.media-section .section-title');
+        if (mediaTitle) mediaTitle.textContent = s.media_title;
+      }
+
+      if (s.media_subtitle) {
+        const mediaSubtitle = document.querySelector('.media-section .section-subtitle');
+        if (mediaSubtitle) mediaSubtitle.textContent = s.media_subtitle;
+      }
+
+      // SEO
+      if (s.site_title) {
+        document.title = s.site_title;
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.setAttribute('content', s.site_title);
+      }
+
+      if (s.site_description) {
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute('content', s.site_description);
+
+        const ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc) ogDesc.setAttribute('content', s.site_description);
+      }
+
+      if (s.site_keywords) {
+        const metaKeywords = document.querySelector('meta[name="keywords"]');
+        if (metaKeywords) metaKeywords.setAttribute('content', s.site_keywords);
+      }
+
+      console.log('✅ Settings loaded successfully');
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  }
+
+  /**
+   * Carica i prossimi concerti dal database condiviso
+   */
+  static async loadConcerts() {
+    try {
+      const response = await fetch('/api/concerts/upcoming?limit=3');
+      const result = await response.json();
+
+      if (!result.success || !result.data) {
+        console.warn('No concerts data received');
+        return;
+      }
+
+      const concerts = result.data;
+      const concertsGrid = document.querySelector('.concerts-grid');
+
+      if (!concertsGrid) {
+        console.warn('Concerts grid container not found');
+        return;
+      }
+
+      // Svuota il contenuto esistente
+      concertsGrid.innerHTML = '';
+
+      // Se non ci sono concerti
+      if (concerts.length === 0) {
+        concertsGrid.innerHTML = `
+          <p style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #666;">
+            Nessun concerto in programma al momento. Torna presto per aggiornamenti!
+          </p>
+        `;
+        return;
+      }
+
+      // Crea le card dei concerti
+      concerts.forEach(concert => {
+        const date = new Date(concert.date);
+        const day = date.getDate();
+        const month = date.toLocaleDateString('it-IT', { month: 'short' }).toUpperCase();
+        const year = date.getFullYear();
+
+        const card = document.createElement('article');
+        card.className = 'concert-card';
+        card.innerHTML = `
+          <div class="concert-date">
+            <span class="concert-day">${day}</span>
+            <span class="concert-month">${month}</span>
+            <span class="concert-year">${year}</span>
+          </div>
+          <div class="concert-info">
+            <h3 class="concert-title">${concert.title || 'Concerto'}</h3>
+            <p class="concert-program">
+              <strong>Programma:</strong> ${concert.programText || 'Da definire'}
+            </p>
+            <div class="concert-meta">
+              <span class="concert-location">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                ${concert.location || 'Roma'}
+              </span>
+            </div>
+            ${concert.poster_cloudinary_id ? `<a href="https://icnt.danielecamiz.com/concerti/${concert.id}" class="btn btn-small btn-primary">Info e Biglietti</a>` : ''}
+          </div>
+        `;
+
+        concertsGrid.appendChild(card);
+      });
+
+      console.log(`✅ Loaded ${concerts.length} concerts`);
+    } catch (error) {
+      console.error('Error loading concerts:', error);
+    }
+  }
+
+  /**
+   * Carica tutti i contenuti
+   */
+  static async loadAll() {
+    await Promise.all([
+      this.loadSettings(),
+      this.loadConcerts()
+    ]);
+  }
+}
+
+// ============================================
 // INITIALIZATION
 // ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   console.log('🎵 Orchestra ICNT - Website initialized');
+
+  // Load dynamic content from CMS
+  await ContentLoader.loadAll();
 
   // Initialize all modules
   Performance.init();

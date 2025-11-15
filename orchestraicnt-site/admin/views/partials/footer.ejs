@@ -1,0 +1,20 @@
+<!-- TinyMCE Editor (from shared) -->
+<script src="/shared/tinymce/tinymce.min.js"></script>
+<script src="/shared/tinymce-init.js"></script>
+
+<!-- Cloudinary Manager (from shared) -->
+<script src="/shared/cloudinary-manager/client.js"></script>
+<script>
+  // Inizializza CloudinaryManager
+  if (typeof CloudinaryManager !== 'undefined') {
+    CloudinaryManager.init({
+      cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME || "your-cloud-name" %>',
+      defaultFolder: 'orchestra-icnt',
+      defaultPreset: 'icnt_general',
+      apiPrefix: '/admin/cloudinary'
+    });
+  }
+</script>
+
+</body>
+</html>
