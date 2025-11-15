@@ -738,12 +738,43 @@ class ContentLoader {
     }
   }
 
+  static async loadGallery() {
+    try {
+      const response = await fetch('/api/gallery');
+      const result = await response.json();
+
+      if (!result.success || !result.data) return;
+
+      const container = document.getElementById('galleria-container');
+      if (!container) return;
+
+      // Filtra solo foto pubblicate
+      const images = result.data.filter(img => img.is_published);
+
+      if (images.length === 0) {
+        container.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">Nessuna foto nella galleria al momento.</p>';
+        return;
+      }
+
+      container.innerHTML = images.map(image => `
+        <div class="gallery-item">
+          <img src="${image.image_url}" alt="${image.caption || 'Foto galleria'}" loading="lazy">
+          ${image.caption ? `<div class="gallery-caption">${image.caption}</div>` : ''}
+        </div>
+      `).join('');
+
+    } catch (error) {
+      console.error('Errore caricamento galleria:', error);
+    }
+  }
+
   static async loadAll() {
     await Promise.all([
       this.loadMaestri(),
       this.loadValori(),
       this.loadConcerti(),
-      this.loadProgetti()
+      this.loadProgetti(),
+      this.loadGallery()
     ]);
   }
 }
