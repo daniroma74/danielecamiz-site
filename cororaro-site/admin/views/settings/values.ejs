@@ -1,107 +1,240 @@
 <div class="page-header">
-  <h1>⚙️ Valori del Coro</h1>
-  <p>Gestisci i valori fondamentali di Cororaro</p>
+  <h1>💎 Valori del Coro</h1>
+  <p style="color: #666; font-size: 1.1rem;">Gestisci i valori fondamentali che rappresentano Cororaro</p>
 </div>
 
 <!-- Navigation Tabs -->
 <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; padding-bottom: 0;">
-  <a href="/admin/settings" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Impostazioni Generali</a>
-  <a href="/admin/settings/values" style="padding: 0.75rem 1.5rem; text-decoration: none; color: white; background: var(--terracotta, #8B4513); border-radius: 8px 8px 0 0;">Valori del Coro</a>
-  <a href="/admin/settings/join" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Unisciti a Noi</a>
+  <a href="/admin/settings" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">📋 Impostazioni Generali</a>
+  <a href="/admin/settings/values" style="padding: 0.75rem 1.5rem; text-decoration: none; color: white; background: var(--terracotta, #8B4513); border-radius: 8px 8px 0 0; font-weight: 600;">💎 Valori del Coro</a>
+  <a href="/admin/settings/join" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">🎤 Unisciti a Noi</a>
 </div>
 
 <!-- Add New Value Form -->
 <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
-  <h3 style="margin-bottom: 1.5rem;">➕ Aggiungi Nuovo Valore</h3>
+
+  <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #4caf50;">
+    <h3 style="margin: 0 0 0.5rem 0; color: #2e7d32;">➕ Aggiungi un Nuovo Valore</h3>
+    <p style="margin: 0; color: #555; font-size: 0.95rem;">
+      Compila i campi qui sotto per aggiungere un nuovo valore alla lista
+    </p>
+  </div>
+
   <form method="POST" action="/admin/settings/values" style="display: grid; grid-template-columns: 100px 1fr 2fr 100px auto; gap: 1rem; align-items: end;">
+
+    <!-- Icona -->
     <div>
-      <label for="new_icon" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Icona</label>
-      <input type="text" id="new_icon" name="icon" placeholder="❤️" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 1.5rem;">
+      <label for="new_icon" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+        🎨 Icona
+      </label>
+      <input
+        type="text"
+        id="new_icon"
+        name="icon"
+        placeholder="❤️"
+        required
+        style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 1.5rem;"
+      >
+      <small style="display: block; margin-top: 0.5rem; color: #666; text-align: center;">
+        Emoji
+      </small>
     </div>
+
+    <!-- Titolo -->
     <div>
-      <label for="new_title" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Titolo</label>
-      <input type="text" id="new_title" name="title" placeholder="Passione" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <label for="new_title" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+        📌 Titolo
+      </label>
+      <input
+        type="text"
+        id="new_title"
+        name="title"
+        placeholder="Es: Passione"
+        required
+        style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+      >
+      <small style="display: block; margin-top: 0.5rem; color: #666;">
+        💬 Nome del valore
+      </small>
     </div>
+
+    <!-- Descrizione -->
     <div>
-      <label for="new_description" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Descrizione</label>
-      <input type="text" id="new_description" name="description" placeholder="Cantare con il cuore..." required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <label for="new_description" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+        📝 Descrizione
+      </label>
+      <input
+        type="text"
+        id="new_description"
+        name="description"
+        placeholder="Es: Cantare con il cuore e mettere passione in ogni nota..."
+        required
+        style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+      >
+      <small style="display: block; margin-top: 0.5rem; color: #666;">
+        💬 Cosa significa questo valore
+      </small>
     </div>
+
+    <!-- Ordinamento -->
     <div>
-      <label for="new_sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Ordine</label>
-      <input type="number" id="new_sort_order" name="sort_order" value="0" min="0" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <label for="new_sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+        🔢 Ordine
+      </label>
+      <input
+        type="number"
+        id="new_sort_order"
+        name="sort_order"
+        value="0"
+        min="0"
+        style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;"
+      >
+      <small style="display: block; margin-top: 0.5rem; color: #666; text-align: center;">
+        0 = primo
+      </small>
     </div>
+
+    <!-- Bottone -->
     <div>
-      <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Aggiungi</button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="padding: 1rem 1.5rem; font-size: 1.1rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; white-space: nowrap;"
+      >
+        ✅ Aggiungi
+      </button>
     </div>
   </form>
 </div>
 
 <!-- Existing Values List -->
 <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
-  <table style="width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left; width: 80px;">Icona</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Titolo</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Descrizione</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left; width: 100px;">Ordine</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left; width: 100px;">Stato</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left; width: 200px;">Azioni</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (values.length === 0) { %>
-        <tr>
-          <td colspan="6" style="padding: 2rem; text-align: center; color: #999;">
-            Nessun valore configurato. Aggiungi il primo valore usando il form sopra.
-          </td>
+
+  <div style="background: #f5f5f5; padding: 1.5rem; border-bottom: 2px solid #ddd;">
+    <h2 style="margin: 0; color: #333; font-size: 1.3rem;">📋 Valori Esistenti</h2>
+    <p style="margin: 0.5rem 0 0 0; color: #666;">
+      Modifica i valori qui sotto. Clicca "Salva" su ogni riga per salvare le modifiche.
+    </p>
+  </div>
+
+  <% if (values.length === 0) { %>
+    <div style="padding: 3rem; text-align: center; color: #999;">
+      <p style="font-size: 1.2rem; margin: 0;">📭 Nessun valore configurato</p>
+      <p style="margin: 0.5rem 0 0 0;">Aggiungi il primo valore usando il form sopra.</p>
+    </div>
+  <% } else { %>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: var(--terracotta, #8B4513); color: white;">
+          <th style="padding: 1rem; text-align: left; width: 80px; font-size: 1.1rem;">Icona</th>
+          <th style="padding: 1rem; text-align: left; font-size: 1.1rem;">Titolo</th>
+          <th style="padding: 1rem; text-align: left; font-size: 1.1rem;">Descrizione</th>
+          <th style="padding: 1rem; text-align: left; width: 100px; font-size: 1.1rem;">Ordine</th>
+          <th style="padding: 1rem; text-align: left; width: 100px; font-size: 1.1rem;">Stato</th>
+          <th style="padding: 1rem; text-align: left; width: 220px; font-size: 1.1rem;">Azioni</th>
         </tr>
-      <% } else { %>
+      </thead>
+      <tbody>
         <% values.forEach(value => { %>
-          <tr style="border-bottom: 1px solid #f0f0f0;" id="value-row-<%= value.id %>">
+          <tr style="border-bottom: 2px solid #f0f0f0;" id="value-row-<%= value.id %>">
             <td style="padding: 1rem;">
               <form method="POST" action="/admin/settings/values/<%= value.id %>" class="inline-edit-form">
-                <input type="text" name="icon" value="<%= value.icon || '' %>" style="width: 60px; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px; text-align: center; font-size: 1.5rem;">
+                <input
+                  type="text"
+                  name="icon"
+                  value="<%= value.icon || '' %>"
+                  style="width: 60px; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 1.5rem; transition: border-color 0.2s;"
+                  onfocus="this.style.borderColor='var(--terracotta, #8B4513)'"
+                  onblur="this.style.borderColor='#ddd'"
+                >
             </td>
             <td style="padding: 1rem;">
-                <input type="text" name="title" value="<%= value.title || '' %>" required style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px;">
+                <input
+                  type="text"
+                  name="title"
+                  value="<%= value.title || '' %>"
+                  required
+                  style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit; transition: border-color 0.2s;"
+                  onfocus="this.style.borderColor='var(--terracotta, #8B4513)'"
+                  onblur="this.style.borderColor='#ddd'"
+                >
             </td>
             <td style="padding: 1rem;">
-                <input type="text" name="description" value="<%= value.description || '' %>" required style="width: 100%; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px;">
+                <input
+                  type="text"
+                  name="description"
+                  value="<%= value.description || '' %>"
+                  required
+                  style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit; transition: border-color 0.2s;"
+                  onfocus="this.style.borderColor='var(--terracotta, #8B4513)'"
+                  onblur="this.style.borderColor='#ddd'"
+                >
             </td>
             <td style="padding: 1rem;">
-                <input type="number" name="sort_order" value="<%= value.sort_order || 0 %>" min="0" style="width: 80px; padding: 0.5rem; border: 2px solid #ddd; border-radius: 4px;">
+                <input
+                  type="number"
+                  name="sort_order"
+                  value="<%= value.sort_order || 0 %>"
+                  min="0"
+                  style="width: 80px; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; transition: border-color 0.2s;"
+                  onfocus="this.style.borderColor='var(--terracotta, #8B4513)'"
+                  onblur="this.style.borderColor='#ddd'"
+                >
             </td>
             <td style="padding: 1rem;">
                 <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                  <input type="checkbox" name="is_active" value="1" <%= value.is_active ? 'checked' : '' %>>
-                  <span style="font-size: 0.85rem;">Attivo</span>
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    value="1"
+                    <%= value.is_active ? 'checked' : '' %>
+                    style="width: 20px; height: 20px; cursor: pointer;"
+                  >
+                  <span style="font-size: 0.95rem; font-weight: 600;">✅ Attivo</span>
                 </label>
             </td>
             <td style="padding: 1rem;">
-              <div style="display: flex; gap: 0.5rem;">
-                <button type="submit" class="btn btn-small">Salva</button>
+              <div style="display: flex; gap: 0.75rem;">
+                <button
+                  type="submit"
+                  class="btn btn-small"
+                  style="padding: 0.75rem 1.25rem; font-size: 1rem; background: #2196f3; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;"
+                >
+                  💾 Salva
+                </button>
               </form>
-                <form method="POST" action="/admin/settings/values/<%= value.id %>/delete" style="display: inline;" onsubmit="return confirm('Sei sicuro di voler eliminare questo valore?');">
-                  <button type="submit" class="btn btn-small btn-danger">Elimina</button>
+                <form
+                  method="POST"
+                  action="/admin/settings/values/<%= value.id %>/delete"
+                  style="display: inline;"
+                  onsubmit="return confirm('⚠️ Sei sicuro di voler eliminare questo valore? Questa azione non può essere annullata.');"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-small btn-danger"
+                    style="padding: 0.75rem 1.25rem; font-size: 1rem; background: #f44336; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;"
+                  >
+                    🗑️ Elimina
+                  </button>
                 </form>
               </div>
             </td>
           </tr>
         <% }) %>
-      <% } %>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  <% } %>
 </div>
 
 <style>
-  .inline-edit-form input[type="text"],
-  .inline-edit-form input[type="number"] {
-    transition: border-color 0.2s;
+  .inline-edit-form input[type="text"]:hover,
+  .inline-edit-form input[type="number"]:hover {
+    border-color: #aaa;
   }
-  .inline-edit-form input[type="text"]:focus,
-  .inline-edit-form input[type="number"]:focus {
-    outline: none;
-    border-color: var(--terracotta, #8B4513);
+
+  .btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    transition: all 0.2s;
   }
 </style>

@@ -1,138 +1,330 @@
 <div class="page-header">
-  <h1><%= action === 'create' ? '+ Nuovo Progetto Solidarietà' : 'Modifica Progetto' %></h1>
+  <h1><%= action === 'create' ? '➕ Aggiungi un Nuovo Progetto' : '✏️ Modifica Progetto' %></h1>
+  <p style="color: #666; font-size: 1.1rem;">Compila i campi qui sotto per creare o modificare un progetto di solidarietà</p>
 </div>
 
-<div class="form-container" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 900px;">
+<div class="form-container" style="background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 900px;">
+
+  <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196f3;">
+    <h3 style="margin: 0 0 0.5rem 0; color: #1976d2;">💡 Come funziona?</h3>
+    <p style="margin: 0; color: #555;">
+      I campi con <strong>*</strong> sono obbligatori. Gli altri sono facoltativi ma aiutano a dare più informazioni sul progetto.
+      <br>Spunta "Attivo" solo quando sei sicuro che il progetto deve apparire sul sito.
+    </p>
+  </div>
+
   <form method="POST" action="<%= action === 'create' ? '/admin/projects' : '/admin/projects/' + project.id %>">
 
-    <!-- Icon -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="icon" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Icona Emoji</label>
-      <input type="text" id="icon" name="icon" value="<%= project.icon || '' %>" placeholder="🏥" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
-      <small style="color: #666;">Emoji che rappresenta il progetto (es: 🏥, 🏫, 💧)</small>
-    </div>
+    <!-- ========== INFORMAZIONI BASE ========== -->
+    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📝 Informazioni Base</h2>
 
-    <!-- Titolo -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Titolo *</label>
-      <input type="text" id="title" name="title" value="<%= project.title || '' %>" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
-      <small style="color: #666;">Es: Ospedale Pediatrico in Kenya</small>
-    </div>
-
-    <!-- Descrizione Breve -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="description" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Descrizione Breve *</label>
-      <textarea id="description" name="description" rows="3" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= project.description || '' %></textarea>
-      <small style="color: #666;">Breve descrizione per lista e card (max 150 caratteri)</small>
-    </div>
-
-    <!-- Descrizione Dettagliata con TinyMCE -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="long_description" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Descrizione Dettagliata</label>
-      <textarea id="long_description" name="long_description"><%= project.long_description || '' %></textarea>
-      <small style="color: #666;">Storia completa del progetto, impatto, risultati raggiunti</small>
-    </div>
-
-    <!-- Paese e Anno -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-      <div class="form-group">
-        <label for="country" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Paese</label>
-        <input type="text" id="country" name="country" value="<%= project.country || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-        <small style="color: #666;">Es: Kenya, Tanzania, Etiopia</small>
+      <!-- Icona -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="icon" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem; color: #333;">
+          🎨 Icona del Progetto
+        </label>
+        <input
+          type="text"
+          id="icon"
+          name="icon"
+          value="<%= project.icon || '' %>"
+          placeholder="🏥"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666; font-size: 0.95rem;">
+          💬 Scegli un'emoji che rappresenta il progetto. Esempi: 🏥 (ospedale), 🏫 (scuola), 💧 (acqua), 🌾 (agricoltura)
+        </small>
       </div>
-      <div class="form-group">
-        <label for="year" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Anno</label>
-        <input type="number" id="year" name="year" value="<%= project.year || '' %>" min="2000" max="2100" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+
+      <!-- Titolo -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem; color: #333;">
+          📌 Nome del Progetto *
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value="<%= project.title || '' %>"
+          required
+          placeholder="Es: Ospedale Pediatrico in Kenya"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666; font-size: 0.95rem;">
+          💬 Scrivi un nome chiaro e descrittivo. Esempio: "Scuola rurale in Tanzania"
+        </small>
+      </div>
+
+      <!-- Descrizione Breve -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="description" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem; color: #333;">
+          📄 Cosa vuoi raccontare in breve? *
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          rows="3"
+          required
+          placeholder="Es: Costruzione di un ambulatorio per i bambini del villaggio..."
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit; resize: vertical;"
+        ><%= project.description || '' %></textarea>
+        <small style="display: block; margin-top: 0.5rem; color: #666; font-size: 0.95rem;">
+          💬 Una breve descrizione (max 150 caratteri) che apparirà nelle card e nelle liste
+        </small>
       </div>
     </div>
 
-    <!-- Fondi Raccolti -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="amount_raised" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Fondi Raccolti (€)</label>
-      <input type="number" id="amount_raised" name="amount_raised" value="<%= project.amount_raised || '' %>" min="0" step="0.01" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <small style="color: #666;">Importo totale raccolto per questo progetto</small>
-    </div>
+    <!-- ========== DETTAGLI DEL PROGETTO ========== -->
+    <div style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #ff9800;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🌍 Dove e Quando</h2>
 
-    <!-- Immagine -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="image_url" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Immagine del Progetto</label>
-      <div style="display: flex; gap: 1rem; align-items: flex-start;">
-        <input type="text" id="image_url" name="image_url" value="<%= project.image_url || '' %>" placeholder="URL immagine" style="flex: 1; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-        <button type="button" onclick="openImagePicker()" class="btn">📸 Scegli da Cloudinary</button>
+      <!-- Paese e Anno -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label for="country" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            🌏 In quale paese?
+          </label>
+          <input
+            type="text"
+            id="country"
+            name="country"
+            value="<%= project.country || '' %>"
+            placeholder="Es: Kenya, Tanzania, Etiopia"
+            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+          >
+          <small style="display: block; margin-top: 0.5rem; color: #666;">
+            💬 Il paese dove si svolge il progetto
+          </small>
+        </div>
+        <div>
+          <label for="year" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            📅 Anno
+          </label>
+          <input
+            type="number"
+            id="year"
+            name="year"
+            value="<%= project.year || '' %>"
+            min="2000"
+            max="2100"
+            placeholder="2024"
+            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;"
+          >
+          <small style="display: block; margin-top: 0.5rem; color: #666;">
+            💬 Anno di avvio
+          </small>
+        </div>
       </div>
-      <% if (project.image_url) { %>
-        <img src="<%= project.image_url %>" alt="Project Image" style="max-width: 400px; margin-top: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-      <% } %>
-      <div id="image-preview" style="margin-top: 1rem;"></div>
+
+      <!-- Fondi Raccolti -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="amount_raised" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          💰 Quanti fondi avete raccolto?
+        </label>
+        <input
+          type="number"
+          id="amount_raised"
+          name="amount_raised"
+          value="<%= project.amount_raised || '' %>"
+          min="0"
+          step="0.01"
+          placeholder="0.00"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Importo totale raccolto per questo progetto (in Euro). Esempio: 5000.00
+        </small>
+      </div>
     </div>
 
-    <!-- Sort Order -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Ordinamento</label>
-      <input type="number" id="sort_order" name="sort_order" value="<%= project.sort_order || 0 %>" min="0" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <small style="color: #666;">Numero più basso = appare prima (0 = primo)</small>
+    <!-- ========== STORIA COMPLETA ========== -->
+    <div style="background: #f3e5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #9c27b0;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📖 La Storia Completa</h2>
+
+      <!-- Descrizione Dettagliata con TinyMCE -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="long_description" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          📝 Descrizione Dettagliata (puoi formattare il testo)
+        </label>
+        <p style="margin: 0 0 1rem 0; padding: 0.75rem; background: #fffde7; border-radius: 4px; border-left: 3px solid #fbc02d;">
+          <strong>📝 Qui puoi formattare il testo!</strong> Usa i bottoni per fare grassetto, elenchi, titoli, ecc. come in Word.
+        </p>
+        <textarea
+          id="long_description"
+          name="long_description"
+          class="tinymce-editor"
+        ><%= project.long_description || '' %></textarea>
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Racconta la storia del progetto, l'impatto, i risultati raggiunti, i beneficiari...
+        </small>
+      </div>
     </div>
 
-    <!-- Flags -->
-    <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
-      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-        <input type="checkbox" name="is_featured" value="1" <%= project.is_featured ? 'checked' : '' %>>
-        <span>⭐ In evidenza</span>
-      </label>
-      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-        <input type="checkbox" name="is_active" value="1" <%= project.is_active ? 'checked' : '' %>>
-        <span>✅ Attivo</span>
-      </label>
+    <!-- ========== IMMAGINE ========== -->
+    <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #4caf50;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📸 Immagine del Progetto</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🖼️ Foto rappresentativa
+        </label>
+        <p style="margin: 0 0 1rem 0; color: #666;">
+          Clicca il bottone qui sotto per caricare o scegliere un'immagine che rappresenta il progetto
+        </p>
+
+        <input type="hidden" id="image_url" name="image_url" value="<%= project.image_url || '' %>">
+
+        <button
+          type="button"
+          onclick="scegliImmagine()"
+          class="btn"
+          style="padding: 1rem 2rem; font-size: 1.1rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer;"
+        >
+          📸 Carica o Scegli Immagine
+        </button>
+
+        <div id="image-preview" style="margin-top: 1.5rem;">
+          <% if (project.image_url) { %>
+            <img src="<%= project.image_url %>" alt="Immagine progetto" style="max-width: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <% } %>
+        </div>
+      </div>
     </div>
 
-    <!-- Actions -->
-    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-      <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">
-        <%= action === 'create' ? 'Crea Progetto' : 'Salva Modifiche' %>
+    <!-- ========== OPZIONI PUBBLICAZIONE ========== -->
+    <div style="background: #fff; padding: 1.5rem; border: 2px solid #2196f3; border-radius: 8px; margin-bottom: 2rem;">
+      <h2 style="margin-top: 0; color: #1976d2; font-size: 1.3rem;">⚙️ Opzioni di Pubblicazione</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🔢 Ordinamento
+        </label>
+        <input
+          type="number"
+          id="sort_order"
+          name="sort_order"
+          value="<%= project.sort_order || 0 %>"
+          min="0"
+          style="width: 200px; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Numero più basso = appare prima nella lista (0 = primo progetto)
+        </small>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div>
+          <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.1rem;">
+            <input
+              type="checkbox"
+              name="is_featured"
+              value="1"
+              <%= project.is_featured ? 'checked' : '' %>
+              style="width: 24px; height: 24px; cursor: pointer;"
+            >
+            <span style="font-weight: 600;">⭐ Metti in Evidenza</span>
+          </label>
+          <small style="display: block; color: #666; margin-left: 3rem; margin-top: 0.5rem;">
+            💬 Il progetto apparirà in cima alla lista e sarà evidenziato
+          </small>
+        </div>
+
+        <div>
+          <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.1rem;">
+            <input
+              type="checkbox"
+              name="is_active"
+              value="1"
+              <%= project.is_active ? 'checked' : '' %>
+              style="width: 24px; height: 24px; cursor: pointer;"
+            >
+            <span style="font-weight: 600;">✅ Attivo (visibile sul sito)</span>
+          </label>
+          <small style="display: block; color: #666; margin-left: 3rem; margin-top: 0.5rem;">
+            💬 Spunta SOLO quando vuoi che il progetto appaia sul sito pubblico
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== BOTTONI ========== -->
+    <div style="display: flex; gap: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid #ddd;">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="padding: 1.25rem 3rem; font-size: 1.2rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;"
+      >
+        <%= action === 'create' ? '✅ Crea Progetto' : '💾 Salva Modifiche' %>
       </button>
-      <a href="/admin/projects" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1rem;">Annulla</a>
+      <a
+        href="/admin/projects"
+        class="btn btn-secondary"
+        style="padding: 1.25rem 3rem; font-size: 1.2rem; background: #999; color: white; border-radius: 8px; text-decoration: none; display: inline-block; text-align: center;"
+      >
+        ❌ Annulla
+      </a>
     </div>
   </form>
 </div>
 
-<!-- TinyMCE -->
+<!-- Scripts -->
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+<script src="/shared/js/cloudinary-widget.js"></script>
 <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
 <script src="/shared/config/editor-config.js"></script>
 
-<!-- Cloudinary Widget -->
-<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-<script src="/shared/js/cloudinary-widget.js"></script>
-
 <script>
-  // Init TinyMCE
-  if (window.SharedEditor) {
+// ========== INIZIALIZZA TINYMCE ==========
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof tinymce !== 'undefined' && window.SharedEditor) {
     window.SharedEditor.init('#long_description', 'projects', {
+      height: 400,
+      menubar: false,
+      language: 'it',
+      content_style: `
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 16px;
+          line-height: 1.6;
+          color: #333;
+          padding: 20px;
+        }
+      `,
       getUploadOptions: () => ({
         preset: 'cororaro_projects',
         folder: 'cororaro/projects'
       })
     });
   }
+});
 
-  // Cloudinary Image Picker
-  function openImagePicker() {
-    const config = {
-      cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME || "your-cloud-name" %>',
-      uploadPreset: 'cororaro_projects',
-      folder: 'cororaro/projects'
-    };
+// ========== CLOUDINARY IMMAGINE ==========
+function scegliImmagine() {
+  const cloudName = '<%= process.env.CLOUDINARY_CLOUD_NAME || "demo" %>';
 
-    if (typeof openCloudinaryPicker !== 'undefined') {
-      openCloudinaryPicker(config, (result) => {
-        document.getElementById('image_url').value = result.url;
-        document.getElementById('image-preview').innerHTML =
-          `<img src="${result.url}" alt="Project Image" style="max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`;
-      }, {
-        multiple: false,
-        cropping: false
-      });
-    } else {
-      alert('Cloudinary widget non disponibile');
-    }
+  if (typeof openCloudinaryPicker === 'undefined') {
+    alert('❌ Sistema upload non disponibile. Contatta l\'amministratore.');
+    return;
   }
+
+  const config = {
+    cloudName: cloudName,
+    uploadPreset: 'cororaro_projects',
+    folder: 'cororaro/projects'
+  };
+
+  openCloudinaryPicker(config, function(imageData) {
+    // Aggiorna campo hidden
+    document.getElementById('image_url').value = imageData.url;
+
+    // Mostra preview
+    document.getElementById('image-preview').innerHTML =
+      '<img src="' + imageData.url + '" alt="Immagine progetto" style="max-width: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">' +
+      '<p style="color: green; margin-top: 1rem;">✅ Immagine caricata con successo!</p>';
+  }, {
+    multiple: false,
+    cropping: false
+  });
+}
 </script>

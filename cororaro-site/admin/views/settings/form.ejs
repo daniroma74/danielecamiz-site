@@ -1,156 +1,326 @@
 <div class="page-header">
-  <h1>⚙️ Impostazioni Sito</h1>
-  <p>Configura i contenuti principali del sito Cororaro</p>
+  <h1>⚙️ Impostazioni Generali del Sito</h1>
+  <p style="color: #666; font-size: 1.1rem;">Configura i contenuti principali che appaiono sul sito Cororaro</p>
 </div>
 
-<div class="form-container" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 1200px;">
+<!-- Navigation Tabs -->
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; padding-bottom: 0;">
+  <a href="/admin/settings" style="padding: 0.75rem 1.5rem; text-decoration: none; color: white; background: var(--terracotta, #8B4513); border-radius: 8px 8px 0 0; font-weight: 600;">📋 Impostazioni Generali</a>
+  <a href="/admin/settings/values" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">💎 Valori del Coro</a>
+  <a href="/admin/settings/join" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">🎤 Unisciti a Noi</a>
+</div>
 
-  <!-- Navigation Tabs -->
-  <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ddd; padding-bottom: 1rem;">
-    <a href="/admin/settings" style="padding: 0.75rem 1.5rem; text-decoration: none; color: white; background: var(--terracotta, #8B4513); border-radius: 8px 8px 0 0;">Impostazioni Generali</a>
-    <a href="/admin/settings/values" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Valori del Coro</a>
-    <a href="/admin/settings/join" style="padding: 0.75rem 1.5rem; text-decoration: none; color: #333; background: #f0f0f0; border-radius: 8px 8px 0 0;">Unisciti a Noi</a>
+<div class="form-container" style="background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 1200px;">
+
+  <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196f3;">
+    <h3 style="margin: 0 0 0.5rem 0; color: #1976d2;">💡 Come funziona?</h3>
+    <p style="margin: 0; color: #555;">
+      Queste impostazioni controllano i testi e le immagini principali del sito.
+      <br>I campi con l'icona 📝 permettono di formattare il testo (grassetto, elenchi, ecc.).
+      <br>Clicca "Salva" in fondo alla pagina per applicare le modifiche.
+    </p>
   </div>
 
   <form method="POST" action="/admin/settings">
 
-    <!-- Hero Section -->
-    <div class="settings-section" style="margin-bottom: 3rem;">
-      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
-        🎭 Sezione Hero
-      </h2>
+    <!-- ========== HERO SECTION ========== -->
+    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🎭 Sezione Hero (Prima cosa che vedono i visitatori)</h2>
 
       <% settings.hero.forEach(setting => { %>
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-            <%= setting.setting_key.replace('hero_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+        <div style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            <%= setting.setting_key === 'hero_title' ? '📌 Titolo Principale' :
+                setting.setting_key === 'hero_subtitle' ? '📄 Sottotitolo' :
+                setting.setting_key === 'hero_cta_text' ? '🔘 Testo Pulsante' :
+                setting.setting_key === 'hero_cta_url' ? '🔗 Link Pulsante' :
+                setting.setting_key === 'hero_background' ? '🖼️ Immagine di Sfondo' :
+                setting.setting_key === 'hero_logo' ? '🎨 Logo' :
+                setting.setting_key.replace('hero_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
-          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('description')) { %>
-            <textarea id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" class="tinymce-field" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= setting.setting_value || '' %></textarea>
+
+          <% if (setting.setting_key.includes('_url') || setting.setting_key.includes('_background') || setting.setting_key.includes('_logo')) { %>
+            <input
+              type="text"
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              value="<%= setting.setting_value || '' %>"
+              placeholder="https://..."
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            >
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 <%= setting.setting_key.includes('cta_url') ? 'Link a cui porta il pulsante (es: /concerti)' :
+                      setting.setting_key.includes('background') ? 'URL dell\'immagine di sfondo' :
+                      setting.setting_key.includes('logo') ? 'URL del logo' : 'URL' %>
+            </small>
+          <% } else if (setting.setting_key.includes('_html') || setting.setting_key.includes('description')) { %>
+            <textarea
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              class="tinymce-editor"
+              rows="4"
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            ><%= setting.setting_value || '' %></textarea>
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 📝 Puoi formattare il testo usando i bottoni dell'editor
+            </small>
           <% } else { %>
-            <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+            <input
+              type="text"
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              value="<%= setting.setting_value || '' %>"
+              placeholder="<%= setting.setting_key.includes('title') ? 'Es: Benvenuti in Cororaro' :
+                             setting.setting_key.includes('subtitle') ? 'Es: Un coro con il cuore in Africa' :
+                             setting.setting_key.includes('cta') ? 'Es: Scopri i nostri concerti' : '' %>"
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            >
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 <%= setting.setting_key.includes('title') ? 'Il titolo grande che appare in homepage' :
+                      setting.setting_key.includes('subtitle') ? 'Il sottotitolo sotto al titolo principale' :
+                      setting.setting_key.includes('cta_text') ? 'Il testo che appare sul bottone' : '' %>
+            </small>
           <% } %>
         </div>
       <% }) %>
     </div>
 
-    <!-- About Section -->
-    <div class="settings-section" style="margin-bottom: 3rem;">
-      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
-        ℹ️ Sezione Chi Siamo
-      </h2>
+    <!-- ========== ABOUT SECTION ========== -->
+    <div style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #ff9800;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">ℹ️ Sezione "Chi Siamo"</h2>
 
       <% settings.about.forEach(setting => { %>
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-            <%= setting.setting_key.replace('about_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+        <div style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            <%= setting.setting_key === 'about_title' ? '📌 Titolo Sezione' :
+                setting.setting_key === 'about_lead' ? '📝 Testo Introduttivo (formattabile)' :
+                setting.setting_key === 'about_text_1' ? '📖 Primo Paragrafo (formattabile)' :
+                setting.setting_key === 'about_text_2' ? '📖 Secondo Paragrafo (formattabile)' :
+                setting.setting_key === 'about_image' ? '🖼️ Immagine' :
+                setting.setting_key.replace('about_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
-          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('description') || setting.setting_key.includes('story')) { %>
-            <textarea id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" class="tinymce-field" rows="6" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= setting.setting_value || '' %></textarea>
+
+          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('_text_') || setting.setting_key.includes('_lead')) { %>
+            <p style="margin: 0 0 0.5rem 0; padding: 0.75rem; background: #fffde7; border-radius: 4px; border-left: 3px solid #fbc02d; font-size: 0.95rem;">
+              <strong>📝 Puoi formattare il testo!</strong> Grassetto, elenchi, titoli...
+            </p>
+            <textarea
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              class="tinymce-editor"
+              rows="6"
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            ><%= setting.setting_value || '' %></textarea>
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 <%= setting.setting_key.includes('lead') ? 'Un\'introduzione accattivante alla storia del coro' :
+                      setting.setting_key.includes('text_1') ? 'La prima parte della vostra storia' :
+                      setting.setting_key.includes('text_2') ? 'La seconda parte della vostra storia' : '' %>
+            </small>
+          <% } else if (setting.setting_key.includes('_image')) { %>
+            <input
+              type="text"
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              value="<%= setting.setting_value || '' %>"
+              placeholder="https://..."
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            >
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 URL dell'immagine che accompagna la sezione "Chi Siamo"
+            </small>
           <% } else { %>
-            <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+            <input
+              type="text"
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              value="<%= setting.setting_value || '' %>"
+              placeholder="<%= setting.setting_key.includes('title') ? 'Es: Chi Siamo' : '' %>"
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            >
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 <%= setting.setting_key.includes('title') ? 'Il titolo della sezione "Chi Siamo"' : '' %>
+            </small>
           <% } %>
         </div>
       <% }) %>
     </div>
 
-    <!-- Projects Section -->
-    <div class="settings-section" style="margin-bottom: 3rem;">
-      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
-        🌍 Sezione Progetti
-      </h2>
+    <!-- ========== PROJECTS SECTION ========== -->
+    <div style="background: #f3e5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #9c27b0;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🌍 Sezione Progetti Solidali</h2>
 
       <% settings.projects.forEach(setting => { %>
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-            <%= setting.setting_key.replace('projects_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+        <div style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            <%= setting.setting_key === 'projects_title' ? '📌 Titolo Sezione' :
+                setting.setting_key === 'projects_intro' ? '📝 Testo Introduttivo (formattabile)' :
+                setting.setting_key.replace('projects_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
-          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('description')) { %>
-            <textarea id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" class="tinymce-field" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= setting.setting_value || '' %></textarea>
+
+          <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('_intro')) { %>
+            <p style="margin: 0 0 0.5rem 0; padding: 0.75rem; background: #fffde7; border-radius: 4px; border-left: 3px solid #fbc02d; font-size: 0.95rem;">
+              <strong>📝 Puoi formattare il testo!</strong> Grassetto, elenchi, titoli...
+            </p>
+            <textarea
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              class="tinymce-editor"
+              rows="4"
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            ><%= setting.setting_value || '' %></textarea>
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 Un'introduzione ai vostri progetti di solidarietà
+            </small>
           <% } else { %>
-            <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+            <input
+              type="text"
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              value="<%= setting.setting_value || '' %>"
+              placeholder="<%= setting.setting_key.includes('title') ? 'Es: I Nostri Progetti' : '' %>"
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            >
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 Il titolo della sezione progetti
+            </small>
           <% } %>
         </div>
       <% }) %>
     </div>
 
-    <!-- Contact Section -->
-    <div class="settings-section" style="margin-bottom: 3rem;">
-      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
-        📧 Sezione Contatti
-      </h2>
+    <!-- ========== CONTACT SECTION ========== -->
+    <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #4caf50;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📧 Informazioni di Contatto</h2>
 
       <% settings.contact.forEach(setting => { %>
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-            <%= setting.setting_key.replace('contact_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+        <div style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            <%= setting.setting_key === 'contact_email' ? '📧 Email' :
+                setting.setting_key === 'contact_phone' ? '📱 Telefono' :
+                setting.setting_key === 'contact_address' ? '📍 Indirizzo' :
+                setting.setting_key.replace('contact_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
-          <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+          <input
+            type="<%= setting.setting_key.includes('email') ? 'email' : 'text' %>"
+            id="<%= setting.setting_key %>"
+            name="<%= setting.setting_key %>"
+            value="<%= setting.setting_value || '' %>"
+            placeholder="<%= setting.setting_key.includes('email') ? 'info@cororaro.it' :
+                           setting.setting_key.includes('phone') ? '+39 XXX XXX XXXX' :
+                           setting.setting_key.includes('address') ? 'Via..., Roma' : '' %>"
+            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+          >
+          <small style="display: block; margin-top: 0.5rem; color: #666;">
+            💬 <%= setting.setting_key.includes('email') ? 'Email principale del coro' :
+                    setting.setting_key.includes('phone') ? 'Numero di telefono per informazioni' :
+                    setting.setting_key.includes('address') ? 'Indirizzo sede delle prove o del coro' : '' %>
+          </small>
         </div>
       <% }) %>
     </div>
 
-    <!-- Social Section -->
-    <div class="settings-section" style="margin-bottom: 3rem;">
-      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
-        📱 Social Media
-      </h2>
+    <!-- ========== SOCIAL MEDIA ========== -->
+    <div style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #e91e63;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📱 Social Media</h2>
 
       <% settings.social.forEach(setting => { %>
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-            <%= setting.setting_key.replace('social_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+        <div style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            <%= setting.setting_key === 'social_facebook' ? '👍 Facebook' :
+                setting.setting_key === 'social_instagram' ? '📷 Instagram' :
+                setting.setting_key === 'social_youtube' ? '▶️ YouTube' :
+                setting.setting_key === 'social_twitter' ? '🐦 Twitter/X' :
+                setting.setting_key.replace('social_', '').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
-          <input type="url" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" placeholder="https://..." style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+          <input
+            type="url"
+            id="<%= setting.setting_key %>"
+            name="<%= setting.setting_key %>"
+            value="<%= setting.setting_value || '' %>"
+            placeholder="https://..."
+            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+          >
+          <small style="display: block; margin-top: 0.5rem; color: #666;">
+            💬 Link completo al vostro profilo <%= setting.setting_key.replace('social_', '').replace(/\b\w/g, l => l.toUpperCase()) %>
+          </small>
         </div>
       <% }) %>
     </div>
 
-    <!-- Footer Section -->
-    <div class="settings-section" style="margin-bottom: 3rem;">
-      <h2 style="color: var(--terracotta, #8B4513); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0;">
-        🦶 Footer
-      </h2>
+    <!-- ========== FOOTER ========== -->
+    <div style="background: #efebe9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #795548;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🦶 Footer (parte finale del sito)</h2>
 
       <% settings.footer.forEach(setting => { %>
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
-            <%= setting.setting_key.replace('footer_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
+        <div style="margin-bottom: 1.5rem;">
+          <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            <%= setting.setting_key === 'footer_copyright' ? '©️ Copyright' :
+                setting.setting_key.replace('footer_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
           <% if (setting.setting_key.includes('_html') || setting.setting_key.includes('copyright')) { %>
-            <textarea id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= setting.setting_value || '' %></textarea>
+            <textarea
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              rows="3"
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            ><%= setting.setting_value || '' %></textarea>
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+              💬 Testo del copyright che appare in fondo alla pagina
+            </small>
           <% } else { %>
-            <input type="text" id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.setting_value || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+            <input
+              type="text"
+              id="<%= setting.setting_key %>"
+              name="<%= setting.setting_key %>"
+              value="<%= setting.setting_value || '' %>"
+              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+            >
           <% } %>
         </div>
       <% }) %>
     </div>
 
-    <!-- Actions -->
-    <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f0f0f0;">
-      <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">
+    <!-- ========== BOTTONE SALVA ========== -->
+    <div style="display: flex; gap: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid #ddd;">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="padding: 1.25rem 3rem; font-size: 1.2rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;"
+      >
         💾 Salva Tutte le Impostazioni
       </button>
     </div>
   </form>
 </div>
 
-<!-- TinyMCE -->
+<!-- Scripts -->
 <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
 <script src="/shared/config/editor-config.js"></script>
 
 <script>
-  // Init TinyMCE for all HTML fields
-  if (window.SharedEditor) {
-    document.querySelectorAll('.tinymce-field').forEach(field => {
+// ========== INIZIALIZZA TINYMCE PER TUTTI I CAMPI HTML ==========
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof tinymce !== 'undefined' && window.SharedEditor) {
+    document.querySelectorAll('.tinymce-editor').forEach(field => {
       const isSimple = field.rows <= 4;
       window.SharedEditor.init(`#${field.id}`, 'settings', {
         height: isSimple ? 200 : 300,
         toolbar: isSimple ?
           'undo redo | bold italic | link' :
           'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link',
-        menubar: false
+        menubar: false,
+        language: 'it',
+        content_style: `
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+          }
+        `
       });
     });
   }
+});
 </script>
