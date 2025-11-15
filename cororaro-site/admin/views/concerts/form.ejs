@@ -1,141 +1,338 @@
 <div class="page-header">
-  <h1><%= action === 'create' ? '+ Nuovo Concerto' : 'Modifica Concerto' %></h1>
+  <h1><%= action === 'create' ? '➕ Aggiungi un Nuovo Concerto' : '✏️ Modifica Concerto' %></h1>
+  <p style="color: #666; font-size: 1.1rem;">Compila i campi qui sotto per creare o modificare un concerto</p>
 </div>
 
-<div class="form-container" style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 900px;">
+<div class="form-container" style="background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 900px;">
+
+  <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196f3;">
+    <h3 style="margin: 0 0 0.5rem 0; color: #1976d2;">💡 Come funziona?</h3>
+    <p style="margin: 0; color: #555;">
+      I campi con <strong>*</strong> sono obbligatori. Gli altri sono facoltativi ma aiutano a dare più informazioni.
+      <br>Spunta "Pubblicato" solo quando sei sicuro che il concerto deve apparire sul sito.
+    </p>
+  </div>
+
   <form method="POST" action="<%= action === 'create' ? '/admin/concerts' : '/admin/concerts/' + concert.id %>">
 
-    <!-- Titolo -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Titolo *</label>
-      <input type="text" id="title" name="title" value="<%= concert.title || '' %>" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
-      <small style="color: #666;">Es: Concerto di Natale Solidale</small>
-    </div>
+    <!-- ========== INFORMAZIONI BASE ========== -->
+    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📝 Informazioni Base</h2>
 
-    <!-- Data e Ora -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-      <div class="form-group">
-        <label for="date" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Data *</label>
-        <input type="date" id="date" name="date" value="<%= concert.date || '' %>" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+      <!-- Titolo -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem; color: #333;">
+          📌 Nome del Concerto *
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value="<%= concert.title || '' %>"
+          required
+          placeholder="Es: Concerto di Natale Solidale"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666; font-size: 0.95rem;">
+          💬 Scrivi un nome chiaro e accattivante. Esempio: "Concerto di Primavera per la Tanzania"
+        </small>
       </div>
-      <div class="form-group">
-        <label for="time" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Orario</label>
-        <input type="time" id="time" name="time" value="<%= concert.time || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+
+      <!-- Data e Ora -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label for="date" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            📅 Quando si terrà? *
+          </label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            value="<%= concert.date || '' %>"
+            required
+            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;"
+          >
+          <small style="display: block; margin-top: 0.5rem; color: #666;">
+            💬 Scegli la data dal calendario
+          </small>
+        </div>
+        <div>
+          <label for="time" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+            🕐 A che ora?
+          </label>
+          <input
+            type="time"
+            id="time"
+            name="time"
+            value="<%= concert.time || '' %>"
+            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;"
+          >
+          <small style="display: block; margin-top: 0.5rem; color: #666;">
+            💬 Esempio: 18:00
+          </small>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="location" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          📍 Dove si terrà? *
+        </label>
+        <input
+          type="text"
+          id="location"
+          name="location"
+          value="<%= concert.location || '' %>"
+          required
+          placeholder="Es: Chiesa di San Francesco"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Nome del luogo (chiesa, teatro, auditorium...)
+        </small>
+      </div>
+
+      <!-- Indirizzo -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="address" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🏠 Indirizzo completo (facoltativo)
+        </label>
+        <input
+          type="text"
+          id="address"
+          name="address"
+          value="<%= concert.address || '' %>"
+          placeholder="Es: Via delle Isole Curzolane 23, Prati Fiscali, Roma"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Aiuta le persone a trovare il luogo
+        </small>
       </div>
     </div>
 
-    <!-- Location e Indirizzo -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="location" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Location *</label>
-      <input type="text" id="location" name="location" value="<%= concert.location || '' %>" required style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <small style="color: #666;">Es: Chiesa di San Francesco</small>
-    </div>
+    <!-- ========== CAUSA BENEFICA ========== -->
+    <div style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #ff9800;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">💚 A Sostegno di...</h2>
 
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="address" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Indirizzo completo</label>
-      <input type="text" id="address" name="address" value="<%= concert.address || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <small style="color: #666;">Es: Prati Fiscali, Roma</small>
-    </div>
-
-    <!-- Causa benefica -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="cause" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Causa Benefica</label>
-      <input type="text" id="cause" name="cause" value="<%= concert.cause || '' %>" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <small style="color: #666;">Es: Ospedale pediatrico in Kenya</small>
-    </div>
-
-    <!-- Programma -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="program" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Programma Musicale</label>
-      <textarea id="program" name="program" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px; font-family: inherit;"><%= concert.program || '' %></textarea>
-      <small style="color: #666;">Es: Canti di Natale dal mondo, spirituals, tradizioni europee</small>
-    </div>
-
-    <!-- Descrizione con TinyMCE -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="description" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Descrizione Dettagliata</label>
-      <textarea id="description" name="description"><%= concert.description || '' %></textarea>
-    </div>
-
-    <!-- Poster -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="poster_url" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Locandina (URL)</label>
-      <div style="display: flex; gap: 1rem; align-items: flex-start;">
-        <input type="text" id="poster_url" name="poster_url" value="<%= concert.poster_url || '' %>" placeholder="URL immagine locandina" style="flex: 1; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-        <button type="button" onclick="openPosterPicker()" class="btn">📸 Scegli da Cloudinary</button>
+      <div style="margin-bottom: 1.5rem;">
+        <label for="cause" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          ❤️ Per quale causa fate questo concerto?
+        </label>
+        <input
+          type="text"
+          id="cause"
+          name="cause"
+          value="<%= concert.cause || '' %>"
+          placeholder="Es: Ospedale pediatrico in Kenya"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Esempio: "Scuola rurale in Tanzania", "Acqua potabile in Senegal"
+        </small>
       </div>
-      <% if (concert.poster_url) { %>
-        <img src="<%= concert.poster_url %>" alt="Poster" style="max-width: 300px; margin-top: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-      <% } %>
-      <div id="poster-preview" style="margin-top: 1rem;"></div>
     </div>
 
-    <!-- Link prenotazioni -->
-    <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label for="ticket_url" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Link Prenotazioni</label>
-      <input type="url" id="ticket_url" name="ticket_url" value="<%= concert.ticket_url || '' %>" placeholder="https://..." style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
+    <!-- ========== PROGRAMMA MUSICALE ========== -->
+    <div style="background: #f3e5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #9c27b0;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🎼 Cosa Canterete?</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="program" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🎵 Programma musicale (una riga)
+        </label>
+        <textarea
+          id="program"
+          name="program"
+          rows="3"
+          placeholder="Es: Canti di Natale dal mondo, spirituals, tradizioni europee"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit; resize: vertical;"
+        ><%= concert.program || '' %></textarea>
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Un breve riassunto dei brani che canterete
+        </small>
+      </div>
+
+      <!-- Descrizione Lunga con TinyMCE -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="description" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          📄 Descrizione Dettagliata (facoltativo)
+        </label>
+        <p style="margin: 0 0 1rem 0; padding: 0.75rem; background: #fffde7; border-radius: 4px; border-left: 3px solid #fbc02d;">
+          <strong>📝 Qui puoi formattare il testo!</strong> Usa i bottoni per fare grassetto, elenchi, ecc. come in Word.
+        </p>
+        <textarea
+          id="description"
+          name="description"
+          class="tinymce-editor"
+        ><%= concert.description || '' %></textarea>
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Puoi lasciare vuoto se preferisci usare solo il programma breve sopra
+        </small>
+      </div>
     </div>
 
-    <!-- Flags -->
-    <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
-      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-        <input type="checkbox" name="is_featured" value="1" <%= concert.is_featured ? 'checked' : '' %>>
-        <span>⭐ In evidenza</span>
-      </label>
-      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-        <input type="checkbox" name="is_published" value="1" <%= concert.is_published ? 'checked' : '' %>>
-        <span>✅ Pubblicato</span>
-      </label>
+    <!-- ========== LOCANDINA ========== -->
+    <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #4caf50;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📸 Locandina del Concerto</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🖼️ Immagine/Poster
+        </label>
+        <p style="margin: 0 0 1rem 0; color: #666;">
+          Clicca il bottone qui sotto per caricare o scegliere una locandina
+        </p>
+
+        <input type="hidden" id="poster_url" name="poster_url" value="<%= concert.poster_url || '' %>">
+
+        <button
+          type="button"
+          onclick="scegliLocandina()"
+          class="btn"
+          style="padding: 1rem 2rem; font-size: 1.1rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer;"
+        >
+          📸 Carica o Scegli Locandina
+        </button>
+
+        <div id="poster-preview" style="margin-top: 1.5rem;">
+          <% if (concert.poster_url) { %>
+            <img src="<%= concert.poster_url %>" alt="Locandina" style="max-width: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <% } %>
+        </div>
+      </div>
     </div>
 
-    <!-- Actions -->
-    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-      <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">
-        <%= action === 'create' ? 'Crea Concerto' : 'Salva Modifiche' %>
+    <!-- ========== LINK PRENOTAZIONI ========== -->
+    <div style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #e91e63;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🔗 Link per Prenotazioni</h2>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="ticket_url" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
+          🎟️ Link Eventbrite o altro (facoltativo)
+        </label>
+        <input
+          type="url"
+          id="ticket_url"
+          name="ticket_url"
+          value="<%= concert.ticket_url || '' %>"
+          placeholder="https://..."
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666;">
+          💬 Se hai un link per le prenotazioni, incollalo qui
+        </small>
+      </div>
+    </div>
+
+    <!-- ========== OPZIONI PUBBLICAZIONE ========== -->
+    <div style="background: #fff; padding: 1.5rem; border: 2px solid #2196f3; border-radius: 8px; margin-bottom: 2rem;">
+      <h2 style="margin-top: 0; color: #1976d2; font-size: 1.3rem;">⚙️ Opzioni di Pubblicazione</h2>
+
+      <div style="display: flex; gap: 3rem; flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.1rem;">
+          <input
+            type="checkbox"
+            name="is_featured"
+            value="1"
+            <%= concert.is_featured ? 'checked' : '' %>
+            style="width: 24px; height: 24px; cursor: pointer;"
+          >
+          <span style="font-weight: 600;">⭐ Metti in Evidenza</span>
+        </label>
+        <small style="display: block; color: #666; margin-left: 3rem;">
+          💬 Il concerto apparirà in cima alla lista
+        </small>
+
+        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.1rem;">
+          <input
+            type="checkbox"
+            name="is_published"
+            value="1"
+            <%= concert.is_published ? 'checked' : '' %>
+            style="width: 24px; height: 24px; cursor: pointer;"
+          >
+          <span style="font-weight: 600;">✅ Pubblicato (visibile sul sito)</span>
+        </label>
+        <small style="display: block; color: #666; margin-left: 3rem;">
+          💬 Spunta SOLO quando vuoi che appaia sul sito pubblico
+        </small>
+      </div>
+    </div>
+
+    <!-- ========== BOTTONI ========== -->
+    <div style="display: flex; gap: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid #ddd;">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="padding: 1.25rem 3rem; font-size: 1.2rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;"
+      >
+        <%= action === 'create' ? '✅ Crea Concerto' : '💾 Salva Modifiche' %>
       </button>
-      <a href="/admin/concerts" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1rem;">Annulla</a>
+      <a
+        href="/admin/concerts"
+        class="btn btn-secondary"
+        style="padding: 1.25rem 3rem; font-size: 1.2rem; background: #999; color: white; border-radius: 8px; text-decoration: none; display: inline-block; text-align: center;"
+      >
+        ❌ Annulla
+      </a>
     </div>
   </form>
 </div>
 
-<!-- TinyMCE -->
+<!-- Scripts -->
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+<script src="/shared/js/cloudinary-widget.js"></script>
 <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
 <script src="/shared/config/editor-config.js"></script>
 
-<!-- Cloudinary Widget -->
-<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-<script src="/shared/js/cloudinary-widget.js"></script>
-
 <script>
-  // Init TinyMCE
-  if (window.SharedEditor) {
-    window.SharedEditor.init('#description', 'concerts', {
-      getUploadOptions: () => ({
-        preset: 'cororaro_concerts',
-        folder: 'cororaro/concerts'
-      })
+// ========== INIZIALIZZA TINYMCE ==========
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof tinymce !== 'undefined' && window.SharedEditor) {
+    window.SharedEditor.init('#description', 'default', {
+      height: 400,
+      menubar: false,
+      language: 'it',
+      content_style: `
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 16px;
+          line-height: 1.6;
+          color: #333;
+          padding: 20px;
+        }
+      `
     });
   }
+});
 
-  // Cloudinary Poster Picker
-  function openPosterPicker() {
-    const config = {
-      cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME || "your-cloud-name" %>',
-      uploadPreset: 'cororaro_concerts',
-      folder: 'cororaro/concerts'
-    };
+// ========== CLOUDINARY LOCANDINA ==========
+function scegliLocandina() {
+  const cloudName = '<%= process.env.CLOUDINARY_CLOUD_NAME || "demo" %>';
 
-    if (typeof openCloudinaryPicker !== 'undefined') {
-      openCloudinaryPicker(config, (result) => {
-        document.getElementById('poster_url').value = result.url;
-        document.getElementById('poster-preview').innerHTML =
-          `<img src="${result.url}" alt="Poster" style="max-width: 300px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`;
-      }, {
-        multiple: false,
-        cropping: false
-      });
-    } else {
-      alert('Cloudinary widget non disponibile');
-    }
+  if (typeof openCloudinaryPicker === 'undefined') {
+    alert('❌ Sistema upload non disponibile. Contatta l\'amministratore.');
+    return;
   }
+
+  const config = {
+    cloudName: cloudName,
+    uploadPreset: 'cororaro_concerts',
+    folder: 'cororaro/concerts'
+  };
+
+  openCloudinaryPicker(config, function(imageData) {
+    // Aggiorna campo hidden
+    document.getElementById('poster_url').value = imageData.url;
+
+    // Mostra preview
+    document.getElementById('poster-preview').innerHTML =
+      '<img src="' + imageData.url + '" alt="Locandina" style="max-width: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">' +
+      '<p style="color: green; margin-top: 1rem;">✅ Locandina caricata con successo!</p>';
+  }, {
+    multiple: false,
+    cropping: false
+  });
+}
 </script>
