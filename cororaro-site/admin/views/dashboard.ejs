@@ -1,17 +1,17 @@
 <div class="page-header">
-  <h1>Dashboard</h1>
-  <p>Benvenuto, <%= user.fullName || user.username %>!</p>
+  <h1>🏠 Pannello di Controllo</h1>
+  <p style="color: #666; font-size: 1.1rem;">Benvenuto, <strong><%= user.fullName || user.username %></strong>!</p>
 </div>
 
 <style>
-  .stats-grid {
+  .riepilogo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
   }
 
-  .stat-card {
+  .card-numero {
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
@@ -19,37 +19,36 @@
     border-left: 4px solid var(--terracotta);
   }
 
-  .stat-card h3 {
-    font-size: 0.9rem;
+  .card-numero h3 {
+    font-size: 1rem;
     color: var(--text-secondary);
     margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-weight: 600;
   }
 
-  .stat-card .stat-value {
+  .card-numero .valore {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--terracotta);
   }
 
-  .recent-section {
+  .sezione-recenti {
     background: white;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .recent-section h2 {
+  .sezione-recenti h2 {
     margin-bottom: 1.5rem;
     color: var(--terracotta);
   }
 
-  .recent-list {
+  .lista-recenti {
     list-style: none;
   }
 
-  .recent-item {
+  .elemento-recente {
     padding: 1rem;
     border-bottom: 1px solid var(--beige);
     display: flex;
@@ -57,95 +56,95 @@
     align-items: center;
   }
 
-  .recent-item:last-child {
+  .elemento-recente:last-child {
     border-bottom: none;
   }
 
-  .recent-item-info {
+  .info-elemento {
     flex: 1;
   }
 
-  .recent-item-title {
+  .titolo-elemento {
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 0.25rem;
   }
 
-  .recent-item-meta {
+  .meta-elemento {
     font-size: 0.875rem;
     color: var(--text-secondary);
   }
 
-  .empty-state {
+  .stato-vuoto {
     text-align: center;
     padding: 3rem;
     color: var(--text-secondary);
   }
 </style>
 
-<div class="stats-grid">
-  <div class="stat-card">
+<div class="riepilogo-grid">
+  <div class="card-numero">
     <h3>🌍 Paesi</h3>
-    <div class="stat-value"><%= stats.countries || 0 %></div>
-    <a href="/admin/countries" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+    <div class="valore"><%= stats.countries || 0 %></div>
+    <a href="/admin/countries" style="font-size: 0.95rem; color: #666;">Gestisci Paesi →</a>
   </div>
 
-  <div class="stat-card">
+  <div class="card-numero">
     <h3>🎵 Brani Attivi</h3>
-    <div class="stat-value"><%= stats.activeSongs || 0 %></div>
-    <a href="/admin/repertoire" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+    <div class="valore"><%= stats.activeSongs || 0 %></div>
+    <a href="/admin/repertoire" style="font-size: 0.95rem; color: #666;">Gestisci Repertorio →</a>
   </div>
 
-  <div class="stat-card">
+  <div class="card-numero">
     <h3>🎤 Concerti</h3>
-    <div class="stat-value"><%= stats.concerts || 0 %></div>
-    <a href="/admin/concerts" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+    <div class="valore"><%= stats.concerts || 0 %></div>
+    <a href="/admin/concerts" style="font-size: 0.95rem; color: #666;">Gestisci Concerti →</a>
   </div>
 
-  <div class="stat-card">
-    <h3>💚 Progetti</h3>
-    <div class="stat-value"><%= stats.projects || 0 %></div>
-    <a href="/admin/projects" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+  <div class="card-numero">
+    <h3>💚 Progetti Solidali</h3>
+    <div class="valore"><%= stats.projects || 0 %></div>
+    <a href="/admin/projects" style="font-size: 0.95rem; color: #666;">Gestisci Progetti →</a>
   </div>
 
-  <div class="stat-card">
-    <h3>👥 Membri Team</h3>
-    <div class="stat-value"><%= stats.teamMembers || 0 %></div>
-    <a href="/admin/team" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+  <div class="card-numero">
+    <h3>🎭 Maestri</h3>
+    <div class="valore"><%= stats.maestri || 0 %></div>
+    <a href="/admin/maestri" style="font-size: 0.95rem; color: #666;">Gestisci Maestri →</a>
   </div>
 
-  <div class="stat-card">
-    <h3>📸 Immagini</h3>
-    <div class="stat-value"><%= stats.galleryImages || 0 %></div>
-    <a href="/admin/gallery-images" style="font-size: 0.85rem; color: #666;">Gestisci →</a>
+  <div class="card-numero">
+    <h3>📸 Foto Galleria</h3>
+    <div class="valore"><%= stats.galleryImages || 0 %></div>
+    <a href="/admin/gallery-images" style="font-size: 0.95rem; color: #666;">Gestisci Galleria →</a>
   </div>
 </div>
 
-<!-- Quick Actions -->
+<!-- Azioni Rapide -->
 <div style="margin: 2rem 0;">
-  <h2 style="margin-bottom: 1rem;">⚡ Azioni Rapide</h2>
+  <h2 style="margin-bottom: 1rem; font-size: 1.3rem;">⚡ Azioni Rapide</h2>
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-    <a href="/admin/settings" class="btn" style="padding: 1rem; text-align: center;">⚙️ Impostazioni Sito</a>
-    <a href="/admin/concerts/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuovo Concerto</a>
-    <a href="/admin/projects/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuovo Progetto</a>
-    <a href="/admin/team/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuovo Membro</a>
-    <a href="/admin/gallery-images/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuova Foto</a>
-    <a href="/admin/repertoire/new" class="btn" style="padding: 1rem; text-align: center;">+ Nuovo Brano</a>
+    <a href="/admin/settings" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">⚙️ Impostazioni Sito</a>
+    <a href="/admin/concerts/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuovo Concerto</a>
+    <a href="/admin/projects/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuovo Progetto</a>
+    <a href="/admin/maestri/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuovo Maestro</a>
+    <a href="/admin/gallery-images/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuova Foto</a>
+    <a href="/admin/repertoire/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuovo Brano</a>
   </div>
 </div>
 
-<div class="recent-section">
-  <h2>📝 Ultimi Brani Aggiunti</h2>
+<div class="sezione-recenti">
+  <h2>📝 Ultimi Brani Aggiunti al Repertorio</h2>
 
   <% if (recentSongs && recentSongs.length > 0) { %>
-    <ul class="recent-list">
+    <ul class="lista-recenti">
       <% recentSongs.forEach(song => { %>
-        <li class="recent-item">
-          <div class="recent-item-info">
-            <div class="recent-item-title">
+        <li class="elemento-recente">
+          <div class="info-elemento">
+            <div class="titolo-elemento">
               <%= song.flag %> <%= song.title %>
             </div>
-            <div class="recent-item-meta">
+            <div class="meta-elemento">
               <%= song.country_name %> • <%= song.language || 'N/D' %>
             </div>
           </div>
@@ -156,7 +155,7 @@
       <% }) %>
     </ul>
   <% } else { %>
-    <div class="empty-state">
+    <div class="stato-vuoto">
       <p>Nessun brano nel repertorio</p>
       <a href="/admin/repertoire/new" class="btn" style="margin-top: 1rem;">
         + Aggiungi Primo Brano

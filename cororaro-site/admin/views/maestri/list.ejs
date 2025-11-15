@@ -1,0 +1,98 @@
+<div class="page-header">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1>🎭 I Nostri Maestri</h1>
+      <p style="color: #666; font-size: 1.1rem;"><%= maestri.length %> maestro/i nel coro</p>
+    </div>
+    <a href="/admin/maestri/new" class="btn" style="padding: 1rem 2rem; font-size: 1.1rem;">➕ Aggiungi Maestro</a>
+  </div>
+</div>
+
+<div class="filters" style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+  <form method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <input
+      type="text"
+      name="search"
+      placeholder="🔍 Cerca per nome..."
+      value="<%= filters.search %>"
+      style="flex: 1; min-width: 200px; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;"
+    >
+    <button type="submit" class="btn" style="padding: 1rem 2rem; font-size: 1.1rem;">Cerca</button>
+    <% if (filters.search) { %>
+      <a href="/admin/maestri" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem;">❌ Cancella Ricerca</a>
+    <% } %>
+  </form>
+</div>
+
+<div class="table-container" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background: var(--terracotta, #8B4513); color: white;">
+        <th style="padding: 1.25rem; text-align: left; font-size: 1.1rem;">👤 Maestro</th>
+        <th style="padding: 1.25rem; text-align: left; font-size: 1.1rem;">📧 Contatti</th>
+        <th style="padding: 1.25rem; text-align: left; font-size: 1.1rem;">🔢 Ordine</th>
+        <th style="padding: 1.25rem; text-align: left; font-size: 1.1rem;">✅ Visibile</th>
+        <th style="padding: 1.25rem; text-align: left; font-size: 1.1rem;">⚙️ Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (maestri.length === 0) { %>
+        <tr>
+          <td colspan="5" style="padding: 3rem; text-align: center; color: #999;">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">📭 Nessun maestro ancora inserito</p>
+            <a href="/admin/maestri/new" class="btn" style="padding: 1rem 2rem;">➕ Aggiungi il Primo Maestro</a>
+          </td>
+        </tr>
+      <% } else { %>
+        <% maestri.forEach(maestro => { %>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 1.25rem;">
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <% if (maestro.photo_url) { %>
+                  <img src="<%= maestro.photo_url %>" alt="<%= maestro.full_name %>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <% } else { %>
+                  <div style="width: 60px; height: 60px; background: #e3f2fd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                    🎭
+                  </div>
+                <% } %>
+                <div>
+                  <strong style="font-size: 1.1rem;"><%= maestro.full_name %></strong>
+                  <% if (maestro.bio) { %>
+                    <br><small style="color: #666;"><%= maestro.bio.substring(0, 80).replace(/<[^>]*>/g, '') %>...</small>
+                  <% } %>
+                </div>
+              </div>
+            </td>
+            <td style="padding: 1.25rem;">
+              <% if (maestro.email) { %>
+                <div style="margin-bottom: 0.25rem;"><small style="font-size: 0.95rem;">📧 <%= maestro.email %></small></div>
+              <% } %>
+              <% if (maestro.phone) { %>
+                <div><small style="font-size: 0.95rem;">📱 <%= maestro.phone %></small></div>
+              <% } %>
+              <% if (!maestro.email && !maestro.phone) { %>
+                <small style="color: #999;">—</small>
+              <% } %>
+            </td>
+            <td style="padding: 1.25rem;">
+              <span style="font-size: 1.1rem; font-weight: 600; color: #666;"><%= maestro.sort_order || 0 %></span>
+            </td>
+            <td style="padding: 1.25rem;">
+              <span style="padding: 0.5rem 1rem; border-radius: 8px; font-size: 1rem; font-weight: 600; <%= maestro.is_active ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;' %>">
+                <%= maestro.is_active ? '✅ Visibile sul sito' : '❌ Nascosto' %>
+              </span>
+            </td>
+            <td style="padding: 1.25rem;">
+              <div style="display: flex; gap: 0.75rem;">
+                <a href="/admin/maestri/<%= maestro.id %>/edit" class="btn btn-small" style="padding: 0.75rem 1.25rem; font-size: 1rem;">✏️ Modifica</a>
+                <form method="POST" action="/admin/maestri/<%= maestro.id %>/delete" style="display: inline;" onsubmit="return confirm('⚠️ Sei sicuro di voler eliminare questo maestro? Non potrai annullare.');">
+                  <button type="submit" class="btn btn-small btn-danger" style="padding: 0.75rem 1.25rem; font-size: 1rem;">🗑️ Elimina</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>

@@ -83,7 +83,7 @@ const galleryRoutes = require('./admin/routes/gallery')(db);
 // New content management routes
 const concertsRoutes = require('./admin/routes/concerts')(db);
 const projectsRoutes = require('./admin/routes/projects')(db);
-const teamRoutes = require('./admin/routes/team')(db);
+const maestriRoutes = require('./admin/routes/maestri')(db);
 const settingsRoutes = require('./admin/routes/settings')(db);
 const galleryImagesRoutes = require('./admin/routes/gallery-images')(db);
 
@@ -97,7 +97,7 @@ app.use('/admin', cloudinaryApiRoutes);
 app.use('/admin', galleryRoutes);
 app.use('/admin', concertsRoutes);
 app.use('/admin', projectsRoutes);
-app.use('/admin', teamRoutes);
+app.use('/admin', maestriRoutes);
 app.use('/admin', settingsRoutes);
 app.use('/admin', galleryImagesRoutes);
 
@@ -405,33 +405,26 @@ app.get('/api/projects', (req, res) => {
 });
 
 /**
- * GET /api/team
- * Get all active team members
+ * GET /api/maestri
+ * Get all active maestri (directors)
  */
-app.get('/api/team', (req, res) => {
+app.get('/api/maestri', (req, res) => {
   const query = `
     SELECT * FROM team_members
     WHERE is_active = 1
     ORDER BY sort_order ASC, full_name ASC
   `;
 
-  db.all(query, [], (err, members) => {
+  db.all(query, [], (err, maestri) => {
     if (err) {
       console.error('❌ Database error:', err.message);
       return res.status(500).json({ success: false, message: 'Errore database' });
     }
 
-    // Group by role
-    const grouped = {
-      directors: members.filter(m => m.role === 'director' || m.role === 'co-director'),
-      choristers: members.filter(m => m.role === 'chorister'),
-      staff: members.filter(m => m.role === 'staff')
-    };
-
     res.json({
       success: true,
-      data: grouped,
-      total: members.length
+      data: maestri,
+      total: maestri.length
     });
   });
 });

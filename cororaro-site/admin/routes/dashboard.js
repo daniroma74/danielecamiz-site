@@ -32,7 +32,7 @@ module.exports = (db) => {
         activeSongs,
         concerts,
         projects,
-        teamMembers,
+        maestri,
         galleryImages,
         recentSongs
       ] = await Promise.all([
@@ -54,7 +54,7 @@ module.exports = (db) => {
         activeSongs: activeSongs?.count || 0,
         concerts: concerts?.count || 0,
         projects: projects?.count || 0,
-        teamMembers: teamMembers?.count || 0,
+        maestri: maestri?.count || 0,
         galleryImages: galleryImages?.count || 0
       };
 
