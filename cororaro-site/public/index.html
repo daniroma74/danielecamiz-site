@@ -67,24 +67,24 @@
         <div class="hero-logo-wrapper">
           <img src="assets/images/cororaro_logo-completo.png" alt="Coro Raro - Musica dal mondo" class="hero-logo">
         </div>
-        <p class="frase-principale">
+        <p class="hero-claim">
           20 anni di musica, solidarietà e cultura a Prati Fiscali, Roma
         </p>
-        <div class="cifre-importanti">
-          <div class="singola-cifra">
-            <span class="numero-grande">20</span>
-            <span class="descrizione-numero">Anni</span>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">20</span>
+            <span class="stat-label">Anni</span>
           </div>
-          <div class="singola-cifra">
-            <span class="numero-grande">5</span>
-            <span class="descrizione-numero">Continenti</span>
+          <div class="stat-item">
+            <span class="stat-number">5</span>
+            <span class="stat-label">Continenti</span>
           </div>
-          <div class="singola-cifra">
-            <span class="numero-grande">∞</span>
-            <span class="descrizione-numero">Emozioni</span>
+          <div class="stat-item">
+            <span class="stat-number">∞</span>
+            <span class="stat-label">Emozioni</span>
           </div>
         </div>
-        <div class="pulsanti-azione">
+        <div class="hero-cta">
           <a href="#concerti" class="btn btn-primary">Prossimi Concerti</a>
           <a href="#unisciti" class="btn btn-outline">Canta con Noi</a>
         </div>
@@ -130,7 +130,7 @@
 
         <div class="about-image">
           <img src="assets/images/coro-gruppo.png" alt="Il Coro Raro" loading="lazy">
-          <div class="etichetta-informativa">
+          <div class="about-badge">
             <span>Dal 2005</span>
             <span>Prati Fiscali</span>
           </div>
@@ -275,7 +275,7 @@
         </p>
       </div>
 
-      <div class="elenco-progetti" id="progetti-container">
+      <div class="projects-grid" id="progetti-container">
         <!-- Progetti caricati dinamicamente da API -->
       </div>
 
@@ -313,7 +313,7 @@
         <p class="section-subtitle">Vieni ad ascoltarci e sostieni le nostre iniziative</p>
       </div>
 
-      <div class="elenco-concerti" id="concerti-container">
+      <div class="concerts-grid" id="concerti-container">
         <!-- Concerti caricati dinamicamente da API -->
       </div>
     </div>
@@ -327,22 +327,22 @@
         <h2 class="section-title">Galleria</h2>
       </div>
 
-      <div class="raccolta-foto">
-        <div class="singola-foto">
+      <div class="gallery-grid">
+        <div class="gallery-item">
           <img src="assets/images/gallery/concerto-1.jpg" alt="Concerto" loading="lazy">
-          <div class="didascalia-foto">Concerto di Natale 2023</div>
+          <div class="gallery-caption">Concerto di Natale 2023</div>
         </div>
-        <div class="singola-foto">
+        <div class="gallery-item">
           <img src="assets/images/gallery/prove-1.jpg" alt="Prove" loading="lazy">
-          <div class="didascalia-foto">Prove settimanali</div>
+          <div class="gallery-caption">Prove settimanali</div>
         </div>
-        <div class="singola-foto">
+        <div class="gallery-item">
           <img src="assets/images/gallery/gruppo-1.jpg" alt="Gruppo" loading="lazy">
-          <div class="didascalia-foto">Il nostro coro</div>
+          <div class="gallery-caption">Il nostro coro</div>
         </div>
-        <div class="singola-foto">
+        <div class="gallery-item">
           <img src="assets/images/gallery/evento-1.jpg" alt="Evento" loading="lazy">
-          <div class="didascalia-foto">Evento benefico</div>
+          <div class="gallery-caption">Evento benefico</div>
         </div>
       </div>
 
@@ -353,37 +353,37 @@
   </section>
 
   <!-- UNISCITI A NOI -->
-  <section class="section sezione-entra-nel-coro" id="unisciti">
+  <section class="section join-section" id="unisciti">
     <div class="container">
-      <div class="contenuti-iscrizione">
-        <div class="testo-iscrizione">
+      <div class="join-content">
+        <div class="join-text">
           <span class="section-label">Cantare Insieme</span>
           <h2 class="section-title">Unisciti a Noi</h2>
 
-          <p class="presentazione-iscrizione">
+          <p class="join-lead">
             Non serve essere professionisti, serve solo amare il canto e voler condividere
             questa passione con gli altri, contribuendo a un mondo migliore.
           </p>
 
-          <div class="vantaggi-iscrizione">
-            <div class="singolo-vantaggio">
+          <div class="join-benefits">
+            <div class="benefit-item">
               ✓ Nessun limite di età - tutti sono benvenuti
             </div>
-            <div class="singolo-vantaggio">
+            <div class="benefit-item">
               ✓ Non serve saper leggere la musica
             </div>
-            <div class="singolo-vantaggio">
+            <div class="benefit-item">
               ✓ Prove settimanali a Prati Fiscali
             </div>
-            <div class="singolo-vantaggio">
+            <div class="benefit-item">
               ✓ Un repertorio unico e affascinante
             </div>
-            <div class="singolo-vantaggio">
+            <div class="benefit-item">
               ✓ Cantare per fare del bene
             </div>
           </div>
 
-          <div class="box-informazioni">
+          <div class="join-info-box">
             <h3>Come Funziona</h3>
             <p>
               Le prove si tengono ogni <strong>lunedì</strong> dalle 20:30 alle 22:30
@@ -395,8 +395,8 @@
           </div>
         </div>
 
-        <div class="contenitore-modulo">
-          <form class="modulo-richiesta-informazioni" id="joinForm">
+        <div class="join-form-wrapper">
+          <form class="contact-form" id="joinForm">
             <h3>Scrivici</h3>
             <p>Compila il form per ricevere informazioni o venire a una prova</p>
 
@@ -423,13 +423,13 @@
             <button type="submit" class="btn btn-primary btn-full">Invia Richiesta</button>
           </form>
 
-          <div class="contatti-diretti">
+          <div class="contact-direct">
             <h4>Contatti Diretti</h4>
-            <div class="informazione-contatto">
+            <div class="contact-item">
               <span>📧</span>
               <a href="mailto:info@cororaro.it">info@cororaro.it</a>
             </div>
-            <div class="informazione-contatto">
+            <div class="contact-item">
               <span>📍</span>
               <span>Prati Fiscali, Roma</span>
             </div>

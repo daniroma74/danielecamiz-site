@@ -482,9 +482,9 @@ class WorldGlobe {
     card.innerHTML = `
       <div class="song-header">
         <h3 class="song-title">${song.title}</h3>
-        <div class="etichette-brano">
-          ${song.language ? `<span class="etichetta-brano etichetta-lingua">${song.language}</span>` : ''}
-          ${song.difficulty ? `<span class="etichetta-brano etichetta-difficolta ${difficultyClass}">${difficultyLabel}</span>` : ''}
+        <div class="song-badges">
+          ${song.language ? `<span class="song-badge badge-language">${song.language}</span>` : ''}
+          ${song.difficulty ? `<span class="song-badge badge-difficulty ${difficultyClass}">${difficultyLabel}</span>` : ''}
         </div>
       </div>
 
@@ -669,32 +669,32 @@ class ContentLoader {
         const month = date.toLocaleDateString('it-IT', { month: 'short' }).toUpperCase();
 
         return `
-          <div class="scheda-concerto">
-            <div class="data-concerto">
-              <span class="giorno-concerto">${day}</span>
-              <span class="mese-concerto">${month}</span>
+          <div class="concert-card">
+            <div class="concert-date">
+              <span class="concert-day">${day}</span>
+              <span class="concert-month">${month}</span>
             </div>
-            <div class="dettagli-concerto">
+            <div class="concert-info">
               <h3>${concert.title}</h3>
               ${concert.cause_description ? `
-                <p class="causa-benefica">
+                <p class="concert-cause">
                   <strong>A sostegno di:</strong> ${concert.cause_description}
                 </p>
               ` : ''}
-              <div class="dettagli-evento">
+              <div class="concert-details">
                 ${concert.location ? `
-                  <div>
+                  <div class="concert-location">
                     📍 ${concert.location}
                   </div>
                 ` : ''}
                 ${concert.event_time ? `
-                  <div>
+                  <div class="concert-time">
                     🕐 Ore ${concert.event_time}
                   </div>
                 ` : ''}
               </div>
               ${concert.program ? `
-                <p class="programma-concerto">${concert.program}</p>
+                <p class="concert-program">${concert.program}</p>
               ` : ''}
             </div>
           </div>
@@ -725,8 +725,8 @@ class ContentLoader {
       }
 
       container.innerHTML = projects.map(project => `
-        <div class="scheda-progetto">
-          <div class="icona-progetto">${project.icon || '💚'}</div>
+        <div class="project-card">
+          <div class="project-icon">${project.icon || '💚'}</div>
           <h3>${project.title}</h3>
           <p>${project.description}</p>
           ${project.country ? `<small style="color: #666;">📍 ${project.country}</small>` : ''}
