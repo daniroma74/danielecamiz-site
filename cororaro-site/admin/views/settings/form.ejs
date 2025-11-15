@@ -30,12 +30,14 @@
       <% settings.hero.forEach(setting => { %>
         <div style="margin-bottom: 1.5rem;">
           <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
-            <%= setting.setting_key === 'hero_title' ? '📌 Titolo Principale' :
-                setting.setting_key === 'hero_subtitle' ? '📄 Sottotitolo' :
-                setting.setting_key === 'hero_cta_text' ? '🔘 Testo Pulsante' :
-                setting.setting_key === 'hero_cta_url' ? '🔗 Link Pulsante' :
-                setting.setting_key === 'hero_background' ? '🖼️ Immagine di Sfondo' :
-                setting.setting_key === 'hero_logo' ? '🎨 Logo' :
+            <%= setting.setting_key === 'hero_logo' ? '🎨 Logo del Coro' :
+                setting.setting_key === 'hero_claim' ? '💬 Frase Principale' :
+                setting.setting_key === 'hero_background' ? '🖼️ Foto di Sfondo' :
+                setting.setting_key === 'hero_stat_years' ? '📅 Statistiche - Numero Anni' :
+                setting.setting_key === 'hero_stat_continents' ? '🌍 Statistiche - Numero Continenti' :
+                setting.setting_key === 'hero_stat_emotions' ? '❤️ Statistiche - Emozioni' :
+                setting.setting_key === 'hero_cta_concerts' ? '🎵 Testo Pulsante Concerti' :
+                setting.setting_key === 'hero_cta_join' ? '🎤 Testo Pulsante Unisciti' :
                 setting.setting_key.replace('hero_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
 
@@ -110,11 +112,14 @@
       <% settings.about.forEach(setting => { %>
         <div style="margin-bottom: 1.5rem;">
           <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
-            <%= setting.setting_key === 'about_title' ? '📌 Titolo Sezione' :
-                setting.setting_key === 'about_lead' ? '📝 Testo Introduttivo (formattabile)' :
-                setting.setting_key === 'about_text_1' ? '📖 Primo Paragrafo (formattabile)' :
-                setting.setting_key === 'about_text_2' ? '📖 Secondo Paragrafo (formattabile)' :
-                setting.setting_key === 'about_image' ? '🖼️ Immagine' :
+            <%= setting.setting_key === 'about_label' ? '🏷️ Etichetta Sezione' :
+                setting.setting_key === 'about_title' ? '📌 Titolo Sezione' :
+                setting.setting_key === 'about_lead' ? '📝 Testo Introduttivo (con formattazione)' :
+                setting.setting_key === 'about_text_1' ? '📖 Primo Paragrafo (con formattazione)' :
+                setting.setting_key === 'about_text_2' ? '📖 Secondo Paragrafo (con formattazione)' :
+                setting.setting_key === 'about_image' ? '🖼️ Foto del Gruppo' :
+                setting.setting_key === 'about_badge_year' ? '📅 Anno di Fondazione (badge)' :
+                setting.setting_key === 'about_badge_location' ? '📍 Luogo (badge)' :
                 setting.setting_key.replace('about_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
 
@@ -135,16 +140,33 @@
                       setting.setting_key.includes('text_2') ? 'La seconda parte della vostra storia' : '' %>
             </small>
           <% } else if (setting.setting_key.includes('_image')) { %>
-            <input
-              type="text"
-              id="<%= setting.setting_key %>"
-              name="<%= setting.setting_key %>"
-              value="<%= setting.setting_value || '' %>"
-              placeholder="https://..."
-              style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
-            >
+            <!-- CLOUDINARY IMAGE UPLOAD -->
+            <div class="image-upload-container">
+              <input
+                type="text"
+                id="<%= setting.setting_key %>"
+                name="<%= setting.setting_key %>"
+                value="<%= setting.setting_value || '' %>"
+                readonly
+                placeholder="Nessuna immagine caricata"
+                style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px 8px 0 0; font-size: 1.1rem; font-family: inherit; background: #f9f9f9;"
+              >
+              <button
+                type="button"
+                class="cloudinary-upload-btn"
+                data-target="<%= setting.setting_key %>"
+                style="width: 100%; padding: 1rem; background: #3498db; color: white; border: none; border-radius: 0 0 8px 8px; cursor: pointer; font-size: 1.1rem; font-weight: 600; transition: background 0.3s;"
+                onmouseover="this.style.background='#2980b9'"
+                onmouseout="this.style.background='#3498db'"
+              >
+                📷 <%= setting.setting_value ? 'Cambia Immagine' : 'Carica Immagine' %>
+              </button>
+              <% if (setting.setting_value) { %>
+                <img src="<%= setting.setting_value %>" alt="Preview" style="max-width: 300px; margin-top: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <% } %>
+            </div>
             <small style="display: block; margin-top: 0.5rem; color: #666;">
-              💬 URL dell'immagine che accompagna la sezione "Chi Siamo"
+              💬 Foto del gruppo per la sezione "Chi Siamo"
             </small>
           <% } else { %>
             <input
@@ -170,8 +192,13 @@
       <% settings.projects.forEach(setting => { %>
         <div style="margin-bottom: 1.5rem;">
           <label for="<%= setting.setting_key %>" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
-            <%= setting.setting_key === 'projects_title' ? '📌 Titolo Sezione' :
-                setting.setting_key === 'projects_intro' ? '📝 Testo Introduttivo (formattabile)' :
+            <%= setting.setting_key === 'projects_label' ? '🏷️ Etichetta Sezione' :
+                setting.setting_key === 'projects_title' ? '📌 Titolo Sezione' :
+                setting.setting_key === 'projects_subtitle' ? '📄 Sottotitolo' :
+                setting.setting_key === 'projects_intro' ? '📝 Testo Introduttivo (con formattazione)' :
+                setting.setting_key === 'projects_stat_funds' ? '💰 Statistiche - Fondi Raccolti' :
+                setting.setting_key === 'projects_stat_projects' ? '🎯 Statistiche - Numero Progetti' :
+                setting.setting_key === 'projects_stat_countries' ? '🌍 Statistiche - Numero Paesi' :
                 setting.setting_key.replace('projects_', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %>
           </label>
 
@@ -312,6 +339,7 @@
 </div>
 
 <!-- Scripts -->
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
 <script src="/shared/config/editor-config.js"></script>
 <script src="/shared/js/cloudinary-widget.js"></script>
@@ -343,38 +371,47 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ========== CLOUDINARY WIDGET ==========
-  if (window.CloudinaryWidget) {
-    document.querySelectorAll('.cloudinary-upload-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const targetId = this.getAttribute('data-target');
-        const inputField = document.getElementById(targetId);
+  const cloudName = '<%= process.env.CLOUDINARY_CLOUD_NAME || "demo" %>';
 
-        window.CloudinaryWidget.openUploadWidget({
-          cropping: false,
-          folder: 'cororaro/impostazioni'
-        }, function(error, result) {
-          if (!error && result && result.event === "success") {
-            inputField.value = result.info.secure_url;
+  document.querySelectorAll('.cloudinary-upload-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const inputField = document.getElementById(targetId);
 
-            // Aggiorna preview se esiste
-            const container = inputField.closest('.image-upload-container');
-            let preview = container.querySelector('img');
-            if (preview) {
-              preview.src = result.info.secure_url;
-            } else {
-              preview = document.createElement('img');
-              preview.src = result.info.secure_url;
-              preview.alt = 'Preview';
-              preview.style.cssText = 'max-width: 300px; margin-top: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);';
-              container.appendChild(preview);
-            }
+      if (typeof openCloudinaryPicker === 'undefined') {
+        alert('❌ Sistema upload non disponibile. Contatta l\'amministratore.');
+        return;
+      }
 
-            // Aggiorna testo bottone
-            btn.textContent = '📷 Cambia Immagine';
-          }
-        });
+      const config = {
+        cloudName: cloudName,
+        uploadPreset: 'cororaro_settings',
+        folder: 'cororaro/impostazioni'
+      };
+
+      openCloudinaryPicker(config, function(imageData) {
+        inputField.value = imageData.url;
+
+        // Aggiorna preview se esiste
+        const container = inputField.closest('.image-upload-container');
+        let preview = container.querySelector('img');
+        if (preview) {
+          preview.src = imageData.url;
+        } else {
+          preview = document.createElement('img');
+          preview.src = imageData.url;
+          preview.alt = 'Preview';
+          preview.style.cssText = 'max-width: 300px; margin-top: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);';
+          container.appendChild(preview);
+        }
+
+        // Aggiorna testo bottone
+        btn.textContent = '📷 Cambia Immagine';
+      }, {
+        multiple: false,
+        cropping: false
       });
     });
-  }
+  });
 });
 </script>
