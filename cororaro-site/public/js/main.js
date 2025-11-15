@@ -597,6 +597,158 @@ class Accessibility {
 }
 
 // ============================================
+// CONTENT LOADER - Carica contenuti dalle API
+// ============================================
+
+class ContentLoader {
+  static async loadMaestri() {
+    try {
+      const response = await fetch('/api/maestri');
+      const result = await response.json();
+
+      if (!result.success || !result.data) return;
+
+      const container = document.getElementById('maestri-container');
+      if (!container) return;
+
+      container.innerHTML = result.data.map(maestro => `
+        <div class="director-card">
+          <div class="director-name">${maestro.full_name}</div>
+        </div>
+      `).join('');
+
+    } catch (error) {
+      console.error('Errore caricamento maestri:', error);
+    }
+  }
+
+  static async loadValori() {
+    try {
+      const response = await fetch('/api/values');
+      const result = await response.json();
+
+      if (!result.success || !result.data) return;
+
+      const container = document.getElementById('valori-container');
+      if (!container) return;
+
+      container.innerHTML = result.data.map(value => `
+        <div class="value-card">
+          <div class="value-icon">${value.icon || '💎'}</div>
+          <h4>${value.title}</h4>
+          <p>${value.description}</p>
+        </div>
+      `).join('');
+
+    } catch (error) {
+      console.error('Errore caricamento valori:', error);
+    }
+  }
+
+  static async loadConcerti() {
+    try {
+      const response = await fetch('/api/concerts');
+      const result = await response.json();
+
+      if (!result.success || !result.data) return;
+
+      const container = document.getElementById('concerti-container');
+      if (!container) return;
+
+      // Filtra solo concerti pubblicati e futuri
+      const concerts = result.data.filter(c => c.is_published);
+
+      if (concerts.length === 0) {
+        container.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">Nessun concerto in programma al momento. Torna presto per aggiornamenti!</p>';
+        return;
+      }
+
+      container.innerHTML = concerts.map(concert => {
+        const date = new Date(concert.event_date);
+        const day = date.getDate();
+        const month = date.toLocaleDateString('it-IT', { month: 'short' }).toUpperCase();
+
+        return `
+          <div class="concert-card">
+            <div class="concert-date">
+              <span class="concert-day">${day}</span>
+              <span class="concert-month">${month}</span>
+            </div>
+            <div class="concert-info">
+              <h3>${concert.title}</h3>
+              ${concert.cause_description ? `
+                <p class="concert-cause">
+                  <strong>A sostegno di:</strong> ${concert.cause_description}
+                </p>
+              ` : ''}
+              <div class="concert-details">
+                ${concert.location ? `
+                  <div class="concert-location">
+                    📍 ${concert.location}
+                  </div>
+                ` : ''}
+                ${concert.event_time ? `
+                  <div class="concert-time">
+                    🕐 Ore ${concert.event_time}
+                  </div>
+                ` : ''}
+              </div>
+              ${concert.program ? `
+                <p class="concert-program">${concert.program}</p>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (error) {
+      console.error('Errore caricamento concerti:', error);
+    }
+  }
+
+  static async loadProgetti() {
+    try {
+      const response = await fetch('/api/projects');
+      const result = await response.json();
+
+      if (!result.success || !result.data) return;
+
+      const container = document.getElementById('progetti-container');
+      if (!container) return;
+
+      // Filtra solo progetti attivi
+      const projects = result.data.filter(p => p.is_active);
+
+      if (projects.length === 0) {
+        container.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">Nessun progetto attivo al momento.</p>';
+        return;
+      }
+
+      container.innerHTML = projects.map(project => `
+        <div class="project-card">
+          <div class="project-icon">${project.icon || '💚'}</div>
+          <h3>${project.title}</h3>
+          <p>${project.description}</p>
+          ${project.country ? `<small style="color: #666;">📍 ${project.country}</small>` : ''}
+        </div>
+      `).join('');
+
+    } catch (error) {
+      console.error('Errore caricamento progetti:', error);
+    }
+  }
+
+  static async loadAll() {
+    await Promise.all([
+      this.loadMaestri(),
+      this.loadValori(),
+      this.loadConcerti(),
+      this.loadProgetti()
+    ]);
+  }
+}
+
+// ============================================
 // INITIALIZATION
 // ============================================
 
@@ -611,6 +763,9 @@ document.addEventListener('DOMContentLoaded', () => {
   new ContactForm();
   new LazyLoader();
   new WorldGlobe();
+
+  // Carica contenuti dalle API
+  ContentLoader.loadAll();
 
   // Add loaded class
   document.body.classList.add('loaded');
