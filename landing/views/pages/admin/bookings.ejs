@@ -349,11 +349,10 @@
   </style>
 </head>
 <body>
-  <%- include('../../../shared/partials/admin-header') %>
+  <%- include('../../partials/admin-header') %>
 
   <div class="top-nav">
     <div class="dashboard-header">
-      <h1>📋 Prenotazioni: <%= event.title %></h1>
       <div class="d-flex gap-1">
         <a href="/" class="btn-back"><i class="fas fa-arrow-left"></i> Dashboard</a>
         <a href="/bookings/<%= event.slug %>/export" class="btn btn-secondary">

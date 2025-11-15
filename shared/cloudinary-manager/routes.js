@@ -170,6 +170,36 @@ export function createCloudinaryRoutes(cloudinaryAPI) {
     }
   });
 
+  /**
+   * DELETE /cloudinary/delete-image
+   * Elimina un'immagine da Cloudinary
+   * Body: { publicId: "cororaro/foto1" }
+   */
+  router.delete('/delete-image', async (req, res) => {
+    try {
+      const { publicId } = req.body;
+      if (!publicId) {
+        return res.status(400).json({
+          success: false,
+          error: 'publicId parameter required'
+        });
+      }
+      const result = await cloudinaryAPI.deleteImage(publicId);
+
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+
+      res.json(result);
+    } catch (error) {
+      console.error('Error in /cloudinary/delete-image:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message
+      });
+    }
+  });
+
   return router;
 }
 
