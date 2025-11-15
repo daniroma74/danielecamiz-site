@@ -401,7 +401,7 @@ ul, ol {
   animation: fade-in-up 1s ease-out 0.2s backwards;
 }
 
-.hero-claim {
+.frase-principale {
   font-family: var(--font-body);
   font-size: clamp(var(--fs-lg), 2.5vw, var(--fs-2xl));
   margin-bottom: var(--spacing-xl);
@@ -410,7 +410,7 @@ ul, ol {
   animation: fade-in-up 1s ease-out 0.4s backwards;
 }
 
-.hero-stats {
+.cifre-importanti {
   display: flex;
   justify-content: center;
   gap: var(--spacing-2xl);
@@ -418,13 +418,13 @@ ul, ol {
   animation: fade-in-up 1s ease-out 0.6s backwards;
 }
 
-.stat-item {
+.singola-cifra {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.stat-number {
+.numero-grande {
   font-family: var(--font-heading);
   font-size: var(--fs-4xl);
   font-weight: 900;
@@ -433,7 +433,7 @@ ul, ol {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
-.stat-label {
+.descrizione-numero {
   font-size: var(--fs-base);
   color: var(--beige);
   margin-top: var(--spacing-xs);
@@ -441,7 +441,7 @@ ul, ol {
   letter-spacing: 0.1em;
 }
 
-.hero-cta {
+.pulsanti-azione {
   display: flex;
   gap: var(--spacing-md);
   justify-content: center;
@@ -614,7 +614,7 @@ ul, ol {
   display: block;
 }
 
-.about-badge {
+.etichetta-informativa {
   position: absolute;
   top: var(--spacing-lg);
   right: var(--spacing-lg);
@@ -828,14 +828,14 @@ ul, ol {
   line-height: 1.7;
 }
 
-.projects-grid {
+.elenco-progetti {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: var(--spacing-xl);
   margin: var(--spacing-2xl) 0;
 }
 
-.project-card {
+.scheda-progetto {
   background: rgba(255, 250, 240, 0.1);
   backdrop-filter: blur(10px);
   padding: var(--spacing-xl);
@@ -845,25 +845,25 @@ ul, ol {
   transition: all var(--transition-base);
 }
 
-.project-card:hover {
+.scheda-progetto:hover {
   background: rgba(255, 250, 240, 0.15);
   transform: translateY(-5px);
   border-color: var(--oro-light);
 }
 
-.project-icon {
+.icona-progetto {
   font-size: var(--fs-5xl);
   margin-bottom: var(--spacing-md);
 }
 
-.project-card h3 {
+.scheda-progetto h3 {
   font-family: var(--font-heading);
   font-size: var(--fs-xl);
   color: var(--oro-light);
   margin-bottom: var(--spacing-sm);
 }
 
-.project-card p {
+.scheda-progetto p {
   font-size: var(--fs-base);
   line-height: 1.6;
 }
@@ -929,14 +929,14 @@ ul, ol {
   background: var(--beige);
 }
 
-.concerts-grid {
+.elenco-concerti {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: var(--spacing-2xl);
   margin-top: var(--spacing-2xl);
 }
 
-.concert-card {
+.scheda-concerto {
   background: var(--avorio);
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -947,12 +947,12 @@ ul, ol {
   transition: transform var(--transition-base);
 }
 
-.concert-card:hover {
+.scheda-concerto:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-xl);
 }
 
-.concert-date {
+.data-concerto {
   background: linear-gradient(135deg, var(--terracotta), var(--terracotta-dark));
   color: var(--text-light);
   padding: var(--spacing-lg);
@@ -962,14 +962,14 @@ ul, ol {
   align-items: center;
 }
 
-.concert-day {
+.giorno-concerto {
   font-family: var(--font-heading);
   font-size: var(--fs-5xl);
   font-weight: 900;
   line-height: 1;
 }
 
-.concert-month {
+.mese-concerto {
   font-family: var(--font-body);
   font-size: var(--fs-xl);
   font-weight: 700;
@@ -978,7 +978,7 @@ ul, ol {
   margin-top: var(--spacing-xs);
 }
 
-.concert-info {
+.dettagli-concerto {
   padding: var(--spacing-xl);
   flex: 1;
   display: flex;
@@ -986,14 +986,14 @@ ul, ol {
   gap: var(--spacing-md);
 }
 
-.concert-info h3 {
+.dettagli-concerto h3 {
   font-family: var(--font-heading);
   font-size: var(--fs-2xl);
   color: var(--terracotta);
   margin-bottom: var(--spacing-xs);
 }
 
-.concert-cause {
+.causa-benefica {
   padding: var(--spacing-sm) var(--spacing-md);
   background: var(--beige);
   border-left: 3px solid var(--verde-oliva);
@@ -1002,12 +1002,12 @@ ul, ol {
   border-radius: var(--radius-sm);
 }
 
-.concert-cause strong {
+.causa-benefica strong {
   color: var(--verde-oliva);
   font-weight: 700;
 }
 
-.concert-details {
+.dettagli-evento {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
@@ -1015,7 +1015,7 @@ ul, ol {
   color: var(--text-secondary);
 }
 
-.concert-program {
+.programma-concerto {
   font-size: var(--fs-base);
   color: var(--text-secondary);
   line-height: 1.6;
@@ -1030,14 +1030,14 @@ ul, ol {
   background: var(--avorio);
 }
 
-.gallery-grid {
+.raccolta-foto {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-lg);
   margin-top: var(--spacing-2xl);
 }
 
-.gallery-item {
+.singola-foto {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1045,19 +1045,19 @@ ul, ol {
   transition: transform var(--transition-base);
 }
 
-.gallery-item:hover {
+.singola-foto:hover {
   transform: scale(1.05);
   box-shadow: var(--shadow-xl);
 }
 
-.gallery-item img {
+.singola-foto img {
   width: 100%;
   height: 300px;
   object-fit: cover;
   display: block;
 }
 
-.gallery-caption {
+.didascalia-foto {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -1073,34 +1073,34 @@ ul, ol {
    JOIN SECTION
    ============================================ */
 
-.join-section {
+.sezione-entra-nel-coro {
   background: var(--beige);
 }
 
-.join-content {
+.contenuti-iscrizione {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-3xl);
   align-items: start;
 }
 
-.join-text {
+.testo-iscrizione {
   text-align: left;
 }
 
-.join-text .section-header {
+.testo-iscrizione .section-header {
   text-align: left;
   margin-bottom: var(--spacing-xl);
 }
 
-.join-lead {
+.presentazione-iscrizione {
   font-size: var(--fs-xl);
   line-height: 1.8;
   color: var(--text-secondary);
   margin-bottom: var(--spacing-xl);
 }
 
-.join-benefits {
+.vantaggi-iscrizione {
   background: var(--avorio);
   padding: var(--spacing-xl);
   border-radius: var(--radius-xl);
@@ -1108,18 +1108,18 @@ ul, ol {
   margin-bottom: var(--spacing-xl);
 }
 
-.benefit-item {
+.singolo-vantaggio {
   font-size: var(--fs-lg);
   color: var(--text-primary);
   margin-bottom: var(--spacing-md);
   padding-left: var(--spacing-md);
 }
 
-.benefit-item:last-child {
+.singolo-vantaggio:last-child {
   margin-bottom: 0;
 }
 
-.join-info-box {
+.box-informazioni {
   background: linear-gradient(135deg, var(--terracotta), var(--terracotta-dark));
   color: var(--text-light);
   padding: var(--spacing-xl);
@@ -1127,23 +1127,23 @@ ul, ol {
   box-shadow: var(--shadow-lg);
 }
 
-.join-info-box h3 {
+.box-informazioni h3 {
   color: var(--oro-light);
   margin-bottom: var(--spacing-md);
   font-size: var(--fs-2xl);
 }
 
-.join-info-box p {
+.box-informazioni p {
   font-size: var(--fs-lg);
   line-height: 1.7;
 }
 
-.join-form-wrapper {
+.contenitore-modulo {
   position: sticky;
   top: calc(var(--navbar-height) + var(--spacing-lg));
 }
 
-.contact-form {
+.modulo-richiesta-informazioni {
   background: var(--avorio);
   padding: var(--spacing-2xl);
   border-radius: var(--radius-xl);
@@ -1151,14 +1151,14 @@ ul, ol {
   border-top: 4px solid var(--terracotta);
 }
 
-.contact-form h3 {
+.modulo-richiesta-informazioni h3 {
   font-family: var(--font-heading);
   font-size: var(--fs-2xl);
   color: var(--terracotta);
   margin-bottom: var(--spacing-sm);
 }
 
-.contact-form > p {
+.modulo-richiesta-informazioni > p {
   color: var(--text-secondary);
   margin-bottom: var(--spacing-xl);
   font-size: var(--fs-base);
@@ -1203,21 +1203,21 @@ ul, ol {
   min-height: 120px;
 }
 
-.contact-direct {
+.contatti-diretti {
   margin-top: var(--spacing-xl);
   padding: var(--spacing-lg);
   background: var(--beige);
   border-radius: var(--radius-lg);
 }
 
-.contact-direct h4 {
+.contatti-diretti h4 {
   font-family: var(--font-heading);
   color: var(--verde-oliva);
   margin-bottom: var(--spacing-md);
   font-size: var(--fs-xl);
 }
 
-.contact-item {
+.informazione-contatto {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
@@ -1226,16 +1226,16 @@ ul, ol {
   color: var(--text-secondary);
 }
 
-.contact-item span:first-child {
+.informazione-contatto span:first-child {
   font-size: var(--fs-xl);
 }
 
-.contact-item a {
+.informazione-contatto a {
   color: var(--terracotta);
   transition: color var(--transition-base);
 }
 
-.contact-item a:hover {
+.informazione-contatto a:hover {
   color: var(--terracotta-dark);
   text-decoration: underline;
 }
@@ -1363,16 +1363,16 @@ ul, ol {
   }
 
   .about-content,
-  .join-content {
+  .contenuti-iscrizione {
     grid-template-columns: 1fr;
     gap: var(--spacing-2xl);
   }
 
-  .join-form-wrapper {
+  .contenitore-modulo {
     position: static;
   }
 
-  .hero-stats {
+  .cifre-importanti {
     gap: var(--spacing-xl);
   }
 }
@@ -1420,24 +1420,24 @@ ul, ol {
     min-height: 500px;
   }
 
-  .hero-stats {
+  .cifre-importanti {
     flex-direction: column;
     gap: var(--spacing-md);
   }
 
-  .hero-cta {
+  .pulsanti-azione {
     flex-direction: column;
   }
 
-  .hero-cta .btn {
+  .pulsanti-azione .btn {
     width: 100%;
   }
 
-  .concerts-grid,
+  .elenco-concerti,
   .values-grid,
-  .projects-grid,
+  .elenco-progetti,
   .repertoire-regions,
-  .gallery-grid {
+  .raccolta-foto {
     grid-template-columns: 1fr;
   }
 }
@@ -1816,13 +1816,13 @@ ul, ol {
   flex: 1;
 }
 
-.song-badges {
+.etichette-brano {
   display: flex;
   gap: var(--spacing-xs);
   flex-shrink: 0;
 }
 
-.song-badge {
+.etichetta-brano {
   display: inline-block;
   padding: 4px 10px;
   border-radius: var(--radius-sm);
@@ -1832,19 +1832,19 @@ ul, ol {
   letter-spacing: 0.5px;
 }
 
-.badge-language {
+.etichetta-lingua {
   background: var(--verde-oliva-light);
   color: white;
 }
 
-.badge-difficulty {
+.etichetta-difficolta {
   background: var(--oro-antico);
   color: white;
 }
 
-.badge-difficulty.easy { background: #4CAF50; }
-.badge-difficulty.medium { background: #FF9800; }
-.badge-difficulty.hard { background: #F44336; }
+.etichetta-difficolta.easy { background: #4CAF50; }
+.etichetta-difficolta.medium { background: #FF9800; }
+.etichetta-difficolta.hard { background: #F44336; }
 
 .song-description {
   color: var(--text-secondary);
