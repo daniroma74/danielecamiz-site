@@ -321,40 +321,22 @@
       <div class="join-content">
         <div class="join-text">
           <span class="section-label">Cantare Insieme</span>
-          <h2 class="section-title">Unisciti a Noi</h2>
+          <h2 class="section-title" id="join-title">Unisciti a Noi</h2>
 
-          <p class="join-lead">
+          <p class="join-lead" id="join-intro">
             Non serve essere professionisti, serve solo amare il canto e voler condividere
             questa passione con gli altri, contribuendo a un mondo migliore.
           </p>
 
-          <div class="join-benefits">
-            <div class="benefit-item">
-              ✓ Nessun limite di età - tutti sono benvenuti
-            </div>
-            <div class="benefit-item">
-              ✓ Non serve saper leggere la musica
-            </div>
-            <div class="benefit-item">
-              ✓ Prove settimanali a Prati Fiscali
-            </div>
-            <div class="benefit-item">
-              ✓ Un repertorio unico e affascinante
-            </div>
-            <div class="benefit-item">
-              ✓ Cantare per fare del bene
-            </div>
+          <div class="join-benefits" id="join-benefits">
+            <!-- Vantaggi caricati dinamicamente da API -->
           </div>
 
           <div class="join-info-box">
             <h3>Come Funziona</h3>
-            <p>
-              Le prove si tengono ogni <strong>lunedì</strong> dalle 20:30 alle 22:30
-              presso <strong>SalAgnini</strong>, viale Adriatico 136 - 00141 Roma (Prati Fiscali).
-            </p>
-            <p>
-              Vieni a trovarci per una prova gratuita!
-            </p>
+            <div id="join-rehearsal-info">
+              <!-- Info prove caricate dinamicamente da API -->
+            </div>
           </div>
         </div>
 
@@ -390,11 +372,11 @@
             <h4>Contatti Diretti</h4>
             <div class="contact-item">
               <span>📧</span>
-              <a href="mailto:info@cororaro.it">info@cororaro.it</a>
+              <a id="contact-direct-email" href="mailto:info@cororaro.it">info@cororaro.it</a>
             </div>
             <div class="contact-item">
               <span>📍</span>
-              <span>Prati Fiscali, Roma</span>
+              <span id="contact-direct-location">Prati Fiscali, Roma</span>
             </div>
           </div>
         </div>
@@ -428,23 +410,21 @@
         <div class="footer-col">
           <h4>Contatti</h4>
           <ul class="footer-links">
-            <li><a href="mailto:info@cororaro.it">info@cororaro.it</a></li>
-            <li>Prati Fiscali, Roma</li>
+            <li><a id="footer-email" href="mailto:info@cororaro.it">info@cororaro.it</a></li>
+            <li id="footer-location">Prati Fiscali, Roma</li>
           </ul>
         </div>
 
         <div class="footer-col">
           <h4>Seguici</h4>
-          <div class="footer-social">
-            <a href="#" aria-label="Facebook">FB</a>
-            <a href="#" aria-label="Instagram">IG</a>
-            <a href="#" aria-label="YouTube">YT</a>
+          <div class="footer-social" id="footer-social">
+            <!-- Social links caricati dinamicamente da API -->
           </div>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; 2024 Coro Raro. Tutti i diritti riservati.</p>
+        <p id="footer-copyright">&copy; 2024 Coro Raro. Tutti i diritti riservati.</p>
       </div>
     </div>
   </footer>

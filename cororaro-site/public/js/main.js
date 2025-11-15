@@ -638,8 +638,85 @@ class ContentLoader {
       if (s.projects_stat_projects) document.getElementById('projects-stat-projects').textContent = s.projects_stat_projects;
       if (s.projects_stat_countries) document.getElementById('projects-stat-countries').textContent = s.projects_stat_countries;
 
+      // Footer & Contact
+      if (s.contact_email) {
+        const emailLinks = document.querySelectorAll('#footer-email, #contact-direct-email');
+        emailLinks.forEach(link => {
+          link.href = `mailto:${s.contact_email}`;
+          link.textContent = s.contact_email;
+        });
+      }
+
+      if (s.footer_text) {
+        document.getElementById('footer-copyright').textContent = s.footer_text;
+      }
+
+      const locationEls = document.querySelectorAll('#footer-location, #contact-direct-location');
+      if (s.contact_address) {
+        locationEls.forEach(el => el.textContent = s.contact_address);
+      }
+
+      // Social Media
+      const socialContainer = document.getElementById('footer-social');
+      if (socialContainer) {
+        let socialHTML = '';
+        if (s.social_facebook) socialHTML += `<a href="${s.social_facebook}" target="_blank" aria-label="Facebook">FB</a>`;
+        if (s.social_instagram) socialHTML += `<a href="${s.social_instagram}" target="_blank" aria-label="Instagram">IG</a>`;
+        if (s.social_youtube) socialHTML += `<a href="${s.social_youtube}" target="_blank" aria-label="YouTube">YT</a>`;
+        if (s.social_twitter) socialHTML += `<a href="${s.social_twitter}" target="_blank" aria-label="Twitter">X</a>`;
+
+        if (socialHTML) {
+          socialContainer.innerHTML = socialHTML;
+        } else {
+          socialContainer.innerHTML = '<p style="color: #999;">Seguici sui social!</p>';
+        }
+      }
+
     } catch (error) {
       console.error('Errore caricamento settings:', error);
+    }
+  }
+
+  static async loadJoinInfo() {
+    try {
+      const response = await fetch('/api/join-info');
+      const result = await response.json();
+
+      if (!result.success || !result.data) return;
+
+      const info = result.data;
+
+      // Title e intro
+      if (info.title) document.getElementById('join-title').textContent = info.title;
+      if (info.intro_text) document.getElementById('join-intro').innerHTML = info.intro_text;
+
+      // Benefits
+      const benefitsContainer = document.getElementById('join-benefits');
+      if (benefitsContainer && info.benefits_html) {
+        benefitsContainer.innerHTML = info.benefits_html;
+      }
+
+      // Rehearsal info
+      const rehearsalInfo = document.getElementById('join-rehearsal-info');
+      if (rehearsalInfo && (info.rehearsal_day || info.rehearsal_time || info.rehearsal_location)) {
+        let infoHTML = '<p>';
+        if (info.rehearsal_day && info.rehearsal_time) {
+          infoHTML += `Le prove si tengono ogni <strong>${info.rehearsal_day}</strong> alle ${info.rehearsal_time}`;
+        }
+        if (info.rehearsal_location) {
+          infoHTML += ` presso <strong>${info.rehearsal_location}</strong>`;
+        }
+        infoHTML += '.</p>';
+
+        if (info.cta_text) {
+          infoHTML += `<p>${info.cta_text}</p>`;
+        }
+
+        rehearsalInfo.innerHTML = infoHTML;
+      }
+
+    } catch (error) {
+      console.error('Errore caricamento join info:', error);
     }
   }
 
@@ -819,7 +896,8 @@ class ContentLoader {
       this.loadValori(),
       this.loadConcerti(),
       this.loadProgetti(),
-      this.loadGallery()
+      this.loadGallery(),
+      this.loadJoinInfo()
     ]);
   }
 }
