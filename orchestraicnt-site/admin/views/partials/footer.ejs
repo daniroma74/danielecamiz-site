@@ -4,7 +4,7 @@
   // Inizializza CloudinaryManager
   if (typeof CloudinaryManager !== 'undefined') {
     CloudinaryManager.init({
-      cloudName: 'dnwhnz2xy',
+      cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME %>',
       defaultFolder: 'danielecamiz',
       defaultPreset: 'icnt_general',
       apiPrefix: '/admin/cloudinary'
