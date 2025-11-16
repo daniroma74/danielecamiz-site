@@ -39,7 +39,7 @@ async function getUpcomingConcerts(req, res) {
   try {
     const limit = parseInt(req.query.limit) || 3;
 
-    // Query per ottenere i concerti futuri dell'Orchestra ICNT
+    // ✅ FIXED: Use correct column names from view_concert_personnel_agg
     const concerts = await sharedDB.all(`
       SELECT
         c.id,
@@ -48,13 +48,13 @@ async function getUpcomingConcerts(req, res) {
         c.location,
         c.poster_cloudinary_id,
         c.program_notes,
-        cp.orchestra,
-        cp.conductor,
-        cp.soloists
+        cp.orchestra_name,
+        cp.conductor_name,
+        cp.soloists_list
       FROM concerts c
       LEFT JOIN view_concert_personnel_agg cp ON cp.concert_id = c.id
       WHERE (c.is_future = 1 OR date(c.date) >= date('now'))
-        AND LOWER(cp.orchestra) LIKE '%icnt%'
+        AND (cp.orchestra_name IS NULL OR LOWER(cp.orchestra_name) LIKE '%icnt%')
       ORDER BY c.date ASC
       LIMIT ?
     `, [limit]);
