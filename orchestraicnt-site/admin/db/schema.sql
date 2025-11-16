@@ -59,7 +59,13 @@ INSERT OR IGNORE INTO site_settings (setting_key, setting_value, description) VA
 INSERT OR IGNORE INTO site_settings (setting_key, setting_value, description) VALUES
   ('media_label', 'Ascoltaci', 'Etichetta sezione Media'),
   ('media_title', 'Video e Registrazioni', 'Titolo sezione Media'),
-  ('media_subtitle', 'Scopri le nostre performance', 'Sottotitolo sezione Media');
+  ('media_subtitle', 'Scopri le nostre performance', 'Sottotitolo sezione Media'),
+  ('media_video_1_url', '', 'URL Video YouTube 1'),
+  ('media_video_1_title', '', 'Titolo Video YouTube 1'),
+  ('media_video_2_url', '', 'URL Video YouTube 2'),
+  ('media_video_2_title', '', 'Titolo Video YouTube 2'),
+  ('media_video_3_url', '', 'URL Video YouTube 3'),
+  ('media_video_3_title', '', 'Titolo Video YouTube 3');
 
 -- Contatti Section
 INSERT OR IGNORE INTO site_settings (setting_key, setting_value, description) VALUES
