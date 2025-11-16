@@ -81,7 +81,7 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
 
   <% if (Array.isArray(videoItems) && videoItems.length) { %>
     <div id="youtube_videos" class="video-grid">
-      <% videoItems.forEach(v => { %>
+      <% videoItems.slice(0, 3).forEach(v => { %>
         <article class="video-item">
           <a class="video-thumb" href="https://www.youtube.com/watch?v=<%= v.id %>" target="_blank" rel="noopener">
             <img class="youtube-thumbnail" src="<%= v.thumbnail %>" alt="<%= safe(v.title, 'YouTube video') %>">
