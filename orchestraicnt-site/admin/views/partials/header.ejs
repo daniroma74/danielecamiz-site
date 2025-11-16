@@ -50,6 +50,9 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .admin-header h1 {
@@ -62,6 +65,16 @@
       font-size: 0.875rem;
       color: var(--gray-600);
       margin-top: 0.25rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      font-size: 0.813rem;
     }
 
     .admin-container {
@@ -283,6 +296,12 @@
 <body>
 
 <header class="admin-header">
-  <h1>🎵 Orchestra ICNT - Admin</h1>
-  <div class="subtitle">Gestione contenuti sito web</div>
+  <div>
+    <h1>🎵 Orchestra ICNT - Admin</h1>
+    <div class="subtitle">Gestione contenuti sito web</div>
+  </div>
+  <div class="header-actions">
+    <a href="/" target="_blank" class="btn btn-outline btn-small">🌐 Vedi Sito</a>
+    <a href="/admin/logout" class="btn btn-outline btn-small">🚪 Esci</a>
+  </div>
 </header>

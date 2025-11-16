@@ -6,11 +6,12 @@
 require('dotenv').config();
 
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const { initLocalDB } = require('./config/database');
 
 const app = express();
-const PORT = process.env.PORT || 3110;
+const PORT = process.env.PORT || 4012;
 
 // View engine setup
 app.set('view engine', 'ejs');
@@ -19,6 +20,18 @@ app.set('views', path.join(__dirname));
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Session middleware (per autenticazione admin)
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'orchestra-icnt-default-secret-change-me',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // Solo HTTPS in production
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 ore
+  }
+}));
 
 // Enable CORS for development
 app.use((req, res, next) => {
