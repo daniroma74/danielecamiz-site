@@ -2,6 +2,9 @@
  * Orchestra ICNT - Express Server with Admin Panel
  */
 
+// Load environment variables FIRST
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const { initLocalDB } = require('./config/database');
@@ -42,12 +45,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 const adminRoutes = require('./admin/routes/admin');
 const apiRoutes = require('./routes/api');
 
-// Cloudinary routes (from shared)
-const cloudinaryRoutes = require('../shared/cloudinary-manager/routes');
-
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes);
-app.use('/admin/cloudinary', cloudinaryRoutes);
+
+// TODO: Add cloudinary routes after fixing export
+// const cloudinaryRoutes = require('../shared/cloudinary-manager/routes');
+// app.use('/admin/cloudinary', cloudinaryRoutes);
 
 // Contact form endpoint (existing)
 app.post('/api/contact', (req, res) => {
