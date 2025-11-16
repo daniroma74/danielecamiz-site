@@ -639,12 +639,12 @@ class ContentLoader {
       }
 
       if (s.concerts_cta_text) {
-        const concertsCTA = document.querySelector('.section-footer .btn-outline');
+        const concertsCTA = document.getElementById('view-season-btn');
         if (concertsCTA) concertsCTA.textContent = s.concerts_cta_text;
       }
 
       if (s.concerts_cta_link) {
-        const concertsCTA = document.querySelector('.section-footer .btn-outline');
+        const concertsCTA = document.getElementById('view-season-btn');
         if (concertsCTA) concertsCTA.href = s.concerts_cta_link;
       }
 
