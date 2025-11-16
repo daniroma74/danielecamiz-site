@@ -914,8 +914,6 @@ class ContentLoader {
         card.innerHTML = `
           <div class="media-thumbnail">
             <iframe
-              width="560"
-              height="315"
               src="https://www.youtube.com/embed/${video.id}"
               title="${video.title}"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

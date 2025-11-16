@@ -8,8 +8,6 @@ function createVideoCard(item) {
 
   const iframe = document.createElement('iframe');
   iframe.className = 'video-frame';
-  iframe.width = '560';
-  iframe.height = '315';
   iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(item.id)}`;
   iframe.title = item.title || 'YouTube video';
   iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
