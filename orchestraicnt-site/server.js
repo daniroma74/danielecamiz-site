@@ -3,14 +3,20 @@
  * Serves static files and handles basic routing
  */
 
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import cloudinaryRoutes from '../shared/cloudinary-manager/routes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3110;
 
-// Serve static files from public directory
+// Serve static files from public and shared directories
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/shared', express.static(path.join(__dirname, '../shared')));
 
 // Enable CORS for development
 app.use((req, res, next) => {
@@ -22,6 +28,9 @@ app.use((req, res, next) => {
 // Parse JSON bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Cloudinary API routes (uses shared credentials from cms/.env)
+app.use('/admin/cloudinary', cloudinaryRoutes);
 
 // API Routes
 
@@ -105,9 +114,10 @@ app.listen(PORT, () => {
 
   🌐 Local:   http://localhost:${PORT}
   📁 Public:  ${path.join(__dirname, 'public')}
+  🔌 API:     /admin/cloudinary/* (Cloudinary routes)
 
   Press Ctrl+C to stop
   `);
 });
 
-module.exports = app;
+export default app;

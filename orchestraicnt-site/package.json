@@ -2,6 +2,7 @@
   "name": "orchestraicnt-site",
   "version": "1.0.0",
   "description": "Sito pubblico dell'Orchestra ICNT - Orchestra sinfonica a Roma",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
