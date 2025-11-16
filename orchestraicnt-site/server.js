@@ -17,6 +17,9 @@ const PORT = process.env.PORT || 4012;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname));
 
+// Trust proxy (siamo dietro Nginx)
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -29,7 +32,8 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production', // Solo HTTPS in production
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 ore
+    maxAge: 24 * 60 * 60 * 1000, // 24 ore
+    sameSite: 'lax' // Protezione CSRF
   }
 }));
 
