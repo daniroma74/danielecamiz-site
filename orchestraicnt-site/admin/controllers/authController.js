@@ -29,21 +29,29 @@ async function handleLogin(req, res) {
   const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
   const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
+  // DEBUG: Log per verificare cosa viene caricato
+  console.log('[Auth] 🔍 DEBUG - Username fornito:', username);
+  console.log('[Auth] 🔍 DEBUG - Username atteso:', ADMIN_USERNAME);
+  console.log('[Auth] 🔍 DEBUG - Password fornita length:', password?.length);
+  console.log('[Auth] 🔍 DEBUG - Password attesa length:', ADMIN_PASSWORD?.length);
+
   // Se non c'è password configurata, nega accesso
   if (!ADMIN_PASSWORD) {
-    console.error('[Auth] ADMIN_PASSWORD non configurata in .env');
+    console.error('[Auth] ❌ ADMIN_PASSWORD non configurata in .env');
     return res.render('admin/views/login', {
       error: 'Configurazione server non valida. Contatta l\'amministratore.'
     });
   }
 
   try {
-    // Confronta username
-    if (username !== ADMIN_USERNAME) {
+    // Confronta username (trim per rimuovere spazi)
+    if (username.trim() !== ADMIN_USERNAME.trim()) {
+      console.log('[Auth] ❌ Username NON corrisponde');
       return res.render('admin/views/login', {
         error: 'Credenziali non valide'
       });
     }
+    console.log('[Auth] ✅ Username OK');
 
     // Confronta password
     // Se la password in .env inizia con $2a$ o $2b$, è già hashata con bcrypt
@@ -51,17 +59,24 @@ async function handleLogin(req, res) {
 
     if (ADMIN_PASSWORD.startsWith('$2a$') || ADMIN_PASSWORD.startsWith('$2b$')) {
       // Password hashata, usa bcrypt per confrontare
+      console.log('[Auth] 🔐 Usando bcrypt compare');
       passwordMatch = await bcrypt.compare(password, ADMIN_PASSWORD);
     } else {
-      // Password in chiaro (per semplicità in sviluppo), confronto diretto
-      passwordMatch = (password === ADMIN_PASSWORD);
+      // Password in chiaro - trim entrambe per sicurezza
+      console.log('[Auth] 🔓 Confronto diretto plaintext');
+      const passwordTrimmed = password.trim();
+      const expectedTrimmed = ADMIN_PASSWORD.trim();
+      passwordMatch = (passwordTrimmed === expectedTrimmed);
+      console.log('[Auth] 🔍 Match?', passwordMatch);
     }
 
     if (!passwordMatch) {
+      console.log('[Auth] ❌ Password NON corrisponde');
       return res.render('admin/views/login', {
         error: 'Credenziali non valide'
       });
     }
+    console.log('[Auth] ✅ Password OK');
 
     // Login riuscito, crea sessione
     req.session.authenticated = true;
