@@ -767,6 +767,28 @@ class ContentLoader {
         if (twLink) twLink.href = s.social_twitter;
       }
 
+      // Footer Social Links
+      if (s.social_facebook) {
+        const fbLink = document.querySelector('.footer-social a[aria-label="Facebook"]');
+        if (fbLink) fbLink.href = s.social_facebook;
+      }
+
+      if (s.social_instagram) {
+        const igLink = document.querySelector('.footer-social a[aria-label="Instagram"]');
+        if (igLink) igLink.href = s.social_instagram;
+      }
+
+      if (s.social_youtube) {
+        const ytLink = document.querySelector('.footer-social a[aria-label="YouTube"]');
+        if (ytLink) ytLink.href = s.social_youtube;
+      }
+
+      // Video YouTube
+      ContentLoader.loadYouTubeVideos(s);
+
+      // Sezione Direttore
+      ContentLoader.loadDirectorSection(s);
+
       console.log('✅ Settings loaded successfully');
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -814,13 +836,29 @@ class ContentLoader {
         const month = date.toLocaleDateString('it-IT', { month: 'short' }).toUpperCase();
         const year = date.getFullYear();
 
+        // Costruisci URL poster se disponibile
+        const posterUrl = concert.poster_cloudinary_id
+          ? `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fit,w_400,h_600/${concert.poster_cloudinary_id}`
+          : null;
+
         const card = document.createElement('article');
         card.className = 'concert-card';
         card.innerHTML = `
-          <div class="concert-date">
-            <span class="concert-day">${day}</span>
-            <span class="concert-month">${month}</span>
-            <span class="concert-year">${year}</span>
+          <div class="concert-poster${!posterUrl ? ' concert-poster-placeholder' : ''}">
+            ${posterUrl ? `
+            <img src="${posterUrl}" alt="Locandina ${concert.title}" loading="lazy">
+            ` : `
+            <div class="poster-placeholder-content">
+              <div class="poster-music-note">🎵</div>
+              <h4 class="poster-title">${concert.title}</h4>
+              <div class="poster-orchestra">Orchestra ICNT</div>
+            </div>
+            `}
+            <div class="concert-date-badge">
+              <span class="concert-day">${day}</span>
+              <span class="concert-month">${month}</span>
+              <span class="concert-year">${year}</span>
+            </div>
           </div>
           <div class="concert-info">
             <h3 class="concert-title">${concert.title || 'Concerto'}</h3>
@@ -836,7 +874,9 @@ class ContentLoader {
                 ${concert.location || 'Roma'}
               </span>
             </div>
-            ${concert.poster_cloudinary_id ? `<a href="https://icnt.danielecamiz.com/concerti/${concert.id}" class="btn btn-small btn-primary">Info e Biglietti</a>` : ''}
+            <a href="https://${concert.slug}.danielecamiz.com" class="btn btn-small btn-primary" style="margin-top: auto;">
+              Info e Prenotazioni
+            </a>
           </div>
         `;
 
@@ -850,6 +890,112 @@ class ContentLoader {
   }
 
   /**
+   * Carica video YouTube dalla configurazione
+   */
+  static loadYouTubeVideos(settings) {
+    const mediaGrid = document.querySelector('.media-grid');
+    if (!mediaGrid) return;
+
+    // Helper per estrarre ID YouTube da URL
+    const getYouTubeID = (url) => {
+      if (!url) return null;
+      const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+      return match ? match[1] : null;
+    };
+
+    // Carica fino a 3 video
+    const videos = [];
+    for (let i = 1; i <= 3; i++) {
+      const url = settings[`media_video_${i}_url`];
+      const title = settings[`media_video_${i}_title`];
+      const videoId = getYouTubeID(url);
+
+      if (videoId && title) {
+        videos.push({ videoId, title });
+      }
+    }
+
+    // Se ci sono video, sostituisci il contenuto hardcoded
+    if (videos.length > 0) {
+      mediaGrid.innerHTML = '';
+
+      videos.forEach(video => {
+        const card = document.createElement('div');
+        card.className = 'media-card';
+        card.innerHTML = `
+          <div class="media-thumbnail">
+            <iframe
+              loading="lazy"
+              src="https://www.youtube.com/embed/${video.videoId}"
+              title="${video.title}"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="media-info">
+            <h3>${video.title}</h3>
+          </div>
+        `;
+        mediaGrid.appendChild(card);
+      });
+
+      console.log(`✅ Loaded ${videos.length} YouTube videos`);
+    }
+  }
+
+  /**
+   * Carica la sezione direttore
+   */
+  static loadDirectorSection(settings) {
+    const directorName = settings.director_name;
+    const directorBio = settings.director_bio;
+    const directorPhoto = settings.director_photo;
+    const directorTitle = settings.director_title;
+    const directorQuote = settings.director_quote;
+
+    // Se non c'è almeno il nome del direttore, non mostrare la sezione
+    if (!directorName) return;
+
+    // Trova la sezione chi-siamo e inserisci la sezione direttore dopo
+    const aboutSection = document.querySelector('#chi-siamo');
+    if (!aboutSection) return;
+
+    // Crea la sezione direttore
+    const directorSection = document.createElement('section');
+    directorSection.className = 'section director-section';
+    directorSection.id = 'direttore';
+
+    const photoUrl = directorPhoto
+      ? `https://res.cloudinary.com/danielecamiz/image/upload/c_fill,w_500,h_500,g_face/${directorPhoto}`
+      : 'assets/images/director-placeholder.jpg';
+
+    directorSection.innerHTML = `
+      <div class="container">
+        <div class="director-content">
+          <div class="director-image">
+            <img src="${photoUrl}" alt="${directorName}" loading="lazy">
+          </div>
+          <div class="director-text">
+            <span class="section-label">Il Direttore</span>
+            <h2 class="section-title">${directorName}</h2>
+            ${directorTitle ? `<p class="director-title">${directorTitle}</p>` : ''}
+            ${directorQuote ? `<blockquote class="director-quote">"${directorQuote}"</blockquote>` : ''}
+            <div class="director-bio">
+              ${directorBio}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Inserisci dopo la sezione chi-siamo
+    aboutSection.after(directorSection);
+
+    console.log('✅ Director section loaded');
+  }
+
+  /**
    * Carica tutti i contenuti
    */
   static async loadAll() {
@@ -857,6 +1003,209 @@ class ContentLoader {
       this.loadSettings(),
       this.loadConcerts()
     ]);
+  }
+}
+
+// ============================================
+// SCROLL PROGRESS INDICATOR
+// ============================================
+
+class ScrollProgress {
+  constructor() {
+    this.createIndicator();
+    this.attachListeners();
+  }
+
+  createIndicator() {
+    const indicator = document.createElement('div');
+    indicator.className = 'scroll-progress';
+    indicator.id = 'scrollProgress';
+    document.body.prepend(indicator);
+    this.indicator = indicator;
+  }
+
+  attachListeners() {
+    window.addEventListener('scroll', throttle(() => {
+      this.updateProgress();
+    }, 10));
+  }
+
+  updateProgress() {
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+
+    this.indicator.style.transform = `scaleX(${scrollPercent / 100})`;
+  }
+}
+
+// ============================================
+// REVEAL ANIMATIONS ON SCROLL
+// ============================================
+
+class RevealAnimations {
+  constructor() {
+    this.elements = document.querySelectorAll('.section, .concert-card, .feature-item, .media-card');
+    this.init();
+  }
+
+  init() {
+    // Add reveal class to elements
+    this.elements.forEach(el => {
+      if (!el.classList.contains('hero')) {
+        el.classList.add('reveal');
+      }
+    });
+
+    // Create intersection observer
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            // Optionally unobserve after reveal
+            // this.observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
+    // Observe all elements
+    this.elements.forEach(el => {
+      if (el.classList.contains('reveal')) {
+        this.observer.observe(el);
+      }
+    });
+  }
+}
+
+// ============================================
+// SMOOTH SCROLL ENHANCEMENT
+// ============================================
+
+class SmoothScrollEnhancement {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    // Add smooth scroll to all anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        const href = anchor.getAttribute('href');
+        if (href === '#' || href === '') return;
+
+        e.preventDefault();
+        const target = document.querySelector(href);
+
+        if (target) {
+          const navbarHeight = document.getElementById('navbar')?.offsetHeight || 80;
+          const targetPosition = target.offsetTop - navbarHeight;
+
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+
+          // Update URL without jumping
+          history.pushState(null, null, href);
+        }
+      });
+    });
+  }
+}
+
+// ============================================
+// PARALLAX EFFECT (Subtle)
+// ============================================
+
+class ParallaxEffect {
+  constructor() {
+    this.heroImage = document.querySelector('.hero-image');
+    if (this.heroImage) {
+      this.attachListeners();
+    }
+  }
+
+  attachListeners() {
+    window.addEventListener('scroll', throttle(() => {
+      this.updateParallax();
+    }, 16)); // ~60fps
+  }
+
+  updateParallax() {
+    const scrolled = window.pageYOffset;
+    const rate = scrolled * 0.5;
+
+    if (this.heroImage && scrolled < window.innerHeight) {
+      this.heroImage.style.transform = `translateY(${rate}px) scale(1.1)`;
+    }
+  }
+}
+
+// ============================================
+// MOUSE TRAIL EFFECT (Optional - Subtle)
+// ============================================
+
+class MouseTrail {
+  constructor() {
+    this.coords = { x: 0, y: 0 };
+    this.circles = [];
+    this.colors = ['#C41E3A', '#DC143C', '#FF6B6B'];
+
+    // Create circles
+    for (let i = 0; i < 3; i++) {
+      const circle = document.createElement('div');
+      circle.style.cssText = `
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: ${this.colors[i]};
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9998;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      `;
+      document.body.appendChild(circle);
+      this.circles.push(circle);
+    }
+
+    this.init();
+  }
+
+  init() {
+    window.addEventListener('mousemove', (e) => {
+      this.coords.x = e.clientX;
+      this.coords.y = e.clientY;
+    });
+
+    this.animateCircles();
+  }
+
+  animateCircles() {
+    let x = this.coords.x;
+    let y = this.coords.y;
+
+    this.circles.forEach((circle, index) => {
+      circle.style.left = x - 4 + 'px';
+      circle.style.top = y - 4 + 'px';
+      circle.style.opacity = '0.6';
+
+      circle.x = x;
+      circle.y = y;
+
+      const nextCircle = this.circles[index + 1] || this.circles[0];
+      x += (nextCircle.x - x) * 0.3;
+      y += (nextCircle.y - y) * 0.3;
+    });
+
+    requestAnimationFrame(() => this.animateCircles());
   }
 }
 
@@ -880,6 +1229,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   new ScrollAnimations();
   new LazyLoader();
   new HeroParallax();
+
+  // New enhanced features
+  new ScrollProgress();
+  new RevealAnimations();
+  new SmoothScrollEnhancement();
+  new ParallaxEffect();
+  // Uncomment for mouse trail (might be too much):
+  // new MouseTrail();
 
   // Add loaded class to body
   document.body.classList.add('loaded');

@@ -21,10 +21,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20251116c">
 
   <!-- Defer JS -->
-  <script defer src="js/main.js"></script>
+  <script defer src="js/main.js?v=20251116c"></script>
 </head>
 <body>
 
@@ -33,7 +33,6 @@
     <div class="container navbar-content">
       <div class="navbar-brand">
         <img src="assets/images/logo.png" alt="Orchestra ICNT Logo" class="navbar-logo" id="navbar-logo">
-        <span class="navbar-title">Orchestra ICNT</span>
       </div>
 
       <button class="navbar-toggle" id="navToggle" aria-label="Toggle navigation">
@@ -98,101 +97,7 @@
       </div>
 
       <div class="concerts-grid">
-        <!-- Concert Card 1 -->
-        <article class="concert-card">
-          <div class="concert-date">
-            <span class="concert-day">15</span>
-            <span class="concert-month">DIC</span>
-            <span class="concert-year">2024</span>
-          </div>
-          <div class="concert-info">
-            <h3 class="concert-title">Concerto di Natale</h3>
-            <p class="concert-program">
-              <strong>Programma:</strong> Čajkovskij - Schiaccianoci Suite, Corelli - Concerto Grosso
-            </p>
-            <div class="concert-meta">
-              <span class="concert-location">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-                Auditorium Santa Cecilia, Roma
-              </span>
-              <span class="concert-time">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 6v6l4 2"/>
-                </svg>
-                20:30
-              </span>
-            </div>
-            <a href="#" class="btn btn-small btn-primary">Info e Biglietti</a>
-          </div>
-        </article>
-
-        <!-- Concert Card 2 -->
-        <article class="concert-card">
-          <div class="concert-date">
-            <span class="concert-day">28</span>
-            <span class="concert-month">GEN</span>
-            <span class="concert-year">2025</span>
-          </div>
-          <div class="concert-info">
-            <h3 class="concert-title">Omaggio a Beethoven</h3>
-            <p class="concert-program">
-              <strong>Programma:</strong> Beethoven - Sinfonia n. 5, Ouverture Coriolano
-            </p>
-            <div class="concert-meta">
-              <span class="concert-location">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-                Teatro dell'Opera, Roma
-              </span>
-              <span class="concert-time">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 6v6l4 2"/>
-                </svg>
-                21:00
-              </span>
-            </div>
-            <a href="#" class="btn btn-small btn-primary">Info e Biglietti</a>
-          </div>
-        </article>
-
-        <!-- Concert Card 3 -->
-        <article class="concert-card">
-          <div class="concert-date">
-            <span class="concert-day">18</span>
-            <span class="concert-month">MAR</span>
-            <span class="concert-year">2025</span>
-          </div>
-          <div class="concert-info">
-            <h3 class="concert-title">Capolavori Romantici</h3>
-            <p class="concert-program">
-              <strong>Programma:</strong> Brahms - Sinfonia n. 1, Mendelssohn - Le Ebridi
-            </p>
-            <div class="concert-meta">
-              <span class="concert-location">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-                Auditorium Parco della Musica
-              </span>
-              <span class="concert-time">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 6v6l4 2"/>
-                </svg>
-                20:00
-              </span>
-            </div>
-            <a href="#" class="btn btn-small btn-primary">Info e Biglietti</a>
-          </div>
-        </article>
+        <!-- Caricato dinamicamente da JavaScript -->
       </div>
 
       <div class="section-footer">
@@ -347,7 +252,7 @@
             Scrivici, ti risponderemo al più presto!
           </p>
 
-          <div class="contact-details">
+          <div class="contact-details contact-info">
             <div class="contact-item">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
@@ -355,18 +260,18 @@
               </svg>
               <div>
                 <h4>Email</h4>
-                <a href="mailto:info@orchestraicnt.it">info@orchestraicnt.it</a>
+                <a href="mailto:icnt@danielecamiz.com"><span>icnt@danielecamiz.com</span></a>
               </div>
             </div>
 
-            <div class="contact-item">
+            <div class="contact-item contact-address">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
               <div>
                 <h4>Dove siamo</h4>
-                <p>Roma, Italia</p>
+                <span>Roma, Italia</span>
               </div>
             </div>
           </div>
@@ -480,7 +385,7 @@
         <p class="footer-credits">
           Website by <a href="https://danielecamiz.com" target="_blank">Daniele Camiz</a>
           <span style="margin: 0 0.5rem;">|</span>
-          <a href="/admin" style="opacity: 0.7;">🔒 Area Riservata</a>
+          <a href="/admin" style="opacity: 0.7;">🔧 Area Admin</a>
         </p>
       </div>
     </div>

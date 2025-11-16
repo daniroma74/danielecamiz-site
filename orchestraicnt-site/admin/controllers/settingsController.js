@@ -17,6 +17,7 @@ async function showSettings(req, res) {
       about: settings.filter(s => s.setting_key.startsWith('about_')),
       media: settings.filter(s => s.setting_key.startsWith('media_')),
       concerts: settings.filter(s => s.setting_key.startsWith('concerts_')),
+      director: settings.filter(s => s.setting_key.startsWith('director_')),
       contact: settings.filter(s => s.setting_key.startsWith('contact_')),
       footer: settings.filter(s => s.setting_key.startsWith('footer_') || s.setting_key.startsWith('social_')),
       seo: settings.filter(s => s.setting_key.startsWith('site_'))

@@ -79,7 +79,7 @@
         <textarea
           id="hero_claim"
           name="hero_claim"
-          class="form-control"
+          class="form-control tinymce"
         ><%= sections.hero.find(s => s.setting_key === 'hero_claim')?.setting_value || '' %></textarea>
       </div>
 
@@ -271,7 +271,7 @@
         <textarea
           id="about_feature_1_text"
           name="about_feature_1_text"
-          class="form-control"
+          class="form-control tinymce"
         ><%= sections.about.find(s => s.setting_key === 'about_feature_1_text')?.setting_value || '' %></textarea>
       </div>
 
@@ -310,7 +310,7 @@
         <textarea
           id="about_feature_2_text"
           name="about_feature_2_text"
-          class="form-control"
+          class="form-control tinymce"
         ><%= sections.about.find(s => s.setting_key === 'about_feature_2_text')?.setting_value || '' %></textarea>
       </div>
 
@@ -349,7 +349,7 @@
         <textarea
           id="about_feature_3_text"
           name="about_feature_3_text"
-          class="form-control"
+          class="form-control tinymce"
         ><%= sections.about.find(s => s.setting_key === 'about_feature_3_text')?.setting_value || '' %></textarea>
       </div>
     </div>
@@ -489,6 +489,197 @@
           value="<%= sections.media.find(s => s.setting_key === 'media_subtitle')?.setting_value || '' %>"
           class="form-control"
         >
+      </div>
+
+      <h4 style="margin: 2rem 0 1rem; font-size: 1rem; font-weight: 600; color: var(--gray-700);">
+        🎥 Video YouTube (max 3)
+      </h4>
+      <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1.5rem;">
+        Inserisci gli URL completi dei video YouTube (es: https://www.youtube.com/watch?v=xxxxx)
+      </p>
+
+      <!-- Video 1 -->
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="media_video_1_url">
+            Video 1 - URL YouTube
+            <span class="hint">URL completo del video</span>
+          </label>
+          <input
+            type="url"
+            id="media_video_1_url"
+            name="media_video_1_url"
+            value="<%= sections.media.find(s => s.setting_key === 'media_video_1_url')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="https://www.youtube.com/watch?v=..."
+          >
+        </div>
+        <div class="form-group">
+          <label for="media_video_1_title">
+            Video 1 - Titolo
+            <span class="hint">Titolo descrittivo</span>
+          </label>
+          <input
+            type="text"
+            id="media_video_1_title"
+            name="media_video_1_title"
+            value="<%= sections.media.find(s => s.setting_key === 'media_video_1_title')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="Es: Concerto di Natale 2024"
+          >
+        </div>
+      </div>
+
+      <!-- Video 2 -->
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="media_video_2_url">
+            Video 2 - URL YouTube
+          </label>
+          <input
+            type="url"
+            id="media_video_2_url"
+            name="media_video_2_url"
+            value="<%= sections.media.find(s => s.setting_key === 'media_video_2_url')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="https://www.youtube.com/watch?v=..."
+          >
+        </div>
+        <div class="form-group">
+          <label for="media_video_2_title">
+            Video 2 - Titolo
+          </label>
+          <input
+            type="text"
+            id="media_video_2_title"
+            name="media_video_2_title"
+            value="<%= sections.media.find(s => s.setting_key === 'media_video_2_title')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="Es: Mozart Symphony No. 40"
+          >
+        </div>
+      </div>
+
+      <!-- Video 3 -->
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="media_video_3_url">
+            Video 3 - URL YouTube
+          </label>
+          <input
+            type="url"
+            id="media_video_3_url"
+            name="media_video_3_url"
+            value="<%= sections.media.find(s => s.setting_key === 'media_video_3_url')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="https://www.youtube.com/watch?v=..."
+          >
+        </div>
+        <div class="form-group">
+          <label for="media_video_3_title">
+            Video 3 - Titolo
+          </label>
+          <input
+            type="text"
+            id="media_video_3_title"
+            name="media_video_3_title"
+            value="<%= sections.media.find(s => s.setting_key === 'media_video_3_title')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="Es: Brahms Concerto per Violino"
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- DIRETTORE SECTION -->
+    <div class="card">
+      <div class="card-header">
+        <h3>🎼 Il Direttore</h3>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="director_name">
+            👤 Nome Completo
+            <span class="hint">Nome e cognome del direttore</span>
+          </label>
+          <input
+            type="text"
+            id="director_name"
+            name="director_name"
+            value="<%= sections.director.find(s => s.setting_key === 'director_name')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="Es: Daniele Camiz"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="director_title">
+            🎯 Titolo/Ruolo
+            <span class="hint">Es: Direttore d'Orchestra</span>
+          </label>
+          <input
+            type="text"
+            id="director_title"
+            name="director_title"
+            value="<%= sections.director.find(s => s.setting_key === 'director_title')?.setting_value || '' %>"
+            class="form-control"
+            placeholder="Es: Direttore d'Orchestra"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="director_photo">
+          📸 Foto Profilo
+          <span class="hint">Cloudinary ID dell'immagine (verrà ritagliata in cerchio)</span>
+        </label>
+        <div class="image-upload-container">
+          <input
+            type="text"
+            id="director_photo"
+            name="director_photo"
+            value="<%= sections.director.find(s => s.setting_key === 'director_photo')?.setting_value || '' %>"
+            class="form-control"
+            readonly
+            placeholder="Nessuna immagine caricata"
+          >
+          <button type="button" class="btn btn-primary cloudinary-upload-btn" data-target="director_photo">
+            📷 Carica Immagine
+          </button>
+        </div>
+        <% if (sections.director.find(s => s.setting_key === 'director_photo')?.setting_value) { %>
+          <img src="https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_200,h_200,g_face/<%= sections.director.find(s => s.setting_key === 'director_photo').setting_value %>"
+               alt="Preview" class="image-preview" id="director_photo_preview">
+        <% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="director_quote">
+          💬 Citazione
+          <span class="hint">Una frase rappresentativa (opzionale)</span>
+        </label>
+        <input
+          type="text"
+          id="director_quote"
+          name="director_quote"
+          value="<%= sections.director.find(s => s.setting_key === 'director_quote')?.setting_value || '' %>"
+          class="form-control"
+          placeholder='Es: "La musica è l\'arte più diretta, entra nell\'orecchio e va al cuore"'
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="director_bio">
+          📝 Biografia
+          <span class="hint">Biografia completa (supporta HTML)</span>
+        </label>
+        <textarea
+          id="director_bio"
+          name="director_bio"
+          class="form-control tinymce"
+          rows="8"
+        ><%= sections.director.find(s => s.setting_key === 'director_bio')?.setting_value || '' %></textarea>
       </div>
     </div>
 
@@ -696,7 +887,7 @@
         <textarea
           id="site_description"
           name="site_description"
-          class="form-control"
+          class="form-control tinymce"
         ><%= sections.seo.find(s => s.setting_key === 'site_description')?.setting_value || '' %></textarea>
       </div>
 
