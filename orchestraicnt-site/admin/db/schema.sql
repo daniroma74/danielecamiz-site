@@ -71,6 +71,7 @@ INSERT OR IGNORE INTO site_settings (setting_key, setting_value, description) VA
 
 -- Footer
 INSERT OR IGNORE INTO site_settings (setting_key, setting_value, description) VALUES
+  ('footer_description', 'Orchestra sinfonica di giovani talenti e musicisti appassionati a Roma.', 'Descrizione nel footer'),
   ('footer_copyright', '© 2024 Orchestra ICNT. Tutti i diritti riservati.', 'Copyright footer'),
   ('social_facebook', '', 'URL Facebook'),
   ('social_instagram', '', 'URL Instagram'),

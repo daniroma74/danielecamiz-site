@@ -577,6 +577,21 @@
       </div>
 
       <div class="form-group">
+        <label for="footer_description">
+          📝 Descrizione Footer
+          <span class="hint">Breve descrizione dell'orchestra nel footer</span>
+        </label>
+        <input
+          type="text"
+          id="footer_description"
+          name="footer_description"
+          value="<%= sections.footer.find(s => s.setting_key === 'footer_description')?.setting_value || '' %>"
+          class="form-control"
+          placeholder="Orchestra sinfonica di giovani talenti..."
+        >
+      </div>
+
+      <div class="form-group">
         <label for="footer_copyright">
           © Copyright
           <span class="hint">Il testo del copyright nel footer</span>
@@ -587,6 +602,7 @@
           name="footer_copyright"
           value="<%= sections.footer.find(s => s.setting_key === 'footer_copyright')?.setting_value || '' %>"
           class="form-control"
+          placeholder="© 2024 Orchestra ICNT. Tutti i diritti riservati."
         >
       </div>
 

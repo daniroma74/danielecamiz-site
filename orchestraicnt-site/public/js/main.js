@@ -719,9 +719,31 @@ class ContentLoader {
       }
 
       // Footer
+      if (s.footer_description) {
+        const footerDesc = document.querySelector('.footer-description');
+        if (footerDesc) footerDesc.textContent = s.footer_description;
+      }
+
       if (s.footer_copyright) {
-        const copyright = document.querySelector('.footer-copyright p');
+        const copyright = document.querySelector('.footer-bottom p:first-child');
         if (copyright) copyright.textContent = s.footer_copyright;
+      }
+
+      // Footer Links - Contact Info
+      if (s.contact_email) {
+        const footerEmail = document.querySelector('.footer-col .footer-links a[href^="mailto:"]');
+        if (footerEmail) {
+          footerEmail.href = `mailto:${s.contact_email}`;
+          footerEmail.textContent = s.contact_email;
+        }
+      }
+
+      if (s.contact_address) {
+        const footerAddress = document.querySelectorAll('.footer-col .footer-links li');
+        // L'indirizzo è il secondo li nella colonna contatti
+        if (footerAddress.length > 1) {
+          footerAddress[1].textContent = s.contact_address;
+        }
       }
 
       // Social Links
