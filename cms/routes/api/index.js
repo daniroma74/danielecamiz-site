@@ -3,6 +3,7 @@ import express from 'express';
 import attendanceRoutes from './attendanceRoutes.js';
 import lineupRoutes from './lineupRoutes.js';
 import repertoireApi from './repertoireApi.js';
+import youtubeRoutes from './youtubeRoutes.js';
 
 const router = express.Router();
 
@@ -10,6 +11,7 @@ const router = express.Router();
 router.use('/attendance', attendanceRoutes);
 router.use('/lineup', lineupRoutes);
 router.use('/repertoire', repertoireApi);
+router.use('/youtube', youtubeRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
