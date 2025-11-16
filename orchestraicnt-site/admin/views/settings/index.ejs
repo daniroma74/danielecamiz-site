@@ -714,15 +714,26 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Inizializza TinyMCE per i campi HTML
-  if (typeof window.SharedEditor !== 'undefined') {
-    document.querySelectorAll('.tinymce-editor').forEach(textarea => {
-      window.SharedEditor.init(`#${textarea.id}`, 'settings', {
-        height: 300,
-        toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link',
-        menubar: false,
-        language: 'it'
-      });
+  if (typeof tinymce !== 'undefined') {
+    tinymce.init({
+      selector: '.tinymce-editor',
+      height: 300,
+      menubar: false,
+      plugins: 'link lists',
+      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link',
+      language: 'it',
+      content_css: false,
+      skin: false,
+      branding: false,
+      promotion: false,
+      setup: function(editor) {
+        editor.on('change', function() {
+          editor.save();
+        });
+      }
     });
+  } else {
+    console.warn('⚠️ TinyMCE non caricato');
   }
 
   // CloudinaryManager per upload immagini

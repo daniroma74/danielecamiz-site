@@ -684,6 +684,67 @@ class ContentLoader {
         if (metaKeywords) metaKeywords.setAttribute('content', s.site_keywords);
       }
 
+      // Contact Section
+      if (s.contact_title) {
+        const contactTitle = document.querySelector('.contact-section .section-title');
+        if (contactTitle) contactTitle.textContent = s.contact_title;
+      }
+
+      if (s.contact_subtitle) {
+        const contactSubtitle = document.querySelector('.contact-section .section-subtitle');
+        if (contactSubtitle) contactSubtitle.textContent = s.contact_subtitle;
+      }
+
+      if (s.contact_email) {
+        const emailLinks = document.querySelectorAll('.contact-info a[href^="mailto:"]');
+        emailLinks.forEach(link => {
+          link.href = `mailto:${s.contact_email}`;
+          const textSpan = link.querySelector('span:last-child');
+          if (textSpan) textSpan.textContent = s.contact_email;
+        });
+      }
+
+      if (s.contact_phone) {
+        const phoneLinks = document.querySelectorAll('.contact-info a[href^="tel:"]');
+        phoneLinks.forEach(link => {
+          link.href = `tel:${s.contact_phone}`;
+          const textSpan = link.querySelector('span:last-child');
+          if (textSpan) textSpan.textContent = s.contact_phone;
+        });
+      }
+
+      if (s.contact_address) {
+        const addressEl = document.querySelector('.contact-info .contact-address span:last-child');
+        if (addressEl) addressEl.textContent = s.contact_address;
+      }
+
+      // Footer
+      if (s.footer_copyright) {
+        const copyright = document.querySelector('.footer-copyright p');
+        if (copyright) copyright.textContent = s.footer_copyright;
+      }
+
+      // Social Links
+      if (s.social_facebook) {
+        const fbLink = document.querySelector('.social-links a[aria-label="Facebook"]');
+        if (fbLink) fbLink.href = s.social_facebook;
+      }
+
+      if (s.social_instagram) {
+        const igLink = document.querySelector('.social-links a[aria-label="Instagram"]');
+        if (igLink) igLink.href = s.social_instagram;
+      }
+
+      if (s.social_youtube) {
+        const ytLink = document.querySelector('.social-links a[aria-label="YouTube"]');
+        if (ytLink) ytLink.href = s.social_youtube;
+      }
+
+      if (s.social_twitter) {
+        const twLink = document.querySelector('.social-links a[aria-label="Twitter"]');
+        if (twLink) twLink.href = s.social_twitter;
+      }
+
       console.log('✅ Settings loaded successfully');
     } catch (error) {
       console.error('Error loading settings:', error);
