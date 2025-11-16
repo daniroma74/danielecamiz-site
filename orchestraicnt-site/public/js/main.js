@@ -783,11 +783,11 @@ class ContentLoader {
         if (ytLink) ytLink.href = s.social_youtube;
       }
 
-      // Video YouTube
-      ContentLoader.loadYouTubeVideos(s);
-
       // Sezione Direttore
       ContentLoader.loadDirectorSection(s);
+
+      // Video YouTube (async, carica in parallelo)
+      ContentLoader.loadYouTubeVideos();
 
       console.log('✅ Settings loaded successfully');
     } catch (error) {
@@ -890,36 +890,25 @@ class ContentLoader {
   }
 
   /**
-   * Carica video YouTube dalla configurazione
+   * Carica video YouTube dalla API (supporta auto/manual mix)
    */
-  static loadYouTubeVideos(settings) {
+  static async loadYouTubeVideos() {
     const mediaGrid = document.querySelector('.media-grid');
     if (!mediaGrid) return;
 
-    // Helper per estrarre ID YouTube da URL
-    const getYouTubeID = (url) => {
-      if (!url) return null;
-      const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
-      return match ? match[1] : null;
-    };
+    try {
+      const response = await fetch('/api/media/videos');
+      const result = await response.json();
 
-    // Carica fino a 3 video
-    const videos = [];
-    for (let i = 1; i <= 3; i++) {
-      const url = settings[`media_video_${i}_url`];
-      const title = settings[`media_video_${i}_title`];
-      const videoId = getYouTubeID(url);
-
-      if (videoId && title) {
-        videos.push({ videoId, title });
+      if (!result.success || !result.videos || result.videos.length === 0) {
+        console.warn('No videos configured');
+        return;
       }
-    }
 
-    // Se ci sono video, sostituisci il contenuto hardcoded
-    if (videos.length > 0) {
+      // Sostituisci il contenuto hardcoded con i video configurati
       mediaGrid.innerHTML = '';
 
-      videos.forEach(video => {
+      result.videos.forEach(video => {
         const card = document.createElement('div');
         card.className = 'media-card';
         card.innerHTML = `
@@ -927,7 +916,7 @@ class ContentLoader {
             <iframe
               width="560"
               height="315"
-              src="https://www.youtube.com/embed/${video.videoId}"
+              src="https://www.youtube.com/embed/${video.id}"
               title="${video.title}"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerpolicy="strict-origin-when-cross-origin"
@@ -941,7 +930,9 @@ class ContentLoader {
         mediaGrid.appendChild(card);
       });
 
-      console.log(`✅ Loaded ${videos.length} YouTube videos`);
+      console.log(`✅ Loaded ${result.videos.length} YouTube videos (auto/manual mix)`);
+    } catch (error) {
+      console.error('Error loading YouTube videos:', error);
     }
   }
 

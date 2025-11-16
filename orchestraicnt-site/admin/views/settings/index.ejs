@@ -494,101 +494,119 @@
       <h4 style="margin: 2rem 0 1rem; font-size: 1rem; font-weight: 600; color: var(--gray-700);">
         🎥 Video YouTube (max 3)
       </h4>
-      <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1.5rem;">
-        Inserisci gli URL completi dei video YouTube (es: https://www.youtube.com/watch?v=xxxxx)
-      </p>
 
-      <!-- Video 1 -->
-      <div class="grid-2">
-        <div class="form-group">
-          <label for="media_video_1_url">
-            Video 1 - URL YouTube
-            <span class="hint">URL completo del video</span>
-          </label>
-          <input
-            type="url"
-            id="media_video_1_url"
-            name="media_video_1_url"
-            value="<%= sections.media.find(s => s.setting_key === 'media_video_1_url')?.setting_value || '' %>"
-            class="form-control"
-            placeholder="https://www.youtube.com/watch?v=..."
-          >
-        </div>
-        <div class="form-group">
-          <label for="media_video_1_title">
-            Video 1 - Titolo
-            <span class="hint">Titolo descrittivo</span>
-          </label>
-          <input
-            type="text"
-            id="media_video_1_title"
-            name="media_video_1_title"
-            value="<%= sections.media.find(s => s.setting_key === 'media_video_1_title')?.setting_value || '' %>"
-            class="form-control"
-            placeholder="Es: Concerto di Natale 2024"
-          >
-        </div>
+      <!-- Playlist ID Configuration -->
+      <div class="form-group" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+        <label for="media_youtube_playlist_id">
+          🎬 ID Playlist YouTube (opzionale)
+          <span class="hint">Lascia vuoto per caricare dal canale. Trova l'ID nell'URL: youtube.com/playlist?list=<strong>PLxxxxxx</strong></span>
+        </label>
+        <input
+          type="text"
+          id="media_youtube_playlist_id"
+          name="media_youtube_playlist_id"
+          value="<%= sections.media.find(s => s.setting_key === 'media_youtube_playlist_id')?.setting_value || '' %>"
+          class="form-control"
+          placeholder="PLxxxxxxxxxxxxxxxxxxxxxx"
+        >
       </div>
 
-      <!-- Video 2 -->
-      <div class="grid-2">
-        <div class="form-group">
-          <label for="media_video_2_url">
-            Video 2 - URL YouTube
-          </label>
-          <input
-            type="url"
-            id="media_video_2_url"
-            name="media_video_2_url"
-            value="<%= sections.media.find(s => s.setting_key === 'media_video_2_url')?.setting_value || '' %>"
-            class="form-control"
-            placeholder="https://www.youtube.com/watch?v=..."
-          >
-        </div>
-        <div class="form-group">
-          <label for="media_video_2_title">
-            Video 2 - Titolo
-          </label>
-          <input
-            type="text"
-            id="media_video_2_title"
-            name="media_video_2_title"
-            value="<%= sections.media.find(s => s.setting_key === 'media_video_2_title')?.setting_value || '' %>"
-            class="form-control"
-            placeholder="Es: Mozart Symphony No. 40"
-          >
-        </div>
-      </div>
+      <% for (let i = 1; i <= 3; i++) { %>
+      <%
+        const videoMode = sections.media.find(s => s.setting_key === `media_video_${i}_mode`)?.setting_value || 'manual';
+        const videoUrl = sections.media.find(s => s.setting_key === `media_video_${i}_url`)?.setting_value || '';
+        const videoTitle = sections.media.find(s => s.setting_key === `media_video_${i}_title`)?.setting_value || '';
+      %>
+      <!-- Video <%= i %> -->
+      <div style="border: 1px solid #e0e0e0; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+        <h5 style="margin: 0 0 1rem; font-size: 0.95rem; font-weight: 600; color: var(--gray-700);">
+          Video <%= i %>
+        </h5>
 
-      <!-- Video 3 -->
-      <div class="grid-2">
+        <!-- Mode Toggle -->
         <div class="form-group">
-          <label for="media_video_3_url">
-            Video 3 - URL YouTube
-          </label>
-          <input
-            type="url"
-            id="media_video_3_url"
-            name="media_video_3_url"
-            value="<%= sections.media.find(s => s.setting_key === 'media_video_3_url')?.setting_value || '' %>"
-            class="form-control"
-            placeholder="https://www.youtube.com/watch?v=..."
-          >
+          <label style="font-weight: 500; margin-bottom: 0.5rem; display: block;">Modalità</label>
+          <div style="display: flex; gap: 2rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input
+                type="radio"
+                name="media_video_<%= i %>_mode"
+                value="auto"
+                <%= videoMode === 'auto' ? 'checked' : '' %>
+                onchange="toggleVideoMode(<%= i %>, 'auto')"
+              >
+              <span>🤖 Automatico (da playlist/canale)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input
+                type="radio"
+                name="media_video_<%= i %>_mode"
+                value="manual"
+                <%= videoMode === 'manual' ? 'checked' : '' %>
+                onchange="toggleVideoMode(<%= i %>, 'manual')"
+              >
+              <span>✋ Manuale (URL personalizzato)</span>
+            </label>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="media_video_3_title">
-            Video 3 - Titolo
-          </label>
-          <input
-            type="text"
-            id="media_video_3_title"
-            name="media_video_3_title"
-            value="<%= sections.media.find(s => s.setting_key === 'media_video_3_title')?.setting_value || '' %>"
-            class="form-control"
-            placeholder="Es: Brahms Concerto per Violino"
-          >
+
+        <!-- Manual Fields (shown only if mode=manual) -->
+        <div id="video_<%= i %>_manual_fields" style="<%= videoMode === 'auto' ? 'display: none;' : '' %>">
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="media_video_<%= i %>_url">
+                URL YouTube
+                <span class="hint">URL completo del video</span>
+              </label>
+              <input
+                type="url"
+                id="media_video_<%= i %>_url"
+                name="media_video_<%= i %>_url"
+                value="<%= videoUrl %>"
+                class="form-control"
+                placeholder="https://www.youtube.com/watch?v=..."
+              >
+            </div>
+            <div class="form-group">
+              <label for="media_video_<%= i %>_title">
+                Titolo
+                <span class="hint">Titolo descrittivo</span>
+              </label>
+              <input
+                type="text"
+                id="media_video_<%= i %>_title"
+                name="media_video_<%= i %>_title"
+                value="<%= videoTitle %>"
+                class="form-control"
+                placeholder="Es: Concerto di Natale 2024"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Auto Mode Info -->
+        <div id="video_<%= i %>_auto_info" style="<%= videoMode === 'manual' ? 'display: none;' : '' %>">
+          <p style="font-size: 0.875rem; color: #666; background: #e8f4fd; padding: 0.75rem; border-radius: 6px; margin: 0;">
+            ℹ️ Video <%= i %> sarà caricato automaticamente dalla posizione #<%= i %> della playlist (o dal canale se non configurata).
+          </p>
         </div>
       </div>
+      <% } %>
+
+      <script>
+      function toggleVideoMode(videoNum, mode) {
+        const manualFields = document.getElementById(`video_${videoNum}_manual_fields`);
+        const autoInfo = document.getElementById(`video_${videoNum}_auto_info`);
+
+        if (mode === 'auto') {
+          manualFields.style.display = 'none';
+          autoInfo.style.display = 'block';
+        } else {
+          manualFields.style.display = 'block';
+          autoInfo.style.display = 'none';
+        }
+      }
+      </script>
     </div>
 
     <!-- DIRETTORE SECTION -->

@@ -61,9 +61,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 const adminRoutes = require('./admin/routes/admin');
 const apiRoutes = require('./routes/api');
+const mediaRoutes = require('./routes/media');
 
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes);
+app.use('/api/media', mediaRoutes);
 
 // TODO: Add cloudinary routes after fixing export
 // const cloudinaryRoutes = require('../shared/cloudinary-manager/routes');

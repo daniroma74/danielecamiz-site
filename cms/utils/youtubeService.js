@@ -7,6 +7,7 @@ import net from 'net';
 
 const TTL_MS = 10 * 60 * 1000;
 let CACHE = { ts: 0, max: 0, channel: '', items: [] };
+let PLAYLIST_CACHE = { ts: 0, max: 0, playlistId: '', items: [] };
 
 const FETCH_TIMEOUT_MS = parseInt(process.env.YT_FETCH_TIMEOUT_MS || '8000', 10);
 
@@ -79,6 +80,19 @@ function normalizeItems(json) {
     }));
 }
 
+function normalizePlaylistItems(json) {
+  const items = Array.isArray(json?.items) ? json.items : [];
+  return items
+    .filter(it => it?.snippet?.resourceId?.videoId)
+    .map(it => ({
+      id: it.snippet.resourceId.videoId,
+      title: it.snippet?.title || '',
+      thumbnail: it.snippet?.thumbnails?.medium?.url
+        || it.snippet?.thumbnails?.default?.url
+        || ''
+    }));
+}
+
 export async function getLatestVideos(max = 3) {
   const API_KEY = process.env.YT_API_KEY;
   const CHANNEL = process.env.YT_CHANNEL_ID;
@@ -117,5 +131,47 @@ export async function getLatestVideos(max = 3) {
     console.error('YouTube fetch error:', err.message || err);
     // Return cached items if available, even if expired
     return CACHE.items.length ? CACHE.items : [];
+  }
+}
+
+export async function getLatestVideosFromPlaylist(playlistId, max = 3) {
+  const API_KEY = process.env.YT_API_KEY;
+  if (!API_KEY || !playlistId) return [];
+
+  const now = Date.now();
+  const cacheExtended = 24 * 60 * 60 * 1000;
+
+  // Check cache
+  if (PLAYLIST_CACHE.items.length &&
+      PLAYLIST_CACHE.max === max &&
+      PLAYLIST_CACHE.playlistId === playlistId &&
+      (now - PLAYLIST_CACHE.ts) < cacheExtended) {
+    console.log('[YouTube Playlist] Returning cached items (age: ' + Math.round((now - PLAYLIST_CACHE.ts) / 1000 / 60) + ' min)');
+    return PLAYLIST_CACHE.items;
+  }
+
+  const url =
+    `https://www.googleapis.com/youtube/v3/playlistItems` +
+    `?key=${encodeURIComponent(API_KEY)}` +
+    `&playlistId=${encodeURIComponent(playlistId)}` +
+    `&part=snippet&maxResults=${Math.max(1, Math.min(50, max))}`;
+
+  try {
+    const json = await fetchJson(url);
+    if (json?.error) {
+      const isQuotaError = json.error.message?.includes('quota') || json.error.code === 403;
+      if (isQuotaError) {
+        console.warn('[YouTube Playlist] API quota exceeded, using cache if available');
+        if (PLAYLIST_CACHE.items.length) return PLAYLIST_CACHE.items;
+      }
+      console.error('YouTube Playlist API error:', json.error);
+      return PLAYLIST_CACHE.items.length ? PLAYLIST_CACHE.items : [];
+    }
+    const items = normalizePlaylistItems(json);
+    PLAYLIST_CACHE = { ts: now, max, playlistId, items };
+    return items;
+  } catch (err) {
+    console.error('YouTube Playlist fetch error:', err.message || err);
+    return PLAYLIST_CACHE.items.length ? PLAYLIST_CACHE.items : [];
   }
 }

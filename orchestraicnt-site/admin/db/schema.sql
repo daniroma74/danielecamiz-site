@@ -60,10 +60,14 @@ INSERT OR IGNORE INTO site_settings (setting_key, setting_value, description) VA
   ('media_label', 'Ascoltaci', 'Etichetta sezione Media'),
   ('media_title', 'Video e Registrazioni', 'Titolo sezione Media'),
   ('media_subtitle', 'Scopri le nostre performance', 'Sottotitolo sezione Media'),
+  ('media_youtube_playlist_id', '', 'ID Playlist YouTube (lascia vuoto per caricare dal canale)'),
+  ('media_video_1_mode', 'manual', 'Modalità Video 1: auto o manual'),
   ('media_video_1_url', '', 'URL Video YouTube 1'),
   ('media_video_1_title', '', 'Titolo Video YouTube 1'),
+  ('media_video_2_mode', 'manual', 'Modalità Video 2: auto o manual'),
   ('media_video_2_url', '', 'URL Video YouTube 2'),
   ('media_video_2_title', '', 'Titolo Video YouTube 2'),
+  ('media_video_3_mode', 'manual', 'Modalità Video 3: auto o manual'),
   ('media_video_3_url', '', 'URL Video YouTube 3'),
   ('media_video_3_title', '', 'Titolo Video YouTube 3');
 
