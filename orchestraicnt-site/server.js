@@ -102,6 +102,7 @@ app.post('/api/contact', async (req, res) => {
 
     const recipientEmail = process.env.CONTACT_EMAIL || 'orchestraicnt@danielecamiz.com';
 
+    // Send email to Orchestra ICNT
     await transporter.sendMail({
       from: `"Orchestra ICNT Website" <noreply@orchestraicnt.danielecamiz.com>`,
       replyTo: email,
@@ -120,6 +121,35 @@ app.post('/api/contact', async (req, res) => {
     });
 
     console.log('[Contact] Email sent successfully to:', recipientEmail);
+
+    // Send confirmation copy to sender
+    await transporter.sendMail({
+      from: `"Orchestra ICNT" <noreply@orchestraicnt.danielecamiz.com>`,
+      to: email,
+      subject: `Conferma ricezione messaggio - Orchestra ICNT`,
+      text: `Gentile ${name},\n\nGrazie per averci contattato! Abbiamo ricevuto il tuo messaggio e ti risponderemo al più presto.\n\nEcco una copia del messaggio che hai inviato:\n\nOggetto: ${subject}\nMessaggio:\n${message}\n\n---\nOrchestra ICNT\nwww.orchestraicnt.danielecamiz.com`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1a1a1a;">Orchestra ICNT</h2>
+          <p>Gentile <strong>${name}</strong>,</p>
+          <p>Grazie per averci contattato! Abbiamo ricevuto il tuo messaggio e ti risponderemo al più presto.</p>
+
+          <div style="background: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #333;">Copia del tuo messaggio:</h3>
+            <p><strong>Oggetto:</strong> ${subject}</p>
+            <p><strong>Messaggio:</strong></p>
+            <p style="white-space: pre-wrap;">${message}</p>
+          </div>
+
+          <p style="color: #666; font-size: 14px;">
+            Orchestra ICNT<br>
+            <a href="https://orchestraicnt.danielecamiz.com">www.orchestraicnt.danielecamiz.com</a>
+          </p>
+        </div>
+      `
+    });
+
+    console.log('[Contact] Confirmation email sent to:', email);
 
     res.json({
       success: true,
