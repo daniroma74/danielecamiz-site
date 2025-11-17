@@ -48,7 +48,8 @@
     if (!opts.preset) throw new Error('Preset Cloudinary mancante');
     formData.append('upload_preset', opts.preset);
 
-    if (opts.folder) formData.append('folder', withYear(opts.folder));
+    // Solo folder senza anno per evitare errori con preset
+    if (opts.folder) formData.append('folder', opts.folder);
     if (opts.public_id) formData.append('public_id', opts.public_id);
 
     const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
@@ -56,6 +57,15 @@
       body: formData
     });
     const data = await res.json();
+
+    // Se c'è un errore, loga e ritorna l'errore
+    if (data.error) {
+      console.error('Cloudinary upload error:', data.error);
+      return {
+        success: false,
+        error: data.error.message || 'Upload failed'
+      };
+    }
 
     if (data.secure_url) {
       return {

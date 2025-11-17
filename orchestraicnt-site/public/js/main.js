@@ -549,7 +549,7 @@ class ContentLoader {
 
       if (s.hero_claim) {
         const heroClaim = document.querySelector('.hero-claim');
-        if (heroClaim) heroClaim.textContent = s.hero_claim;
+        if (heroClaim) heroClaim.innerHTML = s.hero_claim;
       }
 
       if (s.hero_cta_primary_text) {
@@ -618,7 +618,7 @@ class ContentLoader {
 
         if (text) {
           const textEl = features[i].querySelector('p');
-          if (textEl) textEl.textContent = text;
+          if (textEl) textEl.innerHTML = text;
         }
       }
 
