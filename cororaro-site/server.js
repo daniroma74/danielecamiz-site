@@ -10,7 +10,6 @@ const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const session = require('express-session');
-const SQLiteStore = require('connect-sqlite3')(session);
 const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
