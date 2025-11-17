@@ -225,16 +225,28 @@ class ContactForm {
     submitBtn.disabled = true;
 
     try {
-      // TODO: Implementare invio effettivo al server
-      // Per ora simuliamo con timeout
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Send to server
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
 
-      // Success
-      this.showMessage('Messaggio inviato con successo! Ti risponderemo presto.', 'success');
-      this.form.reset();
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Success
+        this.showMessage('Messaggio inviato con successo! Ti risponderemo presto.', 'success');
+        this.form.reset();
+      } else {
+        // Server returned error
+        this.showMessage(result.message || 'Errore nell\'invio. Riprova più tardi.', 'error');
+      }
 
     } catch (error) {
-      // Error
+      // Network or other error
       this.showMessage('Errore nell\'invio. Riprova più tardi.', 'error');
       console.error('Form submission error:', error);
 
