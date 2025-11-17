@@ -36,7 +36,8 @@ app.set('layout', 'layout');
 app.use(session({
   store: new SQLiteStore({
     db: 'sessions.db',
-    dir: path.join(__dirname, 'db')
+    dir: path.join(__dirname, 'db'),
+    table: 'sessions'
   }),
   secret: process.env.SESSION_SECRET || 'coro-raro-secret-change-in-production',
   resave: false,
@@ -44,7 +45,7 @@ app.use(session({
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production'
+    secure: false // Set to false for development/staging
   }
 }));
 

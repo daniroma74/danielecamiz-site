@@ -58,7 +58,14 @@ module.exports = (db) => {
           req.session.username = user.username;
           req.session.fullName = user.full_name;
 
-          res.redirect('/admin/dashboard');
+          // Save session before redirect
+          req.session.save((err) => {
+            if (err) {
+              console.error('Session save error:', err);
+              return res.redirect('/admin/login?error=session');
+            }
+            res.redirect('/admin/dashboard');
+          });
         } catch (error) {
           console.error('Password comparison error:', error);
           return res.redirect('/admin/login?error=server');
