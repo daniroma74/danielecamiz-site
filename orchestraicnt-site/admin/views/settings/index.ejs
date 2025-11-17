@@ -972,7 +972,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
-      CloudinaryManager.showImageDialog(function(imageUrl, publicId) {
+      CloudinaryManager.showImageDialog(function(result) {
+        console.log('✅ Cloudinary upload result:', result);
+        const imageUrl = result.url || result;
         inputField.value = imageUrl;
 
         // Aggiorna o crea preview
@@ -991,7 +993,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.textContent = '📷 Cambia Immagine';
       }, {
         folder: 'danielecamiz',
-        preset: 'icnt_settings'
+        preset: 'icnt_general'  // Fixed: use existing preset
       });
     });
   });

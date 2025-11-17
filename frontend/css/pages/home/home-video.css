@@ -20,10 +20,20 @@
 
 /* Titolo sezione: ereditato da .section-title globale */
 
-#youtube_videos {
+/* Force grid layout on #youtube_videos with higher specificity */
+#latest_videos #youtube_videos.video-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 340px)) !important;
+  gap: clamp(1.5rem, 3vw, 2rem) !important;
+  justify-content: center !important;
+  justify-items: center !important;
   margin-top: 2rem;
-  position: relative;
-  z-index: 1;
+}
+
+/* Ensure video items don't overflow */
+#latest_videos #youtube_videos.video-grid .video-item {
+  width: 100% !important;
+  max-width: 340px !important;
 }
 
 /* CTA "Tutti i video" */

@@ -956,9 +956,26 @@ class ContentLoader {
     directorSection.className = 'section director-section';
     directorSection.id = 'direttore';
 
-    const photoUrl = directorPhoto
-      ? `https://res.cloudinary.com/danielecamiz/image/upload/c_fill,w_500,h_500,g_face/${directorPhoto}`
-      : 'assets/images/director-placeholder.jpg';
+    // directorPhoto is already a full Cloudinary URL, extract the public ID if needed
+    let photoUrl = 'assets/images/director-placeholder.jpg';
+    if (directorPhoto) {
+      // Check if it's already a full URL
+      if (directorPhoto.startsWith('http')) {
+        // Extract public ID from full Cloudinary URL
+        // URL format: https://res.cloudinary.com/CLOUD_NAME/image/upload/VERSION/FOLDER/PUBLIC_ID.ext
+        const match = directorPhoto.match(/\/upload\/(?:v\d+\/)?(.+)$/);
+        if (match) {
+          const publicId = match[1];
+          photoUrl = `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_500,h_500,g_face/${publicId}`;
+        } else {
+          // Fallback: use the URL as-is
+          photoUrl = directorPhoto;
+        }
+      } else {
+        // It's just a public ID
+        photoUrl = `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_500,h_500,g_face/${directorPhoto}`;
+      }
+    }
 
     directorSection.innerHTML = `
       <div class="container">

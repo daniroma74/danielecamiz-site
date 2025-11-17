@@ -30,7 +30,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // Solo HTTPS in production
+    secure: false, // FIXED: Allow cookies on HTTP for localhost testing
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 ore
     sameSite: 'lax' // Protezione CSRF

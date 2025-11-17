@@ -80,7 +80,7 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
   <div class="section-title" id="video_title"><%= _t('home.video_title', 'Ultimi video', 'Latest videos') %></div>
 
   <% if (Array.isArray(videoItems) && videoItems.length) { %>
-    <div id="youtube_videos" class="video-grid">
+    <div id="youtube_videos" class="video-grid" style="display: grid !important; grid-template-columns: repeat(auto-fit, minmax(280px, 340px)) !important; gap: 2rem !important; justify-content: center !important;">
       <% videoItems.slice(0, 3).forEach(v => { %>
         <article class="video-item">
           <a class="video-thumb" href="https://www.youtube.com/watch?v=<%= v.id %>" target="_blank" rel="noopener">

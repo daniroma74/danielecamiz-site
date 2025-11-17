@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // News (se hai un arricchimento client)
   safeCall(initHomeNews);
 
-  // Ultimi video: carica 3 dal proxy server-side
-  safeCall(initHomeVideos, 3);
+  // Ultimi video: DISABLED - già renderizzati server-side con video-item
+  // safeCall(initHomeVideos, 3);
 
   // Concerti: anteprima/timeline o CTA
   safeCall(initHomeConcerts);

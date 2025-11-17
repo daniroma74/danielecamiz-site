@@ -3,6 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { localDB } = require('../config/database');
 
 /**
  * Helper per estrarre ID YouTube da URL
@@ -19,14 +20,9 @@ function getYouTubeID(url) {
  */
 router.get('/videos', async (req, res) => {
   try {
-    const db = req.app.locals.db;
-    if (!db) {
-      return res.status(500).json({ success: false, error: 'Database not available' });
-    }
-
-    // Carica tutte le settings necessarie
+    // Carica tutte le settings necessarie usando localDB
     const settings = {};
-    const rows = await db.all(
+    const rows = await localDB.all(
       `SELECT setting_key, setting_value FROM site_settings
        WHERE setting_key LIKE 'media_%'`
     );
