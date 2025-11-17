@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Galleria fotografica completa di Coro Raro - Concerti, prove, eventi e momenti insieme">
+  <meta name="keywords" content="coro raro, galleria, foto, concerti, eventi, Roma">
+
+  <title>Galleria - Coro Raro</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300;400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .gallery-page {
+      padding-top: calc(var(--navbar-height) + 2rem);
+      min-height: 100vh;
+      background: var(--avorio);
+    }
+
+    .gallery-header {
+      text-align: center;
+      padding: 3rem 0;
+      background: linear-gradient(135deg, var(--terracotta) 0%, var(--verde) 100%);
+      color: white;
+      margin-bottom: 3rem;
+    }
+
+    .gallery-header h1 {
+      font-family: var(--font-heading);
+      font-size: var(--fs-4xl);
+      margin-bottom: 1rem;
+    }
+
+    .gallery-header p {
+      font-size: var(--fs-xl);
+      opacity: 0.95;
+    }
+
+    .gallery-filters {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .filter-btn {
+      padding: 0.75rem 1.5rem;
+      background: white;
+      border: 2px solid var(--terracotta);
+      color: var(--terracotta);
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: var(--fs-base);
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--terracotta);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(210, 105, 30, 0.3);
+    }
+
+    .gallery-count {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--text-secondary);
+      font-size: var(--fs-lg);
+    }
+
+    .gallery-grid-full {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-xl);
+      margin-bottom: 4rem;
+    }
+
+    .gallery-item-full {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s;
+      cursor: pointer;
+      background: white;
+    }
+
+    .gallery-item-full:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .gallery-item-full img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-item-info {
+      padding: 1rem;
+      background: white;
+    }
+
+    .gallery-item-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      font-size: var(--fs-lg);
+    }
+
+    .gallery-item-caption {
+      color: var(--text-secondary);
+      font-size: var(--fs-base);
+      line-height: 1.5;
+    }
+
+    .gallery-item-category {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: var(--terracotta);
+      color: white;
+      border-radius: 20px;
+      font-size: var(--fs-sm);
+      margin-top: 0.5rem;
+    }
+
+    .back-home {
+      text-align: center;
+      padding: 3rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .gallery-grid-full {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-btn {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar-content">
+      <div class="navbar-brand">
+        <a href="/">
+          <img src="assets/images/cororaro_logo_semplice.png" alt="Coro Raro Logo" class="navbar-logo">
+        </a>
+      </div>
+
+      <button class="navbar-toggle" id="navToggle" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="navbar-menu" id="navMenu">
+        <li><a href="/#home" class="nav-link">Home</a></li>
+        <li><a href="/#chi-siamo" class="nav-link">Chi Siamo</a></li>
+        <li><a href="/#repertorio" class="nav-link">Repertorio</a></li>
+        <li><a href="/#progetti" class="nav-link">Progetti</a></li>
+        <li><a href="/#concerti" class="nav-link">Concerti</a></li>
+        <li><a href="/galleria.html" class="nav-link active">Galleria</a></li>
+        <li><a href="/#unisciti" class="nav-link nav-link-special">Unisciti a Noi</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- GALLERY PAGE -->
+  <div class="gallery-page">
+
+    <!-- Header -->
+    <div class="gallery-header">
+      <div class="container">
+        <h1>📸 Galleria Completa</h1>
+        <p>Tutti i nostri momenti insieme - Concerti, prove, eventi e tanto altro</p>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Filters -->
+      <div class="gallery-filters">
+        <button class="filter-btn active" data-category="all">🌟 Tutte le Foto</button>
+        <button class="filter-btn" data-category="concerts">🎵 Concerti</button>
+        <button class="filter-btn" data-category="rehearsals">🎼 Prove</button>
+        <button class="filter-btn" data-category="group">👥 Foto di Gruppo</button>
+        <button class="filter-btn" data-category="events">🎉 Eventi Speciali</button>
+      </div>
+
+      <!-- Count -->
+      <div class="gallery-count" id="gallery-count">
+        Caricamento foto...
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="gallery-grid-full" id="gallery-full-container">
+        <!-- Foto caricate dinamicamente -->
+      </div>
+
+      <!-- Back to Home -->
+      <div class="back-home">
+        <a href="/" class="btn btn-primary">← Torna alla Home</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-col">
+          <img src="assets/images/cororaro_logo_semplice.png" alt="Coro Raro" class="footer-logo">
+          <p class="footer-description">
+            Un coro che unisce voci, culture e cuori dal 2004.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Link Rapidi</h4>
+          <ul class="footer-links">
+            <li><a href="/#home">Home</a></li>
+            <li><a href="/#chi-siamo">Chi Siamo</a></li>
+            <li><a href="/#repertorio">Repertorio</a></li>
+            <li><a href="/#progetti">Progetti</a></li>
+            <li><a href="/#concerti">Concerti</a></li>
+            <li><a href="/galleria.html">Galleria</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contatti</h4>
+          <ul class="footer-links">
+            <li><a href="mailto:info@cororaro.it">📧 info@cororaro.it</a></li>
+            <li><a href="tel:+39123456789">📞 +39 123 456 789</a></li>
+            <li>📍 Quartiere Prati Fiscali, Roma</li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Seguici</h4>
+          <div class="social-icons">
+            <a href="#" aria-label="Facebook">FB</a>
+            <a href="#" aria-label="Instagram">IG</a>
+            <a href="#" aria-label="YouTube">YT</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 Coro Raro. Tutti i diritti riservati.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Variabili globali
+    let allImages = [];
+    let currentFilter = 'all';
+
+    // Category labels
+    const categoryLabels = {
+      concerts: 'Concerti',
+      rehearsals: 'Prove',
+      group: 'Foto di Gruppo',
+      events: 'Eventi Speciali'
+    };
+
+    // Carica tutte le foto
+    async function loadAllGallery() {
+      try {
+        const response = await fetch('/api/gallery');
+        const result = await response.json();
+
+        if (!result.success || !result.data) return;
+
+        // Filtra solo foto pubblicate
+        allImages = result.data.filter(img => img.is_published);
+
+        // Mostra le foto filtrate
+        renderGallery();
+
+      } catch (error) {
+        console.error('Errore caricamento galleria:', error);
+        document.getElementById('gallery-full-container').innerHTML =
+          '<p style="text-align: center; padding: 3rem; color: #666;">Errore nel caricamento delle foto.</p>';
+      }
+    }
+
+    // Renderizza la galleria in base al filtro
+    function renderGallery() {
+      const container = document.getElementById('gallery-full-container');
+      const countEl = document.getElementById('gallery-count');
+
+      // Filtra le immagini
+      let filtered = allImages;
+      if (currentFilter !== 'all') {
+        filtered = allImages.filter(img => img.category === currentFilter);
+      }
+
+      // Aggiorna conteggio
+      countEl.textContent = `${filtered.length} ${filtered.length === 1 ? 'foto' : 'foto'}`;
+
+      // Mostra messaggio se vuoto
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align: center; padding: 3rem; color: #666;">Nessuna foto in questa categoria.</p>';
+        return;
+      }
+
+      // Renderizza le foto
+      container.innerHTML = filtered.map(image => `
+        <div class="gallery-item-full" data-category="${image.category}">
+          <img src="${image.image_url}" alt="${image.caption || image.title || 'Foto galleria'}" loading="lazy">
+          ${image.title || image.caption ? `
+            <div class="gallery-item-info">
+              ${image.title ? `<div class="gallery-item-title">${image.title}</div>` : ''}
+              ${image.caption ? `<div class="gallery-item-caption">${image.caption}</div>` : ''}
+              ${image.category ? `<span class="gallery-item-category">${categoryLabels[image.category] || image.category}</span>` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    // Gestisci filtri
+    document.addEventListener('DOMContentLoaded', () => {
+      // Carica foto
+      loadAllGallery();
+
+      // Setup filtri
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Rimuovi active da tutti
+          filterBtns.forEach(b => b.classList.remove('active'));
+          // Aggiungi active a quello cliccato
+          btn.classList.add('active');
+          // Imposta filtro e re-render
+          currentFilter = btn.dataset.category;
+          renderGallery();
+        });
+      });
+
+      // Setup mobile menu (stesso di homepage)
+      const navToggle = document.getElementById('navToggle');
+      const navMenu = document.getElementById('navMenu');
+      if (navToggle) {
+        navToggle.addEventListener('click', () => {
+          navMenu.classList.toggle('active');
+          navToggle.classList.toggle('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

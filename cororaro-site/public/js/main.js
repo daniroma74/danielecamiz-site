@@ -857,7 +857,7 @@ class ContentLoader {
     }
   }
 
-  static async loadGallery() {
+  static async loadGallery(limit = 9) {
     try {
       const response = await fetch('/api/gallery');
       const result = await response.json();
@@ -867,8 +867,13 @@ class ContentLoader {
       const container = document.getElementById('galleria-container');
       if (!container) return;
 
-      // Filtra solo foto pubblicate
-      const images = result.data.filter(img => img.is_published);
+      // Filtra solo foto pubblicate e limita il numero
+      let images = result.data.filter(img => img.is_published);
+
+      // Sulla homepage mostra solo le ultime N foto
+      if (limit) {
+        images = images.slice(0, limit);
+      }
 
       if (images.length === 0) {
         container.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">Nessuna foto nella galleria al momento.</p>';
