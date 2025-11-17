@@ -1410,10 +1410,16 @@ ul, ol {
     visibility: visible;
   }
 
-  .nav-link {
+  .navbar-menu .nav-link {
     width: 100%;
     text-align: center;
     padding: var(--spacing-sm);
+    color: var(--text-primary) !important;
+  }
+
+  .navbar-menu .nav-link:hover,
+  .navbar-menu .nav-link.active {
+    color: var(--terracotta) !important;
   }
 
   .hero {
