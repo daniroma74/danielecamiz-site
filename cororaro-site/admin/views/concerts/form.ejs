@@ -9,7 +9,7 @@
     <h3 style="margin: 0 0 0.5rem 0; color: #1976d2;">💡 Come funziona?</h3>
     <p style="margin: 0; color: #555;">
       I campi con <strong>*</strong> sono obbligatori. Gli altri sono facoltativi ma aiutano a dare più informazioni.
-      <br>Spunta "Pubblicato" solo quando sei sicuro che il concerto deve apparire sul sito.
+      <br><strong>I concerti vengono pubblicati automaticamente sul sito appena li salvi!</strong>
     </p>
   </div>
 
@@ -225,40 +225,6 @@
       </div>
     </div>
 
-    <!-- ========== OPZIONI PUBBLICAZIONE ========== -->
-    <div style="background: #fff; padding: 1.5rem; border: 2px solid #2196f3; border-radius: 8px; margin-bottom: 2rem;">
-      <h2 style="margin-top: 0; color: #1976d2; font-size: 1.3rem;">⚙️ Opzioni di Pubblicazione</h2>
-
-      <div style="display: flex; gap: 3rem; flex-wrap: wrap;">
-        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.1rem;">
-          <input
-            type="checkbox"
-            name="is_featured"
-            value="1"
-            <%= concert.is_featured ? 'checked' : '' %>
-            style="width: 24px; height: 24px; cursor: pointer;"
-          >
-          <span style="font-weight: 600;">⭐ Metti in Evidenza</span>
-        </label>
-        <small style="display: block; color: #666; margin-left: 3rem;">
-          💬 Il concerto apparirà in cima alla lista
-        </small>
-
-        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.1rem;">
-          <input
-            type="checkbox"
-            name="is_published"
-            value="1"
-            <%= concert.is_published ? 'checked' : '' %>
-            style="width: 24px; height: 24px; cursor: pointer;"
-          >
-          <span style="font-weight: 600;">✅ Pubblicato (visibile sul sito)</span>
-        </label>
-        <small style="display: block; color: #666; margin-left: 3rem;">
-          💬 Spunta SOLO quando vuoi che appaia sul sito pubblico
-        </small>
-      </div>
-    </div>
 
     <!-- ========== BOTTONI ========== -->
     <div style="display: flex; gap: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid #ddd;">

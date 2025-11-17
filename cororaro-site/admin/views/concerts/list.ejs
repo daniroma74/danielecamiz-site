@@ -10,81 +10,146 @@
 
 <div class="filters" style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
   <form method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-    <input type="text" name="search" placeholder="Cerca per titolo, location, causa..." value="<%= filters.search %>" style="flex: 1; min-width: 200px; padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-    <select name="status" style="padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <option value="">Tutti gli stati</option>
-      <option value="published" <%= filters.status === 'published' ? 'selected' : '' %>>Pubblicati</option>
-      <option value="unpublished" <%= filters.status === 'unpublished' ? 'selected' : '' %>>Non pubblicati</option>
-      <option value="future" <%= filters.status === 'future' ? 'selected' : '' %>>Futuri</option>
-      <option value="past" <%= filters.status === 'past' ? 'selected' : '' %>>Passati</option>
-    </select>
-    <button type="submit" class="btn">Cerca</button>
-    <% if (filters.search || filters.status) { %>
-      <a href="/admin/concerts" class="btn btn-secondary">Reset</a>
+    <input type="text" name="search" placeholder="Cerca per titolo, location, causa..." value="<%= filters.search %>" style="flex: 1; min-width: 200px; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;">
+    <button type="submit" class="btn" style="padding: 1rem 2rem; font-size: 1.1rem;">🔍 Cerca</button>
+    <% if (filters.search) { %>
+      <a href="/admin/concerts" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem;">Reset</a>
     <% } %>
   </form>
 </div>
 
-<div class="table-container" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
-  <table style="width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Data</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Titolo</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Location</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Causa</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Stato</th>
-        <th style="background: var(--terracotta, #8B4513); color: white; padding: 1rem; text-align: left;">Azioni</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (concerts.length === 0) { %>
-        <tr>
-          <td colspan="6" style="padding: 2rem; text-align: center; color: #999;">
-            Nessun concerto trovato. <a href="/admin/concerts/new">Aggiungi il primo concerto</a>
-          </td>
-        </tr>
-      <% } else { %>
-        <% concerts.forEach(concert => { %>
-          <tr style="border-bottom: 1px solid #f0f0f0;">
-            <td style="padding: 1rem;">
-              <strong><%= new Date(concert.date).toLocaleDateString('it-IT') %></strong><br>
-              <small><%= concert.time || '' %></small>
-            </td>
-            <td style="padding: 1rem;">
-              <strong><%= concert.title %></strong>
-              <% if (concert.is_featured) { %><span style="color: gold;">⭐</span><% } %>
-            </td>
-            <td style="padding: 1rem;"><%= concert.location %></td>
-            <td style="padding: 1rem;"><%= concert.cause || 'N/A' %></td>
-            <td style="padding: 1rem;">
-              <span style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem; <%= concert.is_published ? 'background: #d4edda; color: #155724;' : 'background: #f8d7da; color: #721c24;' %>">
-                <%= concert.is_published ? '✅ Pubblicato' : '❌ Bozza' %>
-              </span>
-            </td>
-            <td style="padding: 1rem;">
-              <div style="display: flex; gap: 0.5rem;">
-                <a href="/admin/concerts/<%= concert.id %>/edit" class="btn btn-small">Modifica</a>
-                <form method="POST" action="/admin/concerts/<%= concert.id %>/delete" style="display: inline;" onsubmit="return confirm('Sei sicuro di voler eliminare questo concerto?');">
-                  <button type="submit" class="btn btn-small btn-danger">Elimina</button>
-                </form>
+<style>
+  .concerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .concert-card-admin {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+  }
+
+  .concert-card-admin:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .concert-card-header {
+    background: linear-gradient(135deg, var(--terracotta, #8B4513) 0%, var(--verde, #4a7c59) 100%);
+    color: white;
+    padding: 1.5rem;
+  }
+
+  .concert-card-date {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .concert-card-time {
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+
+  .concert-card-body {
+    padding: 1.5rem;
+  }
+
+  .concert-card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .concert-card-info {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .concert-card-info-item {
+    display: flex;
+    align-items: start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .concert-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+</style>
+
+<div class="concerts-grid">
+  <% if (concerts.length === 0) { %>
+    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; background: white; border-radius: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+      <p style="font-size: 1.3rem; color: #999; margin-bottom: 1.5rem;">🎵 Nessun concerto trovato</p>
+      <a href="/admin/concerts/new" class="btn">Aggiungi il Primo Concerto</a>
+    </div>
+  <% } else { %>
+    <% concerts.forEach(concert => { %>
+      <div class="concert-card-admin">
+        <!-- Header con Data -->
+        <div class="concert-card-header">
+          <div class="concert-card-date">
+            📅 <%= new Date(concert.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+          </div>
+          <% if (concert.time) { %>
+            <div class="concert-card-time">🕐 Ore <%= concert.time %></div>
+          <% } %>
+        </div>
+
+        <!-- Body -->
+        <div class="concert-card-body">
+          <div class="concert-card-title"><%= concert.title %></div>
+
+          <div class="concert-card-info">
+            <div class="concert-card-info-item">
+              <strong>📍 Dove:</strong> <%= concert.location %>
+            </div>
+            <% if (concert.cause) { %>
+              <div class="concert-card-info-item">
+                <strong>💚 Causa:</strong> <%= concert.cause %>
               </div>
-            </td>
-          </tr>
-        <% }) %>
-      <% } %>
-    </tbody>
-  </table>
+            <% } %>
+            <% if (concert.program) { %>
+              <div class="concert-card-info-item">
+                <strong>🎼 Programma:</strong> <%= concert.program.substring(0, 100) %><%= concert.program.length > 100 ? '...' : '' %>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Actions -->
+          <div class="concert-card-actions">
+            <a href="/admin/concerts/<%= concert.id %>/edit" class="btn btn-small" style="flex: 1; text-align: center;">
+              ✏️ Modifica
+            </a>
+            <form method="POST" action="/admin/concerts/<%= concert.id %>/delete" style="flex: 1;" onsubmit="return confirm('Sei sicuro di voler eliminare questo concerto?');">
+              <button type="submit" class="btn btn-small btn-danger" style="width: 100%;">
+                🗑️ Elimina
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
 </div>
 
 <% if (pagination.totalPages > 1) { %>
   <div class="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
     <% if (pagination.page > 1) { %>
-      <a href="?page=<%= pagination.page - 1 %>&search=<%= filters.search %>&status=<%= filters.status %>" class="btn">← Precedente</a>
+      <a href="?page=<%= pagination.page - 1 %>&search=<%= filters.search %>" class="btn">← Precedente</a>
     <% } %>
-    <span style="padding: 0.75rem 1rem;">Pagina <%= pagination.page %> di <%= pagination.totalPages %></span>
+    <span style="padding: 0.75rem 1rem; font-size: 1.1rem;">Pagina <%= pagination.page %> di <%= pagination.totalPages %></span>
     <% if (pagination.page < pagination.totalPages) { %>
-      <a href="?page=<%= pagination.page + 1 %>&search=<%= filters.search %>&status=<%= filters.status %>" class="btn">Successiva →</a>
+      <a href="?page=<%= pagination.page + 1 %>&search=<%= filters.search %>" class="btn">Successiva →</a>
     <% } %>
   </div>
 <% } %>

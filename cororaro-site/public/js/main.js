@@ -783,9 +783,12 @@ class ContentLoader {
       }
 
       container.innerHTML = concerts.map(concert => {
-        const date = new Date(concert.event_date);
-        const day = date.getDate();
-        const month = date.toLocaleDateString('it-IT', { month: 'short' }).toUpperCase();
+        // Fixed: use 'date' instead of 'event_date' and handle invalid dates
+        const date = new Date(concert.date);
+        const isValidDate = !isNaN(date.getTime());
+
+        const day = isValidDate ? date.getDate() : '?';
+        const month = isValidDate ? date.toLocaleDateString('it-IT', { month: 'short' }).toUpperCase() : '?';
 
         return `
           <div class="concert-card">
@@ -795,9 +798,9 @@ class ContentLoader {
             </div>
             <div class="concert-info">
               <h3>${concert.title}</h3>
-              ${concert.cause_description ? `
+              ${concert.cause ? `
                 <p class="concert-cause">
-                  <strong>A sostegno di:</strong> ${concert.cause_description}
+                  <strong>A sostegno di:</strong> ${concert.cause}
                 </p>
               ` : ''}
               <div class="concert-details">
@@ -806,9 +809,9 @@ class ContentLoader {
                     📍 ${concert.location}
                   </div>
                 ` : ''}
-                ${concert.event_time ? `
+                ${concert.time ? `
                   <div class="concert-time">
-                    🕐 Ore ${concert.event_time}
+                    🕐 Ore ${concert.time}
                   </div>
                 ` : ''}
               </div>

@@ -13,7 +13,6 @@ module.exports = (db) => {
     const limit = 20;
     const offset = (page - 1) * limit;
     const search = req.query.search || '';
-    const status = req.query.status || ''; // all, published, unpublished, past, future
 
     let query = 'SELECT * FROM concerts WHERE 1=1';
     let countQuery = 'SELECT COUNT(*) as total FROM concerts WHERE 1=1';
@@ -26,20 +25,6 @@ module.exports = (db) => {
       const searchParam = `%${search}%`;
       params.push(searchParam, searchParam, searchParam);
       countParams.push(searchParam, searchParam, searchParam);
-    }
-
-    if (status === 'published') {
-      query += ' AND is_published = 1';
-      countQuery += ' AND is_published = 1';
-    } else if (status === 'unpublished') {
-      query += ' AND is_published = 0';
-      countQuery += ' AND is_published = 0';
-    } else if (status === 'past') {
-      query += ' AND date < DATE("now")';
-      countQuery += ' AND date < DATE("now")';
-    } else if (status === 'future') {
-      query += ' AND date >= DATE("now")';
-      countQuery += ' AND date >= DATE("now")';
     }
 
     query += ' ORDER BY date DESC LIMIT ? OFFSET ?';
@@ -67,8 +52,7 @@ module.exports = (db) => {
             total
           },
           filters: {
-            search,
-            status
+            search
           }
         });
       });
@@ -80,10 +64,7 @@ module.exports = (db) => {
     res.render('concerts/form', {
       title: 'Nuovo Concerto',
       user: req.session,
-      concert: {
-        is_published: 1,
-        is_featured: 0
-      },
+      concert: {},
       action: 'create'
     });
   });
@@ -100,16 +81,14 @@ module.exports = (db) => {
       program,
       description,
       poster_url,
-      ticket_url,
-      is_featured,
-      is_published
+      ticket_url
     } = req.body;
 
     const query = `
       INSERT INTO concerts (
         title, date, time, location, address, cause, program,
-        description, poster_url, ticket_url, is_featured, is_published
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        description, poster_url, ticket_url, is_published
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `;
 
     db.run(
@@ -124,9 +103,7 @@ module.exports = (db) => {
         program || null,
         description || null,
         poster_url || null,
-        ticket_url || null,
-        is_featured ? 1 : 0,
-        is_published ? 1 : 0
+        ticket_url || null
       ],
       function (err) {
         if (err) {
@@ -175,9 +152,7 @@ module.exports = (db) => {
       program,
       description,
       poster_url,
-      ticket_url,
-      is_featured,
-      is_published
+      ticket_url
     } = req.body;
 
     const query = `
@@ -192,8 +167,7 @@ module.exports = (db) => {
         description = ?,
         poster_url = ?,
         ticket_url = ?,
-        is_featured = ?,
-        is_published = ?
+        is_published = 1
       WHERE id = ?
     `;
 
@@ -210,8 +184,6 @@ module.exports = (db) => {
         description || null,
         poster_url || null,
         ticket_url || null,
-        is_featured ? 1 : 0,
-        is_published ? 1 : 0,
         id
       ],
       (err) => {
