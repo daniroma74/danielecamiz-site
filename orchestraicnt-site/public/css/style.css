@@ -1747,3 +1747,134 @@ ul, ol {
   color: var(--primary-white);
   text-shadow: none;
 }
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Navbar mobile */
+  .navbar-toggle {
+    display: flex;
+    z-index: 1001;
+  }
+
+  .navbar-toggle span {
+    background: var(--primary-white);
+  }
+
+  .navbar-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  .navbar-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+  }
+
+  .navbar-menu {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+    padding: var(--spacing-xl) 0;
+    gap: 0;
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    max-height: calc(100vh - var(--navbar-height));
+    overflow-y: auto;
+  }
+
+  .navbar-menu.active {
+    transform: translateX(0);
+  }
+
+  .navbar-menu li {
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar-menu li:last-child {
+    border-bottom: none;
+  }
+
+  .nav-link {
+    display: block;
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-xl);
+    text-align: left;
+    color: var(--primary-white);
+    background: transparent;
+    transition: all var(--transition-base);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    background: rgba(196, 30, 58, 0.2);
+    color: var(--accent-light);
+    text-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+  }
+
+  .nav-link::after {
+    display: none;
+  }
+
+  .nav-link-special {
+    background: var(--primary-red);
+    color: var(--primary-white) !important;
+    margin: var(--spacing-md) var(--spacing-xl);
+    width: calc(100% - calc(var(--spacing-xl) * 2));
+    text-align: center;
+    border-radius: var(--radius-md);
+  }
+
+  .nav-link-special:hover {
+    background: var(--accent-dark);
+  }
+
+  /* Navbar logo più piccolo su mobile */
+  .navbar-logo {
+    height: 70px;
+  }
+
+  /* Hero section su mobile */
+  .hero {
+    min-height: 500px;
+  }
+
+  .hero-title-main {
+    font-size: 2.5rem;
+  }
+
+  .hero-title-sub {
+    font-size: 1.2rem;
+  }
+
+  /* Riduci padding delle sezioni su mobile */
+  .section {
+    padding: var(--spacing-xl) 0;
+  }
+
+  /* Card grid su mobile */
+  .concerts-grid,
+  .media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Footer su mobile */
+  .footer-content {
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+
+  .footer-col {
+    width: 100%;
+    text-align: center;
+  }
+}
