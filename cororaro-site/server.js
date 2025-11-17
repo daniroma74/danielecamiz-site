@@ -32,21 +32,19 @@ app.set('views', path.join(__dirname, 'admin/views'));
 app.use(expressLayouts);
 app.set('layout', 'layout');
 
-// Session middleware
+// Session middleware - Using memory store for reliability
+// Note: Sessions will be lost on server restart, but auth is more reliable
 app.use(session({
-  store: new SQLiteStore({
-    db: 'sessions.db',
-    dir: path.join(__dirname, 'db'),
-    table: 'sessions'
-  }),
   secret: process.env.SESSION_SECRET || 'coro-raro-secret-change-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
-    secure: false // Set to false for development/staging
-  }
+    secure: false, // Must be false for HTTP (staging)
+    sameSite: 'lax' // Important for cross-page navigation
+  },
+  name: 'cororaro.sid' // Custom session cookie name
 }));
 
 // Middleware
