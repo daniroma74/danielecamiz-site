@@ -97,20 +97,17 @@ module.exports = (db) => {
       title,
       description,
       audio_url,
-      sheet_music_url,
-      lyrics,
+      lyrics_original,
+      lyrics_italian,
       language,
-      difficulty,
-      duration_seconds,
-      is_active,
-      sort_order
+      is_active
     } = req.body;
 
     const query = `
       INSERT INTO repertoire (
-        country_id, title, description, audio_url, sheet_music_url,
-        lyrics, language, difficulty, duration_seconds, is_active, sort_order
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        country_id, title, description, audio_url,
+        lyrics_original, lyrics_italian, language, is_active
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.run(
@@ -120,13 +117,10 @@ module.exports = (db) => {
         title,
         description || null,
         audio_url || null,
-        sheet_music_url || null,
-        lyrics || null,
+        lyrics_original || null,
+        lyrics_italian || null,
         language || null,
-        difficulty || 'medium',
-        duration_seconds || null,
-        is_active === 'on' ? 1 : 0,
-        sort_order || 0
+        is_active === 'on' ? 1 : 0
       ],
       function (err) {
         if (err) {
@@ -168,13 +162,10 @@ module.exports = (db) => {
       title,
       description,
       audio_url,
-      sheet_music_url,
-      lyrics,
+      lyrics_original,
+      lyrics_italian,
       language,
-      difficulty,
-      duration_seconds,
-      is_active,
-      sort_order
+      is_active
     } = req.body;
 
     const query = `
@@ -183,13 +174,10 @@ module.exports = (db) => {
         title = ?,
         description = ?,
         audio_url = ?,
-        sheet_music_url = ?,
-        lyrics = ?,
+        lyrics_original = ?,
+        lyrics_italian = ?,
         language = ?,
-        difficulty = ?,
-        duration_seconds = ?,
         is_active = ?,
-        sort_order = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `;
@@ -201,13 +189,10 @@ module.exports = (db) => {
         title,
         description || null,
         audio_url || null,
-        sheet_music_url || null,
-        lyrics || null,
+        lyrics_original || null,
+        lyrics_italian || null,
         language || null,
-        difficulty || 'medium',
-        duration_seconds || null,
         is_active === 'on' ? 1 : 0,
-        sort_order || 0,
         id
       ],
       function (err) {

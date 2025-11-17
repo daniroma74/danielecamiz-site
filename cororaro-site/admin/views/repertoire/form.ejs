@@ -1,15 +1,32 @@
 <div class="page-header">
-  <h1><%= action === 'create' ? 'Nuovo Brano' : 'Modifica Brano' %></h1>
+  <h2><%= action === 'create' ? '🎵 Nuovo Brano' : '✏️ Modifica Brano' %></h2>
   <p><%= action === 'create' ? 'Aggiungi un nuovo brano al repertorio' : 'Modifica i dettagli del brano' %></p>
 </div>
 
 <style>
   .form-container {
     background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+  }
+
+  .form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--beige);
+  }
+
+  .form-section:last-of-type {
+    border-bottom: none;
+  }
+
+  .form-section h3 {
+    font-size: 1.4rem;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
   }
 
   .form-grid {
@@ -24,24 +41,26 @@
 
   .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
     color: var(--text-primary);
+    font-size: 1.1rem;
   }
 
   .form-group input,
   .form-group select,
   .form-group textarea {
     width: 100%;
-    padding: 0.75rem;
+    padding: 1rem;
     border: 2px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 10px;
+    font-size: 1.1rem;
     font-family: inherit;
+    transition: border-color 0.2s;
   }
 
   .form-group textarea {
-    min-height: 120px;
+    min-height: 150px;
     resize: vertical;
   }
 
@@ -54,107 +73,137 @@
 
   .form-group small {
     display: block;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
     color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-size: 1rem;
   }
 
   .checkbox-group {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--beige);
+    border-radius: 10px;
   }
 
   .checkbox-group input[type="checkbox"] {
-    width: auto;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  .checkbox-group label {
+    margin: 0 !important;
+    font-size: 1.1rem !important;
+    cursor: pointer;
   }
 
   .form-actions {
     display: flex;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     padding-top: 2rem;
     border-top: 2px solid var(--beige);
+  }
+
+  .info-box {
+    background: #e3f2fd;
+    padding: 1.2rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #2196f3;
+  }
+
+  .info-box p {
+    margin: 0;
+    color: #1976d2;
+    font-size: 1rem;
   }
 </style>
 
 <div class="form-container">
   <form method="POST" action="<%= action === 'create' ? '/admin/repertoire' : `/admin/repertoire/${song.id}` %>">
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="country_id">Paese *</label>
-        <select id="country_id" name="country_id" required>
-          <option value="">Seleziona un paese...</option>
-          <% countries.forEach(c => { %>
-            <option value="<%= c.id %>" <%= song.country_id == c.id ? 'selected' : '' %>>
-              <%= c.flag %> <%= c.name %>
-            </option>
-          <% }) %>
-        </select>
+
+    <!-- Informazioni Base -->
+    <div class="form-section">
+      <h3>📋 Informazioni Base</h3>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="country_id">🌍 Paese *</label>
+          <select id="country_id" name="country_id" required>
+            <option value="">Seleziona un paese...</option>
+            <% countries.forEach(c => { %>
+              <option value="<%= c.id %>" <%= song.country_id == c.id ? 'selected' : '' %>>
+                <%= c.flag %> <%= c.name %>
+              </option>
+            <% }) %>
+          </select>
+          <small>Il paese di origine del brano</small>
+        </div>
+
+        <div class="form-group">
+          <label for="language">🗣️ Lingua</label>
+          <input type="text" id="language" name="language" value="<%= song.language || '' %>" placeholder="es. Italiano, Swahili, Inglese">
+          <small>La lingua in cui viene cantato</small>
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="language">Lingua</label>
-        <input type="text" id="language" name="language" value="<%= song.language || '' %>" placeholder="es. Italiano, Swahili">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="title">Titolo Brano *</label>
-      <input type="text" id="title" name="title" value="<%= song.title || '' %>" required placeholder="es. Bella Ciao">
-    </div>
-
-    <div class="form-group">
-      <label for="description">Descrizione</label>
-      <textarea id="description" name="description" placeholder="Breve descrizione del brano..."><%= song.description || '' %></textarea>
-      <small>Una breve descrizione che apparirà nel modal del sito</small>
-    </div>
-
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="difficulty">Difficoltà</label>
-        <select id="difficulty" name="difficulty">
-          <option value="easy" <%= song.difficulty === 'easy' ? 'selected' : '' %>>Facile</option>
-          <option value="medium" <%= !song.difficulty || song.difficulty === 'medium' ? 'selected' : '' %>>Medio</option>
-          <option value="hard" <%= song.difficulty === 'hard' ? 'selected' : '' %>>Difficile</option>
-        </select>
+        <label for="title">🎼 Titolo Brano *</label>
+        <input type="text" id="title" name="title" value="<%= song.title || '' %>" required placeholder="es. Bella Ciao">
+        <small>Il titolo del brano come appare nel repertorio</small>
       </div>
 
       <div class="form-group">
-        <label for="duration_seconds">Durata (secondi)</label>
-        <input type="number" id="duration_seconds" name="duration_seconds" value="<%= song.duration_seconds || '' %>" placeholder="180">
+        <label for="description">📝 Descrizione</label>
+        <textarea id="description" name="description" class="tinymce-editor" rows="4"><%= song.description || '' %></textarea>
+        <small>Una breve descrizione che apparirà nel popup sul sito (puoi usare formattazione)</small>
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="audio_url">Link Audio</label>
-      <input type="url" id="audio_url" name="audio_url" value="<%= song.audio_url || '' %>" placeholder="https://www.youtube.com/watch?v=...">
-      <small>YouTube, Spotify, SoundCloud, o qualsiasi altro link audio</small>
-    </div>
+    <!-- Testi del Brano -->
+    <div class="form-section">
+      <h3>📄 Testi del Brano</h3>
 
-    <div class="form-group">
-      <label for="sheet_music_url">Link Spartito (PDF)</label>
-      <input type="url" id="sheet_music_url" name="sheet_music_url" value="<%= song.sheet_music_url || '' %>" placeholder="https://cloudinary.com/...">
-      <small>URL diretto al file PDF dello spartito (verrà integrato Cloudinary)</small>
-    </div>
+      <div class="info-box">
+        <p>💡 <strong>Suggerimento:</strong> Inserisci il testo nella lingua originale e la traduzione in italiano. Puoi usare la formattazione (grassetto, corsivo, elenchi) per rendere il testo più leggibile.</p>
+      </div>
 
-    <div class="form-group">
-      <label for="lyrics">Testo del Brano</label>
-      <textarea id="lyrics" name="lyrics" style="min-height: 200px;"><%= song.lyrics || '' %></textarea>
-      <small>Il testo completo del brano (opzionale)</small>
-    </div>
-
-    <div class="form-grid">
       <div class="form-group">
-        <label for="sort_order">Ordinamento</label>
-        <input type="number" id="sort_order" name="sort_order" value="<%= song.sort_order || 0 %>">
-        <small>Numero per ordinare i brani (default: 0)</small>
+        <label for="lyrics_original">🌐 Testo in Lingua Originale</label>
+        <textarea id="lyrics_original" name="lyrics_original" class="tinymce-editor" rows="8"><%= song.lyrics_original || song.lyrics || '' %></textarea>
+        <small>Il testo completo nella lingua originale del brano</small>
       </div>
 
-      <div class="form-group checkbox-group">
+      <div class="form-group">
+        <label for="lyrics_italian">🇮🇹 Testo in Italiano</label>
+        <textarea id="lyrics_italian" name="lyrics_italian" class="tinymce-editor" rows="8"><%= song.lyrics_italian || '' %></textarea>
+        <small>La traduzione italiana del testo (se disponibile)</small>
+      </div>
+    </div>
+
+    <!-- Link e Media -->
+    <div class="form-section">
+      <h3>🔗 Link Audio</h3>
+
+      <div class="form-group">
+        <label for="audio_url">🎵 Link Audio</label>
+        <input type="url" id="audio_url" name="audio_url" value="<%= song.audio_url || '' %>" placeholder="https://www.youtube.com/watch?v=...">
+        <small>YouTube, Spotify, SoundCloud, o qualsiasi altro link audio/video del brano</small>
+      </div>
+    </div>
+
+    <!-- Visibilità -->
+    <div class="form-section">
+      <h3>👁️ Visibilità</h3>
+
+      <div class="checkbox-group">
         <input type="checkbox" id="is_active" name="is_active" <%= !song.id || song.is_active ? 'checked' : '' %>>
-        <label for="is_active" style="margin: 0;">Attivo (visibile sul sito)</label>
+        <label for="is_active">✅ Attivo (visibile sul sito pubblico)</label>
       </div>
+      <small style="margin-left: 2.5rem; color: #666;">Se disattivi, il brano non sarà visibile ai visitatori del sito</small>
     </div>
 
     <div class="form-actions">
@@ -167,3 +216,40 @@
     </div>
   </form>
 </div>
+
+<!-- TinyMCE Editor -->
+<script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+<script src="/shared/config/editor-config.js"></script>
+
+<script>
+// Inizializza TinyMCE per tutti i campi con classe tinymce-editor
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof tinymce !== 'undefined' && window.SharedEditor) {
+    // Description (editor semplice)
+    window.SharedEditor.init('#description', 'repertoire', {
+      height: 200,
+      toolbar: 'undo redo | bold italic | bullist numlist | removeformat',
+      menubar: false,
+      placeholder: 'Breve descrizione del brano...'
+    });
+
+    // Lyrics Original (editor completo)
+    window.SharedEditor.init('#lyrics_original', 'repertoire', {
+      height: 350,
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | removeformat',
+      menubar: false,
+      placeholder: 'Inserisci il testo del brano nella lingua originale...'
+    });
+
+    // Lyrics Italian (editor completo)
+    window.SharedEditor.init('#lyrics_italian', 'repertoire', {
+      height: 350,
+      toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | removeformat',
+      menubar: false,
+      placeholder: 'Inserisci la traduzione italiana del testo...'
+    });
+  } else {
+    console.error('TinyMCE o SharedEditor non disponibile');
+  }
+});
+</script>
