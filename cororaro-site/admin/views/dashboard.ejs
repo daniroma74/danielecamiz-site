@@ -1,165 +1,210 @@
 <div class="page-header">
-  <h1>🏠 Pannello di Controllo</h1>
-  <p style="color: #666; font-size: 1.1rem;">Benvenuto, <strong><%= user.fullName || user.username %></strong>!</p>
+  <h2>🏠 Pannello Principale</h2>
+  <p>Benvenuto, <strong><%= user.fullName || user.username %></strong>! Scegli cosa vuoi gestire:</p>
 </div>
 
 <style>
-  .contenitori-statistiche {
+  /* Card Grandi e Chiare */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .menu-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+    border: 3px solid transparent;
+  }
+
+  .menu-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 24px rgba(210, 105, 30, 0.25);
+    border-color: var(--terracotta);
+  }
+
+  .menu-card-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .menu-card-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--terracotta);
+    margin-bottom: 0.75rem;
+  }
+
+  .menu-card-count {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .menu-card-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .menu-card-btn {
+    display: inline-block;
+    padding: 0.9rem 1.8rem;
+    background: var(--terracotta);
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+  }
+
+  .menu-card:hover .menu-card-btn {
+    background: var(--terracotta-dark);
+  }
+
+  /* Sezione Impostazioni */
+  .settings-section {
+    background: #fff3e0;
+    padding: 2.5rem;
+    border-radius: 16px;
+    border-left: 6px solid var(--oro);
+    margin-top: 3rem;
+  }
+
+  .settings-section h3 {
+    font-size: 1.8rem;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+  }
+
+  .settings-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 2rem;
   }
 
-  .box-conteggio {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid var(--terracotta);
-  }
-
-  .box-conteggio h3 {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-
-  .box-conteggio .numero-grande {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--terracotta);
-  }
-
-  .sezione-ultimi-brani {
+  .settings-card {
     background: white;
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s;
   }
 
-  .sezione-ultimi-brani h2 {
-    margin-bottom: 1.5rem;
+  .settings-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .settings-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .settings-card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
     color: var(--terracotta);
+    margin-bottom: 0.5rem;
   }
 
-  .lista-brani {
-    list-style: none;
-  }
-
-  .riga-brano {
-    padding: 1rem;
-    border-bottom: 1px solid var(--beige);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .riga-brano:last-child {
-    border-bottom: none;
-  }
-
-  .info-brano {
-    flex: 1;
-  }
-
-  .titolo-brano {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.25rem;
-  }
-
-  .dettagli-brano {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-  }
-
-  .messaggio-vuoto {
-    text-align: center;
-    padding: 3rem;
+  .settings-card-description {
+    font-size: 1rem;
     color: var(--text-secondary);
   }
 </style>
 
-<div class="contenitori-statistiche">
-  <div class="box-conteggio">
-    <h3>🌍 Paesi</h3>
-    <div class="numero-grande"><%= stats.countries || 0 %></div>
-    <a href="/admin/countries" style="font-size: 0.95rem; color: #666;">Gestisci Paesi →</a>
-  </div>
+<!-- Menu Principale -->
+<div class="menu-grid">
+  <!-- Repertorio -->
+  <a href="/admin/repertoire" class="menu-card">
+    <span class="menu-card-icon">🎼</span>
+    <h3 class="menu-card-title">Repertorio</h3>
+    <div class="menu-card-count"><%= stats.activeSongs || 0 %></div>
+    <p class="menu-card-description">Brani nel repertorio</p>
+    <span class="menu-card-btn">Gestisci Brani</span>
+  </a>
 
-  <div class="box-conteggio">
-    <h3>🎵 Brani Attivi</h3>
-    <div class="numero-grande"><%= stats.activeSongs || 0 %></div>
-    <a href="/admin/repertoire" style="font-size: 0.95rem; color: #666;">Gestisci Repertorio →</a>
-  </div>
+  <!-- Paesi -->
+  <a href="/admin/countries" class="menu-card">
+    <span class="menu-card-icon">🌍</span>
+    <h3 class="menu-card-title">Paesi</h3>
+    <div class="menu-card-count"><%= stats.countries || 0 %></div>
+    <p class="menu-card-description">Paesi nel catalogo</p>
+    <span class="menu-card-btn">Gestisci Paesi</span>
+  </a>
 
-  <div class="box-conteggio">
-    <h3>🎤 Concerti</h3>
-    <div class="numero-grande"><%= stats.concerts || 0 %></div>
-    <a href="/admin/concerts" style="font-size: 0.95rem; color: #666;">Gestisci Concerti →</a>
-  </div>
+  <!-- Concerti -->
+  <a href="/admin/concerts" class="menu-card">
+    <span class="menu-card-icon">🎤</span>
+    <h3 class="menu-card-title">Concerti</h3>
+    <div class="menu-card-count"><%= stats.concerts || 0 %></div>
+    <p class="menu-card-description">Concerti organizzati</p>
+    <span class="menu-card-btn">Gestisci Concerti</span>
+  </a>
 
-  <div class="box-conteggio">
-    <h3>💚 Progetti Solidali</h3>
-    <div class="numero-grande"><%= stats.projects || 0 %></div>
-    <a href="/admin/projects" style="font-size: 0.95rem; color: #666;">Gestisci Progetti →</a>
-  </div>
+  <!-- Progetti -->
+  <a href="/admin/projects" class="menu-card">
+    <span class="menu-card-icon">💚</span>
+    <h3 class="menu-card-title">Progetti Solidali</h3>
+    <div class="menu-card-count"><%= stats.projects || 0 %></div>
+    <p class="menu-card-description">Progetti attivi</p>
+    <span class="menu-card-btn">Gestisci Progetti</span>
+  </a>
 
-  <div class="box-conteggio">
-    <h3>🎭 Maestri</h3>
-    <div class="numero-grande"><%= stats.maestri || 0 %></div>
-    <a href="/admin/maestri" style="font-size: 0.95rem; color: #666;">Gestisci Maestri →</a>
-  </div>
+  <!-- Maestri -->
+  <a href="/admin/maestri" class="menu-card">
+    <span class="menu-card-icon">🎭</span>
+    <h3 class="menu-card-title">Maestri</h3>
+    <div class="menu-card-count"><%= stats.maestri || 0 %></div>
+    <p class="menu-card-description">Maestri del coro</p>
+    <span class="menu-card-btn">Gestisci Maestri</span>
+  </a>
 
-  <div class="box-conteggio">
-    <h3>📸 Foto Galleria</h3>
-    <div class="numero-grande"><%= stats.galleryImages || 0 %></div>
-    <a href="/admin/gallery-images" style="font-size: 0.95rem; color: #666;">Gestisci Galleria →</a>
-  </div>
+  <!-- Galleria -->
+  <a href="/admin/gallery-images" class="menu-card">
+    <span class="menu-card-icon">📸</span>
+    <h3 class="menu-card-title">Galleria Foto</h3>
+    <div class="menu-card-count"><%= stats.galleryImages || 0 %></div>
+    <p class="menu-card-description">Foto nella galleria</p>
+    <span class="menu-card-btn">Gestisci Foto</span>
+  </a>
 </div>
 
-<!-- Azioni Rapide -->
-<div style="margin: 2rem 0;">
-  <h2 style="margin-bottom: 1rem; font-size: 1.3rem;">⚡ Azioni Rapide</h2>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-    <a href="/admin/settings" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">⚙️ Impostazioni Sito</a>
-    <a href="/admin/concerts/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuovo Concerto</a>
-    <a href="/admin/projects/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuovo Progetto</a>
-    <a href="/admin/maestri/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuovo Maestro</a>
-    <a href="/admin/gallery-images/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuova Foto</a>
-    <a href="/admin/repertoire/new" class="btn" style="padding: 1rem; text-align: center; font-size: 1rem;">+ Nuovo Brano</a>
+<!-- Sezione Impostazioni -->
+<div class="settings-section">
+  <h3>⚙️ Impostazioni del Sito</h3>
+  <p style="font-size: 1.15rem; color: #666; margin-bottom: 2rem;">Modifica i testi e le immagini che appaiono sul sito</p>
+
+  <div class="settings-grid">
+    <a href="/admin/settings" class="settings-card">
+      <span class="settings-card-icon">📋</span>
+      <div class="settings-card-title">Impostazioni Generali</div>
+      <p class="settings-card-description">Testi homepage, Chi Siamo, Footer, Social</p>
+    </a>
+
+    <a href="/admin/settings/values" class="settings-card">
+      <span class="settings-card-icon">💎</span>
+      <div class="settings-card-title">Valori del Coro</div>
+      <p class="settings-card-description">Gestisci i valori fondamentali</p>
+    </a>
+
+    <a href="/admin/settings/join" class="settings-card">
+      <span class="settings-card-icon">🎤</span>
+      <div class="settings-card-title">Unisciti a Noi</div>
+      <p class="settings-card-description">Info per chi vuole entrare nel coro</p>
+    </a>
   </div>
-</div>
-
-<div class="sezione-ultimi-brani">
-  <h2>📝 Ultimi Brani Aggiunti al Repertorio</h2>
-
-  <% if (recentSongs && recentSongs.length > 0) { %>
-    <ul class="lista-brani">
-      <% recentSongs.forEach(song => { %>
-        <li class="riga-brano">
-          <div class="info-brano">
-            <div class="titolo-brano">
-              <%= song.flag %> <%= song.title %>
-            </div>
-            <div class="dettagli-brano">
-              <%= song.country_name %> • <%= song.language || 'N/D' %>
-            </div>
-          </div>
-          <a href="/admin/repertoire/<%= song.id %>/edit" class="btn btn-small">
-            Modifica
-          </a>
-        </li>
-      <% }) %>
-    </ul>
-  <% } else { %>
-    <div class="messaggio-vuoto">
-      <p>Nessun brano nel repertorio</p>
-      <a href="/admin/repertoire/new" class="btn" style="margin-top: 1rem;">
-        + Aggiungi Primo Brano
-      </a>
-    </div>
-  <% } %>
 </div>
