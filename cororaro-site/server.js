@@ -49,9 +49,6 @@ app.use(session({
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-// Serve shared resources (cloudinary, tinymce, etc)
-app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
 
 // CORS
 app.use((req, res, next) => {
@@ -67,7 +64,21 @@ app.use((req, res, next) => {
 });
 
 // ============================================
-// ADMIN ROUTES
+// SITE-WIDE AUTHENTICATION (STAGING)
+// ============================================
+const siteAuthRoutes = require('./routes/site-auth')(db);
+app.use('/', siteAuthRoutes);
+
+// Apply site auth middleware to protect entire site
+const { requireSiteAuth } = require('./middleware/site-auth');
+app.use(requireSiteAuth);
+
+// Now serve static files (protected by auth)
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
+
+// ============================================
+// ADMIN ROUTES (also protected by site auth)
 // ============================================
 
 const authRoutes = require('./admin/routes/auth')(db);
