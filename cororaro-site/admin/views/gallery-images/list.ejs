@@ -1,98 +1,198 @@
 <div class="page-header">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <div>
-      <h1>🖼️ Gestione Galleria</h1>
-      <p><%= images.length %> immagini totali</p>
-    </div>
-    <div style="display: flex; gap: 1rem;">
-      <button onclick="openBulkUpload()" class="btn">📤 Caricamento Multiplo</button>
-      <a href="/admin/gallery-images/new" class="btn">+ Nuova Immagine</a>
-    </div>
+  <h2>📸 Galleria Foto</h2>
+  <p><%= images.length %> foto nel sito</p>
+</div>
+
+<style>
+  .gallery-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .gallery-filter {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .gallery-filter select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  .gallery-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .gallery-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+  }
+
+  .gallery-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .gallery-card-image {
+    position: relative;
+    padding-top: 75%;
+    background: #f0f0f0;
+    overflow: hidden;
+  }
+
+  .gallery-card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gallery-card-category {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .gallery-card-content {
+    padding: 1.5rem;
+  }
+
+  .gallery-card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .gallery-card-caption {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .gallery-card-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .empty-state p {
+    font-size: 1.3rem;
+    color: #999;
+    margin-bottom: 1.5rem;
+  }
+</style>
+
+<!-- Toolbar -->
+<div class="gallery-toolbar">
+  <div class="gallery-filter">
+    <form method="GET" style="display: flex; gap: 1rem;">
+      <select name="category" onchange="this.form.submit()">
+        <option value="">🌟 Tutte le categorie</option>
+        <option value="concerts" <%= filters.category === 'concerts' ? 'selected' : '' %>>🎵 Concerti</option>
+        <option value="rehearsals" <%= filters.category === 'rehearsals' ? 'selected' : '' %>>🎼 Prove</option>
+        <option value="group" <%= filters.category === 'group' ? 'selected' : '' %>>👥 Foto di Gruppo</option>
+        <option value="events" <%= filters.category === 'events' ? 'selected' : '' %>>🎉 Eventi Speciali</option>
+      </select>
+      <% if (filters.category) { %>
+        <a href="/admin/gallery-images" class="btn btn-secondary">Reset</a>
+      <% } %>
+    </form>
+  </div>
+
+  <div class="gallery-actions">
+    <button onclick="openBulkUpload()" class="btn">📤 Carica Più Foto</button>
+    <a href="/admin/gallery-images/new" class="btn">+ Nuova Foto</a>
   </div>
 </div>
 
-<div class="filters" style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
-  <form method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-    <select name="category" style="padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <option value="">Tutte le categorie</option>
-      <option value="concerts" <%= filters.category === 'concerts' ? 'selected' : '' %>>🎵 Concerti</option>
-      <option value="rehearsals" <%= filters.category === 'rehearsals' ? 'selected' : '' %>>🎼 Prove</option>
-      <option value="group" <%= filters.category === 'group' ? 'selected' : '' %>>👥 Gruppo</option>
-      <option value="events" <%= filters.category === 'events' ? 'selected' : '' %>>🎉 Eventi</option>
-    </select>
-    <select name="status" style="padding: 0.75rem; border: 2px solid #ddd; border-radius: 8px;">
-      <option value="">Tutti gli stati</option>
-      <option value="published" <%= filters.status === 'published' ? 'selected' : '' %>>Pubblicate</option>
-      <option value="unpublished" <%= filters.status === 'unpublished' ? 'selected' : '' %>>Non pubblicate</option>
-      <option value="featured" <%= filters.status === 'featured' ? 'selected' : '' %>>In evidenza</option>
-    </select>
-    <button type="submit" class="btn">Filtra</button>
-    <% if (filters.category || filters.status) { %>
-      <a href="/admin/gallery-images" class="btn btn-secondary">Reset</a>
-    <% } %>
-  </form>
-</div>
-
-<!-- Grid View -->
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+<!-- Grid -->
+<div class="gallery-grid">
   <% if (images.length === 0) { %>
-    <div style="grid-column: 1 / -1; padding: 3rem; text-align: center; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
-      <p style="color: #999; margin-bottom: 1rem;">Nessuna immagine trovata.</p>
-      <a href="/admin/gallery-images/new" class="btn">Aggiungi la prima immagine</a>
+    <div class="empty-state">
+      <p>📸 Nessuna foto nella galleria</p>
+      <a href="/admin/gallery-images/new" class="btn">Aggiungi la Prima Foto</a>
     </div>
   <% } else { %>
     <% images.forEach(image => { %>
-      <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+      <%
+        let categoryIcon = '📷';
+        let categoryLabel = image.category || 'Generale';
+        if (image.category === 'concerts') { categoryIcon = '🎵'; categoryLabel = 'Concerti'; }
+        else if (image.category === 'rehearsals') { categoryIcon = '🎼'; categoryLabel = 'Prove'; }
+        else if (image.category === 'group') { categoryIcon = '👥'; categoryLabel = 'Gruppo'; }
+        else if (image.category === 'events') { categoryIcon = '🎉'; categoryLabel = 'Eventi'; }
+      %>
+
+      <div class="gallery-card">
         <!-- Image -->
-        <div style="position: relative; padding-top: 75%; background: #f0f0f0; overflow: hidden;">
-          <img src="<%= image.image_url %>" alt="<%= image.title || 'Gallery Image' %>" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-
-          <!-- Badges -->
-          <div style="position: absolute; top: 0.5rem; left: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <%
-              let categoryIcon = '📷';
-              let categoryLabel = image.category;
-              if (image.category === 'concerts') { categoryIcon = '🎵'; categoryLabel = 'Concerti'; }
-              else if (image.category === 'rehearsals') { categoryIcon = '🎼'; categoryLabel = 'Prove'; }
-              else if (image.category === 'group') { categoryIcon = '👥'; categoryLabel = 'Gruppo'; }
-              else if (image.category === 'events') { categoryIcon = '🎉'; categoryLabel = 'Eventi'; }
-            %>
-            <span style="background: rgba(0, 0, 0, 0.7); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
-              <%= categoryIcon %> <%= categoryLabel %>
-            </span>
-            <% if (image.is_featured) { %>
-              <span style="background: rgba(255, 215, 0, 0.9); color: #333; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
-                ⭐ Featured
-              </span>
-            <% } %>
-          </div>
-
-          <!-- Status Badge -->
-          <div style="position: absolute; top: 0.5rem; right: 0.5rem;">
-            <span style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; <%= image.is_published ? 'background: rgba(76, 175, 80, 0.9); color: white;' : 'background: rgba(244, 67, 54, 0.9); color: white;' %>">
-              <%= image.is_published ? '✅' : '❌' %>
-            </span>
+        <div class="gallery-card-image">
+          <img src="<%= image.image_url %>" alt="<%= image.title || 'Foto galleria' %>" loading="lazy">
+          <div class="gallery-card-category">
+            <%= categoryIcon %> <%= categoryLabel %>
           </div>
         </div>
 
         <!-- Content -->
-        <div style="padding: 1rem;">
+        <div class="gallery-card-content">
           <% if (image.title) { %>
-            <h3 style="margin: 0 0 0.5rem 0; font-size: 1rem; font-weight: 600;"><%= image.title %></h3>
+            <div class="gallery-card-title"><%= image.title %></div>
           <% } %>
+
           <% if (image.caption) { %>
-            <p style="margin: 0 0 1rem 0; font-size: 0.875rem; color: #666; line-height: 1.4;">
-              <%= image.caption.substring(0, 80) %><%= image.caption.length > 80 ? '...' : '' %>
-            </p>
+            <div class="gallery-card-caption">
+              <%= image.caption.substring(0, 100) %><%= image.caption.length > 100 ? '...' : '' %>
+            </div>
           <% } else { %>
-            <p style="margin: 0 0 1rem 0; font-size: 0.875rem; color: #999; font-style: italic;">Nessuna caption</p>
+            <div class="gallery-card-caption" style="font-style: italic; color: #999;">
+              Nessuna didascalia
+            </div>
           <% } %>
 
           <!-- Actions -->
-          <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-            <a href="/admin/gallery-images/<%= image.id %>/edit" class="btn btn-small" style="flex: 1; text-align: center;">Modifica</a>
-            <form method="POST" action="/admin/gallery-images/<%= image.id %>/delete" style="flex: 1;" onsubmit="return confirm('Sei sicuro di voler eliminare questa immagine?');">
-              <button type="submit" class="btn btn-small btn-danger" style="width: 100%;">Elimina</button>
+          <div class="gallery-card-actions">
+            <a href="/admin/gallery-images/<%= image.id %>/edit" class="btn btn-small" style="flex: 1; text-align: center;">
+              ✏️ Modifica
+            </a>
+            <form method="POST" action="/admin/gallery-images/<%= image.id %>/delete" style="flex: 1;" onsubmit="return confirm('Sei sicuro di voler eliminare questa foto?');">
+              <button type="submit" class="btn btn-small btn-danger" style="width: 100%;">
+                🗑️ Elimina
+              </button>
             </form>
           </div>
         </div>
@@ -101,57 +201,60 @@
   <% } %>
 </div>
 
-<!-- Cloudinary Widget for Bulk Upload -->
-<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-<script src="/shared/js/cloudinary-widget.js"></script>
+<!-- CloudinaryManager condiviso -->
+<script src="/shared/js/cloudinary-manager.js"></script>
 
 <script>
-  function openBulkUpload() {
-    const config = {
-      cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME || "your-cloud-name" %>',
-      uploadPreset: 'cororaro_gallery',
-      folder: 'cororaro/gallery'
-    };
+// Configurazione Cloudinary
+const CLOUDINARY_CONFIG = {
+  cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME %>',
+  apiKey: '<%= process.env.CLOUDINARY_API_KEY %>',
+  folder: 'cororaro/gallery',
+  preset: 'cororaro_gallery'
+};
 
-    if (typeof openCloudinaryPicker !== 'undefined') {
-      openCloudinaryPicker(config, (results) => {
-        // results is an array of uploaded images
-        if (Array.isArray(results)) {
-          const images = results.map(r => ({
-            cloudinary_id: r.public_id,
-            url: r.url,
-            thumbnail: r.thumbnail || r.url,
-            category: 'group' // Default category
-          }));
-
-          // Send to backend
-          fetch('/admin/gallery-images/bulk-upload', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ images })
-          })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              alert(`${data.count} immagini caricate con successo!`);
-              location.reload();
-            } else {
-              alert('Errore durante il caricamento: ' + data.error);
-            }
-          })
-          .catch(err => {
-            console.error('Upload error:', err);
-            alert('Errore durante il caricamento delle immagini');
-          });
-        }
-      }, {
-        multiple: true,
-        maxFiles: 20
-      });
-    } else {
-      alert('Cloudinary widget non disponibile');
-    }
+function openBulkUpload() {
+  if (typeof CloudinaryManager === 'undefined') {
+    alert('❌ Sistema upload non disponibile. Contatta l\'amministratore.');
+    return;
   }
+
+  CloudinaryManager.showImageDialog(function(imageData) {
+    // Per caricamento multiplo, l'imageData sarà un array
+    const images = Array.isArray(imageData) ? imageData : [imageData];
+
+    const uploadData = images.map(img => ({
+      cloudinary_id: img.public_id,
+      url: img.url,
+      thumbnail: img.thumbnail || img.url,
+      category: 'group' // Categoria default
+    }));
+
+    // Invia al backend
+    fetch('/admin/gallery-images/bulk-upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ images: uploadData })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert(`✅ ${data.count} ${data.count === 1 ? 'foto caricata' : 'foto caricate'} con successo!`);
+        location.reload();
+      } else {
+        alert('❌ Errore: ' + (data.error || 'Errore sconosciuto'));
+      }
+    })
+    .catch(err => {
+      console.error('Upload error:', err);
+      alert('❌ Errore durante il caricamento delle foto');
+    });
+  }, {
+    ...CLOUDINARY_CONFIG,
+    multiple: true,
+    maxFiles: 20
+  });
+}
 </script>
