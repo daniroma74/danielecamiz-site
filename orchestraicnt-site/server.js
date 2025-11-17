@@ -67,9 +67,8 @@ app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes);
 app.use('/api/media', mediaRoutes);
 
-// TODO: Add cloudinary routes after fixing export
-// const cloudinaryRoutes = require('../shared/cloudinary-manager/routes');
-// app.use('/admin/cloudinary', cloudinaryRoutes);
+// Cloudinary routes (loaded dynamically via import() to support ES modules)
+// Will be mounted at /admin/cloudinary/* after server starts
 
 // Contact form endpoint (existing)
 app.post('/api/contact', (req, res) => {
@@ -145,6 +144,16 @@ async function start() {
     console.log('[Database] Initializing...');
     await initLocalDB();
     console.log('[Database] ✅ Initialized successfully');
+
+    // Load Cloudinary routes (ES module, requires dynamic import)
+    try {
+      const cloudinaryModule = await import('../shared/cloudinary-manager/routes.js');
+      const cloudinaryRoutes = cloudinaryModule.default;
+      app.use('/admin/cloudinary', cloudinaryRoutes);
+      console.log('[Cloudinary] ✅ Routes loaded');
+    } catch (error) {
+      console.warn('[Cloudinary] ⚠️  Routes not loaded:', error.message);
+    }
 
     app.listen(PORT, () => {
       console.log(`
