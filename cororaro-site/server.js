@@ -49,6 +49,8 @@ app.use(session({
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
 
 // CORS
 app.use((req, res, next) => {
@@ -64,24 +66,10 @@ app.use((req, res, next) => {
 });
 
 // ============================================
-// SITE-WIDE AUTHENTICATION (STAGING)
-// ============================================
-const siteAuthRoutes = require('./routes/site-auth')(db);
-app.use('/', siteAuthRoutes);
-
-// Apply site auth middleware to protect entire site
-const { requireSiteAuth } = require('./middleware/site-auth');
-app.use(requireSiteAuth);
-
-// Now serve static files (protected by auth)
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/shared', express.static(path.join(__dirname, '..', 'shared')));
-
-// ============================================
-// ADMIN ROUTES (also protected by site auth)
+// ADMIN ROUTES (NO AUTH FOR NOW)
 // ============================================
 
-const authRoutes = require('./admin/routes/auth')(db);
+// Remove all admin auth - we'll rebuild from scratch
 const dashboardRoutes = require('./admin/routes/dashboard')(db);
 const repertoireRoutes = require('./admin/routes/repertoire')(db);
 const countriesRoutes = require('./admin/routes/countries')(db);
@@ -96,7 +84,8 @@ const maestriRoutes = require('./admin/routes/maestri')(db);
 const settingsRoutes = require('./admin/routes/settings')(db);
 const galleryImagesRoutes = require('./admin/routes/gallery-images')(db);
 
-app.use('/admin', authRoutes);
+// Remove auth route temporarily
+// app.use('/admin', authRoutes);
 app.use('/admin', dashboardRoutes);
 app.use('/admin', repertoireRoutes);
 app.use('/admin', countriesRoutes);
@@ -110,13 +99,9 @@ app.use('/admin', maestriRoutes);
 app.use('/admin', settingsRoutes);
 app.use('/admin', galleryImagesRoutes);
 
-// Admin root redirect
+// Admin root redirect (no auth check)
 app.get('/admin', (req, res) => {
-  if (req.session && req.session.userId) {
-    res.redirect('/admin/dashboard');
-  } else {
-    res.redirect('/admin/login');
-  }
+  res.redirect('/admin/dashboard');
 });
 
 // ============================================
