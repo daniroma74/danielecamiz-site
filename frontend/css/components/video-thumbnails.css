@@ -10,9 +10,9 @@
 .video-grid {
   display: grid;
   /* Fix: limitiamo max width delle colonne per evitare che si allarghino troppo */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 340px));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 340px)) !important;
   gap: clamp(1.5rem, 3vw, 2rem);
-  justify-content: center;
+  justify-content: center !important;
   justify-items: center;
   align-items: stretch;
   max-width: 1200px;
@@ -23,7 +23,7 @@
 /* Card generica con glassmorphism */
 .video-item {
   width: 100%;
-  max-width: 340px; /* Riduciamo da 380px a 340px */
+  max-width: 340px !important; /* Riduciamo da 380px a 340px */
   display: flex;
   flex-direction: column;
   align-items: stretch;
