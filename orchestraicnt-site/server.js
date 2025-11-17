@@ -120,15 +120,6 @@ app.post('/api/newsletter', (req, res) => {
   });
 });
 
-// Catch-all route - serve index.html for client-side routing
-app.get('*', (req, res) => {
-  // Exclude admin routes
-  if (req.path.startsWith('/admin')) {
-    return res.status(404).send('Admin route not found');
-  }
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -146,7 +137,7 @@ async function start() {
     console.log('[Database] ✅ Initialized successfully');
 
     // Load Cloudinary routes (ES module, requires dynamic import)
-    // IMPORTANT: Mounted on /api/cloudinary (NOT /admin/cloudinary) to avoid auth middleware
+    // IMPORTANT: Must be loaded BEFORE catch-all route to avoid HTML response
     try {
       const cloudinaryModule = await import('../shared/cloudinary-manager/routes.js');
       const cloudinaryRoutes = cloudinaryModule.default;
@@ -155,6 +146,16 @@ async function start() {
     } catch (error) {
       console.warn('[Cloudinary] ⚠️  Routes not loaded:', error.message);
     }
+
+    // Catch-all route - serve index.html for client-side routing
+    // MUST be AFTER all API routes to avoid catching API calls
+    app.get('*', (req, res) => {
+      // Exclude admin routes
+      if (req.path.startsWith('/admin')) {
+        return res.status(404).send('Admin route not found');
+      }
+      res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    });
 
     app.listen(PORT, () => {
       console.log(`
