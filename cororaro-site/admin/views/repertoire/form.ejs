@@ -195,17 +195,6 @@
       </div>
     </div>
 
-    <!-- Visibilità -->
-    <div class="form-section">
-      <h3>👁️ Visibilità</h3>
-
-      <div class="checkbox-group">
-        <input type="checkbox" id="is_active" name="is_active" <%= !song.id || song.is_active ? 'checked' : '' %>>
-        <label for="is_active">✅ Attivo (visibile sul sito pubblico)</label>
-      </div>
-      <small style="margin-left: 2.5rem; color: #666;">Se disattivi, il brano non sarà visibile ai visitatori del sito</small>
-    </div>
-
     <div class="form-actions">
       <button type="submit" class="btn">
         <%= action === 'create' ? '✅ Crea Brano' : '💾 Salva Modifiche' %>

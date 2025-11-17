@@ -99,15 +99,14 @@ module.exports = (db) => {
       audio_url,
       lyrics_original,
       lyrics_italian,
-      language,
-      is_active
+      language
     } = req.body;
 
     const query = `
       INSERT INTO repertoire (
         country_id, title, description, audio_url,
         lyrics_original, lyrics_italian, language, is_active
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 1)
     `;
 
     db.run(
@@ -119,8 +118,7 @@ module.exports = (db) => {
         audio_url || null,
         lyrics_original || null,
         lyrics_italian || null,
-        language || null,
-        is_active === 'on' ? 1 : 0
+        language || null
       ],
       function (err) {
         if (err) {
@@ -164,8 +162,7 @@ module.exports = (db) => {
       audio_url,
       lyrics_original,
       lyrics_italian,
-      language,
-      is_active
+      language
     } = req.body;
 
     const query = `
@@ -177,7 +174,7 @@ module.exports = (db) => {
         lyrics_original = ?,
         lyrics_italian = ?,
         language = ?,
-        is_active = ?,
+        is_active = 1,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `;
@@ -192,7 +189,6 @@ module.exports = (db) => {
         lyrics_original || null,
         lyrics_italian || null,
         language || null,
-        is_active === 'on' ? 1 : 0,
         id
       ],
       function (err) {
