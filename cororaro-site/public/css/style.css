@@ -978,6 +978,14 @@ ul, ol {
   margin-top: var(--spacing-xs);
 }
 
+.concert-year {
+  font-family: var(--font-body);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  margin-top: var(--spacing-xs);
+  opacity: 0.9;
+}
+
 .concert-info {
   padding: var(--spacing-xl);
   flex: 1;

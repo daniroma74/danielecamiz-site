@@ -789,12 +789,14 @@ class ContentLoader {
 
         const day = isValidDate ? date.getDate() : '?';
         const month = isValidDate ? date.toLocaleDateString('it-IT', { month: 'short' }).toUpperCase() : '?';
+        const year = isValidDate ? date.getFullYear() : '?';
 
         return `
           <div class="concert-card">
             <div class="concert-date">
               <span class="concert-day">${day}</span>
               <span class="concert-month">${month}</span>
+              <span class="concert-year">${year}</span>
             </div>
             <div class="concert-info">
               <h3>${concert.title}</h3>

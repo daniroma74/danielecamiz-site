@@ -425,9 +425,22 @@
 
       <div class="footer-bottom">
         <p id="footer-copyright">&copy; 2024 Coro Raro. Tutti i diritti riservati.</p>
-        <p style="margin-top: 0.5rem; font-size: 0.85rem; opacity: 0.6;">
-          <a href="/admin" style="color: inherit; text-decoration: none;">Admin</a>
-        </p>
+        <div style="margin-top: 1.5rem;">
+          <a href="/admin" style="
+            display: inline-block;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+            transition: all 0.3s ease;
+          " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(231, 76, 60, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(231, 76, 60, 0.3)';">
+            🔐 Accedi all'Admin
+          </a>
+        </div>
       </div>
     </div>
   </footer>
