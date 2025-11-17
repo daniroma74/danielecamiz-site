@@ -7,7 +7,7 @@
       cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME %>',
       defaultFolder: 'danielecamiz',
       defaultPreset: 'icnt_general',
-      apiPrefix: '/admin/cloudinary'
+      apiPrefix: '/api/cloudinary'  // Changed from /admin/cloudinary to avoid auth middleware
     });
   }
 </script>

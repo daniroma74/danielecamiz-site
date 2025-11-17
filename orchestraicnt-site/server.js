@@ -146,11 +146,12 @@ async function start() {
     console.log('[Database] ✅ Initialized successfully');
 
     // Load Cloudinary routes (ES module, requires dynamic import)
+    // IMPORTANT: Mounted on /api/cloudinary (NOT /admin/cloudinary) to avoid auth middleware
     try {
       const cloudinaryModule = await import('../shared/cloudinary-manager/routes.js');
       const cloudinaryRoutes = cloudinaryModule.default;
-      app.use('/admin/cloudinary', cloudinaryRoutes);
-      console.log('[Cloudinary] ✅ Routes loaded');
+      app.use('/api/cloudinary', cloudinaryRoutes);
+      console.log('[Cloudinary] ✅ Routes loaded at /api/cloudinary');
     } catch (error) {
       console.warn('[Cloudinary] ⚠️  Routes not loaded:', error.message);
     }
