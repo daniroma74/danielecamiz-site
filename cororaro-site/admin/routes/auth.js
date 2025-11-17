@@ -21,7 +21,10 @@ module.exports = (db) => {
   router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
+    console.log('🔐 Login attempt:', username);
+
     if (!username || !password) {
+      console.log('❌ Missing credentials');
       return res.redirect('/admin/login?error=missing');
     }
 
@@ -31,19 +34,24 @@ module.exports = (db) => {
       [username],
       async (err, user) => {
         if (err) {
-          console.error('Database error:', err);
+          console.error('❌ Database error:', err);
           return res.redirect('/admin/login?error=server');
         }
 
         if (!user) {
+          console.log('❌ User not found:', username);
           return res.redirect('/admin/login?error=invalid');
         }
+
+        console.log('✅ User found:', user.username);
 
         // Check password
         try {
           const match = await bcrypt.compare(password, user.password);
+          console.log('🔑 Password match:', match);
 
           if (!match) {
+            console.log('❌ Invalid password');
             return res.redirect('/admin/login?error=invalid');
           }
 
@@ -58,16 +66,23 @@ module.exports = (db) => {
           req.session.username = user.username;
           req.session.fullName = user.full_name;
 
+          console.log('💾 Saving session...', {
+            userId: req.session.userId,
+            sessionID: req.sessionID
+          });
+
           // Save session before redirect
           req.session.save((err) => {
             if (err) {
-              console.error('Session save error:', err);
+              console.error('❌ Session save error:', err);
               return res.redirect('/admin/login?error=session');
             }
+            console.log('✅ Session saved successfully!');
+            console.log('🔄 Redirecting to /admin/dashboard');
             res.redirect('/admin/dashboard');
           });
         } catch (error) {
-          console.error('Password comparison error:', error);
+          console.error('❌ Password comparison error:', error);
           return res.redirect('/admin/login?error=server');
         }
       }
