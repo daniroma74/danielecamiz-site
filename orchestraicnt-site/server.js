@@ -70,8 +70,8 @@ app.use('/api/media', mediaRoutes);
 // Cloudinary routes (loaded dynamically via import() to support ES modules)
 // Will be mounted at /admin/cloudinary/* after server starts
 
-// Contact form endpoint (existing)
-app.post('/api/contact', (req, res) => {
+// Contact form endpoint with email sending
+app.post('/api/contact', async (req, res) => {
   const { name, email, subject, message } = req.body;
 
   // Validation
@@ -91,13 +91,47 @@ app.post('/api/contact', (req, res) => {
     });
   }
 
-  // TODO: Send email
-  console.log('Contact form submission:', { name, email, subject, message });
+  // Send email
+  try {
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      sendmail: true,
+      newline: 'unix',
+      path: '/usr/sbin/sendmail'
+    });
 
-  res.json({
-    success: true,
-    message: 'Messaggio inviato con successo'
-  });
+    const recipientEmail = process.env.CONTACT_EMAIL || 'info@orchestraicnt.danielecamiz.com';
+
+    await transporter.sendMail({
+      from: `"Orchestra ICNT Website" <noreply@orchestraicnt.danielecamiz.com>`,
+      replyTo: email,
+      to: recipientEmail,
+      subject: `[Orchestra ICNT] ${subject}`,
+      text: `Nome: ${name}\nEmail: ${email}\n\nMessaggio:\n${message}`,
+      html: `
+        <h3>Nuovo messaggio dal form contatti</h3>
+        <p><strong>Nome:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Oggetto:</strong> ${subject}</p>
+        <hr>
+        <p><strong>Messaggio:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+      `
+    });
+
+    console.log('[Contact] Email sent successfully to:', recipientEmail);
+
+    res.json({
+      success: true,
+      message: 'Messaggio inviato con successo'
+    });
+  } catch (error) {
+    console.error('[Contact] Error sending email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nell\'invio del messaggio. Riprova più tardi.'
+    });
+  }
 });
 
 // Newsletter subscription endpoint (existing)
