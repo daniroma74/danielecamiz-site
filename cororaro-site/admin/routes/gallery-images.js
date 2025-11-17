@@ -64,24 +64,21 @@ module.exports = (db) => {
   });
 
   // POST /admin/gallery-images - Create new image
-  router.post('/gallery-images', requireAuth, (req, res) => {
+  router.post('/admin/gallery-images', requireAuth, (req, res) => {
     const {
       title,
       caption,
       cloudinary_id,
       image_url,
       thumbnail_url,
-      category,
-      is_featured,
-      is_published,
-      sort_order
+      category
     } = req.body;
 
     const query = `
       INSERT INTO gallery_images (
         title, caption, cloudinary_id, image_url, thumbnail_url,
-        category, is_featured, is_published, sort_order
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        category, is_published
+      ) VALUES (?, ?, ?, ?, ?, ?, 1)
     `;
 
     db.run(
@@ -92,10 +89,7 @@ module.exports = (db) => {
         cloudinary_id || null,
         image_url,
         thumbnail_url || null,
-        category || 'group',
-        is_featured ? 1 : 0,
-        is_published ? 1 : 0,
-        sort_order || 0
+        category || 'group'
       ],
       function (err) {
         if (err) {
@@ -140,10 +134,7 @@ module.exports = (db) => {
       cloudinary_id,
       image_url,
       thumbnail_url,
-      category,
-      is_featured,
-      is_published,
-      sort_order
+      category
     } = req.body;
 
     const query = `
@@ -154,9 +145,7 @@ module.exports = (db) => {
         image_url = ?,
         thumbnail_url = ?,
         category = ?,
-        is_featured = ?,
-        is_published = ?,
-        sort_order = ?
+        is_published = 1
       WHERE id = ?
     `;
 
@@ -169,9 +158,6 @@ module.exports = (db) => {
         image_url,
         thumbnail_url || null,
         category || 'group',
-        is_featured ? 1 : 0,
-        is_published ? 1 : 0,
-        sort_order || 0,
         id
       ],
       (err) => {

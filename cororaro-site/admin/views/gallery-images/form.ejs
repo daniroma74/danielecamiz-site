@@ -1,261 +1,214 @@
 <div class="page-header">
-  <h1><%= action === 'create' ? '➕ Aggiungi una Nuova Foto' : '✏️ Modifica Foto Galleria' %></h1>
-  <p style="color: #666; font-size: 1.1rem;">Compila i campi qui sotto per aggiungere o modificare una foto della galleria</p>
+  <h2><%= action === 'create' ? '📸 Aggiungi Nuova Foto' : '✏️ Modifica Foto' %></h2>
+  <p>Carica una foto per la galleria del sito</p>
 </div>
 
-<div class="form-container" style="background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 900px;">
+<style>
+  .form-container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+  }
 
-  <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196f3;">
-    <h3 style="margin: 0 0 0.5rem 0; color: #1976d2;">💡 Come funziona?</h3>
-    <p style="margin: 0; color: #555;">
-      L'immagine è obbligatoria. Titolo e didascalia sono facoltativi ma aiutano a dare contesto.
-      <br>Spunta "Pubblicata" solo quando sei sicuro che la foto deve apparire sul sito.
-    </p>
-  </div>
+  .form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--beige);
+  }
 
+  .form-section:last-of-type {
+    border-bottom: none;
+  }
+
+  .form-section h3 {
+    font-size: 1.4rem;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-family: inherit;
+  }
+
+  .form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  .image-upload-box {
+    border: 3px dashed #ddd;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background: #fafafa;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .image-upload-box:hover {
+    border-color: var(--terracotta);
+    background: #f5f5f5;
+  }
+
+  .image-preview {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--beige);
+  }
+</style>
+
+<div class="form-container">
   <form method="POST" action="<%= action === 'create' ? '/admin/gallery-images' : '/admin/gallery-images/' + image.id %>">
 
-    <!-- Hidden fields for Cloudinary data -->
+    <!-- Hidden fields -->
     <input type="hidden" id="cloudinary_id" name="cloudinary_id" value="<%= image.cloudinary_id || '' %>">
     <input type="hidden" id="thumbnail_url" name="thumbnail_url" value="<%= image.thumbnail_url || '' %>">
+    <input type="hidden" id="image_url" name="image_url" value="<%= image.image_url || '' %>" required>
 
-    <!-- ========== IMMAGINE ========== -->
-    <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #4caf50;">
-      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📸 La Tua Foto</h2>
+    <!-- Carica Immagine -->
+    <div class="form-section">
+      <h3>📸 La Tua Foto *</h3>
 
-      <div style="margin-bottom: 1.5rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
-          🖼️ Immagine *
-        </label>
-        <p style="margin: 0 0 1rem 0; color: #666;">
-          Clicca il bottone qui sotto per caricare o scegliere una foto per la galleria
-        </p>
+      <div class="image-upload-box" onclick="uploadImage()">
+        <p style="font-size: 3rem; margin: 0;">📷</p>
+        <p style="font-size: 1.2rem; font-weight: 600; margin: 1rem 0 0.5rem;">Clicca per caricare o scegliere una foto</p>
+        <p style="color: #666; margin: 0;">JPG, PNG o WEBP</p>
+      </div>
 
-        <input type="hidden" id="image_url" name="image_url" value="<%= image.image_url || '' %>" required>
-
-        <button
-          type="button"
-          onclick="scegliImmagine()"
-          class="btn"
-          style="padding: 1rem 2rem; font-size: 1.1rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer;"
-        >
-          📸 Carica o Scegli Foto
-        </button>
-
-        <div id="image-preview" style="margin-top: 1.5rem;">
-          <% if (image.image_url) { %>
-            <img src="<%= image.image_url %>" alt="Immagine galleria" style="max-width: 100%; max-height: 500px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-          <% } %>
-        </div>
+      <div class="image-preview" id="image-preview">
+        <% if (image.image_url) { %>
+          <img src="<%= image.image_url %>" alt="Preview">
+          <p style="color: #4caf50; margin-top: 1rem; font-weight: 600;">✅ Immagine caricata</p>
+        <% } %>
       </div>
     </div>
 
-    <!-- ========== INFORMAZIONI FOTO ========== -->
-    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
-      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">📝 Descrivi la Foto</h2>
+    <!-- Informazioni Foto -->
+    <div class="form-section">
+      <h3>📝 Descrivi la Foto (facoltativo)</h3>
 
-      <!-- Titolo -->
-      <div style="margin-bottom: 1.5rem;">
-        <label for="title" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem; color: #333;">
-          📌 Titolo della Foto (facoltativo)
-        </label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value="<%= image.title || '' %>"
-          placeholder="Es: Concerto di Natale 2024"
-          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
-        >
-        <small style="display: block; margin-top: 0.5rem; color: #666; font-size: 0.95rem;">
-          💬 Un titolo descrittivo per questa foto
-        </small>
+      <div class="form-group">
+        <label for="title">📌 Titolo</label>
+        <input type="text" id="title" name="title" value="<%= image.title || '' %>" placeholder="Es: Concerto di Natale 2024">
+        <small>Un titolo descrittivo per questa foto</small>
       </div>
 
-      <!-- Didascalia -->
-      <div style="margin-bottom: 1.5rem;">
-        <label for="caption" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem; color: #333;">
-          💬 Didascalia (facoltativa)
-        </label>
-        <textarea
-          id="caption"
-          name="caption"
-          rows="3"
-          placeholder="Es: Il coro durante l'esibizione alla Chiesa di San Francesco..."
-          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit; resize: vertical;"
-        ><%= image.caption || '' %></textarea>
-        <small style="display: block; margin-top: 0.5rem; color: #666; font-size: 0.95rem;">
-          💬 Una breve descrizione o contesto della foto
-        </small>
+      <div class="form-group">
+        <label for="caption">💬 Didascalia</label>
+        <textarea id="caption" name="caption" placeholder="Es: Il coro durante l'esibizione alla Chiesa di San Francesco..."><%= image.caption || '' %></textarea>
+        <small>Una breve descrizione che apparirà sulla foto</small>
       </div>
     </div>
 
-    <!-- ========== CATEGORIA ========== -->
-    <div style="background: #fff3e0; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #ff9800;">
-      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🗂️ Organizzazione</h2>
+    <!-- Categoria -->
+    <div class="form-section">
+      <h3>🗂️ Categoria *</h3>
 
-      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
-        <!-- Categoria -->
-        <div>
-          <label for="category" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
-            📁 In quale categoria? *
-          </label>
-          <select
-            id="category"
-            name="category"
-            required
-            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit; cursor: pointer;"
-          >
-            <option value="">-- Scegli una categoria --</option>
-            <option value="concerts" <%= image.category === 'concerts' ? 'selected' : '' %>>🎵 Concerti</option>
-            <option value="rehearsals" <%= image.category === 'rehearsals' ? 'selected' : '' %>>🎼 Prove</option>
-            <option value="group" <%= image.category === 'group' ? 'selected' : '' %>>👥 Foto di Gruppo</option>
-            <option value="events" <%= image.category === 'events' ? 'selected' : '' %>>🎉 Eventi Speciali</option>
-          </select>
-          <small style="display: block; margin-top: 0.5rem; color: #666;">
-            💬 Aiuta a organizzare le foto per tipo
-          </small>
-        </div>
-
-        <!-- Ordinamento -->
-        <div>
-          <label for="sort_order" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
-            🔢 Ordine
-          </label>
-          <input
-            type="number"
-            id="sort_order"
-            name="sort_order"
-            value="<%= image.sort_order || 0 %>"
-            min="0"
-            style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem;"
-          >
-          <small style="display: block; margin-top: 0.5rem; color: #666;">
-            💬 0 = prima
-          </small>
-        </div>
+      <div class="form-group">
+        <label for="category">Che tipo di foto è?</label>
+        <select id="category" name="category" required>
+          <option value="">-- Scegli una categoria --</option>
+          <option value="concerts" <%= image.category === 'concerts' ? 'selected' : '' %>>🎵 Concerti</option>
+          <option value="rehearsals" <%= image.category === 'rehearsals' ? 'selected' : '' %>>🎼 Prove</option>
+          <option value="group" <%= image.category === 'group' ? 'selected' : '' %>>👥 Foto di Gruppo</option>
+          <option value="events" <%= image.category === 'events' ? 'selected' : '' %>>🎉 Eventi Speciali</option>
+        </select>
+        <small>Aiuta a organizzare le foto per tipo</small>
       </div>
     </div>
 
-    <!-- ========== INFO CLOUDINARY (se presente) ========== -->
-    <% if (image.cloudinary_id) { %>
-      <div style="background: #e1f5fe; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #03a9f4;">
-        <h3 style="margin: 0 0 1rem 0; color: #0277bd; font-size: 1.1rem;">ℹ️ Informazioni Tecniche</h3>
-        <div style="font-size: 0.95rem; color: #555;">
-          <div style="margin-bottom: 0.5rem;">
-            <strong>Public ID Cloudinary:</strong> <code style="background: #fff; padding: 0.25rem 0.5rem; border-radius: 4px;"><%= image.cloudinary_id %></code>
-          </div>
-          <% if (image.thumbnail_url && image.thumbnail_url !== image.image_url) { %>
-            <div>
-              <strong>Thumbnail URL:</strong> <code style="background: #fff; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;"><%= image.thumbnail_url %></code>
-            </div>
-          <% } %>
-        </div>
-      </div>
-    <% } %>
-
-    <!-- ========== OPZIONI PUBBLICAZIONE ========== -->
-    <div style="background: #fff; padding: 1.5rem; border: 2px solid #2196f3; border-radius: 8px; margin-bottom: 2rem;">
-      <h2 style="margin-top: 0; color: #1976d2; font-size: 1.3rem;">⚙️ Opzioni di Pubblicazione</h2>
-
-      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-        <div>
-          <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.1rem;">
-            <input
-              type="checkbox"
-              name="is_featured"
-              value="1"
-              <%= image.is_featured ? 'checked' : '' %>
-              style="width: 24px; height: 24px; cursor: pointer;"
-            >
-            <span style="font-weight: 600;">⭐ Metti in Evidenza</span>
-          </label>
-          <small style="display: block; color: #666; margin-left: 3rem; margin-top: 0.5rem;">
-            💬 La foto apparirà in cima alla galleria e sarà evidenziata
-          </small>
-        </div>
-
-        <div>
-          <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 1.1rem;">
-            <input
-              type="checkbox"
-              name="is_published"
-              value="1"
-              <%= image.is_published ? 'checked' : '' %>
-              style="width: 24px; height: 24px; cursor: pointer;"
-            >
-            <span style="font-weight: 600;">✅ Pubblicata (visibile sul sito)</span>
-          </label>
-          <small style="display: block; color: #666; margin-left: 3rem; margin-top: 0.5rem;">
-            💬 Spunta SOLO quando vuoi che la foto appaia sul sito pubblico
-          </small>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========== BOTTONI ========== -->
-    <div style="display: flex; gap: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid #ddd;">
-      <button
-        type="submit"
-        class="btn btn-primary"
-        style="padding: 1.25rem 3rem; font-size: 1.2rem; background: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700;"
-      >
+    <div class="form-actions">
+      <button type="submit" class="btn">
         <%= action === 'create' ? '✅ Aggiungi Foto' : '💾 Salva Modifiche' %>
       </button>
-      <a
-        href="/admin/gallery-images"
-        class="btn btn-secondary"
-        style="padding: 1.25rem 3rem; font-size: 1.2rem; background: #999; color: white; border-radius: 8px; text-decoration: none; display: inline-block; text-align: center;"
-      >
-        ❌ Annulla
+      <a href="/admin/gallery-images" class="btn btn-secondary">
+        ← Annulla
       </a>
     </div>
   </form>
 </div>
 
-<!-- Scripts -->
-<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-<script src="/shared/js/cloudinary-widget.js"></script>
+<!-- CloudinaryManager condiviso -->
+<script src="/shared/js/cloudinary-manager.js"></script>
 
 <script>
-// ========== CLOUDINARY IMMAGINE ==========
-function scegliImmagine() {
-  const cloudName = '<%= process.env.CLOUDINARY_CLOUD_NAME || "demo" %>';
+// Configurazione Cloudinary da .env
+const CLOUDINARY_CONFIG = {
+  cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME %>',
+  apiKey: '<%= process.env.CLOUDINARY_API_KEY %>',
+  folder: 'cororaro/gallery',
+  preset: 'cororaro_gallery'
+};
 
-  if (typeof openCloudinaryPicker === 'undefined') {
+function uploadImage() {
+  if (typeof CloudinaryManager === 'undefined') {
     alert('❌ Sistema upload non disponibile. Contatta l\'amministratore.');
     return;
   }
 
-  const config = {
-    cloudName: cloudName,
-    uploadPreset: 'cororaro_gallery',
-    folder: 'cororaro/gallery'
-  };
-
-  openCloudinaryPicker(config, function(imageData) {
+  CloudinaryManager.showImageDialog(function(imageData) {
     // Aggiorna campi hidden
     document.getElementById('image_url').value = imageData.url;
     document.getElementById('cloudinary_id').value = imageData.public_id || '';
     document.getElementById('thumbnail_url').value = imageData.thumbnail || imageData.url;
 
     // Mostra preview
-    document.getElementById('image-preview').innerHTML =
-      '<img src="' + imageData.url + '" alt="Immagine galleria" style="max-width: 100%; max-height: 500px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">' +
-      '<p style="color: green; margin-top: 1rem;">✅ Immagine caricata con successo!</p>';
+    document.getElementById('image-preview').innerHTML = `
+      <img src="${imageData.url}" alt="Preview">
+      <p style="color: #4caf50; margin-top: 1rem; font-weight: 600;">✅ Immagine caricata con successo!</p>
+    `;
 
-    // Auto-compila il titolo se vuoto e abbiamo il nome del file
+    // Auto-compila il titolo se vuoto
     const titleInput = document.getElementById('title');
     if (!titleInput.value && imageData.original_filename) {
-      // Rimuovi estensione e sostituisci underscore con spazi
       const cleanName = imageData.original_filename
         .replace(/\.[^/.]+$/, '')
         .replace(/_/g, ' ');
       titleInput.value = cleanName;
     }
-  }, {
-    multiple: false,
-    cropping: false
-  });
+  }, CLOUDINARY_CONFIG);
 }
 </script>
