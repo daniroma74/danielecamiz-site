@@ -104,7 +104,7 @@ app.post('/api/contact', async (req, res) => {
 
     // Send email to Orchestra ICNT
     await transporter.sendMail({
-      from: `"Orchestra ICNT Website" <noreply@orchestraicnt.danielecamiz.com>`,
+      from: `"Orchestra ICNT Website" <noreply@danielecamiz.com>`,
       replyTo: email,
       to: recipientEmail,
       subject: `[Orchestra ICNT] ${subject}`,
@@ -124,7 +124,7 @@ app.post('/api/contact', async (req, res) => {
 
     // Send confirmation copy to sender
     await transporter.sendMail({
-      from: `"Orchestra ICNT" <noreply@orchestraicnt.danielecamiz.com>`,
+      from: `"Orchestra ICNT" <noreply@danielecamiz.com>`,
       to: email,
       subject: `Conferma ricezione messaggio - Orchestra ICNT`,
       text: `Gentile ${name},\n\nGrazie per averci contattato! Abbiamo ricevuto il tuo messaggio e ti risponderemo al più presto.\n\nEcco una copia del messaggio che hai inviato:\n\nOggetto: ${subject}\nMessaggio:\n${message}\n\n---\nOrchestra ICNT\nwww.orchestraicnt.danielecamiz.com`,
