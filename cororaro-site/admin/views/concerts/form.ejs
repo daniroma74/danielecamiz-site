@@ -38,6 +38,27 @@
         </small>
       </div>
 
+      <!-- Slug (URL) -->
+      <div style="margin-bottom: 1.5rem;">
+        <label for="slug" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem; color: #333;">
+          🔗 Slug (URL Landing Page) *
+        </label>
+        <input
+          type="text"
+          id="slug"
+          name="slug"
+          value="<%= concert.slug || '' %>"
+          required
+          placeholder="es: concerto-natale-2025"
+          pattern="[a-z0-9-]+"
+          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: 'Courier New', monospace; background: #f9f9f9;"
+        >
+        <small style="display: block; margin-top: 0.5rem; color: #666; font-size: 0.95rem;">
+          💬 Usato per l'URL della landing page: <strong id="slug-preview" style="color: #2196f3;">https://<%= concert.slug || 'tuo-slug' %>.cororaro.it</strong>
+          <br>Si genera automaticamente dal titolo, ma puoi modificarlo. Solo lettere minuscole, numeri e trattini.
+        </small>
+      </div>
+
       <!-- Data e Ora -->
       <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
         <div>
@@ -253,6 +274,61 @@
 <script src="/shared/config/editor-config.js"></script>
 
 <script>
+// ========== AUTO-GENERA SLUG DA TITOLO ==========
+function generateSlug(text) {
+  return text
+    .toLowerCase()
+    .normalize('NFD')  // Normalize unicode
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/'/g, '') // Remove apostrophes
+    .replace(/"/g, '') // Remove quotes
+    .replace(/\./g, '') // Remove dots
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
+    .replace(/^-+|-+$/g, ''); // Trim hyphens from start/end
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const titleInput = document.getElementById('title');
+  const slugInput = document.getElementById('slug');
+  const slugPreview = document.getElementById('slug-preview');
+
+  let slugManuallyEdited = false;
+
+  // Check if we're editing an existing concert (has a slug already)
+  if (slugInput.value) {
+    slugManuallyEdited = true;
+  }
+
+  // Auto-generate slug from title
+  titleInput.addEventListener('input', function() {
+    if (!slugManuallyEdited) {
+      const slug = generateSlug(this.value);
+      slugInput.value = slug;
+      updateSlugPreview(slug);
+    }
+  });
+
+  // Mark slug as manually edited when user changes it
+  slugInput.addEventListener('input', function() {
+    slugManuallyEdited = true;
+    updateSlugPreview(this.value);
+  });
+
+  // Update preview
+  function updateSlugPreview(slug) {
+    if (slug) {
+      slugPreview.textContent = 'https://' + slug + '.cororaro.it';
+    } else {
+      slugPreview.textContent = 'https://tuo-slug.cororaro.it';
+    }
+  }
+
+  // Initialize preview
+  if (slugInput.value) {
+    updateSlugPreview(slugInput.value);
+  }
+});
+
 // ========== INIZIALIZZA TINYMCE ==========
 document.addEventListener('DOMContentLoaded', function() {
   if (typeof tinymce !== 'undefined' && window.SharedEditor) {

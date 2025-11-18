@@ -73,6 +73,7 @@ module.exports = (db) => {
   router.post('/concerts', requireAuth, (req, res) => {
     const {
       title,
+      slug,
       date,
       time,
       location,
@@ -86,15 +87,16 @@ module.exports = (db) => {
 
     const query = `
       INSERT INTO concerts (
-        title, date, time, location, address, cause, program,
+        title, slug, date, time, location, address, cause, program,
         description, poster_url, ticket_url, is_published
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `;
 
     db.run(
       query,
       [
         title,
+        slug,
         date,
         time || null,
         location,
@@ -144,6 +146,7 @@ module.exports = (db) => {
     const { id } = req.params;
     const {
       title,
+      slug,
       date,
       time,
       location,
@@ -158,6 +161,7 @@ module.exports = (db) => {
     const query = `
       UPDATE concerts SET
         title = ?,
+        slug = ?,
         date = ?,
         time = ?,
         location = ?,
@@ -175,6 +179,7 @@ module.exports = (db) => {
       query,
       [
         title,
+        slug,
         date,
         time || null,
         location,
