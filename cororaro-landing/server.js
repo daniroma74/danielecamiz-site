@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 
 import { connectDB } from './config/database.js';
 import { PORT, SESSION_SECRET } from './config/constants.js';
+import { routeByDomain } from './middleware/routing.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,18 +46,19 @@ app.set('view engine', 'ejs');
 const db = connectDB();
 app.locals.db = db;
 
-// CORS per API
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+// Trust proxy (per Nginx)
+app.set('trust proxy', 1);
 
 // Logging
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url} - Host: ${req.get('host')}`);
   next();
 });
+
+// ============================================
+// ROUTING BY DOMAIN
+// ============================================
+app.use(routeByDomain);
 
 // ============================================
 // ROUTES
@@ -64,77 +66,27 @@ app.use((req, res, next) => {
 
 // Import routes
 import adminRoutes from './routes/admin.js';
+import publicRoutes from './routes/public.js';
 import bookingRoutes from './routes/bookings.js';
 
-// Mount routes
-app.use('/', adminRoutes);
+// Admin routes (solo su landing-admin.cororaro.it o localhost)
+app.use((req, res, next) => {
+  if (req.isCoroAdmin) {
+    return adminRoutes(req, res, next);
+  }
+  next();
+});
+
+// Public routes (solo su [slug].cororaro.it)
+app.use((req, res, next) => {
+  if (!req.isCoroAdmin) {
+    return publicRoutes(req, res, next);
+  }
+  next();
+});
+
+// API bookings (disponibile su tutti i domini)
 app.use('/api/bookings', bookingRoutes);
-
-// Home/Test route
-app.get('/', (req, res) => {
-  res.send(`
-    <h1>🎵 Coro Raro Landing System</h1>
-    <ul>
-      <li><a href="/admin/landing">Admin Landing Editor</a></li>
-      <li><a href="/test-landing">Test Landing Page</a></li>
-    </ul>
-  `);
-});
-
-// Test landing page
-app.get('/test-landing', async (req, res) => {
-  try {
-    const concerts = db.prepare(`
-      SELECT c.*,
-             (SELECT COUNT(*) FROM concert_bookings WHERE concert_id = c.id AND status = 'confirmed') as booking_count
-      FROM concerts c
-      WHERE is_published = 1
-      ORDER BY date DESC
-      LIMIT 5
-    `).all();
-
-    res.json({
-      success: true,
-      message: 'Coro Raro Landing System is running!',
-      concerts: concerts,
-      database: 'Connected to cororaro.db'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
-
-// Public landing page by slug
-app.get('/:slug', async (req, res) => {
-  try {
-    const { Concert } = await import('./models/Concert.js');
-    const concert = Concert.findBySlug(db, req.params.slug);
-
-    if (!concert || !concert.is_published) {
-      return res.status(404).send('Landing page non trovata');
-    }
-
-    // Parse gallery
-    if (concert.gallery_images) {
-      try {
-        concert.gallery_images = JSON.parse(concert.gallery_images);
-      } catch (e) {
-        concert.gallery_images = [];
-      }
-    }
-
-    res.render('pages/landing', {
-      title: concert.hero_title || concert.title,
-      concert
-    });
-  } catch (error) {
-    console.error('Error loading landing:', error);
-    res.status(500).send('Errore nel caricamento della landing page');
-  }
-});
 
 // ============================================
 // ERROR HANDLER
@@ -154,12 +106,13 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`
 ========================================
-🎵 Coro Raro Landing System
+🎵 Coro Raro Landing System [Multi-Domain]
 ========================================
 Porta: ${PORT}
 Database: cororaro.db (condiviso)
-Admin: http://localhost:${PORT}/admin/landing
-Test: http://localhost:${PORT}/test-landing
+Admin: https://landing-admin.cororaro.it
+Landing: https://[slug].cororaro.it
+Locale: http://localhost:${PORT}/admin/landing
 ========================================
   `);
 });
