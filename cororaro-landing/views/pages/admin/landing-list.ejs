@@ -29,17 +29,43 @@
       border-radius: 20px;
       margin-bottom: 2rem;
       box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
     }
 
-    .header h1 {
+    .header-content h1 {
       color: #333;
       font-size: 2rem;
       margin-bottom: 0.5rem;
     }
 
-    .header p {
+    .header-content p {
       color: #666;
       font-size: 1.1rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-newsletter {
+      background: linear-gradient(135deg, #4a7c59, #2d5d3d);
+      color: white;
+      padding: 0.9rem 1.8rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .btn-newsletter:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(74, 124, 89, 0.4);
     }
 
     .concerts-grid {
@@ -218,8 +244,22 @@
         grid-template-columns: 1fr;
       }
 
-      .header h1 {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-content h1 {
         font-size: 1.5rem;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .btn-newsletter {
+        width: 100%;
+        text-align: center;
       }
     }
   </style>
@@ -227,8 +267,15 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>🎵 <%= title %></h1>
-      <p>Crea landing page bellissime per i tuoi concerti con prenotazione posti integrata</p>
+      <div class="header-content">
+        <h1>🎵 <%= title %></h1>
+        <p>Crea landing page bellissime per i tuoi concerti con prenotazione posti integrata</p>
+      </div>
+      <div class="header-actions">
+        <a href="/admin/newsletter" class="btn-newsletter">
+          📧 Newsletter
+        </a>
+      </div>
     </div>
 
     <% if (concerts.length === 0) { %>

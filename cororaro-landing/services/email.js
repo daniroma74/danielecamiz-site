@@ -331,4 +331,102 @@ export async function sendNewsletterConfirmation(subscriber) {
   return info;
 }
 
-export default { sendBookingConfirmation, sendNewsletterConfirmation };
+/**
+ * Send newsletter to subscriber
+ */
+export async function sendNewsletter(email, name, subject, messageContent) {
+  if (!transporter) {
+    throw new Error('Email transporter not configured');
+  }
+
+  const emailHTML = `
+    <!DOCTYPE html>
+    <html lang="it">
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        .header {
+          background: linear-gradient(135deg, #8B4513, #654321);
+          color: white;
+          padding: 30px;
+          border-radius: 10px 10px 0 0;
+          text-align: center;
+        }
+        .header h1 {
+          margin: 0;
+          font-size: 28px;
+        }
+        .content {
+          background: white;
+          padding: 30px;
+          border: 1px solid #e0e0e0;
+          border-top: none;
+        }
+        .message {
+          white-space: pre-wrap;
+          line-height: 1.8;
+        }
+        .footer {
+          text-align: center;
+          padding: 20px;
+          color: #666;
+          font-size: 14px;
+          border-top: 1px solid #e0e0e0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>🎵 Coro Raro</h1>
+      </div>
+
+      <div class="content">
+        ${name ? `<p>Ciao <strong>${name}</strong>,</p>` : '<p>Ciao,</p>'}
+
+        <div class="message">
+${messageContent}
+        </div>
+
+        <p style="margin-top: 30px;">
+          Un abbraccio,<br>
+          <strong>Coro Raro</strong>
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>
+          <strong>Coro Raro</strong> - Voci dal Mondo per un Mondo Migliore<br>
+          <a href="https://cororaro.it" style="color: #8B4513;">www.cororaro.it</a>
+        </p>
+        <p style="font-size: 12px; color: #999; margin-top: 10px;">
+          Hai ricevuto questa email perché sei iscritto alla newsletter.<br>
+          Per disiscriverti, contattaci a info@cororaro.it
+        </p>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const mailOptions = {
+    from: EMAIL_FROM,
+    to: email,
+    subject: subject,
+    text: messageContent, // Plain text fallback
+    html: emailHTML
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+  console.log(`📧 Newsletter sent to ${email}:`, info.messageId);
+
+  return info;
+}
+
+export default { sendBookingConfirmation, sendNewsletterConfirmation, sendNewsletter };

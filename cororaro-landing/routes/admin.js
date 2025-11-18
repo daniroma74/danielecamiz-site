@@ -174,4 +174,150 @@ router.get('/admin/landing/:id/preview', (req, res) => {
   });
 });
 
+// ============================================
+// NEWSLETTER
+// ============================================
+
+// GET /admin/newsletter - Lista iscritti newsletter
+router.get('/admin/newsletter', (req, res) => {
+  const db = req.app.locals.db;
+
+  // Get all newsletter subscribers
+  const subscribers = db.prepare(`
+    SELECT
+      cn.id,
+      cn.email,
+      cn.name,
+      cn.subscribed_at,
+      c.title as concert_title,
+      c.slug as concert_slug
+    FROM concert_newsletter cn
+    LEFT JOIN concerts c ON c.id = cn.concert_id
+    WHERE cn.is_active = 1
+    ORDER BY cn.subscribed_at DESC
+  `).all();
+
+  // Stats
+  const stats = {
+    total: subscribers.length,
+    today: subscribers.filter(s => {
+      const today = new Date().toISOString().split('T')[0];
+      const subDate = s.subscribed_at.split(' ')[0];
+      return subDate === today;
+    }).length,
+    thisWeek: subscribers.filter(s => {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return new Date(s.subscribed_at) > weekAgo;
+    }).length
+  };
+
+  res.render('pages/admin/newsletter', {
+    title: 'Gestione Newsletter',
+    subscribers,
+    stats
+  });
+});
+
+// GET /admin/newsletter/export - Esporta CSV
+router.get('/admin/newsletter/export', (req, res) => {
+  const db = req.app.locals.db;
+
+  const subscribers = db.prepare(`
+    SELECT
+      cn.email,
+      cn.name,
+      cn.subscribed_at,
+      c.title as concert_title
+    FROM concert_newsletter cn
+    LEFT JOIN concerts c ON c.id = cn.concert_id
+    WHERE cn.is_active = 1
+    ORDER BY cn.subscribed_at DESC
+  `).all();
+
+  // Create CSV
+  let csv = 'Email,Nome,Data Iscrizione,Concerto\n';
+  subscribers.forEach(sub => {
+    csv += `"${sub.email}","${sub.name || ''}","${sub.subscribed_at}","${sub.concert_title || ''}"\n`;
+  });
+
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename="newsletter-cororaro-${new Date().toISOString().split('T')[0]}.csv"`);
+  res.send(csv);
+});
+
+// POST /admin/newsletter/send - Invia newsletter
+router.post('/admin/newsletter/send', async (req, res) => {
+  const db = req.app.locals.db;
+  const { subject, message } = req.body;
+
+  if (!subject || !message) {
+    return res.status(400).json({
+      success: false,
+      message: 'Oggetto e messaggio sono obbligatori'
+    });
+  }
+
+  try {
+    // Get all active subscribers
+    const subscribers = db.prepare(`
+      SELECT email, name
+      FROM concert_newsletter
+      WHERE is_active = 1
+    `).all();
+
+    if (subscribers.length === 0) {
+      return res.json({
+        success: false,
+        message: 'Nessun iscritto alla newsletter'
+      });
+    }
+
+    // Import email service
+    const { sendNewsletter } = await import('../services/email.js');
+
+    // Send newsletter to all subscribers
+    let sent = 0;
+    let errors = 0;
+
+    for (const subscriber of subscribers) {
+      try {
+        await sendNewsletter(subscriber.email, subscriber.name, subject, message);
+        sent++;
+      } catch (error) {
+        console.error(`Failed to send to ${subscriber.email}:`, error.message);
+        errors++;
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Newsletter inviata! ✅ ${sent} inviate, ❌ ${errors} errori`,
+      sent,
+      errors,
+      total: subscribers.length
+    });
+
+  } catch (error) {
+    console.error('Newsletter send error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante l\'invio: ' + error.message
+    });
+  }
+});
+
+// POST /admin/newsletter/:id/unsubscribe - Cancella iscritto
+router.post('/admin/newsletter/:id/unsubscribe', (req, res) => {
+  const db = req.app.locals.db;
+  const { id } = req.params;
+
+  db.prepare('UPDATE concert_newsletter SET is_active = 0 WHERE id = ?').run(id);
+
+  res.json({
+    success: true,
+    message: 'Iscritto rimosso dalla newsletter'
+  });
+});
+
 export default router;
