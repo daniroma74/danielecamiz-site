@@ -9,6 +9,16 @@ const router = express.Router();
 // ADMIN LANDING EDITOR
 // ============================================
 
+// GET / - Root redirect
+router.get('/', requireAuth, (req, res) => {
+  res.redirect('/admin/landing');
+});
+
+// GET /admin - Redirect to landing list
+router.get('/admin', requireAuth, (req, res) => {
+  res.redirect('/admin/landing');
+});
+
 // GET /admin/landing - Lista concerti con possibilità di creare LP
 router.get('/admin/landing', requireAuth, (req, res) => {
   const db = req.app.locals.db;

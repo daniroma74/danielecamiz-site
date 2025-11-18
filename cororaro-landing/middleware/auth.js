@@ -8,7 +8,12 @@ export function requireAuth(req, res, next) {
   }
 
   // Redirect to main site login
-  res.redirect('http://localhost:3120/admin/login?redirect=' + encodeURIComponent(req.originalUrl));
+  // In produzione usa il dominio corretto, in dev usa localhost
+  const mainSiteUrl = process.env.NODE_ENV === 'production'
+    ? 'https://cororaro.it'
+    : 'http://localhost:3120';
+
+  res.redirect(`${mainSiteUrl}/admin?redirect=` + encodeURIComponent(req.originalUrl));
 }
 
 export function requireAdminAuth(req, res, next) {
