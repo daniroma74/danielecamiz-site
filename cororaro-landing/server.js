@@ -62,6 +62,14 @@ app.use((req, res, next) => {
 // ROUTES
 // ============================================
 
+// Import routes
+import adminRoutes from './routes/admin.js';
+import bookingRoutes from './routes/bookings.js';
+
+// Mount routes
+app.use('/', adminRoutes);
+app.use('/api/bookings', bookingRoutes);
+
 // Home/Test route
 app.get('/', (req, res) => {
   res.send(`
@@ -96,6 +104,35 @@ app.get('/test-landing', async (req, res) => {
       success: false,
       error: error.message
     });
+  }
+});
+
+// Public landing page by slug
+app.get('/:slug', async (req, res) => {
+  try {
+    const { Concert } = await import('./models/Concert.js');
+    const concert = Concert.findBySlug(db, req.params.slug);
+
+    if (!concert || !concert.is_published) {
+      return res.status(404).send('Landing page non trovata');
+    }
+
+    // Parse gallery
+    if (concert.gallery_images) {
+      try {
+        concert.gallery_images = JSON.parse(concert.gallery_images);
+      } catch (e) {
+        concert.gallery_images = [];
+      }
+    }
+
+    res.render('pages/landing', {
+      title: concert.hero_title || concert.title,
+      concert
+    });
+  } catch (error) {
+    console.error('Error loading landing:', error);
+    res.status(500).send('Errore nel caricamento della landing page');
   }
 });
 

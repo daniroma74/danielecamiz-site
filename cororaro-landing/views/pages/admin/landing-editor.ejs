@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Editor Landing</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+    }
+
+    .top-bar {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .top-bar h1 {
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .editor-container {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      height: calc(100vh - 73px);
+    }
+
+    .sidebar {
+      background: white;
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .form-color {
+      width: 100%;
+      height: 50px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .form-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .form-checkbox:hover {
+      background: #e9ecef;
+    }
+
+    .form-checkbox input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .form-checkbox label {
+      cursor: pointer;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .preview-pane {
+      background: #f5f7fa;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+
+    .preview-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      min-height: 600px;
+    }
+
+    .save-notification {
+      position: fixed;
+      top: 100px;
+      right: 2rem;
+      background: #28a745;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    .save-notification.show {
+      transform: translateX(0);
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.25rem;
+      font-style: italic;
+    }
+
+    @media (max-width: 1200px) {
+      .editor-container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        max-height: 50vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <h1>✏️ <%= title %></h1>
+    <div class="top-actions">
+      <a href="/admin/landing" class="btn btn-secondary">← Indietro</a>
+      <button onclick="saveAndPreview()" class="btn btn-primary">💾 Salva e Anteprima</button>
+      <button onclick="saveLanding()" class="btn btn-success">✅ Salva</button>
+    </div>
+  </div>
+
+  <div class="editor-container">
+    <!-- SIDEBAR CON FORM -->
+    <div class="sidebar">
+      <form id="landingForm">
+        <!-- CONTENUTI -->
+        <div class="section">
+          <h3 class="section-title">📝 Contenuti</h3>
+
+          <div class="form-group">
+            <label class="form-label">Titolo Hero</label>
+            <input type="text" name="hero_title" class="form-input"
+                   value="<%= concert.hero_title || concert.title %>"
+                   placeholder="<%= concert.title %>">
+            <div class="hint">Il grande titolo in cima alla pagina</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Sottotitolo</label>
+            <input type="text" name="hero_subtitle" class="form-input"
+                   value="<%= concert.hero_subtitle || '' %>"
+                   placeholder="Un sottotitolo accattivante">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descrizione Concerto</label>
+            <textarea name="description_html" class="form-textarea"
+                      placeholder="Racconta di cosa parla questo concerto..."
+            ><%= concert.description_html || concert.description || '' %></textarea>
+            <div class="hint">Puoi usare HTML se vuoi formattare il testo</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">URL Immagine Hero</label>
+            <input type="url" name="hero_image_url" class="form-input"
+                   value="<%= concert.hero_image_url || '' %>"
+                   placeholder="https://...">
+            <div class="hint">Immagine di sfondo grande (opzionale)</div>
+          </div>
+        </div>
+
+        <!-- SEZIONI VISIBILI -->
+        <div class="section">
+          <h3 class="section-title">👁️ Cosa Mostrare</h3>
+
+          <div class="form-group">
+            <div class="form-checkbox">
+              <input type="checkbox" id="show_program" name="show_program"
+                     <%= concert.show_program ? 'checked' : '' %>>
+              <label for="show_program">Mostra Programma</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-checkbox">
+              <input type="checkbox" id="show_location" name="show_location"
+                     <%= concert.show_location ? 'checked' : '' %>>
+              <label for="show_location">Mostra Luogo e Orario</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-checkbox">
+              <input type="checkbox" id="show_booking_form" name="show_booking_form"
+                     <%= concert.show_booking_form ? 'checked' : '' %>>
+              <label for="show_booking_form">Mostra Form Prenotazione</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-checkbox">
+              <input type="checkbox" id="show_gallery" name="show_gallery"
+                     <%= concert.show_gallery ? 'checked' : '' %>>
+              <label for="show_gallery">Mostra Galleria Foto</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRENOTAZIONI -->
+        <div class="section">
+          <h3 class="section-title">📝 Prenotazioni</h3>
+
+          <div class="form-group">
+            <div class="form-checkbox">
+              <input type="checkbox" id="booking_enabled" name="booking_enabled"
+                     <%= concert.booking_enabled ? 'checked' : '' %>>
+              <label for="booking_enabled">Prenotazioni Attive</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Posti Max per Prenotazione</label>
+            <input type="number" name="max_seats_per_booking" class="form-input"
+                   value="<%= concert.max_seats_per_booking || 4 %>" min="1" max="20">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Scadenza Prenotazioni</label>
+            <input type="date" name="booking_deadline" class="form-input"
+                   value="<%= concert.booking_deadline || '' %>">
+            <div class="hint">Lascia vuoto per nessuna scadenza</div>
+          </div>
+        </div>
+
+        <!-- NEWSLETTER -->
+        <div class="section">
+          <h3 class="section-title">💌 Newsletter</h3>
+
+          <div class="form-group">
+            <div class="form-checkbox">
+              <input type="checkbox" id="newsletter_enabled" name="newsletter_enabled"
+                     <%= concert.newsletter_enabled ? 'checked' : '' %>>
+              <label for="newsletter_enabled">Raccogli Email per Newsletter</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Testo Invito Newsletter</label>
+            <textarea name="newsletter_text" class="form-textarea"
+            ><%= concert.newsletter_text || 'Vuoi ricevere aggiornamenti sui prossimi concerti?' %></textarea>
+          </div>
+        </div>
+
+        <!-- COLORI -->
+        <div class="section">
+          <h3 class="section-title">🎨 Colori</h3>
+
+          <div class="form-group">
+            <label class="form-label">Colore Primario</label>
+            <input type="color" name="primary_color" class="form-color"
+                   value="<%= concert.primary_color || '#8B4513' %>">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Colore Secondario</label>
+            <input type="color" name="secondary_color" class="form-color"
+                   value="<%= concert.secondary_color || '#4a7c59' %>">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- PREVIEW PANE -->
+    <div class="preview-pane">
+      <div class="preview-wrapper">
+        <iframe id="previewFrame" style="width: 100%; height: 100%; border: none; border-radius: 10px;"
+                src="/admin/landing/<%= concert.id %>/preview"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-notification" id="saveNotification">
+    ✅ Landing page salvata con successo!
+  </div>
+
+  <script>
+    function saveLanding() {
+      const form = document.getElementById('landingForm');
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+
+      // Convert checkboxes
+      ['show_program', 'show_location', 'show_booking_form', 'show_gallery',
+       'booking_enabled', 'newsletter_enabled'].forEach(field => {
+        data[field] = form.querySelector(`[name="${field}"]`).checked;
+      });
+
+      fetch('/admin/landing/<%= concert.id %>/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(result => {
+        if (result.success) {
+          // Show notification
+          const notification = document.getElementById('saveNotification');
+          notification.classList.add('show');
+          setTimeout(() => notification.classList.remove('show'), 3000);
+
+          // Refresh preview
+          document.getElementById('previewFrame').src =
+            '/admin/landing/<%= concert.id %>/preview?' + Date.now();
+        } else {
+          alert('Errore nel salvataggio: ' + result.message);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Errore nella connessione al server');
+      });
+    }
+
+    function saveAndPreview() {
+      saveLanding();
+      setTimeout(() => {
+        window.open('/admin/landing/<%= concert.id %>/preview', '_blank');
+      }, 500);
+    }
+
+    // Auto-save ogni 30 secondi
+    setInterval(() => {
+      saveLanding();
+    }, 30000);
+  </script>
+</body>
+</html>

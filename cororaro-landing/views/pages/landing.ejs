@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= concert.hero_title || concert.title %> - Coro Raro</title>
+  <meta name="description" content="<%= concert.description || 'Concerto del Coro Raro' %>">
+
+  <style>
+    :root {
+      --primary: <%= concert.primary_color || '#8B4513' %>;
+      --secondary: <%= concert.secondary_color || '#4a7c59' %>;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      min-height: 70vh;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      <% if (concert.hero_image_url) { %>
+      background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('<%= concert.hero_image_url %>');
+      background-size: cover;
+      background-position: center;
+      <% } %>
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      padding: 4rem 2rem;
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      opacity: 0.95;
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: white;
+      color: var(--primary);
+      padding: 1.25rem 3rem;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section {
+      padding: 4rem 0;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .section-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+      text-align: center;
+    }
+
+    /* INFO BOXES */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .info-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .info-box-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-box-label {
+      font-size: 0.9rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-box-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* DESCRIPTION */
+    .description {
+      background: #f8f9fa;
+      padding: 3rem;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 3rem;
+    }
+
+    /* BOOKING FORM */
+    .booking-form {
+      background: white;
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+
+    .form-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1.25rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* SUCCESS MESSAGE */
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 2rem;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .success-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-logo {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: underline;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.2rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        padding: 3rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title"><%= concert.hero_title || concert.title %></h1>
+      <% if (concert.hero_subtitle) { %>
+        <p class="hero-subtitle"><%= concert.hero_subtitle %></p>
+      <% } %>
+      <% if (concert.booking_enabled && concert.show_booking_form) { %>
+        <a href="#prenota" class="hero-cta">🎟️ Prenota il Tuo Posto</a>
+      <% } %>
+    </div>
+  </section>
+
+  <div class="container">
+    <!-- INFO SECTION -->
+    <% if (concert.show_location || concert.show_program) { %>
+      <section class="section">
+        <div class="info-grid">
+          <% if (concert.show_location && concert.date) { %>
+            <div class="info-box">
+              <div class="info-box-icon">📅</div>
+              <div class="info-box-label">Data</div>
+              <div class="info-box-value">
+                <%= new Date(concert.date).toLocaleDateString('it-IT', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                }) %>
+              </div>
+            </div>
+          <% } %>
+
+          <% if (concert.show_location && concert.time) { %>
+            <div class="info-box">
+              <div class="info-box-icon">🕐</div>
+              <div class="info-box-label">Orario</div>
+              <div class="info-box-value"><%= concert.time %></div>
+            </div>
+          <% } %>
+
+          <% if (concert.show_location && concert.location) { %>
+            <div class="info-box">
+              <div class="info-box-icon">📍</div>
+              <div class="info-box-label">Luogo</div>
+              <div class="info-box-value"><%= concert.location %></div>
+            </div>
+          <% } %>
+        </div>
+      </section>
+    <% } %>
+
+    <!-- DESCRIPTION -->
+    <% if (concert.description_html) { %>
+      <section class="section">
+        <div class="description">
+          <%- concert.description_html %>
+        </div>
+      </section>
+    <% } %>
+
+    <!-- PROGRAM -->
+    <% if (concert.show_program && concert.program) { %>
+      <section class="section">
+        <span class="section-icon">🎼</span>
+        <h2 class="section-title">Programma</h2>
+        <div class="description">
+          <%= concert.program %>
+        </div>
+      </section>
+    <% } %>
+
+    <!-- BOOKING FORM -->
+    <% if (concert.booking_enabled && concert.show_booking_form) { %>
+      <section class="section" id="prenota">
+        <span class="section-icon">🎟️</span>
+        <h2 class="section-title">Prenota il Tuo Posto</h2>
+
+        <div class="success-message" id="successMessage">
+          <div class="success-icon">✅</div>
+          <h3>Prenotazione Confermata!</h3>
+          <p>Ti abbiamo inviato una email di conferma con tutti i dettagli.</p>
+        </div>
+
+        <div class="booking-form">
+          <form id="bookingForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nome *</label>
+                <input type="text" name="first_name" class="form-input" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Cognome *</label>
+                <input type="text" name="last_name" class="form-input" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input type="email" name="email" class="form-input" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Telefono</label>
+                <input type="tel" name="phone" class="form-input">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Numero di Posti *</label>
+              <select name="seats" class="form-select" required>
+                <% for(let i = 1; i <= (concert.max_seats_per_booking || 4); i++) { %>
+                  <option value="<%= i %>"><%= i %> <%= i === 1 ? 'posto' : 'posti' %></option>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Note (opzionale)</label>
+              <textarea name="notes" class="form-textarea" rows="3"></textarea>
+            </div>
+
+            <% if (concert.newsletter_enabled) { %>
+              <div class="form-group">
+                <div class="form-checkbox-group">
+                  <input type="checkbox" id="newsletter" name="newsletter" class="form-checkbox">
+                  <label for="newsletter"><%= concert.newsletter_text %></label>
+                </div>
+              </div>
+            <% } %>
+
+            <button type="submit" class="btn-submit">Conferma Prenotazione</button>
+          </form>
+        </div>
+      </section>
+    <% } %>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">🎵</div>
+    <p><strong>Coro Raro</strong></p>
+    <p>Voci dal Mondo per un Mondo Migliore</p>
+    <p style="margin-top: 1rem;">
+      <a href="https://cororaro.it">www.cororaro.it</a>
+    </p>
+  </footer>
+
+  <script>
+    document.getElementById('bookingForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = {
+        concert_id: <%= concert.id %>,
+        first_name: formData.get('first_name'),
+        last_name: formData.get('last_name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        seats: parseInt(formData.get('seats')),
+        notes: formData.get('notes'),
+        newsletter_optin: formData.get('newsletter') === 'on'
+      };
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Prenotazione in corso...';
+
+      try {
+        const response = await fetch('/api/bookings/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          document.getElementById('successMessage').classList.add('show');
+          e.target.reset();
+          setTimeout(() => {
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        } else {
+          alert('Errore nella prenotazione: ' + result.message);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Errore di connessione. Riprova più tardi.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Conferma Prenotazione';
+      }
+    });
+  </script>
+</body>
+</html>

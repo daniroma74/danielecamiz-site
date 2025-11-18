@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Coro Raro Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .concerts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    .concert-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .concert-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .concert-header {
+      background: linear-gradient(135deg, #8B4513, #654321);
+      color: white;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .concert-date {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .concert-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .concert-location {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .concert-body {
+      padding: 2rem;
+    }
+
+    .status-badges {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .badge-warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .badge-info {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #8B4513;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.875rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      display: block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .empty-state {
+      background: white;
+      padding: 4rem 2rem;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-title {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+      font-size: 1.1rem;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .concerts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎵 <%= title %></h1>
+      <p>Crea landing page bellissime per i tuoi concerti con prenotazione posti integrata</p>
+    </div>
+
+    <% if (concerts.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">🎭</div>
+        <h2 class="empty-title">Nessun concerto disponibile</h2>
+        <p class="empty-text">Crea prima un concerto dall'admin principale, poi torna qui per creare la sua landing page!</p>
+      </div>
+    <% } else { %>
+      <div class="concerts-grid">
+        <% concerts.forEach(concert => { %>
+          <div class="concert-card">
+            <div class="concert-header">
+              <div class="concert-date">
+                📅 <%= new Date(concert.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                <% if (concert.time) { %> alle <%= concert.time %><% } %>
+              </div>
+              <h2 class="concert-title"><%= concert.title %></h2>
+              <% if (concert.location) { %>
+                <div class="concert-location">📍 <%= concert.location %></div>
+              <% } %>
+            </div>
+
+            <div class="concert-body">
+              <div class="status-badges">
+                <% if (concert.landing_id) { %>
+                  <span class="badge badge-success">✅ Landing Attiva</span>
+                <% } else { %>
+                  <span class="badge badge-warning">⚠️ Nessuna Landing</span>
+                <% } %>
+
+                <% if (concert.booking_enabled) { %>
+                  <span class="badge badge-info">📝 Prenotazioni Aperte</span>
+                <% } %>
+              </div>
+
+              <% if (concert.landing_id) { %>
+                <div class="stats">
+                  <div class="stat">
+                    <span class="stat-number"><%= concert.booking_count || 0 %></span>
+                    <span class="stat-label">Prenotazioni</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-number"><%= concert.seats_booked || 0 %></span>
+                    <span class="stat-label">Posti Prenotati</span>
+                  </div>
+                </div>
+              <% } %>
+
+              <div class="actions">
+                <a href="/admin/landing/<%= concert.id %>/editor" class="btn btn-primary">
+                  <%= concert.landing_id ? '✏️ Modifica' : '✨ Crea Landing' %>
+                </a>
+                <% if (concert.landing_id) { %>
+                  <a href="/admin/landing/<%= concert.id %>/preview" target="_blank" class="btn btn-secondary">
+                    👁️ Anteprima
+                  </a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>
