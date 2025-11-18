@@ -1,5 +1,4 @@
 import express from 'express';
-import { requireAuth } from '../middleware/auth.js';
 import { Concert } from '../models/Concert.js';
 import { createRecordBestEffort } from '../../shared/services/cloudflare-dns.js';
 
@@ -10,17 +9,17 @@ const router = express.Router();
 // ============================================
 
 // GET / - Root redirect
-router.get('/', requireAuth, (req, res) => {
+router.get('/', (req, res) => {
   res.redirect('/admin/landing');
 });
 
 // GET /admin - Redirect to landing list
-router.get('/admin', requireAuth, (req, res) => {
+router.get('/admin', (req, res) => {
   res.redirect('/admin/landing');
 });
 
 // GET /admin/landing - Lista concerti con possibilità di creare LP
-router.get('/admin/landing', requireAuth, (req, res) => {
+router.get('/admin/landing', (req, res) => {
   const db = req.app.locals.db;
 
   const concerts = Concert.findAllPublished(db);
@@ -32,7 +31,7 @@ router.get('/admin/landing', requireAuth, (req, res) => {
 });
 
 // GET /admin/landing/:id/editor - Editor landing page
-router.get('/admin/landing/:id/editor', requireAuth, (req, res) => {
+router.get('/admin/landing/:id/editor', (req, res) => {
   const db = req.app.locals.db;
   const { id } = req.params;
 
@@ -77,7 +76,7 @@ router.get('/admin/landing/:id/editor', requireAuth, (req, res) => {
 });
 
 // POST /admin/landing/:id/save - Salva landing page
-router.post('/admin/landing/:id/save', requireAuth, async (req, res) => {
+router.post('/admin/landing/:id/save', async (req, res) => {
   const db = req.app.locals.db;
   const { id } = req.params;
 
@@ -147,7 +146,7 @@ router.post('/admin/landing/:id/save', requireAuth, async (req, res) => {
 });
 
 // GET /admin/landing/:id/preview - Preview landing page
-router.get('/admin/landing/:id/preview', requireAuth, (req, res) => {
+router.get('/admin/landing/:id/preview', (req, res) => {
   const db = req.app.locals.db;
   const { id } = req.params;
 

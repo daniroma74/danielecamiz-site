@@ -99,6 +99,10 @@ server {
 
   # Proxy to Node.js app (stesso server, routing interno)
   location / {
+    # Basic Authentication per proteggere l'admin
+    auth_basic "Coro Raro - Landing Admin";
+    auth_basic_user_file /etc/nginx/.htpasswd-cororaro;
+
     proxy_pass http://localhost:3121;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
@@ -123,8 +127,12 @@ server {
 #    - A record: landing-admin → your-server-ip
 #    - A record: @ → your-server-ip (main site)
 #
-# 3. Test configuration:
+# 3. Create Basic Auth password file for landing-admin:
+#    sudo htpasswd -c /etc/nginx/.htpasswd-cororaro admin
+#    (will prompt for password - use: admin123)
+#
+# 4. Test configuration:
 #    sudo nginx -t
 #
-# 4. Reload:
+# 5. Reload:
 #    sudo systemctl reload nginx
