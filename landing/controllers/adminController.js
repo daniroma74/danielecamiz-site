@@ -1,5 +1,6 @@
 // landing/controllers/adminController.js
 import { getOne, queryDB, runDB } from '../config/database.js';
+import { createRecordBestEffort } from '../../shared/services/cloudflare-dns.js';
 
 export async function renderDashboard(req, res) {
   try {
@@ -251,18 +252,46 @@ export async function saveEvent(req, res) {
         data.event_tags || null
       ]);
     }
-    
-    res.json({ 
-      success: true, 
+
+    // ============================================
+    // CLOUDFLARE DNS AUTO-CREATE (best-effort)
+    // ============================================
+    // Se configurato, crea record DNS su Cloudflare
+    // Se fallisce, wildcard DNS funziona comunque
+    if (slug && process.env.CLOUDFLARE_API_TOKEN) {
+      const cfConfig = {
+        slug: slug,
+        domain: process.env.BASE_DOMAIN || 'danielecamiz.com',
+        serverIp: process.env.SERVER_IP || '127.0.0.1',
+        apiToken: process.env.CLOUDFLARE_API_TOKEN,
+        zoneId: process.env.CLOUDFLARE_ZONE_ID,
+        proxied: process.env.CLOUDFLARE_PROXY === 'true'
+      };
+
+      // Non-blocking: se fallisce, wildcard funziona
+      createRecordBestEffort(
+        cfConfig.slug,
+        cfConfig.domain,
+        cfConfig.serverIp,
+        cfConfig.apiToken,
+        cfConfig.zoneId,
+        cfConfig.proxied
+      ).catch(err => {
+        console.log(`⚠️  Cloudflare DNS creation skipped: ${err.message}`);
+      });
+    }
+
+    res.json({
+      success: true,
       message: 'Impostazioni salvate con successo'
     });
-    
+
   } catch (error) {
     console.error('Save event error:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Errore durante il salvataggio',
-      error: error.message 
+      error: error.message
     });
   }
 }

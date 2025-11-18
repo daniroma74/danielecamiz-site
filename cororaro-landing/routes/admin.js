@@ -1,6 +1,7 @@
 import express from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { Concert } from '../models/Concert.js';
+import { createRecordBestEffort } from '../../shared/services/cloudflare-dns.js';
 
 const router = express.Router();
 
@@ -66,7 +67,7 @@ router.get('/admin/landing/:id/editor', requireAuth, (req, res) => {
 });
 
 // POST /admin/landing/:id/save - Salva landing page
-router.post('/admin/landing/:id/save', requireAuth, (req, res) => {
+router.post('/admin/landing/:id/save', requireAuth, async (req, res) => {
   const db = req.app.locals.db;
   const { id } = req.params;
 
@@ -91,6 +92,36 @@ router.post('/admin/landing/:id/save', requireAuth, (req, res) => {
 
   try {
     Concert.createOrUpdateLanding(db, id, data);
+
+    // ============================================
+    // CLOUDFLARE DNS AUTO-CREATE (best-effort)
+    // ============================================
+    // Se configurato, crea record DNS su Cloudflare
+    // Se fallisce, wildcard DNS funziona comunque
+    const concert = Concert.findById(db, id);
+
+    if (concert && concert.slug && process.env.CLOUDFLARE_API_TOKEN) {
+      const cfConfig = {
+        slug: concert.slug,
+        domain: process.env.BASE_DOMAIN || 'cororaro.it',
+        serverIp: process.env.SERVER_IP || '127.0.0.1',
+        apiToken: process.env.CLOUDFLARE_API_TOKEN,
+        zoneId: process.env.CLOUDFLARE_ZONE_ID,
+        proxied: process.env.CLOUDFLARE_PROXY === 'true'
+      };
+
+      // Non-blocking: se fallisce, wildcard funziona
+      createRecordBestEffort(
+        cfConfig.slug,
+        cfConfig.domain,
+        cfConfig.serverIp,
+        cfConfig.apiToken,
+        cfConfig.zoneId,
+        cfConfig.proxied
+      ).catch(err => {
+        console.log(`⚠️  Cloudflare DNS creation skipped: ${err.message}`);
+      });
+    }
 
     res.json({
       success: true,
