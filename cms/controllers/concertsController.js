@@ -583,7 +583,9 @@ export async function getConcertsPage(req, res) {
       layout: 'layouts/base-frontend',
       lang: res.locals.lang || 'it',
       title: 'Error',
-      description: ''
+      description: (res.locals.lang === 'en')
+        ? 'Error loading concerts page'
+        : 'Errore nel caricamento della pagina concerti'
     });
   }
 }

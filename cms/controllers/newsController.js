@@ -227,7 +227,9 @@ export async function listNews(req, res) {
     const nextUrl = page < pageCount ? pageUrl(page + 1) : null;
 
     const title = L.title || (lang === 'en' ? 'News' : 'News');
-    const description = L.claim || '';
+    const description = L.claim || (lang === 'en'
+      ? 'Latest news, updates and announcements about concerts, projects and musical activities of conductor Daniele Camiz'
+      : 'Ultime notizie, aggiornamenti e annunci su concerti, progetti e attività musicali del direttore d\'orchestra Daniele Camiz');
 
     const cssFiles = listPageCss('news');
     let pageScripts = [];
@@ -271,7 +273,7 @@ export async function listNews(req, res) {
       layout: 'layouts/base-frontend',
       lang,
       title: (lang === 'en') ? 'Error loading News' : 'Errore caricando le News',
-      description: ''
+      description: (lang === 'en') ? 'Latest news about Daniele Camiz concerts and projects' : 'Ultime notizie su concerti e progetti di Daniele Camiz'
     });
   }
 }
@@ -293,7 +295,7 @@ export async function getNewsArticle(req, res) {
         lang,
         post: null,
         title: (lang === 'en') ? 'Article not found' : 'Articolo non trovato',
-        description: ''
+        description: (lang === 'en') ? 'The requested news article could not be found' : 'L\'articolo richiesto non è stato trovato'
       });
     }
 

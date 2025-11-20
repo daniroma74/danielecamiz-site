@@ -48,7 +48,8 @@ cat > contact.ejs <<'EOF'
   <div class="linktree-avatar">
     <img id="contact_avatar"
          src="<%= d.avatar || '/img/daniele-camiz-foto-profilo.png' %>"
-         alt="<%= pageTitle %>" />
+         alt="<%= pageTitle %>"
+         loading="eager" />
   </div>
 
   <h1 id="contact_title" class="linktree-title"><%= pageTitle %></h1>
@@ -64,7 +65,7 @@ cat > contact.ejs <<'EOF'
         <% if (link && link.url) { %>
           <a href="<%= link.url %>" target="_blank" rel="noopener" class="linktree-btn">
             <% if (link.icon) { %>
-              <img src="<%= link.icon %>" alt="<%= link.alt || '' %>" class="icon" />
+              <img src="<%= link.icon %>" alt="<%= link.alt || '' %>" class="icon" loading="lazy" />
             <% } %>
             <%= link.text || link.url %>
           </a>
@@ -83,10 +84,10 @@ cat > contact.ejs <<'EOF'
         <% if (link && link.url) { %>
           <a class="linktree-btn" href="<%= link.url %>" target="_blank" rel="noopener">
             <% if (link.iconGold) { %>
-              <img src="<%= link.iconGold %>" alt="<%= link.altGold || '' %>" class="icon gold" />
+              <img src="<%= link.iconGold %>" alt="<%= link.altGold || '' %>" class="icon gold" loading="lazy" />
             <% } %>
             <% if (link.iconBlack) { %>
-              <img src="<%= link.iconBlack %>" alt="<%= link.altBlack || '' %>" class="icon black" />
+              <img src="<%= link.iconBlack %>" alt="<%= link.altBlack || '' %>" class="icon black" loading="lazy" />
             <% } %>
             <%= link.text || link.url %>
           </a>
@@ -105,10 +106,10 @@ cat > contact.ejs <<'EOF'
         <% if (link && link.url) { %>
           <a class="linktree-btn" href="<%= link.url %>" target="_blank" rel="noopener">
             <% if (link.iconGold) { %>
-              <img src="<%= link.iconGold %>" alt="<%= link.altGold || '' %>" class="icon gold" />
+              <img src="<%= link.iconGold %>" alt="<%= link.altGold || '' %>" class="icon gold" loading="lazy" />
             <% } %>
             <% if (link.iconBlack) { %>
-              <img src="<%= link.iconBlack %>" alt="<%= link.altBlack || '' %>" class="icon black" />
+              <img src="<%= link.iconBlack %>" alt="<%= link.altBlack || '' %>" class="icon black" loading="lazy" />
             <% } %>
             <%= link.text || link.url %>
           </a>

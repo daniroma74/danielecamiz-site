@@ -164,7 +164,8 @@ export async function getPressPage(req, res) {
   try {
     const lang = (res.locals.lang || req.language || 'it').toLowerCase();
     const labelsAll = res.locals.labels || {};
-    const L = labelsAll.press || (labelsAll.pages && labelsAll.pages.press) || {};
+    // attachLabels ritorna { press: { press: {...} }, global: {...} }
+    const L = labelsAll.press?.press || labelsAll.press || {};
 
     // 1) Prova sorgente DB nuova
     const fromDb = await loadPressFromDb(lang);
@@ -179,7 +180,9 @@ export async function getPressPage(req, res) {
     }
 
     const title = L.title || (lang === 'en' ? 'Press' : 'Rassegna stampa');
-    const description = L.claim || '';
+    const description = L.claim || (lang === 'en'
+      ? 'Press reviews, articles, interviews and media coverage about conductor Daniele Camiz'
+      : 'Rassegna stampa, articoli, interviste e copertura mediatica sul direttore d\'orchestra Daniele Camiz');
 
     const cssFiles = listPageCss('press');
     const pageScripts = await collectPageScripts();
@@ -207,7 +210,7 @@ export async function getPressPage(req, res) {
       layout: 'layouts/base-frontend',
       lang,
       title: (lang === 'en') ? 'Error loading Press' : 'Errore caricando la rassegna',
-      description: ''
+      description: (lang === 'en') ? 'Error loading press page' : 'Errore nel caricamento della rassegna stampa'
     });
   }
 }

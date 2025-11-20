@@ -114,7 +114,7 @@
                 <div class="concert-full-details" id="details_<%= concertId %>" style="display: none;">
                   <div class="concert-lightbox-poster-view">
                     <div class="concert-lightbox-img">
-                      <% if (poster) { %><img src="<%= poster %>" alt="<%= c.title || 'Poster' %>" /><% } %>
+                      <% if (poster) { %><img src="<%= poster %>" alt="<%= c.title || 'Poster' %>" loading="lazy" /><% } %>
                     </div>
                     <div class="concert-lightbox-info">
                       <h3><%= c.title || (lang==='en'?'Concert':'Concerto') %></h3>
@@ -251,7 +251,7 @@
                       <div class="concert-full-details" id="details_<%= concertId %>" style="display: none;">
                           <div class="concert-lightbox-poster-view">
                             <div class="concert-lightbox-img">
-                              <% if (poster) { %><img src="<%= poster %>" alt="<%= c.title || 'Poster' %>" /><% } %>
+                              <% if (poster) { %><img src="<%= poster %>" alt="<%= c.title || 'Poster' %>" loading="lazy" /><% } %>
                             </div>
                             <div class="concert-lightbox-info">
                               <h3><%= c.title || (lang==='en'?'Concert':'Concerto') %></h3>
