@@ -190,7 +190,7 @@ export async function getPressPage(req, res) {
     return res.renderPage('pages/frontend/press', {
       layout: 'layouts/base-frontend',
       lang,
-      labels: labelsAll,
+      labels: { press: L }, // Template si aspetta labels.press.read_article
       title,
       description,
       pageMeta: { title, description },
