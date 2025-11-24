@@ -14,6 +14,11 @@ const hasSoloists = collaborators && collaborators.soloists && collaborators.sol
 const hasChoruses = collaborators && collaborators.choruses && collaborators.choruses.length > 0;
 const hasOrchestras = collaborators && collaborators.orchestras && collaborators.orchestras.length > 0;
 const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
+
+// Helper to check if work is upcoming (in programma)
+const upcomingWorkIds = (comingSoon || []).map(w => w.id);
+const isUpcoming = (workId) => upcomingWorkIds.includes(workId);
+const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
 %>
 
 <main class="repertoire-page-new">
@@ -38,10 +43,78 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
           <div class="rep-stat-label"><%= lang === 'en' ? 'Concerts' : 'Concerti' %></div>
         </div>
       </div>
+
+      <!-- Quick Guide -->
+      <div class="rep-quick-guide">
+        <div class="rep-guide-icon"><i class="fas fa-compass"></i></div>
+        <div class="rep-guide-content">
+          <h3 class="rep-guide-title"><%= lang === 'en' ? 'Explore the Repertoire' : 'Esplora il Repertorio' %></h3>
+          <p class="rep-guide-text">
+            <%= lang === 'en'
+              ? 'Use the tabs below to discover works by different views: most performed pieces, composers with their complete catalogs, historical periods, or search through everything.'
+              : 'Usa le schede qui sotto per scoprire i brani da diverse prospettive: i più eseguiti, i compositori con i loro cataloghi completi, i periodi storici, o cerca tra tutto il repertorio.'
+            %>
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Collaborators Section - PROMINENTE IN ALTO -->
+  <!-- Top Composers Section -->
+  <% if (topComposers && topComposers.length > 0) { %>
+    <section class="rep-top-composers">
+      <div class="rep-container">
+        <h2 class="rep-section-title-center">
+          <%= lang === 'en' ? 'Featured Composers' : 'Compositori in Evidenza' %>
+        </h2>
+        <p class="rep-section-subtitle-center">
+          <%= lang === 'en' ? 'The composers I perform most frequently' : 'I compositori che eseguo più frequentemente' %>
+        </p>
+
+        <div class="rep-top-composers-grid">
+          <% topComposers.forEach((composer, index) => { %>
+            <div class="rep-top-composer-card" data-rank="<%= index + 1 %>">
+              <div class="rep-top-composer-rank"><%= index + 1 %></div>
+              <div class="rep-top-composer-avatar <%= composer.portrait_url ? 'has-portrait' : '' %>">
+                <% if (composer.portrait_url) { %>
+                  <img src="<%= composer.portrait_url %>" alt="<%= composer.name %>" class="rep-top-composer-portrait">
+                <% } else { %>
+                  <span class="rep-top-composer-initials">
+                    <%= composer.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() %>
+                  </span>
+                <% } %>
+              </div>
+              <h3 class="rep-top-composer-name"><%= composer.name %></h3>
+              <div class="rep-top-composer-stats">
+                <div class="rep-top-composer-stat">
+                  <i class="fas fa-music"></i>
+                  <span><%= composer.works_count %> <%= lang === 'en' ? 'works' : 'brani' %></span>
+                </div>
+                <div class="rep-top-composer-stat">
+                  <i class="fas fa-calendar"></i>
+                  <span><%= composer.concerts_count %> <%= lang === 'en' ? 'concerts' : 'concerti' %></span>
+                </div>
+                <% if (composer.total_performances > 0) { %>
+                  <div class="rep-top-composer-stat">
+                    <i class="fas fa-repeat"></i>
+                    <span><%= composer.total_performances %> <%= lang === 'en' ? 'performances' : 'esecuzioni' %></span>
+                  </div>
+                <% } %>
+                <% if (composer.total_performed_minutes > 0) { %>
+                  <div class="rep-top-composer-stat" style="opacity: 0.8; font-size: 0.85em;">
+                    <i class="fas fa-clock"></i>
+                    <span><%= Math.round(composer.total_performed_minutes / 60) %>h <%= lang === 'en' ? 'performed' : 'sul palco' %></span>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Collaborators Section - DOPO compositori, compatta e collassabile -->
   <% if (hasAnyCollab) { %>
     <section class="rep-collaborators">
       <div class="rep-container">
@@ -52,6 +125,12 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
         <p class="rep-section-subtitle">
           <%= lang === 'en' ? 'Artists I have performed with' : 'Artisti con cui ho collaborato' %>
         </p>
+
+        <button class="rep-collaborators-toggle" onclick="document.querySelector('.rep-collaborators').classList.toggle('expanded')">
+          <i class="fas fa-chevron-down"></i>
+          <span class="toggle-text-show"><%= lang === 'en' ? 'Explore Collaborators' : 'Esplora Collaboratori' %></span>
+          <span class="toggle-text-hide"><%= lang === 'en' ? 'Hide Collaborators' : 'Nascondi Collaboratori' %></span>
+        </button>
 
         <div class="rep-collab-grid">
           <!-- Soloists - raggruppati per strumento -->
@@ -126,81 +205,45 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
     </section>
   <% } %>
 
-  <!-- Top Composers Section -->
-  <% if (topComposers && topComposers.length > 0) { %>
-    <section class="rep-top-composers">
-      <div class="rep-container">
-        <h2 class="rep-section-title-center">
-          <%= lang === 'en' ? 'Featured Composers' : 'Compositori in Evidenza' %>
-        </h2>
-        <p class="rep-section-subtitle-center">
-          <%= lang === 'en' ? 'The composers I perform most frequently' : 'I compositori che eseguo più frequentemente' %>
-        </p>
-
-        <div class="rep-top-composers-grid">
-          <% topComposers.forEach((composer, index) => { %>
-            <div class="rep-top-composer-card" data-rank="<%= index + 1 %>">
-              <div class="rep-top-composer-rank"><%= index + 1 %></div>
-              <div class="rep-top-composer-avatar <%= composer.portrait_url ? 'has-portrait' : '' %>">
-                <% if (composer.portrait_url) { %>
-                  <img src="<%= composer.portrait_url %>" alt="<%= composer.name %>" class="rep-top-composer-portrait">
-                <% } else { %>
-                  <span class="rep-top-composer-initials">
-                    <%= composer.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() %>
-                  </span>
-                <% } %>
-              </div>
-              <h3 class="rep-top-composer-name"><%= composer.name %></h3>
-              <div class="rep-top-composer-stats">
-                <div class="rep-top-composer-stat">
-                  <i class="fas fa-music"></i>
-                  <span><%= composer.works_count %> <%= lang === 'en' ? 'works' : 'brani' %></span>
-                </div>
-                <div class="rep-top-composer-stat">
-                  <i class="fas fa-calendar"></i>
-                  <span><%= composer.concerts_count %> <%= lang === 'en' ? 'concerts' : 'concerti' %></span>
-                </div>
-                <% if (composer.total_performances > 0) { %>
-                  <div class="rep-top-composer-stat">
-                    <i class="fas fa-repeat"></i>
-                    <span><%= composer.total_performances %> <%= lang === 'en' ? 'performances' : 'esecuzioni' %></span>
-                  </div>
-                <% } %>
-                <% if (composer.total_performed_minutes > 0) { %>
-                  <div class="rep-top-composer-stat" style="opacity: 0.8; font-size: 0.85em;">
-                    <i class="fas fa-clock"></i>
-                    <span><%= Math.round(composer.total_performed_minutes / 60) %>h <%= lang === 'en' ? 'performed' : 'sul palco' %></span>
-                  </div>
-                <% } %>
-              </div>
-            </div>
-          <% }) %>
-        </div>
-      </div>
-    </section>
-  <% } %>
-
   <!-- Main Content -->
   <div class="rep-container">
-    <!-- Navigation Tabs -->
+    <!-- Navigation Tabs (Desktop) -->
     <div class="rep-tabs">
       <button class="rep-tab active" data-view="highlights">
         <i class="fas fa-star"></i>
-        <%= lang === 'en' ? 'Highlights' : 'In Evidenza' %>
+        <span class="rep-tab-label"><%= lang === 'en' ? 'Highlights' : 'In Evidenza' %></span>
+        <% if (frequentlyPerformed && frequentlyPerformed.length > 0) { %>
+          <span class="rep-tab-badge"><%= frequentlyPerformed.length %></span>
+        <% } %>
       </button>
       <button class="rep-tab" data-view="composers">
         <i class="fas fa-user-tie"></i>
-        <%= lang === 'en' ? 'By Composer' : 'Per Compositore' %>
+        <span class="rep-tab-label"><%= lang === 'en' ? 'By Composer' : 'Per Compositore' %></span>
+        <% if (composers && composers.length > 0) { %>
+          <span class="rep-tab-badge"><%= composers.length %></span>
+        <% } %>
       </button>
       <button class="rep-tab" data-view="timeline">
         <i class="fas fa-clock"></i>
-        <%= lang === 'en' ? 'Timeline' : 'Periodi' %>
+        <span class="rep-tab-label"><%= lang === 'en' ? 'Timeline' : 'Periodi' %></span>
+        <% if (timeline && timeline.length > 0) { %>
+          <span class="rep-tab-badge"><%= timeline.length %> <%= lang === 'en' ? 'eras' : 'epoche' %></span>
+        <% } %>
       </button>
       <button class="rep-tab" data-view="all">
         <i class="fas fa-th"></i>
-        <%= lang === 'en' ? 'All Works' : 'Tutti i Brani' %>
+        <span class="rep-tab-label"><%= lang === 'en' ? 'All Works' : 'Tutti i Brani' %></span>
+        <span class="rep-tab-count"><%= works.length %></span>
       </button>
     </div>
+
+    <!-- Mobile Select Dropdown -->
+    <select class="rep-mobile-select" id="repMobileSelect">
+      <option value="highlights">⭐ <%= lang === 'en' ? 'Highlights' : 'In Evidenza' %><% if (frequentlyPerformed && frequentlyPerformed.length > 0) { %> (<%= frequentlyPerformed.length %>)<% } %></option>
+      <option value="composers">👤 <%= lang === 'en' ? 'By Composer' : 'Per Compositore' %><% if (composers && composers.length > 0) { %> (<%= composers.length %>)<% } %></option>
+      <option value="timeline">🕐 <%= lang === 'en' ? 'Timeline' : 'Periodi' %><% if (timeline && timeline.length > 0) { %> (<%= timeline.length %>)<% } %></option>
+      <option value="all">📋 <%= lang === 'en' ? 'All Works' : 'Tutti i Brani' %> (<%= works.length %>)</option>
+    </select>
 
     <!-- Highlights View (Default) -->
     <div id="highlightsView" class="rep-view active">
@@ -291,7 +334,7 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
             </button>
             <div class="rep-composer-works" id="composer_<%= composer.id %>" style="display: none;">
               <% composer.works.forEach(work => { %>
-                <div class="rep-work-item">
+                <div class="rep-work-item <%= isUpcoming(work.id) ? 'upcoming' : '' %>">
                   <span class="rep-work-item-title">
                     <%= work.title %>
                     <% if (work.catalogue) { %>
@@ -301,9 +344,17 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
                       <span style="color: var(--text-secondary); font-style: italic; margin-left: 8px;"><%= work.subtitle %></span>
                     <% } %>
                   </span>
-                  <% if (work.category_name) { %>
-                    <span class="rep-work-item-cat" data-category="<%= work.category_id %>"><%= work.category_name %></span>
-                  <% } %>
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <% if (isUpcoming(work.id)) { %>
+                      <span class="rep-work-badge-upcoming">
+                        <i class="fas fa-calendar-alt"></i>
+                        <%= upcomingBadge %>
+                      </span>
+                    <% } %>
+                    <% if (work.category_name) { %>
+                      <span class="rep-work-item-cat" data-category="<%= work.category_id %>"><%= work.category_name %></span>
+                    <% } %>
+                  </div>
                 </div>
               <% }) %>
             </div>
@@ -403,14 +454,22 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
       </div>
       <div class="rep-works-list">
         <% works.forEach(work => { %>
-          <div class="rep-work-row" data-search="<%= (work.title + ' ' + work.composer_name).toLowerCase() %>">
+          <div class="rep-work-row <%= isUpcoming(work.id) ? 'upcoming' : '' %>" data-search="<%= (work.title + ' ' + work.composer_name).toLowerCase() %>">
             <div class="rep-work-row-main">
               <h4 class="rep-work-row-title"><%= work.title %></h4>
               <p class="rep-work-row-composer"><%= work.composer_name %></p>
             </div>
-            <% if (work.category_name) { %>
-              <span class="rep-work-row-cat" data-category="<%= work.category_id %>"><%= work.category_name %></span>
-            <% } %>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <% if (isUpcoming(work.id)) { %>
+                <span class="rep-work-badge-upcoming">
+                  <i class="fas fa-calendar-alt"></i>
+                  <%= upcomingBadge %>
+                </span>
+              <% } %>
+              <% if (work.category_name) { %>
+                <span class="rep-work-row-cat" data-category="<%= work.category_id %>"><%= work.category_name %></span>
+              <% } %>
+            </div>
           </div>
         <% }) %>
       </div>
@@ -419,7 +478,7 @@ const hasAnyCollab = hasSoloists || hasChoruses || hasOrchestras;
 </main>
 
 <script>
-// Tab switching
+// Tab switching (desktop)
 document.querySelectorAll('.rep-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     const view = tab.dataset.view;
@@ -429,6 +488,16 @@ document.querySelectorAll('.rep-tab').forEach(tab => {
     document.getElementById(view + 'View').classList.add('active');
   });
 });
+
+// Mobile select dropdown
+const mobileSelect = document.getElementById('repMobileSelect');
+if (mobileSelect) {
+  mobileSelect.addEventListener('change', (e) => {
+    const view = e.target.value;
+    document.querySelectorAll('.rep-view').forEach(v => v.classList.remove('active'));
+    document.getElementById(view + 'View').classList.add('active');
+  });
+}
 
 // Composer toggle
 document.querySelectorAll('.rep-composer-toggle').forEach(btn => {
