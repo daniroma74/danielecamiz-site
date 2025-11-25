@@ -1,3 +1,12 @@
+<%
+// DEBUG: cosa arriva nel template?
+console.log('[PRESS TEMPLATE DEBUG]', {
+  'labels': typeof labels,
+  'labels keys': labels ? Object.keys(labels) : 'null',
+  'labels.press': labels?.press,
+  'lang': typeof lang !== 'undefined' ? lang : 'undefined'
+});
+%>
 <% if (pageCss) { %>
   <link rel="stylesheet" href="/css/<%= pageCss %>">
 <% } %>

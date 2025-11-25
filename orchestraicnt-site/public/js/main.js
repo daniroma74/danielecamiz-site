@@ -622,6 +622,32 @@ class ContentLoader {
         }
       }
 
+      // Director Section
+      if (s.director_photo) {
+        const directorImage = document.querySelector('.director-image img');
+        if (directorImage) directorImage.src = s.director_photo;
+      }
+
+      if (s.director_name) {
+        const directorName = document.querySelector('.director-name');
+        if (directorName) directorName.textContent = s.director_name;
+      }
+
+      if (s.director_title) {
+        const directorTitle = document.querySelector('.director-title');
+        if (directorTitle) directorTitle.textContent = s.director_title;
+      }
+
+      if (s.director_quote) {
+        const directorQuote = document.querySelector('.director-quote');
+        if (directorQuote) directorQuote.textContent = s.director_quote;
+      }
+
+      if (s.director_bio) {
+        const directorBio = document.querySelector('.director-bio');
+        if (directorBio) directorBio.innerHTML = s.director_bio;
+      }
+
       // Concerts Section
       if (s.concerts_label) {
         const concertsLabel = document.querySelector('.concerts-section .section-label');
@@ -783,8 +809,8 @@ class ContentLoader {
         if (ytLink) ytLink.href = s.social_youtube;
       }
 
-      // Sezione Direttore
-      ContentLoader.loadDirectorSection(s);
+      // Sezione Direttore - ora è nell'HTML statico, popolata da loadSettings()
+      // ContentLoader.loadDirectorSection(s);
 
       // Video YouTube (async, carica in parallelo)
       ContentLoader.loadYouTubeVideos();

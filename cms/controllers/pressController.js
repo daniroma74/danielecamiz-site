@@ -167,6 +167,14 @@ export async function getPressPage(req, res) {
     // attachLabels ritorna { press: { press: {...} }, global: {...} }
     const L = labelsAll.press?.press || labelsAll.press || {};
 
+    // TEMPORARY DEBUG
+    console.log('[PRESS DEBUG]', {
+      lang,
+      'labelsAll': Object.keys(labelsAll),
+      'labelsAll.press': labelsAll.press,
+      'L': L
+    });
+
     // 1) Prova sorgente DB nuova
     const fromDb = await loadPressFromDb(lang);
 

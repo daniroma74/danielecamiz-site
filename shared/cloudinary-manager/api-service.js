@@ -54,9 +54,23 @@ export function createCloudinaryAPI(config) {
 
     const result = await cloudinaryInstance.api.resources(searchOptions);
 
+    // Filtra per mostrare SOLO le immagini nella cartella corrente (non nelle sottocartelle)
+    const filteredImages = result.resources.filter(img => {
+      if (!folder) {
+        // Se non c'è folder, mostra tutte le immagini root
+        return !img.public_id.includes('/') || img.public_id.split('/').length === 1;
+      } else {
+        // Conta le slash nel public_id
+        // Se il numero di slash è uguale al numero di slash nel folder + 1, è nella cartella corrente
+        const folderDepth = folder.split('/').length;
+        const imageDepth = img.public_id.split('/').length;
+        return imageDepth === folderDepth + 1;
+      }
+    });
+
     return {
       success: true,
-      images: result.resources.map(img => ({
+      images: filteredImages.map(img => ({
         publicId: img.public_id,
         url: img.secure_url,
         width: img.width,
@@ -72,7 +86,7 @@ export function createCloudinaryAPI(config) {
         })
       })),
       nextCursor: result.next_cursor,
-      totalCount: result.total_count
+      totalCount: filteredImages.length
     };
   } catch (error) {
     console.error('Error listing Cloudinary images:', error);

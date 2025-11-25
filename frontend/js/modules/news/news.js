@@ -22,10 +22,11 @@
 
   /* ===== Filtering helpers ===== */
   function detectFilterMode(tabs, items) {
-    // Prefer categories if explicitly present
+    // Prefer categories ONLY if tabs explicitly use data-filter-cat
     const hasCatTabs = (tabs || []).some(el => el.hasAttribute('data-filter-cat'));
-    const hasCatItems = (items || []).some(el => el.hasAttribute('data-cat'));
-    if (hasCatTabs || hasCatItems) return 'cat';
+    if (hasCatTabs) return 'cat';
+
+    // Otherwise use tag mode (tabs use data-filter, items use data-tags)
     return 'tag';
   }
 
@@ -36,13 +37,21 @@
     const passing = [];
 
     for (const li of items) {
-      if (k === 'all') { passing.push(li); continue; }
+      if (k === 'all') {
+        passing.push(li);
+        continue;
+      }
       if (mode === 'cat') {
-        const cat = (li.getAttribute('data-cat') || '').trim();
-        if (cat && cat === k) passing.push(li);
+        const cat = (li.getAttribute('data-cat') || '').trim().toLowerCase();
+        const kLower = k.toLowerCase();
+        if (cat && cat === kLower) passing.push(li);
       } else {
-        const tags = (li.getAttribute('data-tags') || '').split('|').filter(Boolean);
-        if (tags.includes(k)) passing.push(li);
+        const tags = (li.getAttribute('data-tags') || '')
+          .split('|')
+          .filter(Boolean)
+          .map(t => t.trim().toLowerCase());
+        const kLower = k.toLowerCase();
+        if (tags.includes(kLower)) passing.push(li);
       }
     }
 
@@ -53,7 +62,10 @@
     items.forEach(li => { li.style.display = 'none'; });
     // Show up to limit
     for (let i = 0; i < passing.length; i++) {
-      if (i < max) { passing[i].style.display = ''; visible++; }
+      if (i < max) {
+        passing[i].style.display = '';
+        visible++;
+      }
     }
     return { total, visible };
   }
@@ -217,8 +229,16 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = (emailInput && emailInput.value || '').trim();
+      const wantsSiteNews = form.querySelector('[name="wants_site_news"]')?.checked ?? true;
+      const wantsConcerts = form.querySelector('[name="wants_concerts"]')?.checked ?? true;
+      const source = form.querySelector('[name="source"]')?.value || 'website';
 
       if (!isValidEmail(email)) { setFeedback(MSG.invalid); if (emailInput) emailInput.focus(); return; }
+
+      if (!wantsSiteNews && !wantsConcerts) {
+        setFeedback(lang === 'en' ? 'Please select at least one option.' : 'Seleziona almeno un\'opzione.');
+        return;
+      }
 
       setFeedback(MSG.sending);
       disableForm(true);
@@ -227,7 +247,14 @@
         const res = await fetch('/api/newsletter/subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, consent: true, lang })
+          body: JSON.stringify({
+            email,
+            consent: true,
+            lang,
+            wants_site_news: wantsSiteNews,
+            wants_concerts: wantsConcerts,
+            source
+          })
         });
         const data = await res.json().catch(() => ({}));
         if (res.ok && data && data.ok) {
@@ -292,12 +319,34 @@
     });
   }
 
+  /* ===== Mobile Select Dropdown ===== */
+  function initMobileSelect() {
+    const mobileSelect = document.getElementById('newsMobileSelect');
+    if (!mobileSelect) return;
+
+    mobileSelect.addEventListener('change', (e) => {
+      const selectedValue = e.target.value;
+
+      // Find the corresponding tab and trigger its click
+      const tabs = $all('#news_tabs .news-tab');
+      const matchingTab = tabs.find(btn => {
+        const filterVal = btn.getAttribute('data-filter-cat') || btn.getAttribute('data-filter');
+        return filterVal === selectedValue;
+      });
+
+      if (matchingTab) {
+        matchingTab.click();
+      }
+    });
+  }
+
   /* ===== Init ===== */
   function init() {
     initTabsAndPaging();
     initNewsletterForm();
     initLqipFade();
     initClickableTags();
+    initMobileSelect();
   }
 
   if (document.readyState === 'loading') {

@@ -17,10 +17,7 @@
       tabs: [
         { label: 'Dashboard', url: '/gallery', icon: 'home' },
         { label: 'Collezioni', url: '/gallery/collections', icon: 'folder-open' },
-        { label: 'Foto', url: '/gallery/photos', icon: 'camera' },
-        { label: 'Video', url: '/gallery/videos', icon: 'video' },
-        { label: 'Audio', url: '/gallery/audios', icon: 'music' },
-        { label: 'Categorie', url: '/gallery/categories', icon: 'tags' }
+        { label: 'Media Manager', url: '/gallery/media', icon: 'images' }
       ],
       currentPath: '/gallery',
       baseUrl: 'gallery'
@@ -118,28 +115,6 @@
           <% } else { %>
             <p>Nessuna collezione creata. <a href="/gallery/collections/new" class="btn btn-primary">Crea prima collezione</a></p>
           <% } %>
-        </div>
-
-        <div class="quick-links">
-          <h2>Azioni Rapide</h2>
-          <div class="link-grid">
-            <a href="/gallery/collections/new" class="quick-link-card">
-              <span class="icon"><i class="fas fa-plus"></i></span>
-              <span>Nuova Collezione</span>
-            </a>
-            <a href="/gallery/photos" class="quick-link-card">
-              <span class="icon"><i class="fas fa-camera"></i></span>
-              <span>Carica Foto</span>
-            </a>
-            <a href="/gallery/videos" class="quick-link-card">
-              <span class="icon"><i class="fas fa-video"></i></span>
-              <span>Gestisci Video</span>
-            </a>
-            <a href="/gallery/audios" class="quick-link-card">
-              <span class="icon"><i class="fas fa-music"></i></span>
-              <span>Gestisci Audio</span>
-            </a>
-          </div>
         </div>
   </main>
 

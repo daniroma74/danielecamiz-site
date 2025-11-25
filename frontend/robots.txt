@@ -1,0 +1,16 @@
+# robots.txt for danielecamiz.com
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.danielecamiz.com/sitemap.xml
+
+# Disallow admin panels (protezione extra oltre a auth)
+Disallow: /bio-admin/
+Disallow: /news-admin/
+Disallow: /gallery-admin/
+Disallow: /press-admin/
+Disallow: /concerts-admin/
+Disallow: /contact-admin/
+Disallow: /hub/

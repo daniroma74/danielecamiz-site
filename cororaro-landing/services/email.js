@@ -429,4 +429,84 @@ ${messageContent}
   return info;
 }
 
-export default { sendBookingConfirmation, sendNewsletterConfirmation, sendNewsletter };
+/**
+ * Send newsletter campaign with HTML content
+ */
+export async function sendCampaign(email, firstName, lastName, subject, htmlContent) {
+  if (!transporter) {
+    throw new Error('Email transporter not configured');
+  }
+
+  // Wrap campaign HTML in basic email template
+  const emailHTML = `
+    <!DOCTYPE html>
+    <html lang="it">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          margin: 0;
+          padding: 0;
+          background-color: #f4f4f4;
+        }
+        .email-wrapper {
+          max-width: 600px;
+          margin: 0 auto;
+          background: white;
+        }
+        .email-content {
+          padding: 20px;
+        }
+        .footer {
+          text-align: center;
+          padding: 20px;
+          color: #666;
+          font-size: 12px;
+          background-color: #f8f9fa;
+          border-top: 1px solid #e0e0e0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-wrapper">
+        <div class="email-content">
+${htmlContent}
+        </div>
+        <div class="footer">
+          <p>
+            <strong>Coro Raro</strong> - Voci dal Mondo per un Mondo Migliore<br>
+            <a href="https://cororaro.it" style="color: #8B4513;">www.cororaro.it</a>
+          </p>
+          <p style="margin-top: 10px;">
+            Hai ricevuto questa email perché sei iscritto alla newsletter.<br>
+            Per disiscriverti, contattaci a info@cororaro.it
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const mailOptions = {
+    from: EMAIL_FROM,
+    to: email,
+    subject: subject,
+    html: emailHTML
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+  console.log(`📧 Campaign sent to ${email}:`, info.messageId);
+
+  return info;
+}
+
+export default {
+  sendBookingConfirmation,
+  sendNewsletterConfirmation,
+  sendNewsletter,
+  sendCampaign
+};

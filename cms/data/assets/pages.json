@@ -34,15 +34,16 @@
   },
   "home": {
     "styles": [
+      "/css/pages/home/home-reset.css",
       "/css/pages/home/home-bandcamp.css",
       "/css/pages/home/home-concerts.css",
       "/css/pages/home/home-contact.css",
       "/css/pages/home/home-hero.css",
       "/css/pages/home/home-news.css",
       "/css/pages/home/home-projects.css",
-      "/css/pages/home/home-reset.css",
-      "/css/pages/home/home-responsive.css",
-      "/css/pages/home/home-video.css"
+      "/css/pages/home/home-video.css",
+      "/css/pages/home/home-z-enhancements.css",
+      "/css/pages/home/home-responsive.css"
     ],
     "scripts": [
       "/js/modules/home/home-entry.js"
@@ -57,7 +58,8 @@
   },
   "news": {
     "styles": [
-      "/css/pages/news/news-base.css"
+      "/css/pages/news/news-base.css",
+      "/css/pages/news/news-ux-enhancements.css"
     ],
     "scripts": [
       "/js/modules/news/news.js"
@@ -73,6 +75,11 @@
   "repertoire": {
     "styles": [
       "/css/pages/repertoire/repertoire-base.css",
+      "/css/pages/repertoire/repertoire-modern.css",
+      "/css/pages/repertoire/repertoire-new.css",
+      "/css/pages/repertoire/repertoire-guide.css",
+      "/css/pages/repertoire/repertoire-ux-enhancements.css",
+      "/css/pages/repertoire/repertoire-collaborators-compact.css",
       "/css/pages/repertoire/repertoire-responsive.css"
     ],
     "scripts": [

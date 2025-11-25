@@ -1,0 +1,279 @@
+<%
+// Newsletter preferences management page
+const isItalian = lang === 'it';
+%>
+
+<style>
+.manage-container {
+  max-width: 700px;
+  margin: 60px auto;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.manage-container h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.intro-text {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.preferences-box {
+  background: #f8f9fa;
+  padding: 24px;
+  border-radius: 8px;
+  margin: 24px 0;
+}
+
+.checkbox-group {
+  margin: 16px 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: white;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.checkbox-label:hover {
+  border-color: #d4af37;
+  box-shadow: 0 2px 8px rgba(212,175,55,0.2);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  margin-right: 16px;
+  cursor: pointer;
+  accent-color: #d4af37;
+}
+
+.checkbox-label .label-content {
+  flex: 1;
+}
+
+.checkbox-label .label-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.checkbox-label .label-desc {
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: #d4af37;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #c4a137;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.success-message, .error-message {
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.back-link a {
+  color: #7f8c8d;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.back-link a:hover {
+  color: #d4af37;
+}
+</style>
+
+<div class="manage-container">
+  <h1>⚙️ <%= isItalian ? 'Gestisci le tue preferenze' : 'Manage your preferences' %></h1>
+
+  <p class="intro-text">
+    <%= isItalian
+      ? 'Scegli quali aggiornamenti vuoi ricevere. Puoi modificare le tue preferenze in qualsiasi momento.'
+      : 'Choose which updates you want to receive. You can change your preferences anytime.' %>
+  </p>
+
+  <% if (message) { %>
+    <div class="<%= message.type === 'success' ? 'success-message' : 'error-message' %>">
+      <%= message.text %>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/newsletter/manage">
+    <input type="hidden" name="lang" value="<%= lang %>">
+    <input type="hidden" name="token" value="<%= token || '' %>">
+
+    <div class="form-group">
+      <label for="email"><%= isItalian ? 'Email' : 'Email' %></label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        class="form-control"
+        value="<%= email || '' %>"
+        <%= token ? 'readonly' : 'required' %>
+      >
+    </div>
+
+    <div class="preferences-box">
+      <h3 style="margin-top: 0;"><%= isItalian ? 'Le tue preferenze:' : 'Your preferences:' %></h3>
+
+      <div class="checkbox-group">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            name="wants_site_news"
+            value="1"
+            <%= (typeof wants_site_news !== 'undefined' ? wants_site_news : true) ? 'checked' : '' %>
+          >
+          <div class="label-content">
+            <div class="label-title">📰 <%= isItalian ? 'News del sito' : 'Site News' %></div>
+            <div class="label-desc">
+              <%= isItalian
+                ? 'Ricevi aggiornamenti su articoli, progetti e novità dal sito danielecamiz.com'
+                : 'Receive updates about articles, projects and news from danielecamiz.com' %>
+            </div>
+          </div>
+        </label>
+
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            name="wants_concerts"
+            value="1"
+            <%= (typeof wants_concerts !== 'undefined' ? wants_concerts : true) ? 'checked' : '' %>
+          >
+          <div class="label-content">
+            <div class="label-title">🎵 <%= isItalian ? 'Aggiornamenti concerti' : 'Concert Updates' %></div>
+            <div class="label-desc">
+              <%= isItalian
+                ? 'Ricevi annunci e informazioni sui concerti e le performance'
+                : 'Receive announcements and information about concerts and performances' %>
+            </div>
+          </div>
+        </label>
+      </div>
+
+      <p style="font-size: 14px; color: #7f8c8d; margin-top: 16px;">
+        ⚠️ <%= isItalian
+          ? 'Devi selezionare almeno una preferenza per rimanere iscritto.'
+          : 'You must select at least one preference to stay subscribed.' %>
+      </p>
+    </div>
+
+    <div class="btn-group">
+      <button type="submit" class="btn btn-primary">
+        💾 <%= isItalian ? 'Salva preferenze' : 'Save Preferences' %>
+      </button>
+      <a href="/" class="btn btn-secondary">
+        <%= isItalian ? 'Annulla' : 'Cancel' %>
+      </a>
+    </div>
+  </form>
+
+  <div class="back-link">
+    <a href="/">danielecamiz.com</a>
+  </div>
+</div>
+
+<script>
+// Validation: at least one checkbox must be checked
+document.querySelector('form').addEventListener('submit', function(e) {
+  const siteNews = document.querySelector('[name="wants_site_news"]').checked;
+  const concerts = document.querySelector('[name="wants_concerts"]').checked;
+
+  if (!siteNews && !concerts) {
+    e.preventDefault();
+    alert('<%= isItalian ? "Seleziona almeno un\\'opzione!" : "Please select at least one option!" %>');
+  }
+});
+</script>

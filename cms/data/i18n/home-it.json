@@ -39,7 +39,8 @@
       "title": "Coro Raro",
       "desc": "Ensemble vocale specializzato in musica corale rara e contemporanea.",
       "btnText": "Visita il sito",
-      "btnUrl": "https://cororaro.it"
+      "btnUrl": "https://cororaro.it",
+      "comingSoon": true
     }
   ]
 }

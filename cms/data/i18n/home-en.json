@@ -39,7 +39,8 @@
       "title": "Coro Raro",
       "desc": "Vocal ensemble specialized in rare and contemporary choral music.",
       "btnText": "Visit the website",
-      "btnUrl": "https://cororaro.it"
+      "btnUrl": "https://cororaro.it",
+      "comingSoon": true
     }
   ]
 }

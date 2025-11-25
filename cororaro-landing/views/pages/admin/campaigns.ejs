@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Coro Raro Landing Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .actions {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.9rem 1.8rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8B4513, #654321);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+    }
+
+    .btn-secondary {
+      background: #4a7c59;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #3d6849;
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .campaigns-list {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .campaigns-list h2 {
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    .campaign-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .campaign-card:hover {
+      border-color: #8B4513;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .campaign-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .campaign-title {
+      flex: 1;
+    }
+
+    .campaign-title h3 {
+      font-size: 1.3rem;
+      color: #333;
+      margin-bottom: 0.3rem;
+    }
+
+    .campaign-title p {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .campaign-status {
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-draft {
+      background: #ffeaa7;
+      color: #d63031;
+    }
+
+    .status-sent {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .campaign-meta {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .campaign-actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #666;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📬 <%= title %></h1>
+      <p>Gestisci le campagne newsletter per il Coro Raro</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <a href="/admin/newsletter" class="btn btn-secondary">← Torna a Newsletter</a>
+      <a href="/admin/newsletter/campaigns/new" class="btn btn-primary">✏️ Nuova Campagna</a>
+    </div>
+
+    <!-- Campaigns List -->
+    <div class="campaigns-list">
+      <h2>📋 Le Tue Campagne (<%= campaigns.length %>)</h2>
+
+      <% if (campaigns.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <h3>Nessuna campagna creata</h3>
+          <p>Crea la tua prima campagna newsletter per comunicare con i tuoi iscritti!</p>
+          <br>
+          <a href="/admin/newsletter/campaigns/new" class="btn btn-primary">
+            ✏️ Crea Prima Campagna
+          </a>
+        </div>
+      <% } else { %>
+        <% campaigns.forEach(campaign => { %>
+          <div class="campaign-card">
+            <div class="campaign-header">
+              <div class="campaign-title">
+                <h3><%= campaign.name %></h3>
+                <p><strong>Oggetto:</strong> <%= campaign.subject %></p>
+              </div>
+              <span class="campaign-status status-<%= campaign.status %>">
+                <%= campaign.status === 'draft' ? '📝 Bozza' : '✅ Inviata' %>
+              </span>
+            </div>
+
+            <div class="campaign-meta">
+              <span>📅 Creata: <%= new Date(campaign.created_at).toLocaleDateString('it-IT') %></span>
+              <% if (campaign.sent_at) { %>
+                <span>📧 Inviata: <%= new Date(campaign.sent_at).toLocaleDateString('it-IT') %></span>
+                <span>👥 Destinatari: <%= campaign.sent_count %></span>
+              <% } %>
+            </div>
+
+            <div class="campaign-actions">
+              <% if (campaign.status === 'draft') { %>
+                <a href="/admin/newsletter/campaigns/<%= campaign.id %>/edit" class="btn btn-primary btn-small">
+                  ✏️ Modifica
+                </a>
+                <button class="btn btn-success btn-small" onclick="sendCampaign(<%= campaign.id %>, '<%= campaign.name %>')">
+                  📧 Invia Newsletter
+                </button>
+              <% } else { %>
+                <a href="/admin/newsletter/campaigns/<%= campaign.id %>/edit" class="btn btn-secondary btn-small">
+                  👁️ Visualizza
+                </a>
+              <% } %>
+              <button class="btn btn-danger btn-small" onclick="deleteCampaign(<%= campaign.id %>, '<%= campaign.name %>')">
+                🗑️ Elimina
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+
+  <script>
+    async function sendCampaign(id, name) {
+      if (!confirm(`Vuoi davvero inviare la campagna "${name}" a tutti gli iscritti?
+
+Questa azione non può essere annullata!`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/newsletter/campaigns/${id}/send`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert(data.message);
+          location.reload();
+        } else {
+          alert('❌ Errore: ' + data.message);
+        }
+      } catch (error) {
+        alert('❌ Errore: ' + error.message);
+      }
+    }
+
+    async function deleteCampaign(id, name) {
+      if (!confirm(`Vuoi davvero eliminare la campagna "${name}"?
+
+Questa azione non può essere annullata!`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/newsletter/campaigns/${id}/delete`, {
+          method: 'POST'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert('✅ Campagna eliminata');
+          location.reload();
+        } else {
+          alert('❌ Errore: ' + data.message);
+        }
+      } catch (error) {
+        alert('❌ Errore: ' + error.message);
+      }
+    }
+  </script>
+</body>
+</html>

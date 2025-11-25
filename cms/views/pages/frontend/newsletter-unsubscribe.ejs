@@ -1,0 +1,254 @@
+<%
+// Newsletter unsubscribe page
+const isItalian = lang === 'it';
+
+const messages = {
+  form: {
+    title: isItalian ? 'Cancellazione Newsletter' : 'Unsubscribe from Newsletter',
+    intro: isItalian ? 'Inserisci il tuo indirizzo email per cancellarti dalla newsletter.' : 'Enter your email address to unsubscribe from the newsletter.',
+    emailLabel: isItalian ? 'Email' : 'Email',
+    submitBtn: isItalian ? 'Cancella iscrizione' : 'Unsubscribe',
+    back: isItalian ? 'Torna al sito' : 'Back to website'
+  },
+  confirm: {
+    title: isItalian ? 'Conferma cancellazione' : 'Confirm unsubscription',
+    intro: isItalian ? 'Sei sicuro di volerti cancellare dalla newsletter?' : 'Are you sure you want to unsubscribe from the newsletter?',
+    emailLabel: isItalian ? 'Email da cancellare:' : 'Email to unsubscribe:',
+    warning: isItalian ? 'Non riceverai più aggiornamenti su news, progetti e concerti.' : 'You will no longer receive updates about news, projects and concerts.',
+    confirmBtn: isItalian ? 'Sì, cancella iscrizione' : 'Yes, unsubscribe',
+    cancelBtn: isItalian ? 'No, torna indietro' : 'No, go back'
+  },
+  success: {
+    title: isItalian ? '✅ Cancellazione completata' : '✅ Unsubscribed successfully',
+    message: isItalian ? 'Sei stato cancellato dalla newsletter. Non riceverai più email da noi.' : 'You have been unsubscribed from the newsletter. You will no longer receive emails from us.',
+    resubscribe: isItalian ? 'Se cambi idea, puoi iscriverti di nuovo dalla pagina News.' : 'If you change your mind, you can subscribe again from the News page.',
+    backBtn: isItalian ? 'Torna al sito' : 'Back to website'
+  },
+  error: {
+    title: isItalian ? '❌ Errore' : '❌ Error',
+    invalid_token: isItalian ? 'Il link di cancellazione non è valido o è scaduto.' : 'The unsubscribe link is invalid or expired.',
+    invalid_request: isItalian ? 'Richiesta non valida. Verifica il link ricevuto via email.' : 'Invalid request. Please check the link received via email.',
+    server_error: isItalian ? 'Si è verificato un errore. Riprova più tardi.' : 'An error occurred. Please try again later.',
+    backBtn: isItalian ? 'Torna al sito' : 'Back to website'
+  }
+};
+
+const currentMessages = messages[step] || messages.error;
+%>
+
+<style>
+.unsubscribe-container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.unsubscribe-container h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.unsubscribe-intro {
+  text-align: center;
+  color: #7f8c8d;
+  margin-bottom: 30px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.unsubscribe-form {
+  margin: 30px 0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #d4af37;
+}
+
+.email-display {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.warning-box {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 16px;
+  margin: 20px 0;
+  border-radius: 4px;
+  color: #856404;
+}
+
+.success-box {
+  background: #d4edda;
+  border-left: 4px solid #28a745;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 4px;
+  color: #155724;
+  text-align: center;
+}
+
+.error-box {
+  background: #f8d7da;
+  border-left: 4px solid #dc3545;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 4px;
+  color: #721c24;
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: #d4af37;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #c4a137;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+.btn-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.back-link a {
+  color: #7f8c8d;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.back-link a:hover {
+  color: #d4af37;
+  text-decoration: underline;
+}
+</style>
+
+<div class="unsubscribe-container">
+  <h1><%= currentMessages.title %></h1>
+
+  <% if (step === 'form') { %>
+    <!-- Manual unsubscribe form -->
+    <p class="unsubscribe-intro"><%= currentMessages.intro %></p>
+    <form method="POST" action="/newsletter/unsubscribe" class="unsubscribe-form">
+      <input type="hidden" name="lang" value="<%= lang %>">
+      <div class="form-group">
+        <label for="email"><%= currentMessages.emailLabel %></label>
+        <input type="email" id="email" name="email" class="form-control" required autofocus>
+      </div>
+      <div class="btn-group">
+        <button type="submit" class="btn btn-danger"><%= currentMessages.submitBtn %></button>
+      </div>
+    </form>
+
+  <% } else if (step === 'confirm') { %>
+    <!-- Confirmation step -->
+    <p class="unsubscribe-intro"><%= currentMessages.intro %></p>
+    <div class="email-display"><%= email %></div>
+    <div class="warning-box">⚠️ <%= currentMessages.warning %></div>
+
+    <form method="POST" action="/newsletter/unsubscribe" class="unsubscribe-form">
+      <input type="hidden" name="email" value="<%= email %>">
+      <input type="hidden" name="token" value="<%= token %>">
+      <input type="hidden" name="lang" value="<%= lang %>">
+      <div class="btn-group">
+        <button type="submit" class="btn btn-danger"><%= currentMessages.confirmBtn %></button>
+        <a href="/" class="btn btn-secondary"><%= currentMessages.cancelBtn %></a>
+      </div>
+    </form>
+
+  <% } else if (step === 'success') { %>
+    <!-- Success message -->
+    <div class="success-box">
+      <p style="font-size: 18px; margin: 0 0 10px;"><%= currentMessages.message %></p>
+      <p style="margin: 0; font-size: 14px;"><%= currentMessages.resubscribe %></p>
+    </div>
+    <div class="btn-group">
+      <a href="/" class="btn btn-primary"><%= currentMessages.backBtn %></a>
+    </div>
+
+  <% } else if (step === 'error') { %>
+    <!-- Error message -->
+    <div class="error-box">
+      <p style="font-size: 18px; margin: 0;"><%= currentMessages[error] || currentMessages.server_error %></p>
+    </div>
+    <div class="btn-group">
+      <a href="/" class="btn btn-primary"><%= currentMessages.backBtn %></a>
+    </div>
+  <% } %>
+
+  <div class="back-link">
+    <a href="/">danielecamiz.com</a>
+  </div>
+</div>

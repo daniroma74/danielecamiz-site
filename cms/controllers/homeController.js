@@ -201,6 +201,29 @@ export async function getHomePage(req, res) {
     const videoItems   = await getLatestVideos(3);
     const homeConcerts = await getUpcomingConcerts(db, lang, 3);
 
+    // Get repertoire stats for the homepage highlight
+    let stats = { total_works: 0, total_composers: 0, total_concerts: 0 };
+    try {
+      const statsRow = await new Promise((resolve) => {
+        db.get(`
+          SELECT
+            (SELECT COUNT(*) FROM works) AS total_works,
+            (SELECT COUNT(*) FROM composers) AS total_composers,
+            (SELECT COUNT(DISTINCT concert_id) FROM concert_program) AS total_concerts
+        `, (err, row) => {
+          if (err) {
+            console.error('[home] stats query error:', err);
+            resolve({ total_works: 0, total_composers: 0, total_concerts: 0 });
+          } else {
+            resolve(row || { total_works: 0, total_composers: 0, total_concerts: 0 });
+          }
+        });
+      });
+      stats = statsRow;
+    } catch (e) {
+      console.error('[home] stats catch:', e);
+    }
+
     const contactMini = homeData.contactMini || { email: 'info@danielecamiz.com', moreUrl: '/contact' };
 
     const _videoItems    = Array.isArray(videoItems) ? videoItems : [];
@@ -233,6 +256,7 @@ export async function getHomePage(req, res) {
       videoItems: _videoItems,
       homeConcerts: _homeConcerts,
       contactMini: _contactMini,
+      stats,
       cookieConsent
     });
   } catch (err) {

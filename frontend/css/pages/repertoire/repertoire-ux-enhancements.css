@@ -1,0 +1,419 @@
+/* ===== REPERTOIRE UX ENHANCEMENTS 2025 ===== */
+/* Sticky navigation and better section accessibility */
+
+/* Sticky Tab Navigation - Always visible while scrolling */
+.rep-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.98) 0%, rgba(10, 10, 10, 0.95) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  margin: 3rem 0 0 0 !important;
+  padding: 1.5rem 0 0.5rem 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.3) !important;
+  transition: all 0.3s ease;
+}
+
+/* Enhanced sticky state when scrolled */
+.rep-tabs.scrolled {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(212, 175, 55, 0.2);
+  border-bottom-color: rgba(212, 175, 55, 0.5) !important;
+}
+
+/* More prominent tabs */
+.rep-tab {
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  padding: 1.25rem 2rem !important;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Tab icon enhancements */
+.rep-tab i {
+  font-size: 1.1rem !important;
+  transition: transform 0.3s ease;
+}
+
+.rep-tab:hover i {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.rep-tab.active i {
+  transform: scale(1.1);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Badge/count styling improvements */
+.rep-tab-badge,
+.rep-tab-count {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.3)) !important;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
+}
+
+.rep-tab.active .rep-tab-badge,
+.rep-tab.active .rep-tab-count {
+  background: linear-gradient(135deg, #d4af37, rgba(212, 175, 55, 0.8)) !important;
+  color: #000;
+  border-color: #d4af37;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+}
+
+/* Enhanced hover effect with underline slide */
+.rep-tab::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.rep-tab:hover::before {
+  transform: scaleX(0.7);
+}
+
+.rep-tab.active::before {
+  transform: scaleX(1);
+}
+
+/* Tab label visibility */
+.rep-tab-label {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.rep-tab:hover .rep-tab-label {
+  letter-spacing: 0.02em;
+}
+
+/* Quick scroll hint for mobile - appears when tabs become sticky */
+.rep-scroll-hint {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.95), rgba(212, 175, 55, 0.85));
+  color: #000;
+  padding: 1rem 1.5rem;
+  border-radius: 50px;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+  z-index: 90;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: none; /* Shown via JS when needed */
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.rep-scroll-hint:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(212, 175, 55, 0.6);
+}
+
+.rep-scroll-hint i {
+  font-size: 1rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Enhanced view transitions */
+.rep-view {
+  animation: fadeSlideIn 0.5s ease-out forwards;
+  padding: 3rem 0 4rem 0 !important;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Container adjustments for better spacing with sticky tabs */
+.rep-container {
+  position: relative;
+}
+
+/* Improved quick guide prominence */
+.rep-quick-guide {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(212, 175, 55, 0.04));
+  border: 2px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  margin: 3rem auto 2rem;
+  max-width: 900px;
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.1);
+  transition: all 0.4s ease;
+}
+
+.rep-quick-guide:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.rep-guide-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.rep-guide-icon i {
+  font-size: 1.8rem;
+  color: #d4af37;
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rep-guide-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f4eed4;
+  text-align: center;
+  margin: 0 0 1rem 0;
+}
+
+.rep-guide-text {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin: 0;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+/* Tablet and below */
+@media (max-width: 992px) {
+  .rep-tabs {
+    top: 70px; /* Adjust for smaller navbar */
+    padding: 1rem 0 0 0;
+    gap: 0.5rem;
+  }
+
+  .rep-tab {
+    font-size: 1rem !important;
+    padding: 1rem 1.25rem !important;
+  }
+
+  .rep-tab i {
+    font-size: 1rem !important;
+  }
+
+  .rep-tab-label {
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile Select Dropdown - NASCOSTO su desktop */
+.rep-mobile-select {
+  display: none;
+}
+
+/* Mobile - SELECT DROPDOWN invece di tabs */
+@media (max-width: 768px) {
+  .rep-tabs {
+    display: none !important; /* Nascondi i tab su mobile */
+  }
+
+  /* Mostra il select dropdown su mobile */
+  .rep-mobile-select {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    margin: 0 0 1.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f4eed4;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.1));
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23d4af37' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 3rem;
+  }
+
+  .rep-mobile-select:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+  }
+
+  .rep-mobile-select option {
+    background: #1a1a1a;
+    color: #f4eed4;
+    padding: 0.75rem;
+  }
+}
+
+  /* Show scroll hint on mobile when tabs are scrollable */
+  .rep-scroll-hint {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.85rem;
+  }
+
+  .rep-quick-guide {
+    padding: 1.5rem;
+  }
+
+  .rep-guide-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .rep-guide-icon i {
+    font-size: 1.5rem;
+  }
+
+  .rep-guide-title {
+    font-size: 1.25rem;
+  }
+
+  .rep-guide-text {
+    font-size: 0.95rem;
+  }
+}
+
+/* Small mobile - keep icons visible */
+@media (max-width: 480px) {
+  .rep-tab {
+    padding: 0.75rem 1rem !important;
+  }
+
+  .rep-tab i {
+    font-size: 1.1rem !important;
+  }
+
+  .rep-tab-badge,
+  .rep-tab-count {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .rep-tabs,
+  .rep-tab,
+  .rep-tab i,
+  .rep-view,
+  .rep-quick-guide {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+
+  .rep-scroll-hint i {
+    animation: none !important;
+  }
+
+  .rep-guide-icon i {
+    animation: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .rep-tabs {
+    border-bottom-width: 3px !important;
+  }
+
+  .rep-tab.active {
+    border-bottom-width: 4px;
+  }
+
+  .rep-quick-guide {
+    border-width: 3px;
+  }
+}
+
+/* Focus states for keyboard navigation */
+.rep-tab:focus-visible {
+  outline: 3px solid #d4af37;
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* GPU acceleration for smooth animations */
+.rep-tabs,
+.rep-tab,
+.rep-quick-guide {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Remove will-change when not needed */
+@media (hover: hover) {
+  .rep-tab:not(:hover):not(.active),
+  .rep-quick-guide:not(:hover) {
+    will-change: auto;
+  }
+}

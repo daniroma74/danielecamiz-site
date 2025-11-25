@@ -135,19 +135,22 @@ router.post('/api/collections', async (req, res) => {
   try {
     const {
       slug, type, title_it, title_en, description_it, description_en,
-      cover_cloudinary_id, cover_local_path, is_published, is_featured, display_order
+      cover_cloudinary_id, cover_local_path, is_published, is_featured, display_order,
+      is_auto_sync, auto_sync_max_videos
     } = req.body;
 
     const result = await runQuery(`
       INSERT INTO gallery_collections (
         slug, type, title_it, title_en, description_it, description_en,
-        cover_cloudinary_id, cover_local_path, is_published, is_featured, display_order
+        cover_cloudinary_id, cover_local_path, is_published, is_featured, display_order,
+        is_auto_sync, auto_sync_max_videos
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       slug, type, title_it, title_en, description_it, description_en,
       cover_cloudinary_id, cover_local_path,
-      is_published ? 1 : 0, is_featured ? 1 : 0, display_order || 0
+      is_published ? 1 : 0, is_featured ? 1 : 0, display_order || 0,
+      is_auto_sync ? 1 : 0, auto_sync_max_videos || 4
     ]);
 
     res.json({ success: true, id: result.lastID });
@@ -162,19 +165,21 @@ router.put('/api/collections/:id', async (req, res) => {
   try {
     const {
       slug, type, title_it, title_en, description_it, description_en,
-      cover_cloudinary_id, cover_local_path, is_published, is_featured, display_order
+      cover_cloudinary_id, cover_local_path, is_published, is_featured, display_order,
+      is_auto_sync, auto_sync_max_videos
     } = req.body;
 
     await runQuery(`
       UPDATE gallery_collections
       SET slug = ?, type = ?, title_it = ?, title_en = ?, description_it = ?, description_en = ?,
           cover_cloudinary_id = ?, cover_local_path = ?, is_published = ?, is_featured = ?,
-          display_order = ?, updated_at = datetime('now')
+          display_order = ?, is_auto_sync = ?, auto_sync_max_videos = ?, updated_at = datetime('now')
       WHERE id = ?
     `, [
       slug, type, title_it, title_en, description_it, description_en,
       cover_cloudinary_id, cover_local_path,
       is_published ? 1 : 0, is_featured ? 1 : 0, display_order || 0,
+      is_auto_sync ? 1 : 0, auto_sync_max_videos || 4,
       req.params.id
     ]);
 
@@ -197,38 +202,7 @@ router.delete('/api/collections/:id', async (req, res) => {
 });
 
 // ============= FOTO =============
-router.get('/photos', async (req, res) => {
-  try {
-    const collection_id = req.query.collection;
-    let photos;
-
-    if (collection_id) {
-      photos = await allQuery(`
-        SELECT * FROM gallery_items
-        WHERE item_type = 'photo' AND collection_id = ?
-        ORDER BY display_order ASC, created_at DESC
-      `, [collection_id]);
-    } else {
-      photos = await allQuery(`
-        SELECT * FROM gallery_items
-        WHERE item_type = 'photo'
-        ORDER BY display_order ASC, created_at DESC
-      `);
-    }
-
-    const collections = await allQuery('SELECT * FROM gallery_collections ORDER BY title_it ASC');
-
-    res.render('pages/photos', {
-      title: 'Foto - Gallery Admin',
-      photos,
-      collections,
-      selectedCollection: collection_id || null
-    });
-  } catch (error) {
-    console.error('Error loading photos:', error);
-    res.status(500).send('Errore caricamento foto');
-  }
-});
+// Note: Photos GET route removed - use unified /media page instead
 
 // API: Upload photo (multiplo supportato)
 router.post('/api/photos', async (req, res) => {
@@ -255,6 +229,25 @@ router.post('/api/photos', async (req, res) => {
     res.json({ success: true, id: result.lastID });
   } catch (error) {
     console.error('Error creating photo:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API: Get single photo
+router.get('/api/photos/:id', async (req, res) => {
+  try {
+    const photo = await getQuery(`
+      SELECT * FROM gallery_items
+      WHERE id = ? AND item_type = 'photo'
+    `, [req.params.id]);
+
+    if (!photo) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
+    res.json(photo);
+  } catch (error) {
+    console.error('Error fetching photo:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -297,42 +290,217 @@ router.delete('/api/photos/:id', async (req, res) => {
   }
 });
 
-// ============= VIDEO =============
-router.get('/videos', async (req, res) => {
+// ============= MEDIA UNIFICATO =============
+router.get('/media', async (req, res) => {
   try {
-    const videos = await allQuery(`
-      SELECT * FROM gallery_items
-      WHERE item_type = 'video'
-      ORDER BY is_spotlight DESC, display_order ASC, created_at DESC
-    `);
+    const collection_id = req.query.collection;
+
+    // Fetch photos
+    let photos;
+    if (collection_id) {
+      photos = await allQuery(`
+        SELECT * FROM gallery_items
+        WHERE item_type = 'photo' AND collection_id = ?
+        ORDER BY display_order ASC, created_at DESC
+      `, [collection_id]);
+    } else {
+      photos = await allQuery(`
+        SELECT * FROM gallery_items
+        WHERE item_type = 'photo'
+        ORDER BY display_order ASC, created_at DESC
+      `);
+    }
+
+    // Fetch videos
+    let videos;
+    if (collection_id) {
+      videos = await allQuery(`
+        SELECT * FROM gallery_items
+        WHERE item_type = 'video' AND collection_id = ?
+        ORDER BY display_order ASC, created_at DESC
+      `, [collection_id]);
+    } else {
+      videos = await allQuery(`
+        SELECT * FROM gallery_items
+        WHERE item_type = 'video'
+        ORDER BY display_order ASC, created_at DESC
+      `);
+    }
+
+    // Fetch audios
+    let audios;
+    if (collection_id) {
+      audios = await allQuery(`
+        SELECT * FROM gallery_items
+        WHERE item_type = 'audio' AND collection_id = ?
+        ORDER BY display_order ASC, created_at DESC
+      `, [collection_id]);
+    } else {
+      audios = await allQuery(`
+        SELECT * FROM gallery_items
+        WHERE item_type = 'audio'
+        ORDER BY display_order ASC, created_at DESC
+      `);
+    }
 
     const collections = await allQuery('SELECT * FROM gallery_collections ORDER BY title_it ASC');
-    const lastSync = await getQuery('SELECT * FROM gallery_youtube_sync ORDER BY created_at DESC LIMIT 1');
 
-    res.render('pages/videos', {
-      title: 'Video - Gallery Admin',
+    res.render('pages/media', {
+      title: 'Media Manager - Gallery Admin',
+      photos,
       videos,
+      audios,
       collections,
-      lastSync
+      selectedCollection: collection_id || null
     });
   } catch (error) {
-    console.error('Error loading videos:', error);
-    res.status(500).send('Errore caricamento video');
+    console.error('Error loading media:', error);
+    res.status(500).send('Errore caricamento media');
   }
 });
 
-// API: Sync YouTube (placeholder - da implementare con YouTube API)
+// ============= VIDEO =============
+// Note: Videos GET route removed - use unified /media page instead
+
+// API: Sync YouTube - dual mode (auto from channel + manual IDs)
 router.post('/api/videos/sync-youtube', async (req, res) => {
   try {
-    // TODO: Implementare sync con YouTube Data API v3
-    res.json({ success: true, message: 'YouTube sync da implementare' });
+    const { mode, youtubeIds, channelId, maxVideos } = req.body;
+    let videoIds = [];
+
+    // Mode 1: Auto sync from YouTube channel
+    if (mode === 'auto') {
+      const { getLatestVideos } = await import('../utils/youtubeService.js');
+      const { decode } = await import('html-entities');
+      const max = parseInt(maxVideos) || 4;
+      const collectionId = req.body.collectionId || null;
+
+      const videos = await getLatestVideos(max);
+
+      if (!videos || videos.length === 0) {
+        return res.status(400).json({
+          error: 'Impossibile recuperare video dal canale YouTube',
+          details: 'Verifica che YT_API_KEY e YT_CHANNEL_ID siano configurati correttamente'
+        });
+      }
+
+      // Import each video with metadata
+      let imported = 0;
+      for (const video of videos) {
+        // Decode HTML entities in title
+        const decodedTitle = decode(video.title);
+
+        // Check if already exists
+        const existing = await getQuery(
+          'SELECT id FROM gallery_items WHERE youtube_id = ? AND item_type = ?',
+          [video.id, 'video']
+        );
+
+        if (!existing) {
+          await runQuery(`
+            INSERT INTO gallery_items (
+              item_type, collection_id, youtube_id, title_it, title_en, is_published, created_at
+            ) VALUES (?, ?, ?, ?, ?, 1, datetime('now'))
+          `, ['video', collectionId, video.id, decodedTitle, decodedTitle]);
+          imported++;
+        } else if (collectionId) {
+          // If video exists but not in this collection, update it
+          await runQuery(`
+            UPDATE gallery_items
+            SET collection_id = ?, title_it = ?, title_en = ?
+            WHERE id = ?
+          `, [collectionId, decodedTitle, decodedTitle, existing.id]);
+        }
+      }
+
+      // Log sync
+      const syncChannelId = channelId || process.env.YT_CHANNEL_ID || 'unknown';
+      await runQuery(`
+        INSERT INTO gallery_youtube_sync (
+          channel_id, videos_found, videos_imported, sync_status, created_at
+        )
+        VALUES (?, ?, ?, 'success', datetime('now'))
+      `, [syncChannelId, videos.length, imported]);
+
+      return res.json({
+        success: true,
+        message: `Importati ${imported} nuovi video su ${videos.length} trovati dal canale`,
+        imported,
+        total: videos.length
+      });
+    }
+
+    // Mode 2: Manual ID import
+    else if (mode === 'manual') {
+      if (!youtubeIds || !Array.isArray(youtubeIds) || youtubeIds.length === 0) {
+        return res.status(400).json({ error: 'Fornire array di YouTube IDs' });
+      }
+
+      let imported = 0;
+      for (const ytId of youtubeIds) {
+        // Check if already exists
+        const existing = await getQuery(
+          'SELECT id FROM gallery_items WHERE youtube_id = ? AND item_type = ?',
+          [ytId, 'video']
+        );
+
+        if (!existing) {
+          // Create basic video entry
+          await runQuery(`
+            INSERT INTO gallery_items (
+              item_type, youtube_id, title_it, is_published, created_at
+            ) VALUES (?, ?, ?, 1, datetime('now'))
+          `, ['video', ytId, `Video ${ytId}`]);
+          imported++;
+        }
+      }
+
+      // Log sync
+      const syncChannelId = 'manual-import';
+      await runQuery(`
+        INSERT INTO gallery_youtube_sync (
+          channel_id, videos_found, videos_imported, sync_status, created_at
+        )
+        VALUES (?, ?, ?, 'success', datetime('now'))
+      `, [syncChannelId, youtubeIds.length, imported]);
+
+      return res.json({
+        success: true,
+        message: `Importati ${imported} nuovi video su ${youtubeIds.length} totali`,
+        imported,
+        total: youtubeIds.length
+      });
+    }
+
+    else {
+      return res.status(400).json({ error: 'Mode non valida. Utilizzare "auto" o "manual"' });
+    }
   } catch (error) {
     console.error('Error syncing YouTube:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// API: Add/Update video
+// API: Get single video
+router.get('/api/videos/:id', async (req, res) => {
+  try {
+    const video = await getQuery(`
+      SELECT * FROM gallery_items
+      WHERE id = ? AND item_type = 'video'
+    `, [req.params.id]);
+
+    if (!video) {
+      return res.status(404).json({ error: 'Video not found' });
+    }
+
+    res.json(video);
+  } catch (error) {
+    console.error('Error fetching video:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API: Add video
 router.post('/api/videos', async (req, res) => {
   try {
     const {
@@ -359,6 +527,34 @@ router.post('/api/videos', async (req, res) => {
   }
 });
 
+// API: Update video
+router.put('/api/videos/:id', async (req, res) => {
+  try {
+    const {
+      collection_id, youtube_id, title_it, title_en, description_it, description_en,
+      timecode, is_spotlight, is_whitelisted, is_published, display_order, duration
+    } = req.body;
+
+    await runQuery(`
+      UPDATE gallery_items
+      SET collection_id = ?, youtube_id = ?, title_it = ?, title_en = ?,
+          description_it = ?, description_en = ?, timecode = ?,
+          is_spotlight = ?, is_whitelisted = ?, is_published = ?,
+          display_order = ?, duration = ?
+      WHERE id = ? AND item_type = 'video'
+    `, [
+      collection_id || null, youtube_id, title_it, title_en, description_it, description_en,
+      timecode, is_spotlight ? 1 : 0, is_whitelisted ? 1 : 0, is_published ? 1 : 0,
+      display_order || 0, duration, req.params.id
+    ]);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating video:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // API: Delete video
 router.delete('/api/videos/:id', async (req, res) => {
   try {
@@ -371,28 +567,28 @@ router.delete('/api/videos/:id', async (req, res) => {
 });
 
 // ============= AUDIO =============
-router.get('/audios', async (req, res) => {
+// Note: Audios GET route removed - use unified /media page instead
+
+// API: Get single audio
+router.get('/api/audios/:id', async (req, res) => {
   try {
-    const audios = await allQuery(`
+    const audio = await getQuery(`
       SELECT * FROM gallery_items
-      WHERE item_type = 'audio'
-      ORDER BY display_order ASC, created_at DESC
-    `);
+      WHERE id = ? AND item_type = 'audio'
+    `, [req.params.id]);
 
-    const collections = await allQuery('SELECT * FROM gallery_collections ORDER BY title_it ASC');
+    if (!audio) {
+      return res.status(404).json({ error: 'Audio not found' });
+    }
 
-    res.render('pages/audios', {
-      title: 'Audio - Gallery Admin',
-      audios,
-      collections
-    });
+    res.json(audio);
   } catch (error) {
-    console.error('Error loading audios:', error);
-    res.status(500).send('Errore caricamento audio');
+    console.error('Error fetching audio:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-// API: Add/Update audio
+// API: Add audio
 router.post('/api/audios', async (req, res) => {
   try {
     const {
@@ -418,6 +614,33 @@ router.post('/api/audios', async (req, res) => {
   }
 });
 
+// API: Update audio
+router.put('/api/audios/:id', async (req, res) => {
+  try {
+    const {
+      collection_id, bandcamp_url, bandcamp_embed_code, title_it, title_en,
+      description_it, description_en, is_published, display_order, duration
+    } = req.body;
+
+    await runQuery(`
+      UPDATE gallery_items
+      SET collection_id = ?, bandcamp_url = ?, bandcamp_embed_code = ?,
+          title_it = ?, title_en = ?, description_it = ?, description_en = ?,
+          is_published = ?, display_order = ?, duration = ?
+      WHERE id = ? AND item_type = 'audio'
+    `, [
+      collection_id || null, bandcamp_url, bandcamp_embed_code, title_it, title_en,
+      description_it, description_en, is_published ? 1 : 0, display_order || 0, duration,
+      req.params.id
+    ]);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating audio:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // API: Delete audio
 router.delete('/api/audios/:id', async (req, res) => {
   try {
@@ -430,22 +653,7 @@ router.delete('/api/audios/:id', async (req, res) => {
 });
 
 // ============= CATEGORIE =============
-router.get('/categories', async (req, res) => {
-  try {
-    const categories = await allQuery(`
-      SELECT * FROM gallery_categories
-      ORDER BY display_order ASC, name_it ASC
-    `);
-
-    res.render('pages/categories', {
-      title: 'Categorie - Gallery Admin',
-      categories
-    });
-  } catch (error) {
-    console.error('Error loading categories:', error);
-    res.status(500).send('Errore caricamento categorie');
-  }
-});
+// Note: Categories GET route removed - use unified /media page instead
 
 // API: Create category
 router.post('/api/categories', async (req, res) => {

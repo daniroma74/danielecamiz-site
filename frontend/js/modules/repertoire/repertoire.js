@@ -247,6 +247,65 @@
     }
   }
 
+  // Sticky tab scroll detection
+  function initStickyTabsDetection() {
+    const tabs = document.querySelector('.rep-tabs');
+    if (!tabs) return;
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+        // Add scrolled class when tabs become sticky
+        if (!entry.isIntersecting && currentScroll > lastScrollTop) {
+          tabs.classList.add('scrolled');
+        } else if (entry.isIntersecting) {
+          tabs.classList.remove('scrolled');
+        }
+
+        lastScrollTop = currentScroll;
+      },
+      { threshold: [0, 1], rootMargin: '-80px 0px 0px 0px' }
+    );
+
+    observer.observe(tabs);
+
+    // Also listen to scroll for immediate feedback
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          if (scrollTop > 300) {
+            tabs.classList.add('scrolled');
+          } else {
+            tabs.classList.remove('scrolled');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
+
+  // Smooth scroll to tabs when clicking from hero
+  function initSmoothScrollToTabs() {
+    const quickGuide = document.querySelector('.rep-quick-guide');
+    const tabs = document.querySelector('.rep-tabs');
+
+    if (quickGuide && tabs) {
+      quickGuide.style.cursor = 'pointer';
+      quickGuide.addEventListener('click', () => {
+        const tabsTop = tabs.getBoundingClientRect().top + window.pageYOffset - 100;
+        window.scrollTo({
+          top: tabsTop,
+          behavior: 'smooth'
+        });
+      });
+    }
+  }
+
   // Initialize all features
   function init() {
     initViewModeSwitcher();
@@ -254,8 +313,10 @@
     initExpandableCards();
     initSearch();
     initTimelineSortButtons();
+    initStickyTabsDetection();
+    initSmoothScrollToTabs();
 
-    console.log('[Repertoire] Initialized modern repertoire page');
+    console.log('[Repertoire] Initialized modern repertoire page with UX enhancements');
   }
 
   // Run on DOM ready

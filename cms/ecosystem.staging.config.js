@@ -14,7 +14,8 @@ module.exports = {
     kill_timeout: 5000,
     listen_timeout: 5000,
     env: {
-      NODE_ENV: 'staging'
+      NODE_ENV: 'staging',
+      BASE_URL: 'https://danielecamiz.com'
     },
     error_file: '/home/daniele/danielecamiz-site/shared/logs/staging-site-error.log',
     out_file: '/home/daniele/danielecamiz-site/shared/logs/staging-site-out.log',

@@ -12,7 +12,8 @@ module.exports = {
       env: {
         NODE_ENV: 'staging',
         PORT: 3001,
-        CLOUDINARY_CLOUD_NAME: 'dnwhnz2xy'
+        CLOUDINARY_CLOUD_NAME: 'dnwhnz2xy',
+        BASE_URL: 'https://staging.danielecamiz.com'
       },
       error_file: '../shared/logs/staging-site-error.log',
       out_file: '../shared/logs/staging-site-out.log',

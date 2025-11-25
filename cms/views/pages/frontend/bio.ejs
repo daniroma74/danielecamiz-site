@@ -84,15 +84,11 @@
   </div>
 </section>
 
-<!-- CTA PRESS KIT (singola) -->
-<%
-  // Usa cv_pdf se disponibile, altrimenti manda alla pagina press
-  const bioMediaData = (typeof bioMedia !== 'undefined' && bioMedia) ? bioMedia : {};
-  const pressKitUrl = bioMediaData.cv_pdf || '/press';
-  const downloadAttr = bioMediaData.cv_pdf ? 'download' : '';
-%>
+<!-- CTA PRESS KIT -->
 <section id="bio_cta" class="bio-cta container">
-  <a class="btn btn-primary" href="<%= pressKitUrl %>" <%= downloadAttr %> rel="noopener"><%= pressCtaLabel %></a>
+  <a class="btn btn-primary" href="/press-kit" rel="noopener">
+    <i class="fas fa-download"></i> <%= pressCtaLabel %>
+  </a>
 </section>
 
 <!-- MODALI CSS (:target) -->

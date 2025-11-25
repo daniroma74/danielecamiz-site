@@ -3,6 +3,7 @@ import path from 'path';
 import { getDb as getMainDb } from '../utils/sqliteMain.js';
 import { listPageCss } from '../utils/assetHelpers.js';
 import { resolveAsset } from '../utils/mediaResolver.js';
+import { getLatestVideos } from '../utils/youtubeService.js';
 
 const CMS_ROOT = process.cwd();
 const I18N_DIR = path.join(CMS_ROOT, 'data', 'i18n');
@@ -58,7 +59,7 @@ function resolveItemMedia(item) {
 
   if (item.item_type === 'video' && item.youtube_id) {
     return {
-      thumbnail: `https://img.youtube.com/vi/${item.youtube_id}/maxresdefault.jpg`,
+      thumbnail: `https://img.youtube.com/vi/${item.youtube_id}/hqdefault.jpg`,
       url: `https://www.youtube.com/watch?v=${item.youtube_id}`,
       embed: `https://www.youtube.com/embed/${item.youtube_id}`
     };
@@ -111,6 +112,76 @@ export async function getGalleryOverview(req, res) {
     const itemsByType = {};
     itemStats.forEach(s => { itemsByType[s.item_type] = s.count; });
 
+    // Get preview images for photos (first 3 published photo collections' covers)
+    const photoCovers = await qAll(db, `
+      SELECT cover_cloudinary_id
+      FROM gallery_collections
+      WHERE type = 'photo' AND is_published = 1 AND cover_cloudinary_id IS NOT NULL
+      ORDER BY is_featured DESC, display_order ASC, created_at DESC
+      LIMIT 3
+    `);
+    const photoPreviewImages = photoCovers.map(c =>
+      resolveAsset(
+        { storage: 'cloudinary', cloudinary_id: c.cover_cloudinary_id },
+        { width: 800, crop: 'fill', quality: 'auto', format: 'auto' }
+      )
+    );
+
+    // Get preview image for videos - use auto-sync YouTube if available
+    let videoPreviewImage = null;
+
+    // Check for auto-sync video collection
+    const autoSyncVideoCollection = await qGet(db, `
+      SELECT is_auto_sync, auto_sync_max_videos
+      FROM gallery_collections
+      WHERE type = 'video' AND is_published = 1 AND is_auto_sync = 1
+      LIMIT 1
+    `);
+
+    if (autoSyncVideoCollection && autoSyncVideoCollection.is_auto_sync) {
+      try {
+        const videos = await getLatestVideos(1);
+        if (videos.length > 0) {
+          videoPreviewImage = `https://img.youtube.com/vi/${videos[0].id}/hqdefault.jpg`;
+        }
+      } catch (err) {
+        console.error('[galleryController] Error fetching YouTube preview for overview:', err.message);
+      }
+    }
+
+    // Fallback to latest manual video
+    if (!videoPreviewImage) {
+      const latestVideo = await qGet(db, `
+        SELECT gi.youtube_id
+        FROM gallery_items gi
+        JOIN gallery_collections gc ON gi.collection_id = gc.id
+        WHERE gi.item_type = 'video' AND gi.is_published = 1 AND gc.is_published = 1
+        ORDER BY gi.created_at DESC
+        LIMIT 1
+      `);
+      videoPreviewImage = latestVideo?.youtube_id
+        ? `https://img.youtube.com/vi/${latestVideo.youtube_id}/hqdefault.jpg`
+        : null;
+    }
+
+    // Get preview image for audio (first audio collection cover)
+    const audioCover = await qGet(db, `
+      SELECT cover_cloudinary_id
+      FROM gallery_collections
+      WHERE type = 'audio' AND is_published = 1 AND cover_cloudinary_id IS NOT NULL
+      ORDER BY is_featured DESC, display_order ASC, created_at DESC
+      LIMIT 1
+    `);
+    const audioPreviewImage = audioCover?.cover_cloudinary_id
+      ? resolveAsset(
+          { storage: 'cloudinary', cloudinary_id: audioCover.cover_cloudinary_id },
+          { width: 800, crop: 'fill', quality: 'auto', format: 'auto' }
+        )
+      : null;
+
+    console.log('[GALLERY OVERVIEW] videoPreviewImage:', videoPreviewImage);
+    console.log('[GALLERY OVERVIEW] photoPreviewImages:', photoPreviewImages);
+
     const sections = [
       {
         type: 'photos',
@@ -120,7 +191,8 @@ export async function getGalleryOverview(req, res) {
           : `${itemsByType.photo || 0} foto in ${statsByType.photo || 0} collezioni`,
         icon: 'fa-images',
         url: '/gallery/photos',
-        count: itemsByType.photo || 0
+        count: itemsByType.photo || 0,
+        previewImages: photoPreviewImages
       },
       {
         type: 'videos',
@@ -130,7 +202,8 @@ export async function getGalleryOverview(req, res) {
           : `${itemsByType.video || 0} video in ${statsByType.video || 0} collezioni`,
         icon: 'fa-video',
         url: '/gallery/videos',
-        count: itemsByType.video || 0
+        count: itemsByType.video || 0,
+        previewImage: videoPreviewImage
       },
       {
         type: 'audio',
@@ -140,7 +213,8 @@ export async function getGalleryOverview(req, res) {
           : `${itemsByType.audio || 0} brani in ${statsByType.audio || 0} collezioni`,
         icon: 'fa-music',
         url: '/gallery/audio',
-        count: itemsByType.audio || 0
+        count: itemsByType.audio || 0,
+        previewImage: audioPreviewImage
       }
     ];
 
@@ -150,7 +224,6 @@ export async function getGalleryOverview(req, res) {
       : 'Foto, video e registrazioni audio da concerti ed esibizioni';
 
     const cssFiles = listPageCss('gallery');
-    const pageScripts = ['/js/modules/gallery/gallery-overview.js'];
 
     return res.renderPage('pages/frontend/gallery-overview', {
       layout: 'layouts/base-frontend',
@@ -160,7 +233,7 @@ export async function getGalleryOverview(req, res) {
       pageMeta: { title, description },
       cssFiles,
       pageStyles: cssFiles,
-      pageScripts,
+      pageScripts: [],
       sections
     });
   } catch (err) {
@@ -211,17 +284,34 @@ export async function getGalleryCollectionsByType(req, res) {
         gc.cover_local_path,
         gc.is_featured,
         gc.display_order,
+        gc.is_auto_sync,
+        gc.auto_sync_max_videos,
         (SELECT COUNT(*) FROM gallery_items WHERE collection_id = gc.id AND is_published = 1) as item_count
       FROM gallery_collections gc
       WHERE gc.type = ? AND gc.is_published = 1
       ORDER BY gc.is_featured DESC, gc.display_order ASC, gc.created_at DESC
     `, [dbType]);
 
-    // Resolve covers
-    collections.forEach(c => {
-      c.cover_url = resolveCover(c);
+    // Resolve covers and auto-set for auto-sync video collections
+    for (const c of collections) {
+      // If it's an auto-sync video collection without a manual cover, use latest video thumbnail
+      if (c.is_auto_sync && c.type === 'video' && !c.cover_cloudinary_id) {
+        try {
+          const videos = await getLatestVideos(1);
+          if (videos.length > 0) {
+            c.cover_url = `https://img.youtube.com/vi/${videos[0].id}/hqdefault.jpg`;
+          } else {
+            c.cover_url = resolveCover(c);
+          }
+        } catch (err) {
+          console.error('[galleryController] Error fetching YouTube cover for collection:', err.message);
+          c.cover_url = resolveCover(c);
+        }
+      } else {
+        c.cover_url = resolveCover(c);
+      }
       c.url = `/gallery/${type}/${c.slug}`;
-    });
+    }
 
     const pageTitle = {
       'photos': lang === 'en' ? 'Photo Collections' : 'Collezioni Fotografiche',
@@ -235,7 +325,6 @@ export async function getGalleryCollectionsByType(req, res) {
       : `Esplora tutte le collezioni ${type === 'photos' ? 'fotografiche' : type === 'videos' ? 'video' : 'audio'}`;
 
     const cssFiles = listPageCss('gallery');
-    const pageScripts = ['/js/modules/gallery/gallery-collections.js'];
 
     return res.renderPage('pages/frontend/gallery-collections', {
       layout: 'layouts/base-frontend',
@@ -245,7 +334,7 @@ export async function getGalleryCollectionsByType(req, res) {
       pageMeta: { title, description },
       cssFiles,
       pageStyles: cssFiles,
-      pageScripts,
+      pageScripts: [],
       collections,
       type,
       typeLabel: pageTitle[type]
@@ -283,7 +372,9 @@ export async function getGalleryCollectionDetail(req, res) {
         gc.${titleCol} as title,
         gc.${descCol} as description,
         gc.cover_cloudinary_id,
-        gc.cover_local_path
+        gc.cover_local_path,
+        gc.is_auto_sync,
+        gc.auto_sync_max_videos
       FROM gallery_collections gc
       WHERE gc.slug = ? AND gc.is_published = 1
     `, [slug]);
@@ -292,40 +383,76 @@ export async function getGalleryCollectionDetail(req, res) {
       return res.redirect('/gallery');
     }
 
-    // Get items
-    const itemTitleCol = lang === 'en' ? 'title_en' : 'title_it';
-    const itemDescCol = lang === 'en' ? 'description_en' : 'description_it';
-    const itemAltCol = lang === 'en' ? 'alt_en' : 'alt_it';
+    let items = [];
 
-    const items = await qAll(db, `
-      SELECT
-        gi.id,
-        gi.item_type,
-        gi.cloudinary_id,
-        gi.youtube_id,
-        gi.bandcamp_url,
-        gi.bandcamp_embed_code,
-        gi.${itemTitleCol} as title,
-        gi.${itemDescCol} as description,
-        gi.${itemAltCol} as alt,
-        gi.credits,
-        gi.width,
-        gi.height,
-        gi.duration,
-        gi.is_spotlight,
-        gi.display_order
-      FROM gallery_items gi
-      WHERE gi.collection_id = ? AND gi.is_published = 1
-      ORDER BY gi.display_order ASC, gi.created_at DESC
-    `, [collection.id]);
+    // If auto-sync collection, fetch latest videos from YouTube
+    if (collection.is_auto_sync && collection.type === 'video') {
+      try {
+        const videos = await getLatestVideos(collection.auto_sync_max_videos || 4);
 
-    // Resolve media
-    items.forEach(item => {
-      item.media = resolveItemMedia(item);
-    });
+        items = videos.map(video => ({
+          id: video.id,
+          item_type: 'video',
+          youtube_id: video.id,
+          title: video.title,
+          description: video.description || '',
+          alt: '',
+          credits: null,
+          width: null,
+          height: null,
+          duration: null,
+          is_spotlight: 0,
+          display_order: 0,
+          media: {
+            thumbnail: video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`,
+            url: `https://www.youtube.com/watch?v=${video.id}`,
+            embed: `https://www.youtube.com/embed/${video.id}`
+          }
+        }));
+
+        // Auto-set collection cover to latest video thumbnail
+        if (videos.length > 0 && !collection.cover_cloudinary_id) {
+          collection.cover_url = `https://img.youtube.com/vi/${videos[0].id}/hqdefault.jpg`;
+        }
+      } catch (err) {
+        console.error('[galleryController] Error fetching YouTube videos:', err.message);
+        items = []; // Empty items on error
+      }
+    } else {
+      // Manual collection - get items from database
+      const itemTitleCol = lang === 'en' ? 'title_en' : 'title_it';
+      const itemDescCol = lang === 'en' ? 'description_en' : 'description_it';
+      const itemAltCol = lang === 'en' ? 'alt_en' : 'alt_it';
+
+      items = await qAll(db, `
+        SELECT
+          gi.id,
+          gi.item_type,
+          gi.cloudinary_id,
+          gi.youtube_id,
+          gi.bandcamp_url,
+          gi.bandcamp_embed_code,
+          gi.${itemTitleCol} as title,
+          gi.${itemDescCol} as description,
+          gi.${itemAltCol} as alt,
+          gi.credits,
+          gi.width,
+          gi.height,
+          gi.duration,
+          gi.is_spotlight,
+          gi.display_order
+        FROM gallery_items gi
+        WHERE gi.collection_id = ? AND gi.is_published = 1
+        ORDER BY gi.display_order ASC, gi.created_at DESC
+      `, [collection.id]);
+
+      // Resolve media for manual items
+      items.forEach(item => {
+        item.media = resolveItemMedia(item);
+      });
+    }
 
     const cssFiles = listPageCss('gallery');
-    const pageScripts = ['/js/modules/gallery/gallery-detail.js'];
 
     return res.renderPage('pages/frontend/gallery-detail', {
       layout: 'layouts/base-frontend',
@@ -335,7 +462,7 @@ export async function getGalleryCollectionDetail(req, res) {
       pageMeta: { title: collection.title, description: collection.description || '' },
       cssFiles,
       pageStyles: cssFiles,
-      pageScripts,
+      pageScripts: [],
       collection,
       items,
       type,

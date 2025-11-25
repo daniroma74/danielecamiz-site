@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/bio-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="/shared/cloudinary-manager/ui-notifications.js"></script>
+  <script src="/shared/cloudinary-manager/ui-loading.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
+  <style>
+    .presskit-section { margin-bottom: 3rem; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .presskit-section h2 { margin: 0 0 1.5rem; font-size: 1.5rem; color: #2c3e50; border-bottom: 2px solid #d4af37; padding-bottom: 0.5rem; }
+    .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
+    .asset-card { border: 2px solid #ecf0f1; border-radius: 8px; padding: 1rem; transition: all 0.3s; background: #fafafa; }
+    .asset-card:hover { border-color: #d4af37; box-shadow: 0 4px 12px rgba(212,175,55,0.2); }
+    .asset-preview { width: 100%; height: 150px; background: #ecf0f1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-bottom: 1rem; overflow: hidden; }
+    .asset-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .asset-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; color: #2c3e50; }
+    .asset-category { font-size: 0.85rem; color: #7f8c8d; background: #ecf0f1; padding: 0.25rem 0.75rem; border-radius: 12px; display: inline-block; margin-bottom: 0.75rem; }
+    .asset-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .btn-add-big { background: linear-gradient(135deg, #d4af37, #f0d478); color: white; border: none; padding: 1rem 2rem; font-size: 1.1rem; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(212,175,55,0.3); }
+    .btn-add-big:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(212,175,55,0.4); }
+    .empty-state { text-align: center; padding: 3rem; color: #95a5a6; }
+    .empty-state i { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
+  </style>
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <!-- Tabs -->
+    <%- include('../../../shared/partials/admin-tabs', {
+      tabs: [
+        { label: 'Dashboard', url: '/bio', icon: 'home' },
+        { label: 'Biografia', url: '/bio/biography', icon: 'file-alt' },
+        { label: 'Curriculum', url: '/bio/curriculum', icon: 'graduation-cap' },
+        { label: 'Storia', url: '/bio/story', icon: 'book' },
+        { label: 'Press Kit', url: '/bio/presskit', icon: 'box-open' }
+      ],
+      currentPath: '/bio/presskit',
+      baseUrl: 'bio'
+    }) %>
+
+    <div class="page-header" style="margin-bottom: 2rem;">
+      <h1>📦 Press Kit Manager</h1>
+      <p style="color: #7f8c8d; margin: 0.5rem 0 0;">Gestisci i materiali professionali per stampa e organizzatori. Tutto ciò che carichi qui apparirà automaticamente su <a href="/press-kit" target="_blank" style="color: #d4af37;">danielecamiz.com/press-kit</a></p>
+    </div>
+
+    <!-- SEZIONE DOCUMENTI -->
+    <div class="presskit-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">📄 Documenti (CV, Bio PDF)</h2>
+        <button onclick="addDocument()" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Carica Documento
+        </button>
+      </div>
+
+      <% const documents = assets.filter(a => a.type === 'document'); %>
+      <% if (documents.length > 0) { %>
+        <div class="asset-grid">
+          <% documents.forEach(doc => { %>
+            <div class="asset-card">
+              <div class="asset-preview">📄</div>
+              <div class="asset-title"><%= doc.title_it || 'Documento' %></div>
+              <% if (doc.category) { %>
+                <span class="asset-category"><%= doc.category === 'cv' ? 'CV' : doc.category === 'bio' ? 'Bio' : doc.category %></span>
+              <% } %>
+              <div class="asset-actions">
+                <% if (doc.cloudinary_url) { %>
+                  <a href="<%= doc.cloudinary_url %>" target="_blank" class="btn btn-sm btn-secondary" style="flex: 1;">
+                    <i class="fas fa-download"></i> Scarica
+                  </a>
+                <% } %>
+                <button onclick="deleteAsset(<%= doc.id %>, 'documento')" class="btn btn-sm btn-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <i class="fas fa-file-pdf"></i>
+          <p>Nessun documento caricato. Carica il tuo CV o Bio in formato PDF.</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- SEZIONE FOTO -->
+    <div class="presskit-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">📷 Foto Professionali</h2>
+        <button onclick="addPhoto()" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Carica Foto
+        </button>
+      </div>
+
+      <% const photos = assets.filter(a => a.type === 'photo'); %>
+      <% if (photos.length > 0) { %>
+        <div class="asset-grid">
+          <% photos.forEach(photo => { %>
+            <div class="asset-card">
+              <div class="asset-preview">
+                <% if (photo.cloudinary_id) { %>
+                  <img src="https://res.cloudinary.com/dnwhnz2xy/image/upload/w_300,h_300,c_fill,q_auto/<%= photo.cloudinary_id %>" alt="<%= photo.title_it %>">
+                <% } else { %>
+                  📷
+                <% } %>
+              </div>
+              <div class="asset-title"><%= photo.title_it || 'Foto' %></div>
+              <% if (photo.category) { %>
+                <span class="asset-category">
+                  <%= photo.category === 'portrait' ? '🎭 Ritratto' : photo.category === 'action' ? '🎵 In Azione' : photo.category === 'backstage' ? '🎬 Backstage' : photo.category %>
+                </span>
+              <% } %>
+              <div class="asset-actions">
+                <% if (photo.cloudinary_id) { %>
+                  <a href="https://res.cloudinary.com/dnwhnz2xy/image/upload/fl_attachment:foto-daniele-camiz/<%= photo.cloudinary_id %>" download class="btn btn-sm btn-secondary" style="flex: 1;">
+                    <i class="fas fa-download"></i> Alta Ris.
+                  </a>
+                <% } %>
+                <button onclick="deleteAsset(<%= photo.id %>, 'foto')" class="btn btn-sm btn-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <i class="fas fa-camera"></i>
+          <p>Nessuna foto caricata. Carica foto professionali ad alta risoluzione.</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- SEZIONE VIDEO -->
+    <div class="presskit-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">🎥 Video (YouTube)</h2>
+        <button onclick="addVideo()" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Aggiungi Video
+        </button>
+      </div>
+
+      <% const videos = assets.filter(a => a.type === 'video'); %>
+      <% if (videos.length > 0) { %>
+        <div class="asset-grid">
+          <% videos.forEach(video => { %>
+            <div class="asset-card">
+              <div class="asset-preview" style="background: #000;">
+                <% if (video.youtube_id) { %>
+                  <img src="https://img.youtube.com/vi/<%= video.youtube_id %>/mqdefault.jpg" alt="<%= video.title_it %>">
+                <% } else { %>
+                  🎥
+                <% } %>
+              </div>
+              <div class="asset-title"><%= video.title_it || 'Video' %></div>
+              <div class="asset-actions">
+                <% if (video.youtube_url) { %>
+                  <a href="<%= video.youtube_url %>" target="_blank" class="btn btn-sm btn-secondary" style="flex: 1;">
+                    <i class="fab fa-youtube"></i> Guarda
+                  </a>
+                <% } %>
+                <button onclick="deleteAsset(<%= video.id %>, 'video')" class="btn btn-sm btn-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <i class="fas fa-video"></i>
+          <p>Nessun video aggiunto. Aggiungi link a video YouTube delle tue performance.</p>
+        </div>
+      <% } %>
+    </div>
+
+  </main>
+
+  <script>
+    function addDocument() {
+      CloudinaryManager.showImageDialog((result) => {
+        showMetadataModal(result, 'document');
+      }, {
+        folder: 'danielecamiz/presskit',
+        preset: 'gallery_unsigned',
+        resourceType: 'auto',  // Auto-detect: PDF will be uploaded as 'image' to enable previews
+        clientAllowedFormats: ['pdf', 'doc', 'docx']
+      });
+    }
+
+    function addPhoto() {
+      CloudinaryManager.showImageDialog((result) => {
+        showMetadataModal(result, 'photo');
+      }, {
+        folder: 'danielecamiz/presskit/photos',
+        preset: 'gallery_unsigned'
+      });
+    }
+
+    function addVideo() {
+      const url = prompt('Incolla l\'URL del video YouTube:');
+      if (!url) return;
+
+      const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/);
+      if (!match) {
+        alert('URL YouTube non valido');
+        return;
+      }
+
+      const youtubeId = match[1];
+      const titleIt = prompt('Titolo (Italiano):') || '';
+      const titleEn = prompt('Titolo (English):') || '';
+
+      saveAsset({
+        type: 'video',
+        youtube_id: youtubeId,
+        youtube_url: url,
+        title_it: titleIt,
+        title_en: titleEn
+      });
+    }
+
+    function showMetadataModal(uploadData, type) {
+      const titleIt = prompt(`Titolo ${type === 'document' ? 'documento' : 'foto'} (Italiano):`);
+      if (!titleIt) return;
+
+      const titleEn = prompt('Titolo (English):') || titleIt;
+
+      let category = null;
+      if (type === 'photo') {
+        const cat = prompt('Categoria (portrait/action/backstage):', 'portrait');
+        category = cat || 'portrait';
+      } else if (type === 'document') {
+        const cat = prompt('Categoria (cv/bio):', 'cv');
+        category = cat || 'cv';
+      }
+
+      saveAsset({
+        type,
+        category,
+        cloudinary_id: uploadData.publicId,
+        cloudinary_url: uploadData.url || uploadData.secure_url,
+        title_it: titleIt,
+        title_en: titleEn,
+        width: uploadData.width,
+        height: uploadData.height,
+        format: uploadData.format,
+        file_size: uploadData.bytes
+      });
+    }
+
+    async function saveAsset(data) {
+      try {
+        const res = await fetch('/bio/presskit/assets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          alert('✅ Asset salvato! Ricarico la pagina...');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        alert('❌ Errore di connessione');
+      }
+    }
+
+    async function deleteAsset(id, tipo) {
+      if (!confirm(`Sei sicuro di voler eliminare questo ${tipo}?`)) return;
+
+      try {
+        const res = await fetch(`/bio/presskit/assets/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          alert('✅ Eliminato!');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante l\'eliminazione');
+        }
+      } catch (error) {
+        alert('❌ Errore di connessione');
+      }
+    }
+  </script>
+</body>
+</html>

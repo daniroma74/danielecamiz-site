@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
       stats[section] = { it: !!it, en: !!en };
     }
 
-    const presskitCount = await getQuery('SELECT COUNT(*) as count FROM presskit_assets WHERE is_included_in_kit = 1');
+    const presskitCount = await getQuery('SELECT COUNT(*) as count FROM press_kit_files WHERE is_published = 1');
 
     res.render('pages/dashboard', {
       title: 'Dashboard - Bio Admin',
@@ -86,11 +86,11 @@ router.get('/story', async (req, res) => {
 router.get('/presskit', async (req, res) => {
   try {
     const assets = await allQuery(`
-      SELECT * FROM presskit_assets
-      ORDER BY display_order ASC, created_at DESC
+      SELECT * FROM press_kit_files
+      ORDER BY type ASC, display_order ASC, created_at DESC
     `);
 
-    res.render('pages/presskit', {
+    res.render('pages/presskit-new', {
       title: 'Press Kit - Bio Admin',
       assets
     });
@@ -131,15 +131,26 @@ router.post('/content/:section', async (req, res) => {
   }
 });
 
-// Presskit assets
+// Presskit assets - updated to use press_kit_files table
 router.post('/presskit/assets', async (req, res) => {
   try {
-    const { type, cloudinary_id, cloudinary_folder, title_it, title_en, description_it, description_en, file_size, file_format } = req.body;
+    const { type, category, cloudinary_id, cloudinary_url, youtube_id, youtube_url, title_it, title_en, description_it, description_en, file_size, format, width, height } = req.body;
 
     const result = await runQuery(`
-      INSERT INTO presskit_assets (type, cloudinary_id, cloudinary_folder, title_it, title_en, description_it, description_en, file_size, file_format)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [type, cloudinary_id, cloudinary_folder, title_it, title_en, description_it, description_en, file_size, file_format]);
+      INSERT INTO press_kit_files
+      (type, category, cloudinary_id, cloudinary_url, youtube_id, youtube_url,
+       title_it, title_en, description_it, description_en,
+       file_size, format, width, height, display_order, is_published)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1)
+    `, [
+      type, category || null,
+      cloudinary_id || null, cloudinary_url || null,
+      youtube_id || null, youtube_url || null,
+      title_it || null, title_en || null,
+      description_it || null, description_en || null,
+      file_size || null, format || null,
+      width || null, height || null
+    ]);
 
     res.json({ success: true, id: result.lastID });
   } catch (error) {
@@ -150,7 +161,7 @@ router.post('/presskit/assets', async (req, res) => {
 
 router.delete('/presskit/assets/:id', async (req, res) => {
   try {
-    await runQuery('DELETE FROM presskit_assets WHERE id = ?', [req.params.id]);
+    await runQuery('DELETE FROM press_kit_files WHERE id = ?', [req.params.id]);
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting asset:', error);

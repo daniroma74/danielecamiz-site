@@ -187,14 +187,15 @@ router.get('/admin/newsletter', (req, res) => {
     SELECT
       cn.id,
       cn.email,
-      cn.name,
-      cn.subscribed_at,
+      cn.first_name,
+      cn.last_name,
+      cn.created_at as subscribed_at,
       c.title as concert_title,
       c.slug as concert_slug
     FROM concert_newsletter cn
-    LEFT JOIN concerts c ON c.id = cn.concert_id
+    LEFT JOIN concerts c ON c.id = cn.optin_concert_id
     WHERE cn.is_active = 1
-    ORDER BY cn.subscribed_at DESC
+    ORDER BY cn.created_at DESC
   `).all();
 
   // Stats
@@ -318,6 +319,240 @@ router.post('/admin/newsletter/:id/unsubscribe', (req, res) => {
     success: true,
     message: 'Iscritto rimosso dalla newsletter'
   });
+});
+
+// ============================================
+// NEWSLETTER CAMPAIGNS
+// ============================================
+
+// GET /admin/newsletter/campaigns - Lista campagne
+router.get('/admin/newsletter/campaigns', (req, res) => {
+  const db = req.app.locals.db;
+
+  const campaigns = db.prepare(`
+    SELECT *
+    FROM newsletter_campaigns
+    ORDER BY created_at DESC
+  `).all();
+
+  res.render('pages/admin/campaigns', {
+    title: 'Campagne Newsletter',
+    campaigns
+  });
+});
+
+// GET /admin/newsletter/campaigns/new - Nuova campagna
+router.get('/admin/newsletter/campaigns/new', (req, res) => {
+  res.render('pages/admin/campaign-editor', {
+    title: 'Nuova Campagna Newsletter',
+    campaign: {
+      id: null,
+      name: '',
+      subject: '',
+      content_html: '',
+      status: 'draft'
+    },
+    isNew: true
+  });
+});
+
+// GET /admin/newsletter/campaigns/:id/edit - Modifica campagna
+router.get('/admin/newsletter/campaigns/:id/edit', (req, res) => {
+  const db = req.app.locals.db;
+  const { id } = req.params;
+
+  const campaign = db.prepare('SELECT * FROM newsletter_campaigns WHERE id = ?').get(id);
+
+  if (!campaign) {
+    return res.status(404).send('Campagna non trovata');
+  }
+
+  res.render('pages/admin/campaign-editor', {
+    title: `Modifica Campagna: ${campaign.name}`,
+    campaign,
+    isNew: false
+  });
+});
+
+// POST /admin/newsletter/campaigns/save - Salva campagna
+router.post('/admin/newsletter/campaigns/save', (req, res) => {
+  const db = req.app.locals.db;
+  const { id, name, subject, content_html } = req.body;
+
+  try {
+    if (id) {
+      // Update existing
+      db.prepare(`
+        UPDATE newsletter_campaigns
+        SET name = ?, subject = ?, content_html = ?
+        WHERE id = ?
+      `).run(name, subject, content_html, id);
+
+      res.json({
+        success: true,
+        message: 'Campagna salvata!',
+        id: id
+      });
+    } else {
+      // Create new
+      const result = db.prepare(`
+        INSERT INTO newsletter_campaigns (name, subject, content_html, status)
+        VALUES (?, ?, ?, 'draft')
+      `).run(name, subject, content_html);
+
+      res.json({
+        success: true,
+        message: 'Campagna creata!',
+        id: result.lastInsertRowid
+      });
+    }
+  } catch (error) {
+    console.error('Error saving campaign:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nel salvataggio: ' + error.message
+    });
+  }
+});
+
+// POST /admin/newsletter/campaigns/:id/test - Invia email di test
+router.post('/admin/newsletter/campaigns/:id/test', async (req, res) => {
+  const db = req.app.locals.db;
+  const { id } = req.params;
+  const { test_email } = req.body;
+
+  if (!test_email) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email di test richiesta'
+    });
+  }
+
+  try {
+    const campaign = db.prepare('SELECT * FROM newsletter_campaigns WHERE id = ?').get(id);
+
+    if (!campaign) {
+      return res.status(404).json({
+        success: false,
+        message: 'Campagna non trovata'
+      });
+    }
+
+    // Import email service
+    const { sendCampaign } = await import('../services/email.js');
+
+    // Send test email
+    await sendCampaign(test_email, 'Test', 'User', campaign.subject, campaign.content_html);
+
+    res.json({
+      success: true,
+      message: `Email di test inviata a ${test_email}`
+    });
+
+  } catch (error) {
+    console.error('Test email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante l\'invio: ' + error.message
+    });
+  }
+});
+
+// POST /admin/newsletter/campaigns/:id/send - Invia campagna a tutti
+router.post('/admin/newsletter/campaigns/:id/send', async (req, res) => {
+  const db = req.app.locals.db;
+  const { id } = req.params;
+
+  try {
+    const campaign = db.prepare('SELECT * FROM newsletter_campaigns WHERE id = ?').get(id);
+
+    if (!campaign) {
+      return res.status(404).json({
+        success: false,
+        message: 'Campagna non trovata'
+      });
+    }
+
+    // Get all active subscribers
+    const subscribers = db.prepare(`
+      SELECT email, first_name, last_name
+      FROM concert_newsletter
+      WHERE is_active = 1
+    `).all();
+
+    if (subscribers.length === 0) {
+      return res.json({
+        success: false,
+        message: 'Nessun iscritto alla newsletter'
+      });
+    }
+
+    // Import email service
+    const { sendCampaign } = await import('../services/email.js');
+
+    // Send campaign to all subscribers
+    let sent = 0;
+    let errors = 0;
+
+    for (const subscriber of subscribers) {
+      try {
+        await sendCampaign(
+          subscriber.email,
+          subscriber.first_name,
+          subscriber.last_name,
+          campaign.subject,
+          campaign.content_html
+        );
+        sent++;
+      } catch (error) {
+        console.error(`Failed to send to ${subscriber.email}:`, error.message);
+        errors++;
+      }
+    }
+
+    // Update campaign status
+    db.prepare(`
+      UPDATE newsletter_campaigns
+      SET status = 'sent', sent_at = CURRENT_TIMESTAMP, sent_count = ?
+      WHERE id = ?
+    `).run(sent, id);
+
+    res.json({
+      success: true,
+      message: `Newsletter inviata! ✅ ${sent} inviate, ❌ ${errors} errori`,
+      sent,
+      errors,
+      total: subscribers.length
+    });
+
+  } catch (error) {
+    console.error('Campaign send error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante l\'invio: ' + error.message
+    });
+  }
+});
+
+// POST /admin/newsletter/campaigns/:id/delete - Elimina campagna
+router.post('/admin/newsletter/campaigns/:id/delete', (req, res) => {
+  const db = req.app.locals.db;
+  const { id } = req.params;
+
+  try {
+    db.prepare('DELETE FROM newsletter_campaigns WHERE id = ?').run(id);
+
+    res.json({
+      success: true,
+      message: 'Campagna eliminata'
+    });
+  } catch (error) {
+    console.error('Delete error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante l\'eliminazione'
+    });
+  }
 });
 
 export default router;

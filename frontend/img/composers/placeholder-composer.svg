@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="100" fill="#1a1a1a"/>
+
+  <!-- Golden border -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#d4af37" stroke-width="2"/>
+
+  <!-- Person silhouette in gold -->
+  <g fill="#d4af37" opacity="0.8">
+    <!-- Head -->
+    <circle cx="100" cy="70" r="25"/>
+
+    <!-- Body -->
+    <path d="M 100 95 Q 80 105, 70 130 L 70 160 Q 70 165, 75 165 L 95 165 L 95 145 Q 95 140, 100 140 Q 105 140, 105 145 L 105 165 L 125 165 Q 130 165, 130 160 L 130 130 Q 120 105, 100 95 Z"/>
+  </g>
+
+  <!-- Music note decoration -->
+  <g fill="#d4af37" opacity="0.4">
+    <circle cx="150" cy="50" r="4"/>
+    <rect x="148" y="35" width="2" height="15"/>
+    <path d="M 150 35 Q 155 33, 157 35 L 157 45 Q 155 47, 150 45 Z"/>
+  </g>
+
+  <!-- Text -->
+  <text x="100" y="190" font-family="Arial, sans-serif" font-size="12" fill="#d4af37" text-anchor="middle" opacity="0.6">
+    COMPOSER
+  </text>
+</svg>

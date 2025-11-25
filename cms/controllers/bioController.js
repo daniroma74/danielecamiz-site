@@ -27,23 +27,33 @@ function pickFirst(...vals) { return vals.find(v => typeof v === 'string' && v.t
 async function getBioContentFromDB(lang = 'it') {
   try {
     const db = await initDatabase();
-    return new Promise((resolve, reject) => {
-      db.get(
-        'SELECT * FROM bio_content WHERE section = ? AND lang = ?',
-        ['biography', lang],
-        (err, row) => {
+
+    // Load all 3 sections: biography, curriculum, story
+    const sections = await new Promise((resolve, reject) => {
+      db.all(
+        'SELECT * FROM bio_content WHERE lang = ? AND section IN (?, ?, ?)',
+        [lang, 'biography', 'curriculum', 'story'],
+        (err, rows) => {
           if (err) {
             console.warn('[bioController] DB query error:', err);
-            resolve(null);
+            resolve([]);
           } else {
-            resolve(row);
+            resolve(rows || []);
           }
         }
       );
     });
+
+    // Convert array to object keyed by section
+    const result = {};
+    sections.forEach(row => {
+      result[row.section] = row;
+    });
+
+    return result;
   } catch (error) {
     console.warn('[bioController] DB connection error:', error);
-    return null;
+    return {};
   }
 }
 
@@ -96,18 +106,36 @@ export async function getBio(req, res) {
 
   const t = typeof res.locals.t === 'function' ? res.locals.t : (k => null);
 
-  // Usa DB se disponibile, altrimenti JSON
-  const title = dbContent?.title || bioData?.page?.title || t('bio.title') || (lang === 'en' ? 'Biography' : 'Bio');
-  const claim = dbContent?.intro || bioData?.page?.claim || t('bio.claim') || '';
-  const content = dbContent?.content || bioData?.content || '';
+  // Build content object for bio.ejs template
+  const bioContent = {
+    biography: {
+      title: dbContent.biography?.title || (lang === 'en' ? 'Official biography' : 'Biografia ufficiale'),
+      intro: dbContent.biography?.intro || '',
+      more: dbContent.biography?.content ? [dbContent.biography.content] : []
+    },
+    curriculum: {
+      title: dbContent.curriculum?.title || 'Curriculum',
+      shortText: dbContent.curriculum?.short_text || '',
+      longText: dbContent.curriculum?.long_text || ''
+    },
+    story: {
+      title: dbContent.story?.title || (lang === 'en' ? 'My story' : 'La mia storia'),
+      intro: dbContent.story?.intro || '',
+      content: dbContent.story?.content || ''
+    }
+  };
+
+  // Page title and meta
+  const title = dbContent.biography?.title || bioData?.page?.title || t('bio.title') || (lang === 'en' ? 'Biography' : 'Bio');
+  const claim = dbContent.biography?.intro || bioData?.page?.claim || t('bio.claim') || '';
 
   // CSS & JS centralizzati
   const cssFiles = listPageCss('bio');
   const jsEntry  = havePageJs('bio');
   const pageScripts = jsEntry ? [jsEntry] : ['modules/bio/bio-entry.js'];
 
-  // Media risolti (foto profilo, CV/PDF) – prima dal DB, poi dal JSON
-  const bioMedia = await resolveBioMedia(bioData, lang, dbContent);
+  // Media risolti (foto profilo, CV/PDF)
+  const bioMedia = await resolveBioMedia(bioData, lang, dbContent.biography);
 
   return res.renderPage('pages/frontend/bio', {
     layout: 'layouts/base-frontend',
@@ -118,10 +146,9 @@ export async function getBio(req, res) {
     pageStyles: cssFiles,
     pageScripts,
     claim,
-    content,
+    content: bioContent,  // Pass structured content
     bio: bioData,
-    bioMedia,   // { photo, cv_pdf }
-    dbContent,  // Passa il contenuto DB alla view
+    bioMedia,
     isBio: true
   });
 }

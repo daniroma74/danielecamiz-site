@@ -101,6 +101,27 @@
           <div class="form-section">
             <h2>Impostazioni</h2>
 
+            <% if (!collection || collection.type === 'video') { %>
+            <div class="form-group" style="background: #f0f7ff; padding: 1rem; border-radius: 8px; border: 2px solid #4a9eff;">
+              <label class="checkbox-label" style="font-weight: bold; font-size: 1.1em;">
+                <input type="checkbox" id="is_auto_sync" name="is_auto_sync"
+                       <%= collection && collection.is_auto_sync ? 'checked' : '' %>>
+                🔄 Collezione Auto-Sync YouTube
+              </label>
+              <small style="display: block; margin-top: 0.5rem; color: #333;">
+                I video più recenti dal canale YouTube vengono mostrati automaticamente. Non devi aggiungere video manualmente!
+              </small>
+
+              <div id="auto-sync-settings" style="margin-top: 1rem; <%= collection && collection.is_auto_sync ? '' : 'display: none;' %>">
+                <label for="auto_sync_max_videos">Numero di video da mostrare:</label>
+                <input type="number" id="auto_sync_max_videos" name="auto_sync_max_videos"
+                       value="<%= collection ? collection.auto_sync_max_videos || 4 : 4 %>"
+                       min="1" max="50" style="width: 100px; margin-left: 0.5rem;">
+                <small style="display: block; margin-top: 0.25rem;">Ultimi video pubblicati sul canale</small>
+              </div>
+            </div>
+            <% } %>
+
             <div class="form-group">
               <label for="display_order">Ordine di visualizzazione</label>
               <input type="number" id="display_order" name="display_order"
@@ -138,6 +159,16 @@
     const isNew = <%= isNew ? 'true' : 'false' %>;
     const collectionId = document.getElementById('collection-id').value;
 
+    // Auto-sync checkbox toggle
+    const autoSyncCheckbox = document.getElementById('is_auto_sync');
+    const autoSyncSettings = document.getElementById('auto-sync-settings');
+
+    if (autoSyncCheckbox) {
+      autoSyncCheckbox.addEventListener('change', function() {
+        autoSyncSettings.style.display = this.checked ? 'block' : 'none';
+      });
+    }
+
     // Save collection
     document.getElementById('save-btn').addEventListener('click', async function() {
       const formData = {
@@ -151,7 +182,9 @@
         cover_local_path: null,
         is_published: document.getElementById('is_published').checked,
         is_featured: document.getElementById('is_featured').checked,
-        display_order: parseInt(document.getElementById('display_order').value) || 0
+        display_order: parseInt(document.getElementById('display_order').value) || 0,
+        is_auto_sync: document.getElementById('is_auto_sync') ? document.getElementById('is_auto_sync').checked : false,
+        auto_sync_max_videos: document.getElementById('auto_sync_max_videos') ? parseInt(document.getElementById('auto_sync_max_videos').value) : 4
       };
 
       try {

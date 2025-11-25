@@ -1,0 +1,749 @@
+/* ============================================
+   CORO RARO - MODERN ENHANCEMENTS
+   Migliorie visive moderne senza toccare la hero
+   ============================================ */
+
+/* ============================================
+   ANIMAZIONI E TRANSIZIONI
+   ============================================ */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Elementi animati al caricamento */
+.section-header {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.section-label {
+  display: inline-block;
+  position: relative;
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(135deg, var(--terracotta-light), var(--oro-light));
+  color: white;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  animation: scaleIn 0.6s ease-out 0.2s both;
+  box-shadow: 0 4px 15px rgba(218, 165, 32, 0.3);
+}
+
+.section-title {
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--terracotta), var(--oro-antico));
+  border-radius: 2px;
+  transition: width var(--transition-slow);
+}
+
+.section-title:hover::after {
+  width: 100%;
+}
+
+.section-subtitle {
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+/* ============================================
+   SEZIONI CON SFONDI ALTERNATI
+   ============================================ */
+
+.about-section {
+  background: linear-gradient(to bottom, var(--avorio) 0%, var(--beige) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -10%;
+  width: 40%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(218, 165, 32, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.repertoire-section {
+  background: var(--beige);
+  color: var(--text-primary);
+  position: relative;
+}
+
+.repertoire-section .section-subtitle {
+  color: var(--text-secondary);
+}
+
+.projects-section {
+  background: linear-gradient(to bottom right, var(--beige) 0%, var(--avorio) 50%, var(--beige-dark) 100%);
+  position: relative;
+  color: var(--text-primary) !important;
+}
+
+.projects-section .section-label {
+  color: white !important;
+}
+
+.projects-section .section-title {
+  color: var(--text-primary) !important;
+}
+
+.projects-section .section-subtitle {
+  color: var(--text-secondary) !important;
+}
+
+.projects-section p,
+.projects-section .projects-intro,
+.projects-section .projects-lead {
+  color: var(--text-primary) !important;
+}
+
+/* Project cards - simplified, non-interactive style */
+.projects-section .project-card {
+  background: white !important;
+  border: 1px solid var(--beige-dark) !important;
+  backdrop-filter: none !important;
+  cursor: default !important;
+}
+
+.projects-section .project-card:hover {
+  background: white !important;
+  transform: none !important;
+  border-color: var(--beige-dark) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.projects-section .project-card h3 {
+  color: var(--terracotta) !important;
+  font-size: var(--fs-lg) !important;
+}
+
+.projects-section .project-card p {
+  color: var(--text-primary) !important;
+  font-size: var(--fs-sm) !important;
+}
+
+.projects-section .project-icon {
+  font-size: var(--fs-3xl) !important;
+  opacity: 0.8;
+}
+
+/* Impact section text */
+.projects-section .impact-section h3 {
+  color: var(--text-primary) !important;
+}
+
+.projects-section .impact-note {
+  color: var(--text-secondary) !important;
+}
+
+.projects-section .impact-number {
+  color: var(--terracotta) !important;
+  background: linear-gradient(135deg, var(--terracotta), var(--oro-antico));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.projects-section .impact-label {
+  color: var(--text-secondary) !important;
+}
+
+.concerts-section {
+  background: linear-gradient(to bottom, var(--avorio) 0%, var(--beige-dark) 100%);
+  color: var(--text-primary);
+}
+
+.concerts-section .section-subtitle {
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   CARDS MODERNE CON EFFETTI
+   ============================================ */
+
+.region-card,
+.project-card,
+.concert-card,
+.value-card {
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.region-card::before,
+.project-card::before,
+.concert-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0) 0%, rgba(218, 165, 32, 0.1) 100%);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+}
+
+.region-card:hover::before,
+.project-card:hover::before,
+.concert-card:hover::before {
+  opacity: 1;
+}
+
+.region-card:hover,
+.project-card:hover,
+.concert-card:hover,
+.value-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(93, 78, 55, 0.25);
+}
+
+.region-flag,
+.value-icon {
+  font-size: 3rem;
+  transition: transform var(--transition-slow);
+  display: inline-block;
+}
+
+.region-card:hover .region-flag,
+.value-card:hover .value-icon {
+  transform: scale(1.2) rotate(5deg);
+  animation: float 2s ease-in-out infinite;
+}
+
+/* ============================================
+   BUTTONS MODERNI
+   ============================================ */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.5px;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--terracotta), var(--terracotta-dark));
+  box-shadow: 0 4px 15px rgba(210, 105, 30, 0.4);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 25px rgba(210, 105, 30, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  border: 2px solid var(--terracotta);
+  color: var(--terracotta);
+  background: transparent;
+  transition: all var(--transition-base);
+}
+
+.btn-outline:hover {
+  background: var(--terracotta);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(210, 105, 30, 0.3);
+}
+
+/* ============================================
+   ABOUT SECTION - LAYOUT MIGLIORATO
+   ============================================ */
+
+.about-content {
+  gap: var(--spacing-3xl);
+}
+
+.about-image {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(93, 78, 55, 0.3);
+  transition: transform var(--transition-slow);
+}
+
+.about-image:hover {
+  transform: scale(1.03);
+}
+
+.about-image img {
+  transition: transform var(--transition-slow);
+}
+
+.about-image:hover img {
+  transform: scale(1.05);
+}
+
+.about-badge {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  background: linear-gradient(135deg, var(--oro-antico), var(--oro-dark));
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg) 0 0 0;
+  box-shadow: 0 -5px 20px rgba(184, 134, 11, 0.4);
+  animation: slideInRight 0.8s ease-out 0.6s both;
+}
+
+/* ============================================
+   DIRECTORS BOX MODERNA
+   ============================================ */
+
+.directors-box {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.08), rgba(107, 142, 35, 0.05));
+  border-left: 4px solid var(--oro-antico);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
+  box-shadow: 0 10px 30px rgba(93, 78, 55, 0.1);
+  transition: all var(--transition-base);
+}
+
+.directors-box:hover {
+  box-shadow: 0 15px 40px rgba(93, 78, 55, 0.15);
+  transform: translateX(5px);
+}
+
+.director-card {
+  background: white;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  border: 1px solid var(--beige-dark);
+}
+
+.director-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(93, 78, 55, 0.15);
+  border-color: var(--oro-antico);
+}
+
+/* ============================================
+   VALUES GRID MODERNA
+   ============================================ */
+
+.values-grid {
+  gap: var(--spacing-xl);
+}
+
+.value-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: 0 10px 30px rgba(93, 78, 55, 0.12);
+  border: 2px solid transparent;
+  transition: all var(--transition-base);
+}
+
+.value-card:hover {
+  border-color: var(--oro-antico);
+  background: linear-gradient(to bottom, white, var(--avorio));
+}
+
+.value-icon {
+  margin-bottom: var(--spacing-md);
+  filter: drop-shadow(0 4px 8px rgba(218, 165, 32, 0.3));
+}
+
+/* ============================================
+   GLOBE INFO PANEL MODERNA
+   ============================================ */
+
+.globe-info-panel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 240, 232, 0.95));
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(218, 165, 32, 0.3);
+}
+
+.globe-btn {
+  transition: all var(--transition-base);
+  background: white;
+  border: 2px solid var(--oro-antico);
+  color: var(--terra-scura);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+.globe-btn:hover {
+  background: var(--oro-antico);
+  color: white;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(218, 165, 32, 0.4);
+}
+
+/* ============================================
+   IMPACT SECTION - SIMPLIFIED
+   ============================================ */
+
+.impact-section {
+  background: rgba(107, 142, 35, 0.05);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  margin-top: var(--spacing-2xl);
+  border: 1px solid var(--beige-dark);
+}
+
+.impact-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-2xl);
+  margin-top: var(--spacing-lg);
+}
+
+.impact-stat {
+  text-align: center;
+}
+
+.impact-stat:hover {
+  transform: none;
+}
+
+.impact-number {
+  display: block;
+  font-size: var(--fs-3xl);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--terracotta), var(--oro-antico));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+}
+
+/* ============================================
+   CONCERT CARDS MIGLIORATE
+   ============================================ */
+
+.concert-card {
+  background: linear-gradient(to bottom, rgba(255, 250, 240, 0.98), rgba(245, 240, 232, 0.98));
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 2px solid rgba(218, 165, 32, 0.2);
+}
+
+.concert-card:hover {
+  border-color: var(--oro-antico);
+}
+
+/* ============================================
+   NAVBAR IMPROVEMENTS
+   ============================================ */
+
+.navbar {
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-base);
+}
+
+.nav-link {
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--terracotta), var(--oro-antico));
+  transition: transform var(--transition-base);
+  border-radius: 2px;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nav-link-special {
+  background: linear-gradient(135deg, var(--oro-antico), var(--oro-dark));
+  color: white !important;
+  padding: 0.5rem 1.5rem;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 15px rgba(218, 165, 32, 0.3);
+}
+
+.nav-link-special:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(218, 165, 32, 0.5);
+}
+
+.nav-link-special::after {
+  display: none;
+}
+
+/* ============================================
+   GLOBE LAYOUT IMPROVEMENTS
+   ============================================ */
+
+/* Desktop: side-by-side layout */
+@media (min-width: 1024px) {
+  .world-map-container {
+    flex-direction: row !important;
+    min-height: 600px !important;
+    max-height: 700px !important;
+    align-items: center;
+    gap: var(--spacing-xl);
+  }
+
+  #globeViz {
+    flex: 1;
+    height: 600px !important;
+  }
+
+  .globe-info-panel {
+    width: 350px !important;
+    flex-shrink: 0;
+  }
+}
+
+/* Tablet/Mobile: stack vertically */
+@media (max-width: 1023px) {
+  .world-map-container {
+    min-height: auto !important;
+  }
+
+  #globeViz {
+    height: 400px !important;
+  }
+}
+
+/* ============================================
+   HERO MOBILE FIX
+   ============================================ */
+
+@media (max-width: 768px) {
+  .hero-claim {
+    font-size: var(--fs-base) !important;
+    margin-bottom: var(--spacing-sm) !important;
+    padding: 0 var(--spacing-md);
+  }
+
+  .hero-stats {
+    gap: var(--spacing-md) !important;
+    margin: var(--spacing-md) 0 !important;
+  }
+
+  .stat-item {
+    gap: 0.25rem !important;
+  }
+
+  .stat-number {
+    font-size: var(--fs-2xl) !important;
+  }
+
+  .stat-label {
+    font-size: var(--fs-xs) !important;
+  }
+
+  .hero-cta {
+    gap: var(--spacing-sm) !important;
+    margin-top: var(--spacing-md) !important;
+  }
+
+  .hero-cta .btn {
+    font-size: var(--fs-sm) !important;
+    padding: 0.75rem 1.5rem !important;
+  }
+
+  .hero-logo-wrapper {
+    margin-bottom: var(--spacing-sm) !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .impact-stats {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .section-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* ============================================
+   SCROLL ANIMATIONS (Observer API)
+   ============================================ */
+
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger animations for cards */
+.region-card,
+.value-card,
+.project-card,
+.concert-card {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.region-card:nth-child(1),
+.value-card:nth-child(1),
+.project-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.region-card:nth-child(2),
+.value-card:nth-child(2),
+.project-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.region-card:nth-child(3),
+.value-card:nth-child(3),
+.project-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.region-card:nth-child(4),
+.value-card:nth-child(4),
+.project-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+/* ============================================
+   HERO ANIMATIONS (solo animazioni, non layout)
+   ============================================ */
+
+.hero-logo {
+  animation: fadeIn 1s ease-out 0.5s both;
+}
+
+.hero-claim {
+  animation: fadeInUp 0.8s ease-out 0.8s both;
+}
+
+.hero-stats {
+  animation: fadeInUp 0.8s ease-out 1s both;
+}
+
+.stat-item {
+  transition: transform var(--transition-base);
+}
+
+.stat-item:hover {
+  transform: scale(1.15);
+}
+
+.stat-number {
+  transition: all var(--transition-base);
+  display: inline-block;
+}
+
+.stat-item:hover .stat-number {
+  color: var(--oro-antico);
+  transform: scale(1.1);
+}
+
+.hero-cta {
+  animation: fadeInUp 0.8s ease-out 1.2s both;
+}

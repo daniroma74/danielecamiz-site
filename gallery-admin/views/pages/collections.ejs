@@ -17,10 +17,7 @@
       tabs: [
         { label: 'Dashboard', url: '/gallery', icon: 'home' },
         { label: 'Collezioni', url: '/gallery/collections', icon: 'folder-open' },
-        { label: 'Foto', url: '/gallery/photos', icon: 'camera' },
-        { label: 'Video', url: '/gallery/videos', icon: 'video' },
-        { label: 'Audio', url: '/gallery/audios', icon: 'music' },
-        { label: 'Categorie', url: '/gallery/categories', icon: 'tags' }
+        { label: 'Media Manager', url: '/gallery/media', icon: 'images' }
       ],
       currentPath: '/gallery/collections',
       baseUrl: 'gallery'
@@ -85,7 +82,11 @@
                       <%= collection.items_count || 0 %> elementi
                     </span>
                     <span class="meta-item">
-                      <%= collection.is_published ? '<i class="fas fa-check-circle" style="color: green;"></i> Pubblicata' : '<i class="fas fa-exclamation-circle" style="color: orange;"></i> Bozza' %>
+                      <% if (collection.is_published) { %>
+                        <i class="fas fa-check-circle" style="color: green;"></i> Pubblicata
+                      <% } else { %>
+                        <i class="fas fa-exclamation-circle" style="color: orange;"></i> Bozza
+                      <% } %>
                     </span>
                   </div>
                 </div>

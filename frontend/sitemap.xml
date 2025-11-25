@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://www.danielecamiz.com/</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.danielecamiz.com/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.danielecamiz.com/?lang=en"/>
+  </url>
+
+  <!-- Bio / Biography -->
+  <url>
+    <loc>https://www.danielecamiz.com/bio</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.danielecamiz.com/bio?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.danielecamiz.com/bio?lang=en"/>
+  </url>
+
+  <!-- Press Kit -->
+  <url>
+    <loc>https://www.danielecamiz.com/press-kit</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.danielecamiz.com/press-kit?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.danielecamiz.com/press-kit?lang=en"/>
+  </url>
+
+  <!-- Concerts / Concerti -->
+  <url>
+    <loc>https://www.danielecamiz.com/concerts</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.danielecamiz.com/concerts?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.danielecamiz.com/concerts?lang=en"/>
+  </url>
+
+  <!-- News -->
+  <url>
+    <loc>https://www.danielecamiz.com/news</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.danielecamiz.com/news?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.danielecamiz.com/news?lang=en"/>
+  </url>
+
+  <!-- Press / Rassegna Stampa -->
+  <url>
+    <loc>https://www.danielecamiz.com/press</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.danielecamiz.com/press?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.danielecamiz.com/press?lang=en"/>
+  </url>
+
+  <!-- Gallery -->
+  <url>
+    <loc>https://www.danielecamiz.com/gallery</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="it" href="https://www.danielecamiz.com/gallery?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.danielecamiz.com/gallery?lang=en"/>
+  </url>
+
+  <!-- Gallery - Photos -->
+  <url>
+    <loc>https://www.danielecamiz.com/gallery/photos</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Gallery - Videos -->
+  <url>
+    <loc>https://www.danielecamiz.com/gallery/videos</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Gallery - Audio -->
+  <url>
+    <loc>https://www.danielecamiz.com/gallery/audio</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>

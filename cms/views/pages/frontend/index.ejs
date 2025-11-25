@@ -26,7 +26,10 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
       if (_projects.length) {
         _projects.forEach(p => {
     %>
-      <article class="project_box" id="project_<%= p.id %>">
+      <article class="project_box <%= p.comingSoon ? 'project_box--coming-soon' : '' %>" id="project_<%= p.id %>">
+        <% if (p.comingSoon) { %>
+          <span class="project_badge project_badge--coming-soon"><%= lang === 'en' ? 'Coming Soon' : 'Prossimamente' %></span>
+        <% } %>
         <% if (p.img) { %>
           <div class="project_img">
             <img src="<%= p.img %>" alt="<%= safe(p.imgAlt, p.title || '') %>">
@@ -37,11 +40,19 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
         <div class="project_links">
           <% if (Array.isArray(p.links) && p.links.length) { %>
             <% p.links.forEach(l => { if (l && l.url) { %>
-              <a class="btn" href="<%= l.url %>" target="_blank" rel="noopener noreferrer"><%= safe(l.text, lang === 'en' ? 'Open' : 'Apri') %></a>
+              <% if (p.comingSoon) { %>
+                <button class="btn" disabled style="opacity: 0.5; cursor: not-allowed;"><%= safe(l.text, lang === 'en' ? 'Open' : 'Apri') %></button>
+              <% } else { %>
+                <a class="btn" href="<%= l.url %>" target="_blank" rel="noopener noreferrer"><%= safe(l.text, lang === 'en' ? 'Open' : 'Apri') %></a>
+              <% } %>
             <% } }) %>
           <% } %>
           <% if (p.btnUrl) { %>
-            <a class="btn" href="<%= p.btnUrl %>" target="_blank" rel="noopener noreferrer"><%= safe(p.btnText, lang === 'en' ? 'Open' : 'Apri') %></a>
+            <% if (p.comingSoon) { %>
+              <button class="btn" disabled style="opacity: 0.5; cursor: not-allowed;"><%= safe(p.btnText, lang === 'en' ? 'Open' : 'Apri') %></button>
+            <% } else { %>
+              <a class="btn" href="<%= p.btnUrl %>" target="_blank" rel="noopener noreferrer"><%= safe(p.btnText, lang === 'en' ? 'Open' : 'Apri') %></a>
+            <% } %>
           <% } %>
         </div>
       </article>

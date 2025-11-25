@@ -27,14 +27,36 @@
       <div class="gallery-subcategories">
         <% subcats.forEach((sub) => { %>
           <a class="subcategory-card" href="<%= sub.url %>">
-            <div class="subcategory-icon">
-              <i class="fas <%= sub.icon %>"></i>
-            </div>
-            <h2 class="subcategory-title"><%= sub.title %></h2>
-            <p class="subcategory-description"><%= sub.description %></p>
-            <% if (sub.count > 0) { %>
-              <span class="subcategory-count"><%= sub.count %></span>
+            <% if (sub.previewImages && sub.previewImages.length > 0) { %>
+              <!-- Photo grid preview (3 images) -->
+              <div class="subcategory-preview subcategory-preview--grid">
+                <% sub.previewImages.forEach((img, idx) => { %>
+                  <div class="preview-image preview-image--<%= idx + 1 %>">
+                    <img src="<%= img %>" alt="<%= sub.title %>" loading="lazy">
+                  </div>
+                <% }) %>
+              </div>
+            <% } else if (sub.previewImage) { %>
+              <!-- Single video preview -->
+              <div class="subcategory-preview subcategory-preview--single">
+                <img src="<%= sub.previewImage %>" alt="<%= sub.title %>" loading="lazy">
+                <div class="preview-overlay">
+                  <i class="fas fa-play-circle"></i>
+                </div>
+              </div>
+            <% } else { %>
+              <!-- Fallback icon -->
+              <div class="subcategory-icon">
+                <i class="fas <%= sub.icon %>"></i>
+              </div>
             <% } %>
+            <div class="subcategory-content">
+              <h2 class="subcategory-title"><%= sub.title %></h2>
+              <p class="subcategory-description"><%= sub.description %></p>
+              <% if (sub.count > 0) { %>
+                <span class="subcategory-count"><%= sub.count %></span>
+              <% } %>
+            </div>
           </a>
         <% }) %>
       </div>

@@ -58,11 +58,99 @@
 </section>
 
 <style>
-  /* Stili minimi coerenti con layout sticky e tipografia base */
-  .legal-section { max-width: 900px; margin: 0 auto; padding: 16px; }
-  .legal-title { margin: 8px 0 12px; }
-  .legal-updated { color: #777; margin-bottom: 12px; }
-  .legal-subtitle { margin: 16px 0 8px; }
-  .legal-text, .legal-intro { margin-bottom: 12px; }
-  .legal-list { margin: 0 0 12px 20px; }
+  /* Stili legali coerenti con il design del sito */
+  .legal-section {
+    max-width: 900px;
+    margin: 2rem auto 4rem;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(212,175,55,0.03));
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 12px;
+    line-height: 1.7;
+  }
+  .legal-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #f4eed4;
+    margin: 0 0 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+  }
+  .legal-updated {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-bottom: 2rem;
+  }
+  .legal-intro {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(212, 175, 55, 0.05);
+    border-left: 4px solid #d4af37;
+    border-radius: 4px;
+  }
+  .legal-subtitle {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #d4af37;
+    margin: 2.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .legal-subtitle::before {
+    content: '▸';
+    color: #d4af37;
+    font-size: 1.2rem;
+  }
+  .legal-text {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+  }
+  .legal-list {
+    margin: 1rem 0 1.5rem 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .legal-list li {
+    margin-bottom: 0.75rem;
+    padding-left: 0.5rem;
+  }
+  .legal-list li::marker {
+    color: #d4af37;
+  }
+  .legal-body {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .legal-body h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #d4af37;
+    margin: 2.5rem 0 1rem;
+  }
+  .legal-body p {
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+  .legal-body ul, .legal-body ol {
+    margin: 1rem 0 1.5rem 1.5rem;
+  }
+  .legal-body li {
+    margin-bottom: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    .legal-section {
+      padding: 1.5rem 1rem;
+      margin: 1rem;
+    }
+    .legal-title {
+      font-size: 2rem;
+    }
+    .legal-subtitle {
+      font-size: 1.3rem;
+    }
+  }
 </style>

@@ -11,17 +11,9 @@
       <span class="icon">📚</span>
       <span>Collezioni</span>
     </a>
-    <a href="/gallery/photos" class="nav-item <%= currentPath.startsWith('/gallery/photos') ? 'active' : '' %>">
-      <span class="icon">📷</span>
-      <span>Foto</span>
-    </a>
-    <a href="/gallery/videos" class="nav-item <%= currentPath.startsWith('/gallery/videos') ? 'active' : '' %>">
-      <span class="icon">🎬</span>
-      <span>Video</span>
-    </a>
-    <a href="/gallery/audios" class="nav-item <%= currentPath.startsWith('/gallery/audios') ? 'active' : '' %>">
-      <span class="icon">🎵</span>
-      <span>Audio</span>
+    <a href="/gallery/media" class="nav-item <%= currentPath.startsWith('/gallery/media') || currentPath.startsWith('/gallery/photos') || currentPath.startsWith('/gallery/videos') || currentPath.startsWith('/gallery/audios') ? 'active' : '' %>">
+      <span class="icon">🎨</span>
+      <span>Media Manager</span>
     </a>
   </nav>
   <div class="sidebar-footer">

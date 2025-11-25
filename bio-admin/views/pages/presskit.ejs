@@ -42,32 +42,85 @@
             <thead>
               <tr>
                 <th>Tipo</th>
+                <th>Categoria</th>
                 <th>Titolo (IT)</th>
-                <th>Cloudinary ID</th>
-                <th>Incluso</th>
+                <th>Source</th>
+                <th>Pubblicato</th>
                 <th>Azioni</th>
               </tr>
             </thead>
             <tbody>
               <% assets.forEach(asset => { %>
                 <tr>
-                  <td><%= asset.type %></td>
-                  <td><%= asset.title_it || '-' %></td>
-                  <td><%= asset.cloudinary_id %></td>
-                  <td><%= asset.is_included_in_kit ? '<i class="fas fa-check-circle" style="color: green;"></i>' : '<i class="fas fa-times-circle" style="color: red;"></i>' %></td>
                   <td>
-                    <button onclick="deleteAsset(<%= asset.id %>)" class="btn btn-sm btn-danger">Elimina</button>
+                    <% if (asset.type === 'photo') { %>
+                      📷 Foto
+                    <% } else if (asset.type === 'video') { %>
+                      🎥 Video
+                    <% } else if (asset.type === 'document') { %>
+                      📄 Documento
+                    <% } else { %>
+                      <%= asset.type %>
+                    <% } %>
+                  </td>
+                  <td><%= asset.category || '-' %></td>
+                  <td><strong><%= asset.title_it || asset.title_en || '-' %></strong></td>
+                  <td style="font-size: 0.85em; color: #7f8c8d;">
+                    <% if (asset.cloudinary_id) { %>
+                      Cloudinary: <%= asset.cloudinary_id.split('/').pop() %>
+                    <% } else if (asset.youtube_id) { %>
+                      YouTube: <%= asset.youtube_id %>
+                    <% } else { %>
+                      -
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (asset.is_published) { %>
+                      <i class="fas fa-check-circle" style="color: green;"></i> Sì
+                    <% } else { %>
+                      <i class="fas fa-times-circle" style="color: red;"></i> No
+                    <% } %>
+                  </td>
+                  <td>
+                    <button onclick="viewAsset(<%= asset.id %>, '<%= asset.type %>')" class="btn btn-sm btn-secondary" title="Visualizza">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button onclick="deleteAsset(<%= asset.id %>)" class="btn btn-sm btn-danger" title="Elimina">
+                      <i class="fas fa-trash"></i>
+                    </button>
                   </td>
                 </tr>
               <% }) %>
             </tbody>
           </table>
+
+          <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <p style="margin: 0; color: #7f8c8d; font-size: 0.9em;">
+              <strong>💡 Tip:</strong> Gli asset pubblicati appaiono automaticamente su
+              <a href="/press-kit" target="_blank" style="color: #d4af37;">danielecamiz.com/press-kit</a>
+            </p>
+          </div>
         <% } else { %>
-          <p>Nessun asset nel press kit. <button onclick="addNewAsset()" class="btn btn-primary">Aggiungi primo asset</button></p>
+          <div style="text-align: center; padding: 3rem;">
+            <p style="font-size: 1.1em; color: #7f8c8d; margin-bottom: 1.5rem;">
+              📦 Nessun asset nel press kit. Inizia ad aggiungere materiali professionali!
+            </p>
+            <button onclick="addNewAsset()" class="btn btn-primary" style="font-size: 1.1em; padding: 12px 24px;">
+              <i class="fas fa-plus"></i> Aggiungi Primo Asset
+            </button>
+          </div>
         <% } %>
   </main>
 
   <script>
+    function viewAsset(id, type) {
+      if (type === 'video') {
+        window.open('/press-kit#videos', '_blank');
+      } else {
+        window.open('/press-kit', '_blank');
+      }
+    }
+
     async function deleteAsset(id) {
       if (!confirm('Sei sicuro di voler eliminare questo asset?')) return;
 
@@ -85,15 +138,116 @@
 
     function addNewAsset() {
       // Prima chiedi il tipo di asset
-      const assetType = prompt('Tipo di asset (photo/document/logo/video):', 'photo');
+      const assetType = prompt('Tipo di asset (photo/document/video):', 'photo');
       if (!assetType) return;
 
-      // Usa CloudinaryManager per selezionare/caricare il file
+      // Per video, chiedi YouTube URL
+      if (assetType === 'video') {
+        showVideoForm();
+        return;
+      }
+
+      // Per photo/document usa CloudinaryManager
+      const preset = assetType === 'document' ? 'gallery_unsigned' : 'gallery_unsigned';
       CloudinaryManager.showImageDialog((result) => {
         showAssetMetadataForm(result, assetType);
       }, {
         folder: 'danielecamiz/presskit',
-        preset: 'gallery_unsigned'
+        preset
+      });
+    }
+
+    function showVideoForm() {
+      const modal = document.createElement('div');
+      modal.id = 'video-modal';
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 10001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `;
+
+      modal.innerHTML = `
+        <div style="background: white; border-radius: 12px; max-width: 600px; width: 90%; padding: 30px;">
+          <h2 style="margin-top: 0;">Aggiungi Video YouTube</h2>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">YouTube URL:</label>
+            <input type="url" id="youtube-url" placeholder="https://www.youtube.com/watch?v=..." style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Titolo (Italiano):</label>
+            <input type="text" id="title-it" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Titolo (English):</label>
+            <input type="text" id="title-en" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Descrizione (Italiano):</label>
+            <textarea id="desc-it" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;"></textarea>
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Descrizione (English):</label>
+            <textarea id="desc-en" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;"></textarea>
+          </div>
+
+          <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+            <button onclick="document.getElementById('video-modal').remove()" style="padding: 10px 24px; border: 1px solid #e1e8ed; background: white; color: #333; border-radius: 8px; cursor: pointer; font-weight: 600;">Annulla</button>
+            <button id="save-video-btn" style="padding: 10px 24px; border: none; background: #d4af37; color: white; border-radius: 8px; cursor: pointer; font-weight: 600;">Salva Video</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+      const saveBtn = modal.querySelector('#save-video-btn');
+
+      saveBtn.addEventListener('click', async () => {
+        const youtubeUrl = modal.querySelector('#youtube-url').value;
+        const match = youtubeUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/);
+
+        if (!match) {
+          alert('URL YouTube non valido');
+          return;
+        }
+
+        const youtubeId = match[1];
+        const data = {
+          type: 'video',
+          youtube_id: youtubeId,
+          youtube_url: youtubeUrl,
+          title_it: modal.querySelector('#title-it').value,
+          title_en: modal.querySelector('#title-en').value,
+          description_it: modal.querySelector('#desc-it').value,
+          description_en: modal.querySelector('#desc-en').value
+        };
+
+        try {
+          const res = await fetch('/bio/presskit/assets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          if (res.ok) {
+            modal.remove();
+            window.location.reload();
+          } else {
+            alert('Errore durante il salvataggio');
+          }
+        } catch (error) {
+          alert('Errore di connessione');
+        }
       });
     }
 
@@ -113,6 +267,10 @@
         justify-content: center;
       `;
 
+      const categoryOptions = assetType === 'photo'
+        ? '<option value="">Nessuna</option><option value="portrait">Ritratto</option><option value="action">In azione</option><option value="backstage">Backstage</option>'
+        : '<option value="">Nessuna</option><option value="cv">CV</option><option value="bio">Bio</option>';
+
       modal.innerHTML = `
         <div style="background: white; border-radius: 12px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 30px;">
           <h2 style="margin-top: 0;">Dettagli Asset Press Kit</h2>
@@ -120,6 +278,13 @@
           <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
             <p style="margin: 0; font-size: 14px; color: #7f8c8d;"><strong>Tipo:</strong> ${assetType}</p>
             <p style="margin: 5px 0 0; font-size: 12px; color: #7f8c8d;">${uploadedData.publicId}</p>
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Categoria:</label>
+            <select id="category" style="width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 8px;">
+              ${categoryOptions}
+            </select>
           </div>
 
           <div style="margin-bottom: 15px;">
@@ -155,14 +320,17 @@
       saveBtn.addEventListener('click', async () => {
         const data = {
           type: assetType,
+          category: modal.querySelector('#category').value || null,
           cloudinary_id: uploadedData.publicId,
-          cloudinary_folder: uploadedData.publicId.split('/').slice(0, -1).join('/'),
+          cloudinary_url: uploadedData.url || uploadedData.secure_url || null,
           title_it: modal.querySelector('#title-it').value,
           title_en: modal.querySelector('#title-en').value,
           description_it: modal.querySelector('#desc-it').value,
           description_en: modal.querySelector('#desc-en').value,
           file_size: uploadedData.bytes || 0,
-          file_format: uploadedData.format || ''
+          format: uploadedData.format || '',
+          width: uploadedData.width || null,
+          height: uploadedData.height || null
         };
 
         try {

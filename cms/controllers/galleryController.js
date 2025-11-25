@@ -215,6 +215,32 @@ export async function getGalleryPage(req, res) {
 
     const photoCount = categories.reduce((sum, cat) => sum + (cat.photos?.length || 0), 0);
 
+    // Get preview images for photos subcategory (use first 3 category covers)
+    const photoPreviewImages = categories
+      .filter(cat => cat.cover)
+      .slice(0, 3)
+      .map(cat => cat.cover);
+
+    // Get video count and preview from DB
+    const { getDb: getMainDb } = await import('../utils/sqliteMain.js');
+    const db = await getMainDb();
+    const videoStats = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT COUNT(*) as count,
+                (SELECT thumbnail_id FROM videos WHERE status = 'published' AND thumbnail_id IS NOT NULL ORDER BY published_at DESC LIMIT 1) as latest_thumbnail_id
+         FROM videos
+         WHERE status = 'published'`,
+        [],
+        (err, r) => (err ? reject(err) : resolve(r || { count: 0, latest_thumbnail_id: null }))
+      );
+    });
+
+    const videoCount = videoStats.count || 0;
+    let videoPreview = null;
+    if (videoStats.latest_thumbnail_id) {
+      videoPreview = await resolveMediaById(videoStats.latest_thumbnail_id, { width: 800, crop: 'fill', quality: 'auto', format: 'auto' });
+    }
+
     const subcategories = [
       {
         id: 'photos',
@@ -222,15 +248,17 @@ export async function getGalleryPage(req, res) {
         description: lang === 'en' ? `${photoCount} photos from concerts, rehearsals and official shots` : `${photoCount} foto da concerti, prove e scatti ufficiali`,
         url: '/gallery/photos',
         icon: 'fa-images',
-        count: photoCount
+        count: photoCount,
+        previewImages: photoPreviewImages
       },
       {
         id: 'videos',
         title: 'Video',
-        description: lang === 'en' ? 'Video recordings from concerts and performances' : 'Registrazioni video da concerti ed esecuzioni',
+        description: lang === 'en' ? `${videoCount} video recordings from concerts and performances` : `${videoCount} registrazioni video da concerti ed esecuzioni`,
         url: '/gallery/videos',
         icon: 'fa-video',
-        count: 0 // will be populated from DB later if needed
+        count: videoCount,
+        previewImage: videoPreview
       }
     ];
 

@@ -52,7 +52,11 @@
     if (opts.folder) formData.append('folder', opts.folder);
     if (opts.public_id) formData.append('public_id', opts.public_id);
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    // Determine resource type (image or raw for documents)
+    const resourceType = opts.resourceType || 'image';
+    const uploadEndpoint = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`;
+
+    const res = await fetch(uploadEndpoint, {
       method: 'POST',
       body: formData
     });
@@ -116,6 +120,8 @@
   function showImageDialog(callback, options = {}) {
     const folder = options.folder || '';
     const preset = options.preset || DEFAULT_PRESET;
+    const resourceType = options.resourceType || 'image';
+    const clientAllowedFormats = options.clientAllowedFormats || [];
 
     // Multi-select state
     let multiSelectMode = false;
@@ -185,7 +191,7 @@
               <p style="margin: 0; color: #7f8c8d;">Trascina immagini qui o clicca per selezionare</p>
               <p style="margin: 8px 0 0 0; color: #95a5a6; font-size: 12px;">Supporta caricamento multiplo</p>
             </div>
-            <input type="file" id="cloudinary-file-input" accept="image/*" multiple style="display: none;">
+            <input type="file" id="cloudinary-file-input" multiple style="display: none;">
             <div id="upload-progress-container" style="margin-top: 20px; display: none;">
               <h4 style="margin: 0 0 12px 0; color: #333;">Caricamento in corso...</h4>
               <div id="upload-files-list"></div>
@@ -201,6 +207,21 @@
     `;
 
     document.body.appendChild(modal);
+
+    // Set accept attribute dynamically based on clientAllowedFormats
+    const fileInput = modal.querySelector('#cloudinary-file-input');
+    if (clientAllowedFormats.length > 0) {
+      // Convert formats to MIME types
+      const acceptTypes = clientAllowedFormats.map(format => {
+        if (format === 'pdf') return '.pdf,application/pdf';
+        if (format === 'doc') return '.doc,application/msword';
+        if (format === 'docx') return '.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        return `.${format}`;
+      }).join(',');
+      fileInput.setAttribute('accept', acceptTypes);
+    } else if (resourceType === 'image') {
+      fileInput.setAttribute('accept', 'image/*');
+    }
 
     let currentFolder = folder || DEFAULT_FOLDER;
     let selectedImage = null;
@@ -392,7 +413,7 @@
 
               moveImage(publicId, toFolder, (result) => {
                 if (result.success) {
-                  window.CloudinaryNotifications?.success(`Immagine spostata in "${toFolder}"`);
+                  window.CloudinaryNotifications?.success(`✅ Immagine spostata!\n\nVecchio ID: ${publicId}\nNuovo ID: ${result.newPublicId}\n\n⚠️ IMPORTANTE: Se questa immagine è usata nel database, aggiorna il suo public_id!`);
                   loadCloudinaryImages(currentFolder); // Reload
                 } else {
                   window.CloudinaryNotifications?.error(`Errore spostamento: ${result.error}`);
@@ -586,7 +607,7 @@
     
     // Upload zone
     const dropzone = modal.querySelector('#upload-dropzone');
-    const fileInput = modal.querySelector('#cloudinary-file-input');
+    // fileInput already declared above
     
     dropzone.addEventListener('click', () => fileInput.click());
     
@@ -652,10 +673,11 @@
         }
 
         try {
-          // Upload file
+          // Upload file - usa currentFolder (cartella navigata) non folder (parametro iniziale)
           const result = await upload(file, {
             preset: preset || DEFAULT_PRESET,
-            folder: folder || DEFAULT_FOLDER
+            folder: currentFolder || folder || DEFAULT_FOLDER,
+            resourceType: resourceType
           });
 
           if (progressBar) progressBar.update(100);
@@ -712,7 +734,7 @@
       try {
         const result = await upload(file, {
           preset: preset || DEFAULT_PRESET,
-          folder: folder || DEFAULT_FOLDER
+          folder: currentFolder || folder || DEFAULT_FOLDER
         });
         
         if (result.success) {

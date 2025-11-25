@@ -11,9 +11,41 @@
   <div class="gallery-sections">
     <% _sections.forEach(section => { %>
       <a href="<%= section.url %>" class="gallery-section-card" data-type="<%= section.type %>">
-        <div class="gallery-section-card__icon">
-          <i class="fas <%= section.icon %>"></i>
-        </div>
+        <% if (section.previewImages && section.previewImages.length > 0) { %>
+          <!-- Photo hero + grid preview -->
+          <div class="gallery-section-card__preview gallery-section-card__preview--hero">
+            <!-- Main hero image -->
+            <div class="preview-hero">
+              <img src="<%= section.previewImages[0] %>" alt="<%= section.title %>" loading="lazy">
+            </div>
+            <!-- Mini grid overlay (if more than 1 image) -->
+            <% if (section.previewImages.length > 1) { %>
+              <div class="preview-mini-grid">
+                <% section.previewImages.slice(1, 4).forEach((img, idx) => { %>
+                  <div class="preview-mini">
+                    <img src="<%= img %>" alt="<%= section.title %>" loading="lazy">
+                  </div>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+        <% } else if (section.previewImage) { %>
+          <!-- Single preview (video/audio) -->
+          <div class="gallery-section-card__preview gallery-section-card__preview--single">
+            <img src="<%= section.previewImage %>" alt="<%= section.title %>" loading="lazy">
+            <% if (section.type === 'videos') { %>
+              <div class="preview-overlay">
+                <i class="fas fa-play-circle"></i>
+              </div>
+            <% } %>
+          </div>
+        <% } else { %>
+          <!-- Fallback icon -->
+          <div class="gallery-section-card__icon">
+            <i class="fas <%= section.icon %>"></i>
+          </div>
+        <% } %>
+
         <div class="gallery-section-card__content">
           <h2 class="gallery-section-card__title"><%= section.title %></h2>
           <p class="gallery-section-card__description"><%= section.description %></p>

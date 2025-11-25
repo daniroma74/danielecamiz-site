@@ -1,0 +1,252 @@
+<%
+// Press-Kit page - EPK (Electronic Press Kit)
+const L = (labels && labels['press-kit']) || {};
+const title = L.title || 'Press Kit';
+const subtitle = L.subtitle || '';
+
+function formatFileSize(bytes) {
+  if (!bytes) return '';
+  const kb = bytes / 1024;
+  const mb = kb / 1024;
+  return mb >= 1 ? `${mb.toFixed(1)} MB` : `${kb.toFixed(0)} KB`;
+}
+
+function cloudinaryUrl(id, transform = '', resourceType = 'image') {
+  if (!id) return '';
+  const base = `https://res.cloudinary.com/dnwhnz2xy/${resourceType}/upload/`;
+  return transform ? `${base}${transform}/${id}` : `${base}${id}`;
+}
+
+function pdfPreviewUrl(id) {
+  if (!id) return '';
+  // For PDF previews: use image URL with pg_1 to get first page as JPG
+  return `https://res.cloudinary.com/dnwhnz2xy/image/upload/w_400,pg_1,f_jpg/${id}`;
+}
+
+function youtubeEmbed(id) {
+  if (!id) return '';
+  return `https://www.youtube.com/embed/${id}`;
+}
+%>
+
+<% if (pageCss) { %>
+  <link rel="stylesheet" href="/css/<%= pageCss %>">
+<% } %>
+
+<section class="press-kit">
+  <!-- Hero -->
+  <header class="press-kit-hero">
+    <h1 class="press-kit-hero__title"><%= title %></h1>
+    <% if (subtitle) { %>
+      <p class="press-kit-hero__subtitle"><%= subtitle %></p>
+    <% } %>
+  </header>
+
+  <!-- Biography -->
+  <% if (bio && (bio.short_text || bio.long_text)) { %>
+  <section class="press-kit-section" id="biography">
+    <h2 class="press-kit-section__title"><%= L.biography || 'Biography' %></h2>
+
+    <% if (bio.profile_photo_cloudinary_id) { %>
+      <div class="press-kit-bio__photo">
+        <img src="<%= cloudinaryUrl(bio.profile_photo_cloudinary_id, 'w_400,h_400,c_fill,g_face,q_auto,f_auto') %>"
+             alt="Daniele Camiz"
+             loading="lazy">
+      </div>
+    <% } %>
+
+    <div class="press-kit-bio__text">
+      <% if (bio.short_text) { %>
+        <div class="bio-short">
+          <%- bio.short_text.replace(/\n/g, '<br>') %>
+        </div>
+      <% } %>
+
+      <% if (bio.long_text) { %>
+        <div class="bio-long" id="bio-long" style="display: none;">
+          <%- bio.long_text.replace(/\n/g, '<br>') %>
+        </div>
+        <button class="btn-text" id="bio-toggle" aria-expanded="false" aria-controls="bio-long">
+          <span class="show-more"><%= L.read_more || 'Read more' %> ↓</span>
+          <span class="show-less" style="display: none;"><%= L.read_less || 'Show less' %> ↑</span>
+        </button>
+      <% } %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- Documents -->
+  <% if (documents && documents.length > 0) { %>
+  <section class="press-kit-section" id="documents">
+    <h2 class="press-kit-section__title"><%= L.documents || (lang === 'en' ? 'Documents' : 'Documenti') %></h2>
+    <p class="press-kit-section__desc"><%= L.documents_desc || '' %></p>
+
+    <div class="press-kit-documents">
+      <% documents.forEach(doc => { %>
+        <%
+          // All documents in press-kit are PDFs (filtered by controller WHERE type = 'document')
+          const isPdf = true;
+        %>
+        <div class="document-card">
+          <% if (doc.cloudinary_id && isPdf) { %>
+            <div class="document-card__preview">
+              <img src="<%= pdfPreviewUrl(doc.cloudinary_id) %>"
+                   alt="<%= doc.title %> preview"
+                   loading="lazy"
+                   onerror="this.parentElement.innerHTML='<div class=\'document-card__pdf-fallback\'><svg viewBox=\'0 0 64 80\' class=\'pdf-icon\'><path d=\'M4 0h40l16 16v60a4 4 0 01-4 4H4a4 4 0 01-4-4V4a4 4 0 014-4z\' fill=\'#d4af37\'/><path d=\'M44 0v12a4 4 0 004 4h12L44 0z\' fill=\'#b8941f\'/><text x=\'32\' y=\'50\' text-anchor=\'middle\' fill=\'#0a0a0a\' font-size=\'16\' font-weight=\'700\' font-family=\'Arial\'>PDF</text></svg></div>'">
+              <div class="document-card__format-badge">PDF</div>
+            </div>
+          <% } else if (isPdf) { %>
+            <div class="document-card__pdf-fallback">
+              <svg viewBox="0 0 64 80" class="pdf-icon">
+                <path d="M4 0h40l16 16v60a4 4 0 01-4 4H4a4 4 0 01-4-4V4a4 4 0 014-4z" fill="#d4af37"/>
+                <path d="M44 0v12a4 4 0 004 4h12L44 0z" fill="#b8941f"/>
+                <text x="32" y="50" text-anchor="middle" fill="#0a0a0a" font-size="16" font-weight="700" font-family="Arial">PDF</text>
+              </svg>
+            </div>
+          <% } else { %>
+            <div class="document-card__icon">📁</div>
+          <% } %>
+          <div class="document-card__info">
+            <h3 class="document-card__title"><%= doc.title || 'Document' %></h3>
+            <% if (doc.description) { %>
+              <p class="document-card__desc"><%= doc.description %></p>
+            <% } %>
+            <div class="document-card__meta">
+              <% if (doc.format) { %>
+                <span class="meta-item"><%= doc.format.toUpperCase() %></span>
+              <% } %>
+              <% if (doc.file_size) { %>
+                <span class="meta-item"><%= formatFileSize(doc.file_size) %></span>
+              <% } %>
+            </div>
+          </div>
+          <% if (doc.cloudinary_url || doc.cloudinary_id) { %>
+            <a href="<%= doc.cloudinary_id ? cloudinaryUrl(doc.cloudinary_id, 'fl_attachment', 'raw') : doc.cloudinary_url %>"
+               class="btn btn--small btn--primary"
+               download
+               rel="noopener"
+               style="display: inline-flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-download"></i> <%= L.download || 'Download' %> <%= doc.format ? doc.format.toUpperCase() : '' %>
+            </a>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- Photos -->
+  <% if (photos && photos.length > 0) { %>
+  <section class="press-kit-section" id="photos">
+    <h2 class="press-kit-section__title"><%= L.photos || (lang === 'en' ? 'Professional Photos' : 'Foto professionali') %></h2>
+    <p class="press-kit-section__desc"><%= L.photos_desc || (lang === 'en' ? 'High-resolution photos for press use' : 'Foto ad alta risoluzione per uso stampa') %></p>
+
+    <div class="press-kit-gallery">
+      <% photos.forEach(photo => { %>
+        <div class="gallery-item">
+          <div class="gallery-item__media">
+            <img src="<%= cloudinaryUrl(photo.cloudinary_id, 'w_600,c_fit,q_auto,f_auto') %>"
+                 alt="<%= photo.title || 'Photo' %>"
+                 loading="lazy">
+            <% if (photo.category) { %>
+              <span class="gallery-item__badge"><%= L[photo.category] || photo.category %></span>
+            <% } %>
+          </div>
+          <div class="gallery-item__info">
+            <% if (photo.title) { %>
+              <h3 class="gallery-item__title"><%= photo.title %></h3>
+            <% } %>
+            <div class="gallery-item__meta">
+              <% if (photo.width && photo.height) { %>
+                <span><%= photo.width %> × <%= photo.height %></span>
+              <% } %>
+              <% if (photo.format) { %>
+                <span><%= photo.format.toUpperCase() %></span>
+              <% } %>
+            </div>
+            <% if (photo.cloudinary_url || photo.cloudinary_id) { %>
+              <a href="<%= cloudinaryUrl(photo.cloudinary_id, 'fl_attachment:foto-daniele-camiz') %>"
+                 class="btn-text"
+                 download
+                 rel="noopener">
+                <%= L.download || 'Download' %> (<%= L.high_res || 'High res' %>)
+              </a>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- Videos -->
+  <% if (videos && videos.length > 0) { %>
+  <section class="press-kit-section" id="videos">
+    <h2 class="press-kit-section__title"><%= L.videos || (lang === 'en' ? 'Videos' : 'Video') %></h2>
+    <p class="press-kit-section__desc"><%= L.videos_desc || (lang === 'en' ? 'Performance and rehearsal recordings' : 'Registrazioni di performance e prove') %></p>
+
+    <div class="press-kit-videos">
+      <% videos.forEach(video => { %>
+        <div class="video-card">
+          <% if (video.youtube_id) { %>
+            <div class="video-card__embed">
+              <iframe
+                src="<%= youtubeEmbed(video.youtube_id) %>"
+                title="<%= video.title || 'Video' %>"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy">
+              </iframe>
+            </div>
+          <% } %>
+          <div class="video-card__info">
+            <% if (video.title) { %>
+              <h3 class="video-card__title"><%= video.title %></h3>
+            <% } %>
+            <% if (video.description) { %>
+              <p class="video-card__desc"><%= video.description %></p>
+            <% } %>
+            <% if (video.youtube_url) { %>
+              <a href="<%= video.youtube_url %>" class="btn-text" target="_blank" rel="noopener">
+                <%= L.watch || 'Watch' %> on YouTube →
+              </a>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- Contact -->
+  <section class="press-kit-section press-kit-contact" id="contact">
+    <h2 class="press-kit-section__title"><%= L.contact || (lang === 'en' ? 'Contact' : 'Contatti') %></h2>
+    <p class="press-kit-section__desc"><%= L.contact_booking || (lang === 'en' ? 'For bookings and information' : 'Per ingaggi e informazioni') %></p>
+
+    <div class="contact-info">
+      <div class="contact-item">
+        <span class="contact-item__label"><%= L.email || 'Email' %>:</span>
+        <a href="mailto:info@danielecamiz.com" class="contact-item__value">info@danielecamiz.com</a>
+      </div>
+    </div>
+  </section>
+</section>
+
+<script>
+// Bio toggle
+(function() {
+  const toggle = document.getElementById('bio-toggle');
+  const long = document.getElementById('bio-long');
+  if (!toggle || !long) return;
+
+  toggle.addEventListener('click', function() {
+    const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', !isExpanded);
+    long.style.display = isExpanded ? 'none' : 'block';
+    toggle.querySelector('.show-more').style.display = isExpanded ? 'inline' : 'none';
+    toggle.querySelector('.show-less').style.display = isExpanded ? 'none' : 'inline';
+  });
+})();
+</script>

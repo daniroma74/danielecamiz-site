@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Coro Raro Landing Admin</title>
+
+  <!-- TinyMCE + Cloudinary from shared -->
+  <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/shared/cloudinary-manager/ui-notifications.js"></script>
+  <script src="/shared/cloudinary-manager/ui-loading.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 0.3rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.9rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .editor-wrapper {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      min-height: 400px;
+    }
+
+    .preview-controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .preview-btn {
+      padding: 0.7rem 1.5rem;
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .preview-btn.active {
+      background: #8B4513;
+      color: white;
+      border-color: #8B4513;
+    }
+
+    .email-preview {
+      background: #f0f0f0;
+      padding: 2rem;
+      border-radius: 12px;
+      min-height: 600px;
+      transition: max-width 0.3s;
+      margin: 0 auto;
+    }
+
+    .email-preview.desktop {
+      max-width: 100%;
+    }
+
+    .email-preview.mobile {
+      max-width: 375px;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .email-header {
+      background: linear-gradient(135deg, #8B4513, #654321);
+      padding: 2rem;
+      text-align: center;
+      color: white;
+    }
+
+    .email-header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .email-content {
+      padding: 2rem;
+      min-height: 300px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .email-footer {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .actions-bar {
+      position: sticky;
+      bottom: 0;
+      background: white;
+      border-top: 2px solid #e0e0e0;
+      padding: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      z-index: 100;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+    }
+
+    .btn {
+      padding: 0.9rem 1.8rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8B4513, #654321);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+    }
+
+    .btn-secondary {
+      background: #4a7c59;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #3d6849;
+    }
+
+    .btn-outline {
+      background: white;
+      color: #8B4513;
+      border: 2px solid #8B4513;
+    }
+
+    .btn-outline:hover {
+      background: #8B4513;
+      color: white;
+    }
+
+    .message {
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+
+    @media (max-width: 1200px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><%= isNew ? '✨ Nuova Campagna Newsletter' : '✏️ Modifica Campagna' %></h1>
+      <a href="/admin/newsletter/campaigns" class="btn btn-outline">← Indietro</a>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <form id="campaign-form">
+      <input type="hidden" id="campaign-id" value="<%= campaign.id || '' %>">
+
+      <!-- Info Base -->
+      <div class="card">
+        <h2>📝 Informazioni Base</h2>
+
+        <div class="form-group">
+          <label>Nome Campagna *</label>
+          <input type="text" id="campaign-name" class="form-control" value="<%= campaign.name || '' %>" placeholder="Es: Newsletter Gennaio 2025" required>
+          <small>Nome interno per riconoscere la campagna</small>
+        </div>
+
+        <div class="form-group">
+          <label>Oggetto Email *</label>
+          <input type="text" id="campaign-subject" class="form-control" value="<%= campaign.subject || '' %>" placeholder="Es: 🎵 Prossimi Concerti del Coro Raro" required>
+          <small>Questo è l'oggetto che vedranno i destinatari</small>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <!-- EDITOR Column -->
+        <div>
+          <div class="card">
+            <h2>✍️ Contenuto Email</h2>
+
+            <div class="form-group">
+              <label>Corpo del messaggio</label>
+              <div class="editor-wrapper">
+                <textarea id="content-editor"><%= campaign.content_html || '' %></textarea>
+              </div>
+              <small>💡 Usa l'editor per formattare il testo e inserire immagini da Cloudinary</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREVIEW Column -->
+        <div>
+          <div class="card">
+            <h2>📱 Anteprima Email</h2>
+
+            <div class="preview-controls">
+              <button type="button" class="preview-btn active" onclick="setPreviewMode('desktop', this)">💻 Desktop</button>
+              <button type="button" class="preview-btn" onclick="setPreviewMode('mobile', this)">📱 Mobile</button>
+            </div>
+
+            <div id="email-preview" class="email-preview desktop">
+              <div class="email-container">
+                <div class="email-header">
+                  <h1>🎵 Coro Raro</h1>
+                  <p>Voci dal Mondo per un Mondo Migliore</p>
+                </div>
+
+                <div id="preview-content" class="email-content">
+                  <p style="color:#999; text-align:center;">Il contenuto apparirà qui mentre lo scrivi...</p>
+                </div>
+
+                <div class="email-footer">
+                  <p>
+                    <strong>Coro Raro</strong> - Voci dal Mondo per un Mondo Migliore<br>
+                    <a href="https://cororaro.it" style="color: #8B4513;">www.cororaro.it</a>
+                  </p>
+                  <p style="margin-top: 10px;">
+                    Hai ricevuto questa email perché sei iscritto alla newsletter.<br>
+                    Per disiscriverti, contattaci a info@cororaro.it
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions Bar -->
+      <div class="actions-bar">
+        <button type="button" class="btn btn-outline" onclick="sendTest()">
+          📧 Invia Test
+        </button>
+        <button type="submit" class="btn btn-primary">
+          💾 Salva Campagna
+        </button>
+        <% if (!isNew && campaign.status === 'draft') { %>
+          <button type="button" class="btn btn-secondary" onclick="sendCampaign()">
+            🚀 Invia a Tutti
+          </button>
+        <% } %>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Initialize Cloudinary Manager
+    window.CLOUDINARY_CONFIG = {
+      cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME %>',
+      apiKey: '<%= process.env.CLOUDINARY_API_KEY %>',
+      uploadPreset: 'cororaro_newsletter'
+    };
+
+    // Initialize TinyMCE
+    tinymce.init({
+      selector: '#content-editor',
+      height: 500,
+      menubar: false,
+      plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+      ],
+      toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | image link | removeformat | help',
+      content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 16px; line-height: 1.6; color: #333; }',
+
+      // Image upload via Cloudinary
+      images_upload_handler: function (blobInfo, success, failure) {
+        CloudinaryManager.uploadImage(blobInfo.blob(), blobInfo.filename())
+          .then(result => {
+            success(result.secure_url);
+          })
+          .catch(error => {
+            failure('Errore upload: ' + error.message);
+          });
+      },
+
+      // Update preview on change
+      setup: function (editor) {
+        editor.on('change keyup', function () {
+          updatePreview();
+        });
+      }
+    });
+
+    // Update preview
+    function updatePreview() {
+      const content = tinymce.get('content-editor').getContent();
+      document.getElementById('preview-content').innerHTML = content || '<p style="color:#999; text-align:center;">Il contenuto apparirà qui mentre lo scrivi...</p>';
+    }
+
+    // Preview mode toggle
+    function setPreviewMode(mode, button) {
+      const preview = document.getElementById('email-preview');
+      const buttons = document.querySelectorAll('.preview-btn');
+
+      buttons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      preview.className = 'email-preview ' + mode;
+    }
+
+    // Save campaign
+    document.getElementById('campaign-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('campaign-id').value;
+      const name = document.getElementById('campaign-name').value;
+      const subject = document.getElementById('campaign-subject').value;
+      const content_html = tinymce.get('content-editor').getContent();
+      const messageDiv = document.getElementById('message');
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+
+      // Disable button
+      submitBtn.disabled = true;
+      submitBtn.textContent = '💾 Salvataggio...';
+      messageDiv.className = 'message';
+      messageDiv.textContent = '';
+
+      try {
+        const response = await fetch('/admin/newsletter/campaigns/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ id, name, subject, content_html })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          messageDiv.className = 'message success';
+          messageDiv.textContent = data.message;
+
+          // Update campaign ID if new
+          if (!id && data.id) {
+            document.getElementById('campaign-id').value = data.id;
+            // Update URL without reload
+            window.history.pushState({}, '', `/admin/newsletter/campaigns/${data.id}/edit`);
+          }
+        } else {
+          messageDiv.className = 'message error';
+          messageDiv.textContent = data.message;
+        }
+      } catch (error) {
+        messageDiv.className = 'message error';
+        messageDiv.textContent = 'Errore durante il salvataggio: ' + error.message;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '💾 Salva Campagna';
+      }
+    });
+
+    // Send test email
+    async function sendTest() {
+      const id = document.getElementById('campaign-id').value;
+
+      if (!id) {
+        alert('Salva prima la campagna!');
+        return;
+      }
+
+      const testEmail = prompt('Inserisci l\'email per il test:');
+
+      if (!testEmail) {
+        return;
+      }
+
+      const messageDiv = document.getElementById('message');
+      messageDiv.className = 'message';
+      messageDiv.textContent = '';
+
+      try {
+        const response = await fetch(`/admin/newsletter/campaigns/${id}/test`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ test_email: testEmail })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          messageDiv.className = 'message success';
+          messageDiv.textContent = data.message;
+        } else {
+          messageDiv.className = 'message error';
+          messageDiv.textContent = data.message;
+        }
+      } catch (error) {
+        messageDiv.className = 'message error';
+        messageDiv.textContent = 'Errore durante l\'invio: ' + error.message;
+      }
+    }
+
+    // Send campaign to all
+    async function sendCampaign() {
+      const id = document.getElementById('campaign-id').value;
+      const name = document.getElementById('campaign-name').value;
+
+      if (!confirm(`Vuoi davvero inviare la campagna "${name}" a tutti gli iscritti?\n\nQuesta azione non può essere annullata!`)) {
+        return;
+      }
+
+      const messageDiv = document.getElementById('message');
+      messageDiv.className = 'message';
+      messageDiv.textContent = '';
+
+      try {
+        const response = await fetch(`/admin/newsletter/campaigns/${id}/send`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          messageDiv.className = 'message success';
+          messageDiv.textContent = data.message;
+
+          setTimeout(() => {
+            window.location.href = '/admin/newsletter/campaigns';
+          }, 2000);
+        } else {
+          messageDiv.className = 'message error';
+          messageDiv.textContent = data.message;
+        }
+      } catch (error) {
+        messageDiv.className = 'message error';
+        messageDiv.textContent = 'Errore durante l\'invio: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>

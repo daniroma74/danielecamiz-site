@@ -42,6 +42,14 @@
     </div>
   </header>
 
+  <!-- Mobile Select Dropdown -->
+  <select class="news-mobile-select" id="newsMobileSelect">
+    <option value="all" <%= (ACTIVE==='all') ? 'selected' : '' %>>📰 <%= lang==='en' ? 'All News' : 'Tutte le News' %><% if (P) { %> (<%= P.total %>)<% } %></option>
+    <% CATS.forEach(function(c){ %>
+      <option value="<%= c.id %>" <%= (ACTIVE===c.id) ? 'selected' : '' %>><%= c.label %></option>
+    <% }) %>
+  </select>
+
   <!-- Tabs / filtri (tags dinamici) -->
   <nav class="news-tabs" id="news_tabs" aria-label="<%= lang==='en' ? 'Filters' : 'Filtri' %>">
     <button class="news-tab <%= (ACTIVE==='all') ? 'is-active' : '' %>" data-filter="all"><%= lang==='en' ? 'All' : 'Tutte' %></button>
@@ -113,16 +121,29 @@
       </nav>
     <% } %>
 
-    <!-- Aside: newsletter CTA (semplice, può diventare form reale) -->
+    <!-- Aside: newsletter CTA -->
     <aside class="news-aside">
       <div class="newsletter-card">
         <h3 class="newsletter-card__title"><%= lang==='en' ? 'Stay updated' : 'Resta aggiornato' %></h3>
-        <p class="newsletter-card__text"><%= lang==='en' ? 'Receive the next news and concerts directly in your inbox.' : 'Ricevi le prossime notizie e concerti direttamente nella tua casella di posta.' %></p>
+        <p class="newsletter-card__text"><%= lang==='en' ? 'Subscribe to receive updates.' : 'Iscriviti per ricevere aggiornamenti.' %></p>
         <form id="newsletter_form" class="newsletter-card__form" action="#" method="post" data-lang="<%= lang %>" onsubmit="return false">
           <input id="newsletter_email" name="email" class="input" type="email" placeholder="<%= lang==='en' ? 'email address' : 'indirizzo email' %>" aria-label="email" autocomplete="email" required />
+
+          <div class="newsletter-preferences">
+            <label class="checkbox-label">
+              <input type="checkbox" name="wants_site_news" value="1" checked>
+              <span><%= lang==='en' ? 'Site news (articles, projects)' : 'News del sito (articoli, progetti)' %></span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="wants_concerts" value="1" checked>
+              <span><%= lang==='en' ? 'Concert updates' : 'Aggiornamenti concerti' %></span>
+            </label>
+          </div>
+
           <input type="hidden" name="lang" value="<%= lang %>">
+          <input type="hidden" name="source" value="website">
           <button class="btn" type="submit"><%= lang==='en' ? 'Subscribe' : 'Iscriviti' %></button>
-          <div id="newsletter_feedback" class="newsletter-card__feedback" aria-live="polite" role="status" style="grid-column: 1 / -1; font-size: .9rem; margin-top: .25rem;"></div>
+          <div id="newsletter_feedback" class="newsletter-card__feedback" aria-live="polite" role="status"></div>
         </form>
       </div>
     </aside>

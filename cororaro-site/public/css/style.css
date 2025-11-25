@@ -337,12 +337,7 @@ ul, ol {
 .hero-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(93, 78, 55, 0.3) 0%,
-    rgba(93, 78, 55, 0.5) 50%,
-    rgba(93, 78, 55, 0.8) 100%
-  );
+  background: transparent;
 }
 
 .hero-content {

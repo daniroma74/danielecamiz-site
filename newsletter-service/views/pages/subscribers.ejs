@@ -29,17 +29,31 @@
         </div>
 
         <!-- Stats Bar -->
-        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+        <%
+        const active = subscribers.filter(s => ['active', 'subscribed'].includes(s.status));
+        const onlySite = active.filter(s => s.wants_site_news && !s.wants_concerts).length;
+        const onlyConcerts = active.filter(s => !s.wants_site_news && s.wants_concerts).length;
+        const both = active.filter(s => s.wants_site_news && s.wants_concerts).length;
+        %>
+        <div class="stats-grid" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 24px;">
             <div class="stat-card">
                 <div class="stat-label">Totale</div>
                 <div class="stat-value" style="font-size: 24px;"><%= subscribers.length %></div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Attivi</div>
-                <div class="stat-value" style="font-size: 24px; color: var(--success);"><%= subscribers.filter(s => ['active', 'subscribed'].includes(s.status)).length %></div>
+                <div class="stat-label">📰 Solo News</div>
+                <div class="stat-value" style="font-size: 24px; color: #3498db;"><%= onlySite %></div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Non iscritti</div>
+                <div class="stat-label">🎵 Solo Concerti</div>
+                <div class="stat-value" style="font-size: 24px; color: #9b59b6;"><%= onlyConcerts %></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🌟 Entrambi</div>
+                <div class="stat-value" style="font-size: 24px; color: var(--success);"><%= both %></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">❌ Non iscritti</div>
                 <div class="stat-value" style="font-size: 24px; color: var(--warning);"><%= subscribers.filter(s => s.status === 'unsubscribed').length %></div>
             </div>
         </div>
@@ -98,6 +112,7 @@
                             </th>
                             <th>Email</th>
                             <th>Nome</th>
+                            <th>Preferenze</th>
                             <th>Stato</th>
                             <th>Data Iscrizione</th>
                             <th width="150">Azioni</th>
@@ -112,10 +127,25 @@
                                 </td>
                                 <td><%= subscriber.email %></td>
                                 <td><%= subscriber.name || '-' %></td>
+                                <td style="font-size: 0.9em;">
+                                    <%
+                                    const wantsSite = subscriber.wants_site_news || false;
+                                    const wantsConcerts = subscriber.wants_concerts || false;
+                                    %>
+                                    <% if (wantsSite && wantsConcerts) { %>
+                                        📰 News + 🎵 Concerti
+                                    <% } else if (wantsSite) { %>
+                                        📰 Solo News
+                                    <% } else if (wantsConcerts) { %>
+                                        🎵 Solo Concerti
+                                    <% } else { %>
+                                        <span style="color: #999;">-</span>
+                                    <% } %>
+                                </td>
                                 <td>
-                                    <span class="badge badge-<%= 
-                                        subscriber.status === 'active' || subscriber.status === 'subscribed' ? 'success' : 
-                                        subscriber.status === 'unsubscribed' ? 'warning' : 
+                                    <span class="badge badge-<%=
+                                        subscriber.status === 'active' || subscriber.status === 'subscribed' ? 'success' :
+                                        subscriber.status === 'unsubscribed' ? 'warning' :
                                         'danger' %>">
                                         <%= subscriber.status %>
                                     </span>

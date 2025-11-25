@@ -239,7 +239,52 @@
   opacity: 1;
 }
 
-/* Nessun badge - il logo parla da solo */
+/* Badge Coming Soon */
+.project_badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.project_badge--coming-soon {
+  background: linear-gradient(135deg, #d4af37 0%, #c9a227 100%);
+  color: #1a1a1a;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.7);
+  }
+}
+
+/* Coming Soon card - disabilita hover effects */
+.project_box--coming-soon {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.project_box--coming-soon:hover {
+  transform: none;
+  box-shadow: var(--card-shadow);
+}
+
+.project_box--coming-soon:hover::before,
+.project_box--coming-soon:hover::after {
+  opacity: 0;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
