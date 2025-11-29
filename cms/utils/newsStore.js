@@ -105,16 +105,16 @@ export function list({ lang = '', status = '', q = '', offset = 0, limit = 20 } 
 /**
  * Recupera post per ID
  */
-export function getById(id) {
+export function getById(id, { lang } = {}) {
   const sql = 'SELECT * FROM news_posts WHERE id = ?';
-  
+
   return new Promise((resolve, reject) => {
     db.get(sql, [id], (err, row) => {
       if (err) {
         console.error('[newsStore] getById error:', err);
         resolve(null);
       } else {
-        resolve(row ? normalizePost(row) : null);
+        resolve(row ? normalizePost(row, lang) : null);
       }
     });
   });
@@ -127,14 +127,14 @@ export function getByIdOrSlug(idOrSlug, { lang } = {}) {
   const sql = lang
     ? 'SELECT * FROM news_posts WHERE (id = ? OR slug = ?) AND (title_it IS NOT NULL OR title_en IS NOT NULL) LIMIT 1'
     : 'SELECT * FROM news_posts WHERE (id = ? OR slug = ?) LIMIT 1';
-  
+
   return new Promise((resolve, reject) => {
     db.get(sql, [idOrSlug, idOrSlug], (err, row) => {
       if (err) {
         console.error('[newsStore] getByIdOrSlug error:', err);
         resolve(null);
       } else {
-        resolve(row ? normalizePost(row) : null);
+        resolve(row ? normalizePost(row, lang) : null);
       }
     });
   });
@@ -142,31 +142,43 @@ export function getByIdOrSlug(idOrSlug, { lang } = {}) {
 
 /**
  * Normalizza post dal DB al formato usato dal frontend
+ * @param {object} row - Riga dal database
+ * @param {string} preferredLang - Lingua preferita (opzionale, default: auto-detect)
  */
-function normalizePost(row) {
+function normalizePost(row, preferredLang = null) {
   if (!row) return null;
-  
-  // Determina lingua principale
+
+  // Determina lingua da usare
   const hasIt = !!row.title_it;
   const hasEn = !!row.title_en;
-  const lang = hasIt ? 'it' : (hasEn ? 'en' : 'it');
-  
+
+  // Se preferredLang è specificato e il contenuto esiste, usalo
+  let lang;
+  if (preferredLang === 'en' && hasEn) {
+    lang = 'en';
+  } else if (preferredLang === 'it' && hasIt) {
+    lang = 'it';
+  } else {
+    // Auto-detect: preferisci IT se disponibile
+    lang = hasIt ? 'it' : (hasEn ? 'en' : 'it');
+  }
+
   return {
     id: row.id,
     slug: row.slug,
     status: row.status,
     lang: lang,
-    
+
     // Titoli
-    title: lang === 'it' ? row.title_it : row.title_en,
+    title: lang === 'it' ? (row.title_it || row.title_en) : (row.title_en || row.title_it),
     title_it: row.title_it,
     title_en: row.title_en,
-    
+
     // Contenuti
-    excerpt: lang === 'it' ? row.excerpt_it : row.excerpt_en,
+    excerpt: lang === 'it' ? (row.excerpt_it || row.excerpt_en) : (row.excerpt_en || row.excerpt_it),
     excerpt_it: row.excerpt_it,
     excerpt_en: row.excerpt_en,
-    content_md: lang === 'it' ? row.content_it : row.content_en,
+    content_md: lang === 'it' ? (row.content_it || row.content_en) : (row.content_en || row.content_it),
     content_it: row.content_it,
     content_en: row.content_en,
     
@@ -187,8 +199,8 @@ function normalizePost(row) {
     
     // SEO
     seo: {
-      title: lang === 'it' ? row.meta_title_it : row.meta_title_en,
-      description: lang === 'it' ? row.meta_description_it : row.meta_description_en,
+      title: lang === 'it' ? (row.meta_title_it || row.meta_title_en) : (row.meta_title_en || row.meta_title_it),
+      description: lang === 'it' ? (row.meta_description_it || row.meta_description_en) : (row.meta_description_en || row.meta_description_it),
       og_image: row.cover_image
     },
     

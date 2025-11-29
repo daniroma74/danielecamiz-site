@@ -85,9 +85,51 @@
     <% }); %>
     <!-- RSS feed (News) -->
     <link rel="alternate" type="application/rss+xml" title="News RSS" href="/news/feed.xml">
+
+    <% /* Google Analytics 4 - Cookie Consent compliant */ %>
+    <% if (process.env.GA4_MEASUREMENT_ID && process.env.GA4_MEASUREMENT_ID !== 'G-XXXXXXXXXX') { %>
+    <script>
+      // Initialize dataLayer
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+
+      // Check cookie consent
+      const cookieConsent = '<%= typeof cookieConsent !== "undefined" ? cookieConsent : "unknown" %>';
+      const hasAnalyticsConsent = (cookieConsent === 'all' || cookieConsent === 'measurement' ||
+                                   cookieConsent.includes?.('measurement'));
+
+      // Only load GA4 if user consented to measurement cookies
+      if (hasAnalyticsConsent) {
+        // Load GA4 script
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=<%= process.env.GA4_MEASUREMENT_ID %>';
+        document.head.appendChild(script);
+
+        // Configure GA4
+        gtag('js', new Date());
+        gtag('config', '<%= process.env.GA4_MEASUREMENT_ID %>', {
+          page_path: window.location.pathname,
+          page_title: document.title,
+          page_language: '<%= lang || "it" %>',
+          anonymize_ip: true, // GDPR compliance
+          cookie_flags: 'SameSite=None;Secure'
+        });
+
+        console.log('[Analytics] GA4 initialized with consent');
+      } else {
+        console.log('[Analytics] GA4 not loaded - no measurement cookie consent');
+      }
+    </script>
+    <% } %>
   </head>
 
   <body class="<%= bodyClass || '' %>">
+    <!-- Skip to main content link (accessibility) -->
+    <a href="#main_content" class="skip-link">
+      <%= lang === 'en' ? 'Skip to main content' : 'Vai al contenuto principale' %>
+    </a>
+
     <%-
       // Navbar frontend
       include('../partials/frontend/navbar', { lang, labels })
@@ -119,5 +161,8 @@
     %>
       <script src="<%= s %>" type="module"></script>
     <% }) %>
+
+    <!-- Service Worker Registration (PWA) -->
+    <script src="/js/sw-register.js?v=<%= Date.now() %>" defer></script>
   </body>
 </html>

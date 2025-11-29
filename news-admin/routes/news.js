@@ -59,18 +59,18 @@ router.get('/new', ensureAuthenticated, (req, res) => {
 router.get('/:id/edit', ensureAuthenticated, async (req, res) => {
   try {
     const post = await getOne('SELECT * FROM news_posts WHERE id = ?', [req.params.id]);
-    
+
     if (!post) {
       return res.status(404).send('Post non trovato');
     }
-    
+
     // Parse JSON fields
     if (post.tags) post.tags = JSON.parse(post.tags);
     if (post.gallery_images) post.gallery_images = JSON.parse(post.gallery_images);
     if (post.social_providers) post.social_providers = JSON.parse(post.social_providers);
     if (post.social_messages) post.social_messages = JSON.parse(post.social_messages);
     if (post.social_status) post.social_status = JSON.parse(post.social_status);
-    
+
     res.render('news-edit', {
       post,
       isNew: false,
@@ -137,7 +137,13 @@ router.put('/:id', ensureAuthenticated, async (req, res) => {
   try {
     const data = req.body;
     const id = req.params.id;
-    
+
+    // 🔍 DEBUG: Log del contenuto ricevuto
+    console.log('[NEWS UPDATE] Post ID:', id);
+    console.log('[NEWS UPDATE] content_it length:', data.content_it?.length || 0);
+    console.log('[NEWS UPDATE] content_en length:', data.content_en?.length || 0);
+    console.log('[NEWS UPDATE] content_it preview:', data.content_it?.substring(0, 100));
+
     const sql = `
       UPDATE news_posts SET
         slug = ?, status = ?, title_it = ?, title_en = ?,

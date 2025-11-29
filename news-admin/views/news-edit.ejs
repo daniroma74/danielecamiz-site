@@ -44,17 +44,8 @@
     <form id="newsForm" class="news-form">
       <input type="hidden" id="postId" value="<%= post ? post.id : '' %>">
 
-      <!-- Tab Navigation -->
-      <div class="tabs">
-        <button type="button" class="tab-btn active" data-tab="content">📝 Contenuto</button>
-        <button type="button" class="tab-btn" data-tab="media">🖼️ Media</button>
-        <button type="button" class="tab-btn" data-tab="seo">🔍 SEO</button>
-        <button type="button" class="tab-btn" data-tab="social">📱 Social</button>
-        <button type="button" class="tab-btn" data-tab="settings">⚙️ Impostazioni</button>
-      </div>
-
-      <!-- Tab: Contenuto -->
-      <div class="tab-content active" id="tab-content">
+      <!-- SEZIONE 1: CONTENUTO -->
+      <div class="form-section-visible" id="section-content">
         <!-- 📧 Newsletter Toggle - SUPER VISIBILE -->
         <div class="newsletter-quick-toggle" style="background: linear-gradient(135deg, #4a90e2 0%, #667eea 100%); color: white; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);">
           <div style="display: flex; align-items: center; gap: 1rem;">
@@ -151,8 +142,8 @@
         </div>
       </div>
 
-      <!-- Tab: Media -->
-      <div class="tab-content" id="tab-media">
+      <!-- SEZIONE 2: MEDIA -->
+      <div class="form-section-visible" id="section-media">
         <div class="form-section">
           <h3>🖼️ Immagine Principale</h3>
           
@@ -199,8 +190,8 @@
         </div>
       </div>
 
-      <!-- Tab: SEO -->
-      <div class="tab-content" id="tab-seo">
+      <!-- SEZIONE 3: SEO -->
+      <div class="form-section-visible" id="section-seo">
         <div class="form-section">
           <h3>🔍 Ottimizzazione SEO</h3>
           
@@ -261,8 +252,8 @@
         </div>
       </div>
 
-      <!-- Tab: Social -->
-      <div class="tab-content" id="tab-social">
+      <!-- SEZIONE 4: SOCIAL -->
+      <div class="form-section-visible" id="section-social">
         <div class="form-section">
           <h3>📱 Pubblicazione Social</h3>
           
@@ -360,8 +351,8 @@
         </div>
       </div>
 
-      <!-- Tab: Settings -->
-      <div class="tab-content" id="tab-settings">
+      <!-- SEZIONE 5: IMPOSTAZIONI -->
+      <div class="form-section-visible" id="section-settings">
         <div class="form-section">
           <h3>⚙️ Impostazioni Articolo</h3>
           
@@ -468,20 +459,40 @@
     };
   </script>
   
-  <script src="/static/js/news-editor.js"></script>
+  <script src="/static/js/news-editor.js?v=<%= Date.now() %>"></script>
   
   <!-- Inizializza TinyMCE con upload Cloudinary -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      console.log('🔍 [news-edit] DOMContentLoaded fired');
+      console.log('🔍 [news-edit] window.SharedEditor:', typeof window.SharedEditor);
+      console.log('🔍 [news-edit] window.tinymce:', typeof window.tinymce);
+
       // Init TinyMCE per i campi content
       if (window.SharedEditor) {
+        console.log('✅ [news-edit] Inizializzazione TinyMCE...');
         window.SharedEditor.init('textarea.editor', 'blog', {
           height: 600,
           getUploadOptions: () => ({
             preset: 'gallery_unsigned',
-            folder: 'danielecamiz/gallery'
+            folder: 'danielecamiz/news'
           })
+        }).then((result) => {
+          console.log('✅ [news-edit] TinyMCE inizializzato, result:', result);
+          console.log('✅ [news-edit] tinymce object:', tinymce);
+          console.log('✅ [news-edit] tinymce.editors:', tinymce.editors);
+
+          if (Array.isArray(tinymce.editors)) {
+            console.log('✅ [news-edit] Editors disponibili:', tinymce.editors.length);
+            tinymce.editors.forEach(ed => console.log('  - Editor ID:', ed.id));
+          } else {
+            console.warn('⚠️ [news-edit] tinymce.editors non è un array:', typeof tinymce.editors);
+          }
+        }).catch(err => {
+          console.error('❌ [news-edit] Errore inizializzazione TinyMCE:', err);
         });
+      } else {
+        console.error('❌ [news-edit] SharedEditor non disponibile!');
       }
     });
   </script>

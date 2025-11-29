@@ -1,5 +1,8 @@
 <section id="hero_section">
-  <img src="/img/hero.png" alt="<%= (hero && hero.imgAlt) || 'Foto di Daniele Camiz' %>" id="hero_img" />
+  <picture>
+    <source srcset="/img/hero.webp" type="image/webp">
+    <img src="/img/hero.png" alt="<%= (hero && hero.imgAlt) || 'Foto di Daniele Camiz' %>" id="hero_img" loading="eager" fetchpriority="high">
+  </picture>
   <div id="hero_box">
     <% 
       // Helper i18n: usa t(k) se definito e diverso dalla chiave, altrimenti default

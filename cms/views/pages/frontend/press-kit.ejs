@@ -14,12 +14,18 @@ function formatFileSize(bytes) {
 function cloudinaryUrl(id, transform = '', resourceType = 'image') {
   if (!id) return '';
   const base = `https://res.cloudinary.com/dnwhnz2xy/${resourceType}/upload/`;
-  return transform ? `${base}${transform}/${id}` : `${base}${id}`;
+  // Add f_auto to transformation if not already present
+  if (transform && !transform.includes('f_auto') && !transform.includes('f_jpg') && !transform.includes('f_png')) {
+    transform = transform + ',f_auto';
+  } else if (!transform) {
+    transform = 'f_auto';
+  }
+  return `${base}${transform}/${id}`;
 }
 
 function pdfPreviewUrl(id) {
   if (!id) return '';
-  // For PDF previews: use image URL with pg_1 to get first page as JPG
+  // For PDF previews: use image URL with pg_1 to get first page as JPG (keep f_jpg for PDF thumbnails)
   return `https://res.cloudinary.com/dnwhnz2xy/image/upload/w_400,pg_1,f_jpg/${id}`;
 }
 

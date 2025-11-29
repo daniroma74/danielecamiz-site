@@ -29,7 +29,14 @@ export function cloudinaryUrlFromId(publicId, opts = {}) {
   if (opts.crop) transforms.push(`c_${opts.crop}`);
   if (opts.quality) transforms.push(`q_${opts.quality}`);
   if (opts.gravity) transforms.push(`g_${opts.gravity}`);
-  if (opts.format) transforms.push(`f_${opts.format}`);
+
+  // Always use f_auto (automatic format selection - WebP for modern browsers)
+  // unless explicitly overridden
+  if (opts.format !== undefined) {
+    if (opts.format) transforms.push(`f_${opts.format}`);
+  } else {
+    transforms.push('f_auto');
+  }
 
   const transformation = transforms.length > 0 ? transforms.join(',') : '';
   return buildCloudinaryUrl(publicId, transformation);

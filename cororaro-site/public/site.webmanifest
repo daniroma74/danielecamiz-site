@@ -1,0 +1,19 @@
+{
+    "name": "Coro Raro",
+    "short_name": "Coro Raro",
+    "icons": [
+       {
+          "src": "/assets/images/favicon-32x32.png",
+          "sizes": "32x32",
+          "type": "image/png"
+       },
+       {
+        "src": "/assets/images/apple-touch-icon.png",
+        "sizes": "180x180",
+        "type": "image/png"
+        }
+    ],
+    "theme_color": "#8B4513",
+    "background_color": "#FFFFFF",
+    "display": "standalone"
+ }

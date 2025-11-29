@@ -83,7 +83,11 @@ const TINYMCE_SHARED_CONFIG = {
       'charmap','preview','anchor','searchreplace',
       'visualblocks','code','fullscreen','insertdatetime',
       'media','table','help','wordcount','emoticons'
-    ]
+    ],
+    toolbar:
+      'undo redo | formatselect | ' +
+      'bold italic underline | alignleft aligncenter alignright | ' +
+      'bullist numlist | link image | removeformat | table | code | help'
   }
 };
 

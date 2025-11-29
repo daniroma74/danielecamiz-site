@@ -35,7 +35,13 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.redirect('/press');
+  // Se c'è un token JWT nella query, passalo alla route press
+  const token = req.query.token;
+  if (token) {
+    res.redirect(`/press?token=${token}`);
+  } else {
+    res.redirect('/press');
+  }
 });
 
 app.get('/login', (req, res) => {

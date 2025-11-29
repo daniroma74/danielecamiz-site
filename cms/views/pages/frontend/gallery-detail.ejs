@@ -32,11 +32,8 @@
              data-index="<%= idx %>"
              data-full="<%= item.media?.full || '' %>"
              data-title="<%= item.title || '' %>"
-             data-description="<%= item.description || '' %>"
-             onclick="openLightbox(<%= idx %>)">
-          <img src="<%= item.media?.thumbnail || '' %>"
-               alt="<%= item.alt || item.title || '' %>"
-               loading="lazy">
+             data-description="<%= item.description || '' %>">
+          <img src="<%= item.media?.thumbnail || '' %>" alt="<%= item.alt || item.title || '' %>" loading="lazy" width="500" height="375">
           <% if (item.title) { %>
             <div class="gallery-item__overlay">
               <h4><%= item.title %></h4>
@@ -50,18 +47,12 @@
     </div>
 
     <!-- LIGHTBOX -->
-    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-      <button class="lightbox__close" onclick="closeLightbox()" aria-label="Close">
-        <i class="fas fa-times"></i>
-      </button>
-      <button class="lightbox__prev" onclick="event.stopPropagation(); prevPhoto()" aria-label="Previous">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-      <button class="lightbox__next" onclick="event.stopPropagation(); nextPhoto()" aria-label="Next">
-        <i class="fas fa-chevron-right"></i>
-      </button>
-      <div class="lightbox__content" onclick="event.stopPropagation()">
-        <img id="lightbox-img" src="" alt="">
+    <div id="lightbox" class="lightbox">
+      <button class="lightbox__close" aria-label="Close">×</button>
+      <button class="lightbox__prev" aria-label="Previous">‹</button>
+      <button class="lightbox__next" aria-label="Next">›</button>
+      <div class="lightbox__content">
+        <img id="lightbox-img" src="" alt="" loading="eager">
         <div id="lightbox-info" class="lightbox__info">
           <h3 id="lightbox-title"></h3>
           <p id="lightbox-description"></p>
@@ -71,6 +62,207 @@
         <span id="lightbox-current">1</span> / <span id="lightbox-total"><%= photoItems.length %></span>
       </div>
     </div>
+
+    <!-- Lightbox Script -->
+    <script>
+      (function() {
+        'use strict';
+
+        console.log('[LIGHTBOX] Script loaded');
+
+        let currentIndex = 0;
+        let photos = [];
+        let lightbox = null;
+
+        function init() {
+          console.log('[LIGHTBOX] Initializing...');
+
+          lightbox = document.getElementById('lightbox');
+          if (!lightbox) {
+            console.error('[LIGHTBOX] Lightbox element not found!');
+            return;
+          }
+
+          // Collect photo data from DOM
+          const photoElements = document.querySelectorAll('.gallery-item--photo');
+          console.log('[LIGHTBOX] Found photo elements:', photoElements.length);
+
+          photos = Array.from(photoElements).map((el, idx) => ({
+            index: idx,
+            full: el.getAttribute('data-full') || '',
+            title: el.getAttribute('data-title') || '',
+            description: el.getAttribute('data-description') || ''
+          }));
+
+          console.log('[LIGHTBOX] Photos collected:', photos.length);
+
+          if (photos.length === 0) {
+            console.warn('[LIGHTBOX] No photos found');
+            return;
+          }
+
+          // Update total count
+          const totalEl = document.getElementById('lightbox-total');
+          if (totalEl) totalEl.textContent = photos.length;
+
+          // Event delegation on parent container
+          const container = document.querySelector('.gallery-items--photos');
+          if (container) {
+            container.addEventListener('click', handlePhotoClick);
+            console.log('[LIGHTBOX] Click listener attached to container');
+          } else {
+            console.error('[LIGHTBOX] Container not found!');
+          }
+
+          // Lightbox controls
+          const closeBtn = lightbox.querySelector('.lightbox__close');
+          if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              closeLightbox();
+            });
+          }
+
+          const prevBtn = lightbox.querySelector('.lightbox__prev');
+          if (prevBtn) {
+            prevBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              prevPhoto();
+            });
+          }
+
+          const nextBtn = lightbox.querySelector('.lightbox__next');
+          if (nextBtn) {
+            nextBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              nextPhoto();
+            });
+          }
+
+          // Click outside to close
+          lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) closeLightbox();
+          });
+
+          // Keyboard navigation
+          document.addEventListener('keydown', handleKeyboard);
+
+          console.log('[LIGHTBOX] Initialization complete!');
+        }
+
+        function handlePhotoClick(e) {
+          const photoItem = e.target.closest('.gallery-item--photo');
+          if (!photoItem) return;
+
+          const index = parseInt(photoItem.getAttribute('data-index'), 10);
+          if (isNaN(index)) return;
+
+          console.log('[LIGHTBOX] Photo clicked, index:', index);
+          openLightbox(index);
+        }
+
+        function openLightbox(index) {
+          if (!lightbox || !photos.length) return;
+
+          currentIndex = Math.max(0, Math.min(index, photos.length - 1));
+          console.log('[LIGHTBOX] Opening lightbox at index:', currentIndex);
+          console.log('[LIGHTBOX] Lightbox element:', lightbox);
+          console.log('[LIGHTBOX] Has active class before:', lightbox.classList.contains('active'));
+
+          updateLightbox();
+          lightbox.classList.add('active');
+
+          console.log('[LIGHTBOX] Has active class after:', lightbox.classList.contains('active'));
+          console.log('[LIGHTBOX] Computed display:', window.getComputedStyle(lightbox).display);
+          console.log('[LIGHTBOX] Computed z-index:', window.getComputedStyle(lightbox).zIndex);
+
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+          if (!lightbox) return;
+
+          console.log('[LIGHTBOX] Closing lightbox');
+          lightbox.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+
+        function prevPhoto() {
+          if (!photos.length) return;
+          currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+          console.log('[LIGHTBOX] Previous photo, index:', currentIndex);
+          updateLightbox();
+        }
+
+        function nextPhoto() {
+          if (!photos.length) return;
+          currentIndex = (currentIndex + 1) % photos.length;
+          console.log('[LIGHTBOX] Next photo, index:', currentIndex);
+          updateLightbox();
+        }
+
+        function updateLightbox() {
+          if (!lightbox || !photos[currentIndex]) return;
+
+          const photo = photos[currentIndex];
+          console.log('[LIGHTBOX] Photo data:', photo);
+
+          const img = document.getElementById('lightbox-img');
+          if (img) {
+            console.log('[LIGHTBOX] Setting image src to:', photo.full);
+            img.src = photo.full;
+            img.alt = photo.title;
+          } else {
+            console.error('[LIGHTBOX] Image element not found!');
+          }
+
+          const title = document.getElementById('lightbox-title');
+          if (title) title.textContent = photo.title;
+
+          const description = document.getElementById('lightbox-description');
+          if (description) description.textContent = photo.description;
+
+          const current = document.getElementById('lightbox-current');
+          if (current) current.textContent = currentIndex + 1;
+
+          // Preload adjacent images for faster navigation
+          preloadAdjacentImages();
+
+          console.log('[LIGHTBOX] Updated to photo:', photo.title || 'Untitled');
+        }
+
+        function preloadAdjacentImages() {
+          const prevIndex = (currentIndex - 1 + photos.length) % photos.length;
+          const nextIndex = (currentIndex + 1) % photos.length;
+
+          [prevIndex, nextIndex].forEach(idx => {
+            if (photos[idx] && photos[idx].full) {
+              const preloadImg = new Image();
+              preloadImg.src = photos[idx].full;
+            }
+          });
+        }
+
+        function handleKeyboard(e) {
+          if (!lightbox || !lightbox.classList.contains('active')) return;
+
+          if (e.key === 'Escape') {
+            closeLightbox();
+          } else if (e.key === 'ArrowLeft') {
+            prevPhoto();
+          } else if (e.key === 'ArrowRight') {
+            nextPhoto();
+          }
+        }
+
+        // Start when DOM is ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
   <% } %>
 
   <!-- VIDEO GRID -->
@@ -131,55 +323,3 @@
     </div>
   <% } %>
 </section>
-
-<% if (photoItems.length) { %>
-<script>
-  let currentIndex = 0;
-  const photos = <%- JSON.stringify(photoItems.map(p => ({
-    full: p.media?.full || '',
-    title: p.title || '',
-    description: p.description || ''
-  }))) %>;
-
-  function openLightbox(index) {
-    currentIndex = index;
-    updateLightbox();
-    document.getElementById('lightbox').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  function prevPhoto() {
-    currentIndex = (currentIndex - 1 + photos.length) % photos.length;
-    updateLightbox();
-  }
-
-  function nextPhoto() {
-    currentIndex = (currentIndex + 1) % photos.length;
-    updateLightbox();
-  }
-
-  function updateLightbox() {
-    const photo = photos[currentIndex];
-    document.getElementById('lightbox-img').src = photo.full;
-    document.getElementById('lightbox-img').alt = photo.title;
-    document.getElementById('lightbox-title').textContent = photo.title;
-    document.getElementById('lightbox-description').textContent = photo.description;
-    document.getElementById('lightbox-current').textContent = currentIndex + 1;
-  }
-
-  // Keyboard navigation
-  document.addEventListener('keydown', (e) => {
-    const lightbox = document.getElementById('lightbox');
-    if (lightbox.classList.contains('active')) {
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') prevPhoto();
-      if (e.key === 'ArrowRight') nextPhoto();
-    }
-  });
-</script>
-<% } %>

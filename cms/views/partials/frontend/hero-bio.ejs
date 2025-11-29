@@ -46,7 +46,10 @@
 
 <section id="hero_bio" class="hero-bio hero-compact" style="<%= styleVars.join(';') %>">
   <div class="hero-media" aria-hidden="true">
-    <img src="<%= heroImg %>" alt="" class="hero-media-img" loading="eager" />
+    <picture>
+      <source srcset="<%= heroImg.replace(/\.(jpe?g|png)$/i, '.webp') %>" type="image/webp">
+      <img src="<%= heroImg %>" alt="" class="hero-media-img" loading="eager" fetchpriority="high" width="1600" height="900" decoding="async">
+    </picture>
   </div>
   <div class="hero-overlay">
     <div class="hero-container">

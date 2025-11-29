@@ -1,0 +1,82 @@
+<%
+  /**
+   * RESPONSIVE IMAGE HELPER
+   * Genera tag <img> ottimizzati con srcset, lazy loading, dimensioni corrette
+   *
+   * Params:
+   *   src: URL immagine (richiesto)
+   *   alt: testo alternativo (richiesto per a11y)
+   *   widths: array di larghezze per srcset (default: [400, 800, 1200, 1600])
+   *   sizes: sizes attribute (default: '100vw')
+   *   loading: 'lazy' | 'eager' (default: 'lazy')
+   *   className: classi CSS (opzionale)
+   *   width: larghezza intrinseca (opzionale, raccomandato)
+   *   height: altezza intrinseca (opzionale, raccomandato)
+   *   decoding: 'async' | 'sync' | 'auto' (default: 'async')
+   *   fetchpriority: 'high' | 'low' | 'auto' (opzionale, per LCP images)
+   *
+   * Usage:
+   *   <%- include('../helpers/responsive-image', {
+   *     src: '/img/hero.jpg',
+   *     alt: 'Hero image',
+   *     widths: [800, 1200, 1600],
+   *     sizes: '100vw',
+   *     loading: 'eager',
+   *     fetchpriority: 'high',
+   *     width: 1600,
+   *     height: 900
+   *   }) %>
+   */
+
+  // Input params con default
+  const imgSrc = src || '';
+  const imgAlt = alt || '';
+  const imgWidths = Array.isArray(widths) ? widths : [400, 800, 1200, 1600];
+  const imgSizes = sizes || '100vw';
+  const imgLoading = loading || 'lazy';
+  const imgClass = className || '';
+  const imgWidth = width || null;
+  const imgHeight = height || null;
+  const imgDecoding = decoding || 'async';
+  const imgFetchPriority = fetchpriority || null;
+
+  // Helper per generare URL Cloudinary con trasformazioni
+  function cloudinaryUrl(url, w) {
+    try {
+      if (!/res\.cloudinary\.com\//.test(url)) return url;
+      const i = url.indexOf('/upload/');
+      if (i === -1) return url;
+      const before = url.slice(0, i + 8); // include '/upload/'
+      const after = url.slice(i + 8);
+      // f_auto = formato automatico (WebP su browser moderni, JPG su vecchi)
+      // q_auto = qualità automatica
+      return `${before}f_auto,q_auto,w_${w}/${after}`;
+    } catch (e) {
+      return url;
+    }
+  }
+
+  // Genera srcset
+  let srcset = '';
+  const isCloudinary = /res\.cloudinary\.com\//.test(imgSrc);
+
+  if (isCloudinary) {
+    srcset = imgWidths.map(w => `${cloudinaryUrl(imgSrc, w)} ${w}w`).join(', ');
+  }
+
+  // Costruisci attributi
+  const attrs = [];
+  attrs.push(`src="${imgSrc}"`);
+  if (srcset) {
+    attrs.push(`srcset="${srcset}"`);
+    attrs.push(`sizes="${imgSizes}"`);
+  }
+  attrs.push(`alt="${imgAlt}"`);
+  if (imgClass) attrs.push(`class="${imgClass}"`);
+  if (imgWidth) attrs.push(`width="${imgWidth}"`);
+  if (imgHeight) attrs.push(`height="${imgHeight}"`);
+  attrs.push(`loading="${imgLoading}"`);
+  attrs.push(`decoding="${imgDecoding}"`);
+  if (imgFetchPriority) attrs.push(`fetchpriority="${imgFetchPriority}"`);
+%>
+<img <%= attrs.join(' ') %>>

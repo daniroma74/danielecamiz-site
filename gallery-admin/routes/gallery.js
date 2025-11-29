@@ -20,14 +20,16 @@ router.get('/', async (req, res) => {
 
     const cloudinaryStats = await getQuery('SELECT * FROM gallery_cloudinary_stats WHERE id = 1');
 
-    const recentCollections = await allQuery(`
-      SELECT * FROM gallery_collections
-      ORDER BY created_at DESC
-      LIMIT 5
+    // Get ALL collections with items count
+    const allCollections = await allQuery(`
+      SELECT c.*,
+        (SELECT COUNT(*) FROM gallery_items WHERE collection_id = c.id) as items_count
+      FROM gallery_collections c
+      ORDER BY c.display_order ASC, c.created_at DESC
     `);
 
     res.render('pages/dashboard', {
-      title: 'Dashboard - Gallery Admin',
+      title: 'Gallery Admin',
       stats: {
         photos,
         videos,
@@ -36,7 +38,7 @@ router.get('/', async (req, res) => {
         cloudinary: cloudinaryStats || { total_storage_bytes: 0 }
       },
       collectionsByType: collections,
-      recentCollections
+      recentCollections: allCollections  // Renamed but contains ALL collections
     });
   } catch (error) {
     console.error('Error loading dashboard:', error);
@@ -45,71 +47,23 @@ router.get('/', async (req, res) => {
 });
 
 // ============= COLLEZIONI =============
-router.get('/collections', async (req, res) => {
-  try {
-    const type = req.query.type;
-    let collections;
-
-    if (type) {
-      collections = await allQuery(`
-        SELECT c.*, COUNT(gi.id) as items_count
-        FROM gallery_collections c
-        LEFT JOIN gallery_items gi ON c.id = gi.collection_id
-        WHERE c.type = ?
-        GROUP BY c.id
-        ORDER BY c.display_order ASC, c.created_at DESC
-      `, [type]);
-    } else {
-      collections = await allQuery(`
-        SELECT c.*, COUNT(gi.id) as items_count
-        FROM gallery_collections c
-        LEFT JOIN gallery_items gi ON c.id = gi.collection_id
-        GROUP BY c.id
-        ORDER BY c.display_order ASC, c.created_at DESC
-      `);
-    }
-
-    res.render('pages/collections', {
-      title: 'Collezioni - Gallery Admin',
-      collections,
-      selectedType: type || null
-    });
-  } catch (error) {
-    console.error('Error loading collections:', error);
-    res.status(500).send('Errore caricamento collezioni');
-  }
+// Redirect /collections to dashboard
+router.get('/collections', (req, res) => {
+  res.redirect('/gallery');
 });
 
 router.get('/collections/new', (req, res) => {
   res.render('pages/collection-edit', {
     title: 'Nuova Collezione - Gallery Admin',
     collection: null,
+    items: [],
     isNew: true
   });
 });
 
-router.get('/collections/:id', async (req, res) => {
-  try {
-    const collection = await getQuery('SELECT * FROM gallery_collections WHERE id = ?', [req.params.id]);
-    if (!collection) {
-      return res.status(404).send('Collezione non trovata');
-    }
-
-    const items = await allQuery(`
-      SELECT * FROM gallery_items
-      WHERE collection_id = ?
-      ORDER BY display_order ASC, created_at DESC
-    `, [req.params.id]);
-
-    res.render('pages/collection-detail', {
-      title: `${collection.title_it} - Gallery Admin`,
-      collection,
-      items
-    });
-  } catch (error) {
-    console.error('Error loading collection:', error);
-    res.status(500).send('Errore caricamento collezione');
-  }
+// Redirect /collections/:id to /collections/:id/edit
+router.get('/collections/:id', (req, res) => {
+  res.redirect(`/gallery/collections/${req.params.id}/edit`);
 });
 
 router.get('/collections/:id/edit', async (req, res) => {
@@ -119,9 +73,18 @@ router.get('/collections/:id/edit', async (req, res) => {
       return res.status(404).send('Collezione non trovata');
     }
 
+    // Get items in this collection
+    const items = await allQuery(`
+      SELECT *
+      FROM gallery_items
+      WHERE collection_id = ?
+      ORDER BY display_order ASC, created_at DESC
+    `, [req.params.id]);
+
     res.render('pages/collection-edit', {
       title: 'Modifica Collezione - Gallery Admin',
       collection,
+      items,
       isNew: false
     });
   } catch (error) {
@@ -257,20 +220,43 @@ router.put('/api/photos/:id', async (req, res) => {
   try {
     const {
       collection_id, title_it, title_en, description_it, description_en,
-      alt_it, alt_en, credits, is_published, display_order, taken_date
+      alt_it, alt_en, credits, is_published, is_spotlight, display_order, taken_date,
+      cloudinary_id  // ✅ Aggiungi possibilità di cambiare foto
     } = req.body;
 
-    await runQuery(`
-      UPDATE gallery_items
-      SET collection_id = ?, title_it = ?, title_en = ?, description_it = ?, description_en = ?,
-          alt_it = ?, alt_en = ?, credits = ?, is_published = ?, display_order = ?,
-          taken_date = ?, updated_at = datetime('now')
-      WHERE id = ? AND item_type = 'photo'
-    `, [
-      collection_id || null, title_it, title_en, description_it, description_en,
-      alt_it, alt_en, credits, is_published ? 1 : 0, display_order || 0, taken_date,
-      req.params.id
-    ]);
+    // Se cloudinary_id è fornito, aggiorna anche quello
+    let sql, params;
+    if (cloudinary_id !== undefined) {
+      sql = `
+        UPDATE gallery_items
+        SET title_it = ?, title_en = ?, description_it = ?, description_en = ?,
+            alt_it = ?, alt_en = ?, credits = ?, is_published = ?, is_spotlight = ?,
+            display_order = ?, taken_date = ?, cloudinary_id = ?, updated_at = datetime('now')
+        WHERE id = ? AND item_type = 'photo'
+      `;
+      params = [
+        title_it, title_en, description_it, description_en,
+        alt_it, alt_en, credits, is_published ? 1 : 0, is_spotlight ? 1 : 0,
+        display_order || 0, taken_date, cloudinary_id,
+        req.params.id
+      ];
+    } else {
+      sql = `
+        UPDATE gallery_items
+        SET title_it = ?, title_en = ?, description_it = ?, description_en = ?,
+            alt_it = ?, alt_en = ?, credits = ?, is_published = ?, is_spotlight = ?,
+            display_order = ?, taken_date = ?, updated_at = datetime('now')
+        WHERE id = ? AND item_type = 'photo'
+      `;
+      params = [
+        title_it, title_en, description_it, description_en,
+        alt_it, alt_en, credits, is_published ? 1 : 0, is_spotlight ? 1 : 0,
+        display_order || 0, taken_date,
+        req.params.id
+      ];
+    }
+
+    await runQuery(sql, params);
 
     res.json({ success: true });
   } catch (error) {
@@ -531,21 +517,18 @@ router.post('/api/videos', async (req, res) => {
 router.put('/api/videos/:id', async (req, res) => {
   try {
     const {
-      collection_id, youtube_id, title_it, title_en, description_it, description_en,
-      timecode, is_spotlight, is_whitelisted, is_published, display_order, duration
+      title_it, title_en, description_it, description_en,
+      is_published, display_order
     } = req.body;
 
     await runQuery(`
       UPDATE gallery_items
-      SET collection_id = ?, youtube_id = ?, title_it = ?, title_en = ?,
-          description_it = ?, description_en = ?, timecode = ?,
-          is_spotlight = ?, is_whitelisted = ?, is_published = ?,
-          display_order = ?, duration = ?
+      SET title_it = ?, title_en = ?, description_it = ?, description_en = ?,
+          is_published = ?, display_order = ?, updated_at = datetime('now')
       WHERE id = ? AND item_type = 'video'
     `, [
-      collection_id || null, youtube_id, title_it, title_en, description_it, description_en,
-      timecode, is_spotlight ? 1 : 0, is_whitelisted ? 1 : 0, is_published ? 1 : 0,
-      display_order || 0, duration, req.params.id
+      title_it, title_en, description_it, description_en,
+      is_published ? 1 : 0, display_order || 0, req.params.id
     ]);
 
     res.json({ success: true });
@@ -618,20 +601,18 @@ router.post('/api/audios', async (req, res) => {
 router.put('/api/audios/:id', async (req, res) => {
   try {
     const {
-      collection_id, bandcamp_url, bandcamp_embed_code, title_it, title_en,
-      description_it, description_en, is_published, display_order, duration
+      title_it, title_en, description_it, description_en,
+      is_published, display_order
     } = req.body;
 
     await runQuery(`
       UPDATE gallery_items
-      SET collection_id = ?, bandcamp_url = ?, bandcamp_embed_code = ?,
-          title_it = ?, title_en = ?, description_it = ?, description_en = ?,
-          is_published = ?, display_order = ?, duration = ?
+      SET title_it = ?, title_en = ?, description_it = ?, description_en = ?,
+          is_published = ?, display_order = ?, updated_at = datetime('now')
       WHERE id = ? AND item_type = 'audio'
     `, [
-      collection_id || null, bandcamp_url, bandcamp_embed_code, title_it, title_en,
-      description_it, description_en, is_published ? 1 : 0, display_order || 0, duration,
-      req.params.id
+      title_it, title_en, description_it, description_en,
+      is_published ? 1 : 0, display_order || 0, req.params.id
     ]);
 
     res.json({ success: true });
@@ -648,6 +629,26 @@ router.delete('/api/audios/:id', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting audio:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API: Reorder items
+router.post('/api/items/reorder', async (req, res) => {
+  try {
+    const { items } = req.body; // Array of { id, display_order }
+
+    for (const item of items) {
+      await runQuery(`
+        UPDATE gallery_items
+        SET display_order = ?
+        WHERE id = ?
+      `, [item.display_order, item.id]);
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error reordering items:', error);
     res.status(500).json({ error: error.message });
   }
 });

@@ -27,6 +27,7 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import expressLayouts from 'express-ejs-layouts';
 import fileUpload from 'express-fileupload';
+import helmet from 'helmet';
 
 // i18n SSR
 import i18next from 'i18next';
@@ -117,6 +118,62 @@ async function listCssTop(absDir, relDir) {
 
 const app = express();
 app.set('trust proxy', true);
+
+/* SECURITY HEADERS - 2025 Best Practices */
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'", // Required for inline scripts
+        "https://www.googletagmanager.com",
+        "https://www.google-analytics.com",
+        "https://bandcamp.com",
+        "https://cdn.jsdelivr.net"
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'", // Required for inline styles
+        "https://fonts.googleapis.com",
+        "https://cdnjs.cloudflare.com"
+      ],
+      fontSrc: [
+        "'self'",
+        "https://fonts.gstatic.com",
+        "https://cdnjs.cloudflare.com"
+      ],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https:",
+        "https://res.cloudinary.com",
+        "https://i.ytimg.com"
+      ],
+      mediaSrc: ["'self'", "https:", "https://res.cloudinary.com"],
+      frameSrc: [
+        "'self'",
+        "https://www.youtube.com",
+        "https://bandcamp.com",
+        "https://www.facebook.com",
+        "https://www.linkedin.com",
+        "https://*.danielecamiz.com"  // ✅ Allow concert landing pages
+      ],
+      connectSrc: [
+        "'self'",
+        "https://www.google-analytics.com",
+        "https://www.googletagmanager.com"
+      ]
+    }
+  },
+  strictTransportSecurity: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true
+  },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+}));
+
 app.locals.cssGlobal = [
   ...(await walkCss(path.join(cssRoot, 'base'), 'base')),
   ...(await walkCss(path.join(cssRoot, 'components'), 'components')),
@@ -253,15 +310,45 @@ app.use(async (req, res, next) => {
 // Attach renderPage helpers (non registra catch-all)
 app.use(renderPage(app));
 
-/* Static */
-app.use('/data',      express.static(path.join(__dirname, 'data')));
-app.use('/css',       express.static(path.join(__dirname, '..', 'frontend', 'css')));
-app.use('/js',        express.static(path.join(__dirname, '..', 'frontend', 'js')));
-app.use('/img',       express.static(path.join(__dirname, '..', 'frontend', 'img')));
-app.use('/uploads',   express.static(path.join(__dirname, 'uploads')));
-app.use('/media',     express.static(path.join(__dirname, 'uploads')));
-app.use('/frontend',  express.static(path.join(__dirname, '..', 'frontend')));
-app.use('/manifest.json', express.static(path.join(__dirname, '..', 'frontend', 'manifest.json')));
+/* Static files with Cache-Control headers - 2025 Best Practices */
+const staticOptions = (maxAge) => ({
+  maxAge: maxAge,
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    // Cache CSS/JS/Images aggressively (1 year) - we use cache busting with timestamps
+    if (filePath.match(/\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$/i)) {
+      res.setHeader('Cache-Control', `public, max-age=${maxAge / 1000}, immutable`);
+    }
+    // Cache HTML/JSON for shorter time (1 hour)
+    else if (filePath.match(/\.(html|json)$/i)) {
+      res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+    }
+  }
+});
+
+// Service Worker - Must be before static routes to avoid being caught by /frontend
+app.get('/service-worker.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate'); // No long-term cache for SW
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'service-worker.js'));
+});
+
+// Static routes with different cache strategies
+app.use('/data',      express.static(path.join(__dirname, 'data'), staticOptions(3600000))); // 1 hour
+
+// Use minified assets in production, source files in development
+const isProduction = process.env.NODE_ENV === 'production';
+const cssDir = isProduction ? 'css-dist' : 'css';
+const jsDir = isProduction ? 'js-dist' : 'js';
+
+app.use('/css',       express.static(path.join(__dirname, '..', 'frontend', cssDir), staticOptions(31536000000))); // 1 year
+app.use('/js',        express.static(path.join(__dirname, '..', 'frontend', jsDir), staticOptions(31536000000))); // 1 year
+app.use('/img',       express.static(path.join(__dirname, '..', 'frontend', 'img'), staticOptions(31536000000))); // 1 year
+app.use('/uploads',   express.static(path.join(__dirname, 'uploads'), staticOptions(2592000000))); // 30 days
+app.use('/media',     express.static(path.join(__dirname, 'uploads'), staticOptions(2592000000))); // 30 days
+app.use('/frontend',  express.static(path.join(__dirname, '..', 'frontend'), staticOptions(31536000000))); // 1 year
+app.use('/manifest.json', express.static(path.join(__dirname, '..', 'frontend', 'manifest.json'), staticOptions(86400000))); // 1 day
 
 /* /lang/:lng */
 app.get('/lang/:lng', (req, res) => {

@@ -453,17 +453,19 @@
 
 .gallery-item--photo {
   position: relative;
-  aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 8px;
   cursor: pointer;
   background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gallery-item--photo img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   transition: transform 0.4s ease;
 }
 
@@ -481,6 +483,7 @@
   color: white;
   transform: translateY(100%);
   transition: transform 0.3s ease;
+  pointer-events: none;
 }
 
 .gallery-item--photo:hover .gallery-item__overlay {
@@ -584,19 +587,21 @@
 }
 
 .lightbox.active {
-  display: flex;
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .lightbox__close,
 .lightbox__prev,
 .lightbox__next {
   position: absolute;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  font-size: 1.5rem;
-  width: 50px;
-  height: 50px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  color: #d4af37;
+  font-size: 1.8rem;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -604,6 +609,7 @@
   align-items: center;
   justify-content: center;
   z-index: 10001;
+  font-weight: bold;
 }
 
 .lightbox__close:hover,
@@ -612,24 +618,32 @@
   background: var(--gallery-primary);
   border-color: var(--gallery-primary);
   color: #000;
-  transform: scale(1.1);
+  transform: scale(1.15);
 }
 
 .lightbox__close {
-  top: 2rem;
-  right: 2rem;
+  top: 1.5rem;
+  right: 1.5rem;
 }
 
 .lightbox__prev {
-  left: 2rem;
+  left: 1.5rem;
   top: 50%;
   transform: translateY(-50%);
 }
 
+.lightbox__prev:hover {
+  transform: translateY(-50%) scale(1.15);
+}
+
 .lightbox__next {
-  right: 2rem;
+  right: 1.5rem;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.lightbox__next:hover {
+  transform: translateY(-50%) scale(1.15);
 }
 
 .lightbox__content {
@@ -643,7 +657,10 @@
 .lightbox__content img {
   max-width: 100%;
   max-height: 70vh;
+  width: auto;
+  height: auto;
   object-fit: contain;
+  border-radius: 8px;
 }
 
 .lightbox__info {

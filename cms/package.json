@@ -6,7 +6,12 @@
   "scripts": {
     "start": "node templateServer.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "report:structure": "bash -lc 'if command -v tree >/dev/null 2>&1; then tree -a -I \"node_modules|.git|uploads|dist|build|.cache\" -L 4 > ../STRUTTURA-$(date +%F).md; else ls -R > ../STRUTTURA-$(date +%F).md; fi'"
+    "report:structure": "bash -lc 'if command -v tree >/dev/null 2>&1; then tree -a -I \"node_modules|.git|uploads|dist|build|.cache\" -L 4 > ../STRUTTURA-$(date +%F).md; else ls -R > ../STRUTTURA-$(date +%F).md; fi'",
+    "build:css": "mkdir -p ../frontend/css-dist && find ../frontend/css -name '*.css' -type f | while read file; do rel=\"${file#../frontend/css/}\"; dir=\"../frontend/css-dist/$(dirname \"$rel\")\"; mkdir -p \"$dir\"; out=\"$dir/$(basename \"$file\")\"; csso \"$file\" -o \"$out\"; done",
+    "build:js": "mkdir -p ../frontend/js-dist && find ../frontend/js -name '*.js' -type f | while read file; do rel=\"${file#../frontend/js/}\"; dir=\"../frontend/js-dist/$(dirname \"$rel\")\"; mkdir -p \"$dir\"; out=\"$dir/$(basename \"$file\")\"; npx terser \"$file\" -c -m -o \"$out\" 2>/dev/null || cp \"$file\" \"$out\"; done && echo '⚠️  Some files copied without minification due to syntax errors'",
+    "build:images": "node scripts/convert-to-webp.js",
+    "build:images:dry": "node scripts/convert-to-webp.js --dry-run",
+    "build:prod": "npm run build:css && npm run build:js && echo '✅ Build complete: CSS and JS minified in *-dist folders'"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +25,7 @@
     "express": "^5.1.0",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.18.2",
+    "helmet": "^8.1.0",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-express-middleware": "^2.0.0",
@@ -37,6 +43,10 @@
     "speakeasy": "^2.0.0",
     "sqlite3": "^5.1.7"
   },
-  "description": ""
-  
+  "description": "",
+  "devDependencies": {
+    "csso-cli": "^4.0.2",
+    "html-minifier-terser": "^7.2.0",
+    "terser": "^5.44.1"
+  }
 }

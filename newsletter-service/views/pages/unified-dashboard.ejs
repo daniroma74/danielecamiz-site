@@ -204,7 +204,7 @@
     <!-- Tabs Navigation -->
     <div class="tabs-nav">
       <button class="tab-button active" onclick="switchTab('digest')">
-        📰 Digest News Daniele
+        📰 Digest News
         <% if (digestData.selectedPosts.length > 0) { %>
           <span style="background: #4caf50; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.8rem; margin-left: 0.5rem;">
             <%= digestData.selectedPosts.length %>
@@ -212,13 +212,13 @@
         <% } %>
       </button>
       <button class="tab-button" onclick="switchTab('concerts')">
-        🎼 Newsletter ICNT Concerti
+        🎼 Newsletter Concerti
+      </button>
+      <button class="tab-button" onclick="switchTab('campaigns')">
+        📋 Campagne Inviate
       </button>
       <button class="tab-button" onclick="switchTab('subscribers')">
         👥 Iscritti (<%= stats.active_subscribers %>)
-      </button>
-      <button class="tab-button" onclick="switchTab('stats')">
-        📊 Statistiche
       </button>
     </div>
 
@@ -322,14 +322,26 @@ Here are the latest news from Daniele Camiz's website. You'll find <%= digestDat
       <div class="card">
         <h2>🎼 Newsletter ICNT Concerti</h2>
         <p style="color: #666; margin-bottom: 1.5rem;">
-          Crea newsletter manuale per annunciare nuovi concerti e stagioni
+          Crea newsletter personalizzate per annunciare nuovi concerti e stagioni ICNT
         </p>
         <div class="action-buttons">
           <a href="/admin/campaign/new" class="btn btn-primary" style="text-decoration: none;">
             ✍️ Crea Nuova Newsletter Concerti
           </a>
-          <a href="/admin/campaigns" class="btn btn-secondary" style="text-decoration: none;">
-            📋 Vedi Newsletter Inviate
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Campaigns -->
+    <div id="tab-campaigns" class="tab-content">
+      <div class="card">
+        <h2>📋 Campagne Newsletter Inviate</h2>
+        <p style="color: #666; margin-bottom: 1.5rem;">
+          Visualizza tutte le newsletter inviate (digest e campagne concerti)
+        </p>
+        <div class="action-buttons">
+          <a href="/admin/campaigns" class="btn btn-primary" style="text-decoration: none;">
+            📋 Visualizza Tutte le Campagne
           </a>
         </div>
       </div>
@@ -339,7 +351,7 @@ Here are the latest news from Daniele Camiz's website. You'll find <%= digestDat
     <div id="tab-subscribers" class="tab-content">
       <div class="card">
         <h2>👥 Gestione Iscritti</h2>
-        <div class="preference-badges">
+        <div class="preference-badges" style="margin-bottom: 1.5rem;">
           <div class="preference-badge both">
             <span>✅ Entrambe:</span>
             <strong><%= stats.preferences_both || 0 %></strong>
@@ -355,17 +367,9 @@ Here are the latest news from Daniele Camiz's website. You'll find <%= digestDat
         </div>
         <div class="action-buttons">
           <a href="/admin/subscribers" class="btn btn-primary" style="text-decoration: none;">
-            📋 Vedi Tutti gli Iscritti
+            📋 Gestisci Tutti gli Iscritti
           </a>
         </div>
-      </div>
-    </div>
-
-    <!-- Tab: Stats -->
-    <div id="tab-stats" class="tab-content">
-      <div class="card">
-        <h2>📊 Statistiche</h2>
-        <p>Dashboard statistiche completa in sviluppo...</p>
       </div>
     </div>
   </div>

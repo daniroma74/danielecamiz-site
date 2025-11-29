@@ -112,6 +112,11 @@
         </div>
   </main>
 
+  <!-- Include Cloudinary Manager FIRST -->
+  <script src="/shared/cloudinary-manager/ui-notifications.js"></script>
+  <script src="/shared/cloudinary-manager/ui-loading.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
+
   <script>
     const collectionId = <%= collection.id %>;
     const collectionType = '<%= collection.type %>';
@@ -126,33 +131,140 @@
     });
 
     function showAddItemModal() {
-      // Redirect to appropriate management page based on collection type
+      // Open appropriate modal based on collection type
       if (collectionType === 'photo') {
-        window.location.href = `/gallery/photos?collection=${collectionId}`;
+        openCloudinaryPicker();
       } else if (collectionType === 'video') {
-        window.location.href = `/gallery/videos?collection=${collectionId}`;
+        openVideoModal();
       } else if (collectionType === 'audio') {
-        window.location.href = `/gallery/audios?collection=${collectionId}`;
+        openAudioModal();
       } else {
-        // Mixed type - show selection
-        const choice = confirm('Aggiungi una FOTO? (Annulla per Video/Audio)');
-        if (choice) {
-          window.location.href = `/gallery/photos?collection=${collectionId}`;
+        // Mixed type collection - ask user
+        const choice = prompt('Che tipo di media vuoi aggiungere?\n1 = Foto\n2 = Video\n3 = Audio');
+        if (choice === '1') openCloudinaryPicker();
+        else if (choice === '2') openVideoModal();
+        else if (choice === '3') openAudioModal();
+      }
+    }
+
+    function openCloudinaryPicker() {
+      if (typeof CloudinaryManager === 'undefined') {
+        alert('Cloudinary Manager non caricato. Ricarica la pagina.');
+        return;
+      }
+
+      CloudinaryManager.showImageDialog((result) => {
+        if (!result || !result.publicId) return;
+
+        // Create photo
+        createPhoto({
+          publicId: result.publicId,
+          url: result.url,
+          width: result.width || 0,
+          height: result.height || 0,
+          bytes: result.bytes || 0,
+          format: result.format || ''
+        });
+      }, {
+        folder: 'danielecamiz/gallery',
+        preset: 'gallery_unsigned'
+      });
+    }
+
+    function openVideoModal() {
+      const youtubeId = prompt('Inserisci YouTube Video ID:');
+      if (youtubeId) createVideo(youtubeId);
+    }
+
+    function openAudioModal() {
+      const bandcampUrl = prompt('Inserisci URL Bandcamp:');
+      if (bandcampUrl) createAudio(bandcampUrl);
+    }
+
+    async function createPhoto(photoData) {
+      try {
+        const response = await fetch('/gallery/api/photos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collection_id: collectionId,
+            cloudinary_id: photoData.publicId,
+            cloudinary_folder: photoData.publicId.split('/').slice(0, -1).join('/'),
+            width: photoData.width,
+            height: photoData.height,
+            file_size: photoData.bytes,
+            file_format: photoData.format,
+            title_it: '',
+            is_published: true
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Foto aggiunta!');
+          window.location.reload();
         } else {
-          alert('Vai alla sezione Video o Audio per aggiungere elementi');
+          alert('❌ Errore durante il salvataggio');
         }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
+      }
+    }
+
+    async function createVideo(youtubeId) {
+      try {
+        const response = await fetch('/gallery/api/videos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collection_id: collectionId,
+            youtube_id: youtubeId,
+            title_it: `Video ${youtubeId}`,
+            is_published: true,
+            is_whitelisted: true
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Video aggiunto!');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
+      }
+    }
+
+    async function createAudio(bandcampUrl) {
+      try {
+        const response = await fetch('/gallery/api/audios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collection_id: collectionId,
+            bandcamp_url: bandcampUrl,
+            title_it: 'Nuovo audio',
+            is_published: true
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Audio aggiunto!');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
       }
     }
 
     function editItem(id, type) {
-      // Redirect to appropriate edit page
-      if (type === 'photo') {
-        window.location.href = `/gallery/photos?edit=${id}`;
-      } else if (type === 'video') {
-        window.location.href = `/gallery/videos?edit=${id}`;
-      } else if (type === 'audio') {
-        window.location.href = `/gallery/audios?edit=${id}`;
-      }
+      // TODO: Open edit modal inline instead of redirecting
+      alert(`Modifica ${type} ID: ${id} - TODO: implementare modal di modifica`);
     }
 
     async function deleteItem(id, type) {

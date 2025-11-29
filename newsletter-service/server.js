@@ -83,7 +83,13 @@ app.use('/admin', ensureAuthenticated, adminRoutes);
 
 // ====== ROOT REDIRECT ======
 app.get('/', (req, res) => {
-  res.redirect('/admin');
+  // Se c'è un token JWT nella query, passalo all'admin
+  const token = req.query.token;
+  if (token) {
+    res.redirect(`/admin?token=${token}`);
+  } else {
+    res.redirect('/admin');
+  }
 });
 
 // ====== ERROR HANDLING ======

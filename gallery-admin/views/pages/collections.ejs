@@ -12,12 +12,11 @@
   <%- include('../partials/header') %>
 
   <main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
-    <!-- Tabs -->
+    <!-- Navigation Tabs -->
     <%- include('../../../shared/partials/admin-tabs', {
       tabs: [
         { label: 'Dashboard', url: '/gallery', icon: 'home' },
-        { label: 'Collezioni', url: '/gallery/collections', icon: 'folder-open' },
-        { label: 'Media Manager', url: '/gallery/media', icon: 'images' }
+        { label: 'Collezioni', url: '/gallery/collections', icon: 'folder-open' }
       ],
       currentPath: '/gallery/collections',
       baseUrl: 'gallery'

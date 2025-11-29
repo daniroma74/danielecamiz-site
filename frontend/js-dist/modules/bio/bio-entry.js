@@ -1,0 +1,1 @@
+!function(){function o(){location.hash&&/_modal$/.test(location.hash.slice(1))&&history.pushState("",document.title,location.pathname+location.search)}document.addEventListener("keydown",t=>{"Escape"===t.key&&o()}),document.querySelectorAll(".modal__close, .modal__backdrop").forEach(t=>{t.addEventListener("click",t=>{setTimeout(()=>{""!==location.hash&&o()},0)})})}();

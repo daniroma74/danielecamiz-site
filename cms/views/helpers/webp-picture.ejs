@@ -1,0 +1,19 @@
+<%
+/**
+ * WebP Picture Helper
+ * Usage: <%- include('../helpers/webp-picture', { src: '/img/hero.jpg', alt: 'Hero image', className: 'hero-img', loading: 'eager' }) %>
+ *
+ * Automatically generates <picture> tag with WebP source + fallback
+ */
+const webpSrc = src.replace(/\.(jpe?g|png)$/i, '.webp');
+const imgClass = (typeof className !== 'undefined' && className) ? className : '';
+const imgId = (typeof id !== 'undefined' && id) ? id : '';
+const imgLoading = (typeof loading !== 'undefined' && loading) ? loading : 'lazy';
+const imgFetchPriority = (typeof fetchpriority !== 'undefined' && fetchpriority) ? fetchpriority : '';
+const imgWidth = (typeof width !== 'undefined' && width) ? width : '';
+const imgHeight = (typeof height !== 'undefined' && height) ? height : '';
+const imgDecoding = (typeof decoding !== 'undefined' && decoding) ? decoding : 'async';
+%><picture>
+  <source srcset="<%= webpSrc %>" type="image/webp">
+  <img src="<%= src %>" alt="<%= alt %>"<% if (imgId) { %> id="<%= imgId %>"<% } %><% if (imgClass) { %> class="<%= imgClass %>"<% } %><% if (imgLoading) { %> loading="<%= imgLoading %>"<% } %><% if (imgFetchPriority) { %> fetchpriority="<%= imgFetchPriority %>"<% } %><% if (imgWidth) { %> width="<%= imgWidth %>"<% } %><% if (imgHeight) { %> height="<%= imgHeight %>"<% } %><% if (imgDecoding) { %> decoding="<%= imgDecoding %>"<% } %>>
+</picture>

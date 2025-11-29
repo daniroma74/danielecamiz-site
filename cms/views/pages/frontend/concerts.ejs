@@ -101,12 +101,15 @@
                 </div>
                 <div class="up-cta">
                   <% if (hasLandingPage) { %>
-                    <button class="btn btn-secondary" type="button"
-                            onclick="openConcertPreview(null, '<%= landingUrl %>')"><%= txtDetails %></button>
+                    <button class="btn btn-secondary concert-details-btn" type="button"
+                            data-concert-id="<%= concertId %>"
+                            data-action="preview"
+                            data-landing-url="<%= landingUrl %>"><%= txtDetails %></button>
                     <a href="<%= landingUrl %>" class="btn btn-primary" style="margin-left: 0.5rem;"><%= txtBook %></a>
                   <% } else { %>
-                    <button class="btn btn-secondary" type="button"
-                            onclick="openConcertFromDOM('<%= concertId %>')"><%= txtDetails %></button>
+                    <button class="btn btn-secondary concert-details-btn" type="button"
+                            data-concert-id="<%= concertId %>"
+                            data-action="details"><%= txtDetails %></button>
                   <% } %>
                 </div>
 
@@ -201,9 +204,9 @@
                       <!-- Metà superiore: poster sx + info dx -->
                       <div class="concert-top-section">
                         <% if (poster) { %>
-                          <a class="concert-thumb-link"
+                          <a class="concert-thumb-link concert-poster-link"
                              href="<%= poster %>"
-                             onclick="event.preventDefault(); openConcertFromDOM('<%= concertId %>');"
+                             data-concert-id="<%= concertId %>"
                              aria-label="<%= (lang==='en'?'Open poster':'Apri locandina') %>">
                             <img class="concert-poster" src="<%= poster %>" alt="<%= c.title || 'Poster' %>" loading="lazy" />
                           </a>
@@ -312,7 +315,7 @@
   <!-- Lightbox (NASCOSTA di default) -->
   <div id="concert_lightbox" role="dialog" aria-modal="true" tabindex="-1" hidden>
     <div class="concert-lightbox-content">
-      <button class="concert-lightbox-close" aria-label="Close" onclick="closeConcertLightbox()">×</button>
+      <button class="concert-lightbox-close" aria-label="Close">×</button>
       <div class="concert-lightbox-body">
         <!-- Iframe per LP (nascosto di default) -->
         <div id="concert_iframe_container" class="concert-lightbox-iframe" style="display: none;">

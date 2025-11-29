@@ -67,8 +67,8 @@ router.post('/generate-module-token/:moduleId', async (req, res) => {
         // 🔐 SET COOKIE FOR CROSS-SUBDOMAIN ACCESS
         res.cookie('auth_token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: true, // MUST be true for sameSite: 'none'
+            sameSite: 'none', // Allow cross-site cookie with HTTPS
             domain: `.${process.env.MAIN_DOMAIN || 'danielecamiz.com'}`, // Shared across subdomains!
             maxAge: 3600000 // 1 hour
         });

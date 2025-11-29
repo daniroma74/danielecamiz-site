@@ -79,7 +79,11 @@ export async function initDatabase() {
 export function getBaseRenderData(lang, labels, overrides = {}) {
   const title       = overrides.title       || 'Daniele Camiz';
   const description = overrides.description || overrides.claim || '';
-  const keywords    = overrides.keywords    || 'musica classica, direttore d’orchestra, concerti, Mozart, ICNT';
+  // SEO 2025: Rich, specific keywords for better discoverability
+  const defaultKeywords = lang === 'en'
+    ? 'Daniele Camiz, conductor, orchestra conductor, classical music, opera, symphonic concerts, Italian conductor, Mozart, Beethoven, Verdi, contemporary music, ICNT, I Concerti nel Tempio, Rome concerts, music director'
+    : 'Daniele Camiz, direttore d\'orchestra, direttore, musica classica, opera, concerti sinfonici, direttore italiano, Mozart, Beethoven, Verdi, musica contemporanea, ICNT, I Concerti nel Tempio, concerti Roma, direttore musicale';
+  const keywords    = overrides.keywords    || defaultKeywords;
   const canonical   = overrides.canonical   || 'https://danielecamiz.com/';
   const ogImage     = overrides.ogImage     || 'https://danielecamiz.com/img/default-og-image.jpg';
 

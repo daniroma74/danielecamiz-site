@@ -1,0 +1,103 @@
+/* Service Worker Update Notification */
+
+.sw-update-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10001;
+  max-width: 400px;
+  background: linear-gradient(135deg, rgba(25, 25, 25, 0.98) 0%, rgba(35, 35, 35, 0.95) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(212, 175, 55, 0.1);
+  animation: slideInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.sw-update-content {
+  padding: 20px;
+  color: var(--text-primary, #fffbe9);
+}
+
+.sw-update-content p {
+  margin: 0 0 12px 0;
+  font-family: var(--font-ui, 'Montserrat', sans-serif);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.sw-update-content p strong {
+  color: var(--accent-color, #cba135);
+  font-weight: 600;
+}
+
+.sw-update-content button {
+  margin-right: 10px;
+  margin-top: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-ui, 'Montserrat', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sw-update-content button:first-of-type {
+  background: var(--accent-color, #cba135);
+  color: #000;
+}
+
+.sw-update-content button:first-of-type:hover {
+  background: var(--light-accent, #e6c46a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.sw-update-content button:last-of-type {
+  background: transparent;
+  color: var(--text-secondary, rgba(244, 238, 212, 0.85));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.sw-update-content button:last-of-type:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .sw-update-notification {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+
+  .sw-update-content button {
+    display: block;
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .sw-update-notification {
+    animation: none;
+  }
+}

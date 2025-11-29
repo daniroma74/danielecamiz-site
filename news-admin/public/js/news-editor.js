@@ -1,17 +1,6 @@
 // news-admin/public/js/news-editor.js
 
-// Tab switching
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const tabName = btn.dataset.tab;
-    
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    
-    btn.classList.add('active');
-    document.getElementById(`tab-${tabName}`).classList.add('active');
-  });
-});
+// ✅ TAB NAVIGATION REMOVED - All sections are now always visible
 
 // Auto-generate slug from title
 document.getElementById('title_it')?.addEventListener('input', function(e) {
@@ -93,32 +82,81 @@ async function savePost(status) {
 }
 
 function collectFormData() {
+  console.log('🔍 [collectFormData] Starting...');
+
+  // ✅ FIX CRITICO: Ottieni contenuto da TinyMCE usando metodi compatibili
+  let content_it = '';
+  let content_en = '';
+
+  if (typeof tinymce !== 'undefined') {
+    console.log('✅ TinyMCE globale disponibile');
+
+    // Metodo 1: triggerSave forza il sync textarea → editor
+    try {
+      tinymce.triggerSave();
+      console.log('✅ tinymce.triggerSave() chiamato');
+    } catch (e) {
+      console.warn('⚠️ tinymce.triggerSave() fallito:', e.message);
+    }
+
+    // Metodo 2: prova a ottenere editor tramite get()
+    try {
+      const editorIT = tinymce.get('content_it');
+      const editorEN = tinymce.get('content_en');
+
+      if (editorIT) {
+        content_it = editorIT.getContent();
+        console.log('✅ content_it da tinymce.get():', content_it.length, 'caratteri');
+      } else {
+        console.warn('⚠️ tinymce.get("content_it") = null, leggo da textarea');
+        content_it = document.getElementById('content_it')?.value || '';
+      }
+
+      if (editorEN) {
+        content_en = editorEN.getContent();
+        console.log('✅ content_en da tinymce.get():', content_en.length, 'caratteri');
+      } else {
+        content_en = document.getElementById('content_en')?.value || null;
+      }
+    } catch (e) {
+      console.error('❌ Errore ottenendo editor:', e);
+      // Fallback: leggi dai textarea dopo triggerSave
+      content_it = document.getElementById('content_it')?.value || '';
+      content_en = document.getElementById('content_en')?.value || null;
+      console.log('⚠️ Fallback: content_it da textarea:', content_it.length, 'caratteri');
+    }
+  } else {
+    console.warn('❌ TinyMCE non disponibile, leggo dai textarea');
+    content_it = document.getElementById('content_it')?.value || '';
+    content_en = document.getElementById('content_en')?.value || null;
+  }
+
   const tags = document.getElementById('tags')?.value || '';
   const tagsArray = tags.split(',').map(t => t.trim()).filter(Boolean);
-  
+
   const providers = {};
   document.querySelectorAll('[data-provider]').forEach(cb => {
     if (cb.checked) providers[cb.dataset.provider] = true;
   });
-  
+
   const messages = {};
   ['linkedin', 'facebook', 'threads'].forEach(p => {
     const val = document.getElementById(`msg_${p}`)?.value || '';
     if (val.trim()) messages[p] = val.trim();
   });
-  
+
   const galleryInput = document.getElementById('gallery_images')?.value || '[]';
   const gallery = JSON.parse(galleryInput);
-  
-  return {
+
+  const formData = {
     slug: document.getElementById('slug')?.value,
     status: document.getElementById('status')?.value,
     title_it: document.getElementById('title_it')?.value,
     title_en: document.getElementById('title_en')?.value || null,
     excerpt_it: document.getElementById('excerpt_it')?.value || null,
     excerpt_en: document.getElementById('excerpt_en')?.value || null,
-    content_it: document.getElementById('content_it')?.value,
-    content_en: document.getElementById('content_en')?.value || null,
+    content_it: content_it,
+    content_en: content_en,
     cover_image: document.getElementById('cover_image')?.value || null,
     gallery_images: gallery,
     category: document.getElementById('category')?.value,
@@ -134,6 +172,9 @@ function collectFormData() {
     social_messages: messages,
     include_in_newsletter: document.getElementById('include_in_newsletter')?.checked ? 1 : 0
   };
+
+  console.log('📦 [collectFormData] formData.content_it length:', formData.content_it.length);
+  return formData;
 }
 
 // Cloudinary upload con CloudinaryManager

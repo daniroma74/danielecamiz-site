@@ -33,9 +33,12 @@
 <section id="news_section" class="news-page">
   <!-- Hero con immagine + labels -->
   <header class="news-hero news-hero--with-image">
-    <picture class="news-hero__media" aria-hidden="true">
-      <img src="/img/hero-news.png" alt="" loading="eager" decoding="async" />
-    </picture>
+    <div class="news-hero__media" aria-hidden="true">
+      <picture>
+        <source srcset="/img/hero-news.webp" type="image/webp">
+        <img src="/img/hero-news.png" alt="" loading="eager" fetchpriority="high" decoding="async">
+      </picture>
+    </div>
     <div class="news-hero__text">
       <h1 id="news_title" class="news-hero__title" data-i18n-key="news.title"><%= newsTitle %></h1>
       <p class="news-hero__claim" id="news_claim" data-i18n-key="news.news.claim"><%= newsClaim %></p>

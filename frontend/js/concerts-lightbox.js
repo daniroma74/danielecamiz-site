@@ -32,6 +32,39 @@
         closeConcertLightbox();
       }
     });
+
+    // ✅ Event delegation per bottoni "Vedi dettagli" (CSP-safe)
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('.concert-details-btn');
+      if (btn) {
+        e.preventDefault();
+        var concertId = btn.getAttribute('data-concert-id');
+        var action = btn.getAttribute('data-action');
+
+        if (action === 'preview') {
+          var landingUrl = btn.getAttribute('data-landing-url');
+          if (landingUrl) {
+            openConcertPreview(null, landingUrl);
+          }
+        } else if (action === 'details') {
+          if (concertId) {
+            openConcertFromDOM(concertId);
+          }
+        }
+      }
+    });
+
+    // ✅ Event delegation per link poster concerti passati (CSP-safe)
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('.concert-poster-link');
+      if (link) {
+        e.preventDefault();
+        var concertId = link.getAttribute('data-concert-id');
+        if (concertId) {
+          openConcertFromDOM(concertId);
+        }
+      }
+    });
   }
 
   // Apre la lightbox copiando i dettagli completi dal DOM

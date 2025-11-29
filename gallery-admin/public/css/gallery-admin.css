@@ -490,3 +490,142 @@
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
+
+/* Items Grid (media in collezioni) */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.item-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gold);
+}
+
+.item-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.item-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.item-card:hover .item-preview img {
+  transform: scale(1.05);
+}
+
+.video-preview,
+.audio-preview,
+.no-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--border-light) 100%);
+}
+
+.video-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-preview .play-icon {
+  position: absolute;
+  font-size: 3rem;
+  opacity: 0.8;
+}
+
+.audio-preview .icon-large,
+.no-preview .icon-large {
+  font-size: 4rem;
+  opacity: 0.3;
+  margin-bottom: 0.5rem;
+}
+
+.audio-preview .duration {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.item-badges {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.item-badges .badge {
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+.item-info {
+  padding: 1rem;
+  flex: 1;
+}
+
+.item-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.item-info .subtitle {
+  margin: 0 0 0.5rem 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.item-info .credits {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.item-actions {
+  padding: 0.75rem 1rem;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.item-actions .btn {
+  flex: 1;
+  min-width: fit-content;
+  justify-content: center;
+}

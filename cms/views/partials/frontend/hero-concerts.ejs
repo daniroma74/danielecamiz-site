@@ -24,6 +24,9 @@
 
 <aside id="hero_concerts" class="right-hero hero-concerts" style="<%= asideStyle %>">
   <div class="hero-media" aria-hidden="true">
-    <img class="hero-media-img" src="<%= hcImg %>" alt="" loading="eager" />
+    <picture>
+      <source srcset="<%= hcImg.replace(/\.(jpe?g|png)$/i, '.webp') %>" type="image/webp">
+      <img src="<%= hcImg %>" alt="" class="hero-media-img" loading="eager" fetchpriority="high" width="800" height="1200" decoding="async">
+    </picture>
   </div>
 </aside>

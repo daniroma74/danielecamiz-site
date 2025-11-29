@@ -31,13 +31,19 @@
   border-bottom-color: #2563eb;
 }
 
-/* Tab content */
+/* Tab content - RIMOSSO: ora tutte le sezioni sono sempre visibili */
 .tab-content {
   display: none;
 }
 
 .tab-content.active {
   display: block;
+}
+
+/* Sezioni sempre visibili */
+.form-section-visible {
+  display: block;
+  margin-bottom: 2rem;
 }
 
 /* Form sections */

@@ -25,9 +25,7 @@
         <article class="collection-card <%= collection.is_featured ? 'collection-card--featured' : '' %>">
           <a href="<%= collection.url %>" class="collection-card__link">
             <div class="collection-card__image">
-              <img src="<%= collection.cover_url %>"
-                   alt="<%= collection.title %>"
-                   loading="lazy">
+              <img src="<%= collection.cover_url %>" alt="<%= collection.title %>" loading="lazy" width="600" height="400">
               <% if (collection.is_featured) { %>
                 <span class="collection-card__badge">
                   <i class="fas fa-star"></i>

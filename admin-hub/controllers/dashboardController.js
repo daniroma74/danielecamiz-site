@@ -32,14 +32,11 @@ const showDashboard = async (req, res) => {
             );
         });
         
-        // Statistiche dashboard
-        const stats = await getDashboardStats(req.user.id);
-
         // Attività recenti
         const activities = await getRecentActivities(req.user.id);
 
-        // Analytics summary (ultimi 7 giorni)
-        const analyticsData = await getAnalyticsSummary(7);
+        // Statistiche sito (placeholder - will be implemented with analytics integration)
+        const siteStats = await getSiteStats();
 
         // Formatta ultimo login
         const lastLogin = req.session.lastLogin
@@ -49,9 +46,8 @@ const showDashboard = async (req, res) => {
         res.render('dashboard/index', {
             title: 'Dashboard - Admin HUB',
             modules: userModules,
-            stats,
             activities,
-            analyticsData,
+            siteStats,
             lastLogin
         });
         
@@ -64,55 +60,26 @@ const showDashboard = async (req, res) => {
     }
 };
 
-// Ottieni statistiche dashboard
-async function getDashboardStats(userId) {
+// Ottieni statistiche sito web
+async function getSiteStats() {
     try {
-        // Moduli attivi
-        const activeModules = await get(
-            "SELECT COUNT(*) as count FROM hub_modules WHERE status = 'active'"
-        );
+        // TODO: Implement Google Analytics or similar integration
+        // For now, return null to show placeholder "---" in dashboard
+        //
+        // When implementing, query your analytics service for:
+        // - totalVisitors: total unique visitors
+        // - visitorsTrend: % change compared to previous period
+        // - pageViews: total page views
+        // - pageViewsTrend: % change compared to previous period
+        // - uniqueVisitors: unique visitors in last 30 days
+        // - topPage: most visited page path (e.g., "/bio", "/concerts")
+        // - topPageViews: number of views for top page
 
-        // Utenti online (sessioni attive ultima ora)
-        const onlineUsers = await get(
-            `SELECT COUNT(DISTINCT user_id) as count
-             FROM hub_sessions
-             WHERE expires_at > datetime('now')`
-        );
+        return null; // Returns null until analytics integration is implemented
 
-        // Ultima attività
-        const lastActivity = await get(
-            `SELECT created_at FROM hub_activity_logs
-             WHERE user_id = ?
-             ORDER BY created_at DESC
-             LIMIT 1`,
-            [userId]
-        );
-
-        // Status sicurezza
-        const user = await get(
-            'SELECT two_factor_enabled FROM hub_users WHERE id = ?',
-            [userId]
-        );
-        
-        return {
-            activeModules: activeModules.count,
-            onlineUsers: onlineUsers.count,
-            lastActivity: lastActivity 
-                ? formatTimeAgo(new Date(lastActivity.created_at))
-                : 'Nessuna attività',
-            securityStatus: user.two_factor_enabled ? 'secure' : 'warning',
-            securityText: user.two_factor_enabled ? 'Protetto con 2FA' : '2FA non attivo'
-        };
-        
     } catch (error) {
-        console.error('Errore statistiche:', error);
-        return {
-            activeModules: 0,
-            onlineUsers: 0,
-            lastActivity: 'N/D',
-            securityStatus: 'unknown',
-            securityText: 'Stato sconosciuto'
-        };
+        console.error('Errore statistiche sito:', error);
+        return null;
     }
 }
 
@@ -141,67 +108,6 @@ async function getRecentActivities(userId) {
     } catch (error) {
         console.error('Errore caricamento attività:', error);
         return [];
-    }
-}
-
-// Ottieni riassunto analytics
-async function getAnalyticsSummary(days = 7) {
-    try {
-        // Check if analytics table exists
-        const tableExists = await get(
-            `SELECT name FROM sqlite_master WHERE type='table' AND name='hub_analytics_events'`
-        );
-
-        if (!tableExists) {
-            return null; // Analytics not available
-        }
-
-        // Total events last N days
-        const totalEvents = await get(
-            `SELECT COUNT(*) as count FROM hub_analytics_events
-             WHERE created_at >= datetime('now', '-${days} days')`
-        );
-
-        // Events by module
-        const eventsByModule = await all(
-            `SELECT module_id, COUNT(*) as count
-             FROM hub_analytics_events
-             WHERE created_at >= datetime('now', '-${days} days')
-             GROUP BY module_id
-             ORDER BY count DESC
-             LIMIT 5`
-        );
-
-        // Events by type
-        const eventsByType = await all(
-            `SELECT event_type, COUNT(*) as count
-             FROM hub_analytics_events
-             WHERE created_at >= datetime('now', '-${days} days')
-             GROUP BY event_type
-             ORDER BY count DESC
-             LIMIT 5`
-        );
-
-        // Daily trend (last 7 days)
-        const dailyTrend = await all(
-            `SELECT DATE(created_at) as date, COUNT(*) as count
-             FROM hub_analytics_events
-             WHERE created_at >= datetime('now', '-7 days')
-             GROUP BY DATE(created_at)
-             ORDER BY date ASC`
-        );
-
-        return {
-            totalEvents: totalEvents.count,
-            eventsByModule,
-            eventsByType,
-            dailyTrend,
-            days
-        };
-
-    } catch (error) {
-        console.error('Errore caricamento analytics:', error);
-        return null;
     }
 }
 

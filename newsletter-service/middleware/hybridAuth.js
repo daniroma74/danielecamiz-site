@@ -17,6 +17,10 @@ export function ensureAuthenticated(req, res, next) {
   // Try 1: JWT token from Admin Hub (cookie auth_token)
   const hubToken = req.cookies?.auth_token;
 
+  console.log(`🔍 [Newsletter] Auth check - Cookies:`, Object.keys(req.cookies || {}));
+  console.log(`🔍 [Newsletter] Hub token present:`, !!hubToken);
+  console.log(`🔍 [Newsletter] JWT_SECRET present:`, !!JWT_SECRET);
+
   if (hubToken && JWT_SECRET) {
     try {
       const decoded = jwt.verify(hubToken, JWT_SECRET, {

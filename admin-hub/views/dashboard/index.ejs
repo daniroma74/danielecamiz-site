@@ -82,6 +82,78 @@
             color: var(--gold);
         }
 
+        /* Website Stats Section */
+        .website-stats-section {
+            margin-bottom: 2rem;
+        }
+
+        .website-stats-section h2 {
+            font-size: 1.75rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--gold);
+        }
+
+        .stat-card h3 {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .stat-status {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--danger);
+        }
+
         /* Modules Grid */
         .modules-section {
             margin-bottom: 2rem;
@@ -338,28 +410,43 @@
 
         <div class="error-message" id="errorMessage"></div>
 
-        <% if (stats) { %>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>⚡ Moduli Attivi</h3>
-                <p class="stat-number"><%= stats.activeModules || 0 %></p>
-            </div>
-            <div class="stat-card">
-                <h3>👥 Utenti Online</h3>
-                <p class="stat-number"><%= stats.onlineUsers || 0 %></p>
-            </div>
-            <div class="stat-card">
-                <h3>🕐 Ultima Attività</h3>
-                <p class="stat-status"><%= stats.lastActivity || 'N/D' %></p>
-            </div>
-            <div class="stat-card">
-                <h3>🔒 Sicurezza</h3>
-                <p class="stat-status" style="color: <%= stats.securityStatus === 'secure' ? 'var(--success)' : 'var(--warning)' %>">
-                    <%= stats.securityText || 'N/D' %>
-                </p>
+        <!-- Website Statistics -->
+        <div class="website-stats-section">
+            <h2>📊 Statistiche Sito</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>👥 Visitatori Totali</h3>
+                    <p class="stat-number"><%= siteStats?.totalVisitors || '---' %></p>
+                    <% if (siteStats?.visitorsTrend) { %>
+                    <div class="stat-trend <%= siteStats.visitorsTrend > 0 ? 'trend-up' : 'trend-down' %>">
+                        <%= siteStats.visitorsTrend > 0 ? '↗' : '↘' %> <%= Math.abs(siteStats.visitorsTrend) %>%
+                    </div>
+                    <% } %>
+                </div>
+                <div class="stat-card">
+                    <h3>📄 Visualizzazioni Pagine</h3>
+                    <p class="stat-number"><%= siteStats?.pageViews || '---' %></p>
+                    <% if (siteStats?.pageViewsTrend) { %>
+                    <div class="stat-trend <%= siteStats.pageViewsTrend > 0 ? 'trend-up' : 'trend-down' %>">
+                        <%= siteStats.pageViewsTrend > 0 ? '↗' : '↘' %> <%= Math.abs(siteStats.pageViewsTrend) %>%
+                    </div>
+                    <% } %>
+                </div>
+                <div class="stat-card">
+                    <h3>🌍 Visitatori Unici (30gg)</h3>
+                    <p class="stat-number"><%= siteStats?.uniqueVisitors || '---' %></p>
+                </div>
+                <div class="stat-card">
+                    <h3>⭐ Pagina Più Vista</h3>
+                    <p class="stat-status"><%= siteStats?.topPage || 'N/D' %></p>
+                    <% if (siteStats?.topPageViews) { %>
+                    <div class="stat-trend">
+                        <%= siteStats.topPageViews %> visite
+                    </div>
+                    <% } %>
+                </div>
             </div>
         </div>
-        <% } %>
 
         <div class="modules-section">
             <h2>🎯 Pannelli Admin Disponibili</h2>
@@ -388,85 +475,6 @@
                 <% } %>
             </div>
         </div>
-
-        <% if (analyticsData) { %>
-        <div class="analytics-section">
-            <h2 style="font-size: 1.75rem; color: var(--text-primary); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 3px solid var(--gold); display: flex; align-items: center; gap: 0.75rem;">
-                📊 Analytics Dashboard (Ultimi <%= analyticsData.days %> giorni)
-            </h2>
-
-            <div class="stats-grid" style="margin-bottom: 2rem;">
-                <div class="stat-card">
-                    <h3>📈 Eventi Totali</h3>
-                    <p class="stat-number"><%= analyticsData.totalEvents %></p>
-                </div>
-                <div class="stat-card">
-                    <h3>🎯 Moduli Attivi</h3>
-                    <p class="stat-number"><%= analyticsData.eventsByModule.length %></p>
-                </div>
-                <div class="stat-card">
-                    <h3>🔥 Eventi/Giorno</h3>
-                    <p class="stat-number"><%= Math.round(analyticsData.totalEvents / analyticsData.days) %></p>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
-                <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
-                    <h3 style="margin: 0 0 1rem 0; color: var(--text-primary); font-size: 1.25rem;">Top Moduli</h3>
-                    <% if (analyticsData.eventsByModule.length > 0) { %>
-                        <ul style="list-style: none; padding: 0; margin: 0;">
-                            <% analyticsData.eventsByModule.forEach((item, index) => { %>
-                                <li style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
-                                    <span style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <span style="font-weight: 600; color: var(--gold);">#<%= index + 1 %></span>
-                                        <%= item.module_id %>
-                                    </span>
-                                    <span style="font-weight: 600; color: var(--text-primary);"><%= item.count %> eventi</span>
-                                </li>
-                            <% }) %>
-                        </ul>
-                    <% } else { %>
-                        <p style="color: var(--text-secondary); font-style: italic;">Nessun dato disponibile</p>
-                    <% } %>
-                </div>
-
-                <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow);">
-                    <h3 style="margin: 0 0 1rem 0; color: var(--text-primary); font-size: 1.25rem;">Tipi di Eventi</h3>
-                    <% if (analyticsData.eventsByType.length > 0) { %>
-                        <ul style="list-style: none; padding: 0; margin: 0;">
-                            <% analyticsData.eventsByType.forEach((item, index) => { %>
-                                <li style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color);">
-                                    <span style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <span style="font-weight: 600; color: var(--gold);">#<%= index + 1 %></span>
-                                        <%= item.event_type %>
-                                    </span>
-                                    <span style="font-weight: 600; color: var(--text-primary);"><%= item.count %></span>
-                                </li>
-                            <% }) %>
-                        </ul>
-                    <% } else { %>
-                        <p style="color: var(--text-secondary); font-style: italic;">Nessun dato disponibile</p>
-                    <% } %>
-                </div>
-            </div>
-
-            <% if (analyticsData.dailyTrend && analyticsData.dailyTrend.length > 0) { %>
-            <div style="background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 2rem;">
-                <h3 style="margin: 0 0 1rem 0; color: var(--text-primary); font-size: 1.25rem;">Trend Giornaliero</h3>
-                <div style="display: flex; align-items: flex-end; gap: 0.5rem; height: 150px;">
-                    <% const maxCount = Math.max(...analyticsData.dailyTrend.map(d => d.count)); %>
-                    <% analyticsData.dailyTrend.forEach(day => { %>
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                            <span style="font-size: 0.875rem; font-weight: 600; color: var(--text-primary);"><%= day.count %></span>
-                            <div style="width: 100%; background: linear-gradient(180deg, var(--gold), var(--gold-dark)); border-radius: 4px 4px 0 0; height: <%= (day.count / maxCount) * 100 %>%;"></div>
-                            <span style="font-size: 0.75rem; color: var(--text-secondary);"><%= new Date(day.date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }) %></span>
-                        </div>
-                    <% }) %>
-                </div>
-            </div>
-            <% } %>
-        </div>
-        <% } %>
 
         <% if (activities && activities.length > 0) { %>
         <div class="activities-card">

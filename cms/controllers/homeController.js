@@ -234,6 +234,9 @@ export async function getHomePage(req, res) {
     const pageMeta = {
       title: homeData?.meta?.title || homeNs.title || (lang === 'en' ? 'Home — Daniele Camiz' : 'Home — Daniele Camiz'),
       description: homeData?.meta?.description || homeNs.description || '',
+      keywords: lang === 'en'
+        ? 'Daniele Camiz, conductor, orchestra conductor, classical music, opera, symphonic concerts, Italian conductor, Mozart, Beethoven, Verdi, contemporary music, ICNT, I Concerti nel Tempio, Rome concerts, music director'
+        : 'Daniele Camiz, direttore d\'orchestra, direttore, musica classica, opera, concerti sinfonici, direttore italiano, Mozart, Beethoven, Verdi, musica contemporanea, ICNT, I Concerti nel Tempio, concerti Roma, direttore musicale'
     };
 
     console.log('[home] lang=%s newsTeaser=%d projects=%d bandcamp=%d',
@@ -248,6 +251,12 @@ export async function getHomePage(req, res) {
       labels: res.locals.labels || {},
       lang,
       pageMeta,
+      // SEO meta tags (must be at root level for head partial)
+      title: pageMeta.title,
+      description: pageMeta.description,
+      keywords: pageMeta.keywords,
+      canonical: 'https://danielecamiz.com/',
+      ogImage: 'https://danielecamiz.com/img/default-og-image.jpg',
       homeData,
       newsTeaser,
       bandcampItems,

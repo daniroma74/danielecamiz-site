@@ -137,15 +137,13 @@
         <th>Paese</th>
         <th>Titolo</th>
         <th>Lingua</th>
-        <th>Difficoltà</th>
-        <th>Stato</th>
         <th>Azioni</th>
       </tr>
     </thead>
     <tbody>
       <% if (songs.length === 0) { %>
         <tr>
-          <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+          <td colspan="4" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
             Nessun brano trovato
           </td>
         </tr>
@@ -155,12 +153,6 @@
             <td><%= song.flag %> <%= song.country_name %></td>
             <td><strong><%= song.title %></strong></td>
             <td><%= song.language || 'N/D' %></td>
-            <td><%= song.difficulty || 'medium' %></td>
-            <td>
-              <span class="badge <%= song.is_active ? 'badge-active' : 'badge-inactive' %>">
-                <%= song.is_active ? 'Attivo' : 'Inattivo' %>
-              </span>
-            </td>
             <td>
               <div class="actions">
                 <a href="/admin/repertoire/<%= song.id %>/edit" class="btn btn-small btn-secondary">

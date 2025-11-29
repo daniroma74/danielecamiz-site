@@ -14,38 +14,40 @@ export const CLOUDINARY_CONFIG = {
   },
   
   // Trasformazioni predefinite per tipo
+  // f_auto = automatic format selection (WebP for modern browsers, fallback to original format)
+  // q_auto = automatic quality optimization
   transformations: {
     poster_vertical: {
-      thumb: 'c_fill,w_400,h_566,q_auto',
-      medium: 'c_fill,w_800,h_1131,q_auto',
-      large: 'c_limit,w_1600,h_2263,q_auto:best',
-      print: 'c_limit,w_2480,h_3508,q_auto:best'
+      thumb: 'c_fill,w_400,h_566,f_auto,q_auto',
+      medium: 'c_fill,w_800,h_1131,f_auto,q_auto',
+      large: 'c_limit,w_1600,h_2263,f_auto,q_auto:best',
+      print: 'c_limit,w_2480,h_3508,f_auto,q_auto:best'
     },
     poster_horizontal: {
-      thumb: 'c_fill,w_400,h_225,q_auto',
-      medium: 'c_fill,w_800,h_450,q_auto',
-      large: 'c_fill,w_1920,h_1080,q_auto:best',
-      social_fb: 'c_fill,w_1200,h_630,q_auto',
-      social_ig: 'c_fill,w_1080,h_1080,q_auto',
-      social_tw: 'c_fill,w_1600,h_900,q_auto'
+      thumb: 'c_fill,w_400,h_225,f_auto,q_auto',
+      medium: 'c_fill,w_800,h_450,f_auto,q_auto',
+      large: 'c_fill,w_1920,h_1080,f_auto,q_auto:best',
+      social_fb: 'c_fill,w_1200,h_630,f_auto,q_auto',
+      social_ig: 'c_fill,w_1080,h_1080,f_auto,q_auto',
+      social_tw: 'c_fill,w_1600,h_900,f_auto,q_auto'
     },
     gallery_photo: {
-      mini: 'c_fill,w_150,h_150,q_auto',
-      thumb: 'c_fill,w_400,h_400,q_auto',
-      medium: 'c_limit,w_800,h_800,q_auto',
-      large: 'c_limit,w_1920,h_1080,q_auto:eco',
-      full: 'c_limit,w_2560,q_auto:eco'
+      mini: 'c_fill,w_150,h_150,f_auto,q_auto',
+      thumb: 'c_fill,w_400,h_400,f_auto,q_auto',
+      medium: 'c_limit,w_800,h_800,f_auto,q_auto',
+      large: 'c_limit,w_1920,h_1080,f_auto,q_auto:eco',
+      full: 'c_limit,w_2560,f_auto,q_auto:eco'
     },
     news_banner: {
-      thumb: 'c_fill,w_400,h_200,q_auto',
-      card: 'c_fill,w_600,h_300,q_auto',
-      hero: 'c_fill,w_1920,h_600,q_auto:best',
-      social: 'c_fill,w_1200,h_630,q_auto'
+      thumb: 'c_fill,w_400,h_200,f_auto,q_auto',
+      card: 'c_fill,w_600,h_300,f_auto,q_auto',
+      hero: 'c_fill,w_1920,h_600,f_auto,q_auto:best',
+      social: 'c_fill,w_1200,h_630,f_auto,q_auto'
     },
     artist_photo: {
-      thumb: 'c_fill,w_200,h_200,q_auto,g_face',
-      medium: 'c_fill,w_400,h_400,q_auto,g_face',
-      large: 'c_limit,w_800,h_800,q_auto'
+      thumb: 'c_fill,w_200,h_200,f_auto,q_auto,g_face',
+      medium: 'c_fill,w_400,h_400,f_auto,q_auto,g_face',
+      large: 'c_limit,w_800,h_800,f_auto,q_auto'
     }
   },
   

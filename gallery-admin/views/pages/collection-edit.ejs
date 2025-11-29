@@ -15,8 +15,12 @@
         <div class="content-header">
           <h1><%= isNew ? 'Nuova Collezione' : 'Modifica Collezione' %></h1>
           <div class="header-actions">
-            <a href="/gallery/collections" class="btn btn-outline">Annulla</a>
-            <button id="save-btn" class="btn btn-primary">Salva</button>
+            <a href="/gallery" class="btn btn-outline">
+              <i class="fas fa-arrow-left"></i> Indietro
+            </a>
+            <button id="save-btn" class="btn btn-primary">
+              <i class="fas fa-save"></i> Salva
+            </button>
           </div>
         </div>
 
@@ -148,6 +152,201 @@
             </div>
           </div>
         </form>
+
+        <!-- Sezione Contenuto Collezione (solo se modifica) -->
+        <% if (!isNew) { %>
+        <div class="form-section">
+          <div class="content-header" style="margin-bottom: 1rem;">
+            <h2>Contenuto Collezione</h2>
+            <button id="add-item-btn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Aggiungi Media
+            </button>
+          </div>
+
+          <% if (items && items.length > 0) { %>
+            <div class="items-grid">
+              <% items.forEach(item => { %>
+                <div class="item-card" data-id="<%= item.id %>">
+                  <div class="item-preview">
+                    <% if (item.item_type === 'photo' && item.cloudinary_id) { %>
+                      <img src="https://res.cloudinary.com/<%= process.env.CLOUDINARY_CLOUD_NAME %>/image/upload/c_fill,w_300,h_300/<%= item.cloudinary_id %>"
+                           alt="<%= item.alt_it || item.title_it %>">
+                    <% } else if (item.item_type === 'video' && item.youtube_id) { %>
+                      <div class="video-preview">
+                        <img src="https://img.youtube.com/vi/<%= item.youtube_id %>/mqdefault.jpg" alt="<%= item.title_it %>">
+                        <span class="play-icon">▶️</span>
+                      </div>
+                    <% } else if (item.item_type === 'audio') { %>
+                      <div class="audio-preview">
+                        <span class="icon-large">🎵</span>
+                        <% if (item.duration) { %>
+                          <span class="duration"><%= Math.floor(item.duration / 60) %>:<%= String(item.duration % 60).padStart(2, '0') %></span>
+                        <% } %>
+                      </div>
+                    <% } else { %>
+                      <div class="no-preview">
+                        <span class="icon-large">📄</span>
+                      </div>
+                    <% } %>
+
+                    <div class="item-badges">
+                      <span class="badge badge-<%= item.item_type %>"><%= item.item_type %></span>
+                      <% if (!item.is_published) { %>
+                        <span class="badge">Bozza</span>
+                      <% } %>
+                      <% if (item.is_spotlight) { %>
+                        <span class="badge badge-featured">Spotlight</span>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <div class="item-info">
+                    <h4><%= item.title_it || 'Senza titolo' %></h4>
+                    <% if (item.title_en) { %>
+                      <p class="subtitle"><%= item.title_en %></p>
+                    <% } %>
+                    <% if (item.credits) { %>
+                      <p class="credits"><small><%= item.credits %></small></p>
+                    <% } %>
+                  </div>
+
+                  <div class="item-actions">
+                    <button class="btn btn-sm btn-primary" onclick="editItem(<%= item.id %>, '<%= item.item_type %>')">
+                      <i class="fas fa-edit"></i> Modifica
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteItem(<%= item.id %>, '<%= item.item_type %>')">
+                      <i class="fas fa-trash"></i> Elimina
+                    </button>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="empty-state" style="padding: 2rem; text-align: center; background: #f8f9fa; border-radius: 8px;">
+              <span class="icon-large">
+                <% if (collection && collection.type === 'photo') { %>📷
+                <% } else if (collection && collection.type === 'video') { %>🎬
+                <% } else if (collection && collection.type === 'audio') { %>🎵
+                <% } else { %>📚<% } %>
+              </span>
+              <h3>Nessun elemento</h3>
+              <p>Aggiungi foto, video o audio a questa collezione</p>
+              <button id="add-first-item-btn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Aggiungi Primo Media
+              </button>
+            </div>
+          <% } %>
+        </div>
+        <% } %>
+
+        <!-- Modale Modifica Media -->
+        <div id="edit-item-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
+          <div style="background: white; border-radius: 12px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <h2 id="modal-title">Modifica Media</h2>
+              <button onclick="closeEditModal()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #999;">&times;</button>
+            </div>
+
+            <form id="edit-item-form">
+              <input type="hidden" id="edit-item-id">
+              <input type="hidden" id="edit-item-type">
+
+              <!-- Titoli -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="edit-title-it">Titolo IT</label>
+                  <input type="text" id="edit-title-it" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="edit-title-en">Titolo EN</label>
+                  <input type="text" id="edit-title-en" class="form-control">
+                </div>
+              </div>
+
+              <!-- Descrizioni -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="edit-description-it">Descrizione IT</label>
+                  <textarea id="edit-description-it" rows="3" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="edit-description-en">Descrizione EN</label>
+                  <textarea id="edit-description-en" rows="3" class="form-control"></textarea>
+                </div>
+              </div>
+
+              <!-- Cambio foto (solo foto) -->
+              <div id="edit-photo-section" style="display: none; margin-bottom: 1.5rem;">
+                <div style="background: #f0f7ff; padding: 1.5rem; border-radius: 8px; border: 2px solid #4a9eff;">
+                  <h4 style="margin-top: 0; color: #2563eb;">📸 Cambia Foto</h4>
+                  <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                    Sostituisci l'immagine mantenendo tutte le descrizioni e informazioni
+                  </p>
+                  <div id="current-photo-preview" style="margin-bottom: 1rem;">
+                    <!-- Anteprima foto attuale -->
+                  </div>
+                  <input type="hidden" id="edit-cloudinary-id">
+                  <button type="button" id="change-photo-btn" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-camera"></i> Seleziona Nuova Foto da Cloudinary
+                  </button>
+                </div>
+              </div>
+
+              <!-- Alt text (solo foto) -->
+              <div id="edit-alt-section" style="display: none;">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="edit-alt-it">Alt Text IT</label>
+                    <input type="text" id="edit-alt-it" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="edit-alt-en">Alt Text EN</label>
+                    <input type="text" id="edit-alt-en" class="form-control">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Credits (solo foto) -->
+              <div id="edit-credits-section" style="display: none;">
+                <div class="form-group">
+                  <label for="edit-credits">Credits (Fotografo)</label>
+                  <input type="text" id="edit-credits" class="form-control" placeholder="Foto di Mario Rossi">
+                </div>
+              </div>
+
+              <!-- Data scatto (solo foto) -->
+              <div id="edit-date-section" style="display: none;">
+                <div class="form-group">
+                  <label for="edit-taken-date">Data Scatto</label>
+                  <input type="date" id="edit-taken-date" class="form-control">
+                </div>
+              </div>
+
+              <!-- Pubblicazione -->
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="edit-is-published">
+                  Pubblicato
+                </label>
+              </div>
+
+              <!-- Spotlight (solo foto) -->
+              <div id="edit-spotlight-section" style="display: none;">
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="edit-is-spotlight">
+                    In Evidenza (Spotlight)
+                  </label>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                <button type="button" onclick="closeEditModal()" class="btn btn-outline">Annulla</button>
+                <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+              </div>
+            </form>
+          </div>
+        </div>
   </main>
 
   <!-- Cloudinary Manager -->
@@ -155,6 +354,10 @@
   <script src="/shared/cloudinary-manager/ui-loading.js"></script>
   <script src="/shared/cloudinary-manager/client.js"></script>
   <script src="/static/js/gallery-admin.js"></script>
+
+  <!-- SortableJS for drag & drop -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
   <script>
     const isNew = <%= isNew ? 'true' : 'false' %>;
     const collectionId = document.getElementById('collection-id').value;
@@ -200,9 +403,11 @@
         if (response.ok) {
           const result = await response.json();
           if (isNew) {
-            window.location.href = `/gallery/collections/${result.id}`;
+            // Redirect to edit page so user can add media
+            window.location.href = `/gallery/collections/${result.id}/edit`;
           } else {
-            window.location.href = `/gallery/collections/${collectionId}`;
+            // Reload to show updated data
+            window.location.reload();
           }
         } else {
           alert('Errore durante il salvataggio');
@@ -279,6 +484,382 @@
         this.remove();
       });
     }
+
+    // ============================================
+    // GESTIONE MEDIA (solo se non è nuova collezione)
+    // ============================================
+    <% if (!isNew) { %>
+    const collectionType = '<%= collection.type %>';
+
+    // Add item buttons
+    document.getElementById('add-item-btn')?.addEventListener('click', showAddItemModal);
+    document.getElementById('add-first-item-btn')?.addEventListener('click', showAddItemModal);
+
+    function showAddItemModal() {
+      if (collectionType === 'photo') {
+        openCloudinaryPicker();
+      } else if (collectionType === 'video') {
+        openVideoModal();
+      } else if (collectionType === 'audio') {
+        openAudioModal();
+      } else {
+        // Mixed type collection - ask user
+        const choice = prompt('Che tipo di media vuoi aggiungere?\n1 = Foto\n2 = Video\n3 = Audio');
+        if (choice === '1') openCloudinaryPicker();
+        else if (choice === '2') openVideoModal();
+        else if (choice === '3') openAudioModal();
+      }
+    }
+
+    function openCloudinaryPicker() {
+      if (typeof CloudinaryManager === 'undefined') {
+        alert('Cloudinary Manager non caricato. Ricarica la pagina.');
+        return;
+      }
+
+      CloudinaryManager.showImageDialog((result) => {
+        if (!result || !result.publicId) return;
+
+        createPhoto({
+          publicId: result.publicId,
+          url: result.url,
+          width: result.width || 0,
+          height: result.height || 0,
+          bytes: result.bytes || 0,
+          format: result.format || ''
+        });
+      }, {
+        folder: 'danielecamiz/gallery',
+        preset: 'gallery_unsigned'
+      });
+    }
+
+    function openVideoModal() {
+      const youtubeId = prompt('Inserisci YouTube Video ID:');
+      if (youtubeId) createVideo(youtubeId);
+    }
+
+    function openAudioModal() {
+      const bandcampUrl = prompt('Inserisci URL Bandcamp:');
+      if (bandcampUrl) createAudio(bandcampUrl);
+    }
+
+    async function createPhoto(photoData) {
+      try {
+        const response = await fetch('/gallery/api/photos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collection_id: collectionId,
+            cloudinary_id: photoData.publicId,
+            cloudinary_folder: photoData.publicId.split('/').slice(0, -1).join('/'),
+            width: photoData.width,
+            height: photoData.height,
+            file_size: photoData.bytes,
+            file_format: photoData.format,
+            title_it: '',
+            is_published: true
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Foto aggiunta!');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
+      }
+    }
+
+    async function createVideo(youtubeId) {
+      try {
+        const response = await fetch('/gallery/api/videos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collection_id: collectionId,
+            youtube_id: youtubeId,
+            title_it: `Video ${youtubeId}`,
+            is_published: true,
+            is_whitelisted: true
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Video aggiunto!');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
+      }
+    }
+
+    async function createAudio(bandcampUrl) {
+      try {
+        const response = await fetch('/gallery/api/audios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collection_id: collectionId,
+            bandcamp_url: bandcampUrl,
+            title_it: 'Nuovo audio',
+            is_published: true
+          })
+        });
+
+        if (response.ok) {
+          alert('✅ Audio aggiunto!');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
+      }
+    }
+
+    async function deleteItem(id, type) {
+      if (!confirm('Sei sicuro di voler eliminare questo elemento?')) return;
+
+      try {
+        const response = await fetch(`/gallery/api/${type}s/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          alert('Errore durante l\'eliminazione');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Errore durante l\'eliminazione');
+      }
+    }
+
+    // Edit item
+    async function editItem(id, type) {
+      try {
+        // Load item data
+        const response = await fetch(`/gallery/api/${type}s/${id}`);
+        if (!response.ok) {
+          alert('Errore caricamento dati');
+          return;
+        }
+
+        const item = await response.json();
+
+        // Populate form
+        document.getElementById('edit-item-id').value = id;
+        document.getElementById('edit-item-type').value = type;
+        document.getElementById('edit-title-it').value = item.title_it || '';
+        document.getElementById('edit-title-en').value = item.title_en || '';
+        document.getElementById('edit-description-it').value = item.description_it || '';
+        document.getElementById('edit-description-en').value = item.description_en || '';
+        document.getElementById('edit-is-published').checked = item.is_published;
+
+        // Show/hide fields based on type
+        const photoSection = document.getElementById('edit-photo-section');
+        const altSection = document.getElementById('edit-alt-section');
+        const creditsSection = document.getElementById('edit-credits-section');
+        const dateSection = document.getElementById('edit-date-section');
+        const spotlightSection = document.getElementById('edit-spotlight-section');
+
+        if (type === 'photo') {
+          photoSection.style.display = 'block';
+          altSection.style.display = 'block';
+          creditsSection.style.display = 'block';
+          dateSection.style.display = 'block';
+          spotlightSection.style.display = 'block';
+
+          document.getElementById('edit-cloudinary-id').value = item.cloudinary_id || '';
+          document.getElementById('edit-alt-it').value = item.alt_it || '';
+          document.getElementById('edit-alt-en').value = item.alt_en || '';
+          document.getElementById('edit-credits').value = item.credits || '';
+          document.getElementById('edit-taken-date').value = item.taken_date || '';
+          document.getElementById('edit-is-spotlight').checked = item.is_spotlight;
+
+          // Show current photo preview
+          const preview = document.getElementById('current-photo-preview');
+          if (item.cloudinary_id) {
+            preview.innerHTML = `
+              <img src="https://res.cloudinary.com/<%= process.env.CLOUDINARY_CLOUD_NAME %>/image/upload/c_fill,w_400,h_300/${item.cloudinary_id}"
+                   alt="Foto attuale"
+                   style="width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            `;
+          }
+        } else {
+          photoSection.style.display = 'none';
+          altSection.style.display = 'none';
+          creditsSection.style.display = 'none';
+          dateSection.style.display = 'none';
+          spotlightSection.style.display = 'none';
+        }
+
+        // Update modal title
+        document.getElementById('modal-title').textContent = `Modifica ${type === 'photo' ? 'Foto' : type === 'video' ? 'Video' : 'Audio'}`;
+
+        // Show modal
+        const modal = document.getElementById('edit-item-modal');
+        modal.style.display = 'flex';
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Errore caricamento dati');
+      }
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-item-modal').style.display = 'none';
+    }
+
+    // Handle "Change Photo" button
+    document.getElementById('change-photo-btn')?.addEventListener('click', function() {
+      if (typeof CloudinaryManager === 'undefined') {
+        alert('Cloudinary Manager non caricato. Ricarica la pagina.');
+        return;
+      }
+
+      CloudinaryManager.showImageDialog((result) => {
+        if (!result || !result.publicId) return;
+
+        // Update hidden field
+        document.getElementById('edit-cloudinary-id').value = result.publicId;
+
+        // Update preview
+        const preview = document.getElementById('current-photo-preview');
+        preview.innerHTML = `
+          <div style="position: relative;">
+            <img src="${result.url}"
+                 alt="Nuova foto"
+                 style="width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <span style="position: absolute; top: 8px; right: 8px; background: #16a34a; color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.875rem; font-weight: 600;">
+              ✓ Nuova foto selezionata
+            </span>
+          </div>
+        `;
+
+        if (typeof showNotification === 'function') {
+          showNotification('Nuova foto selezionata! Clicca "Salva Modifiche" per confermare.', 'success');
+        }
+      }, {
+        folder: 'danielecamiz/gallery',
+        preset: 'gallery_unsigned'
+      });
+    });
+
+    // Handle edit form submit
+    document.getElementById('edit-item-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('edit-item-id').value;
+      const type = document.getElementById('edit-item-type').value;
+
+      const data = {
+        title_it: document.getElementById('edit-title-it').value,
+        title_en: document.getElementById('edit-title-en').value,
+        description_it: document.getElementById('edit-description-it').value,
+        description_en: document.getElementById('edit-description-en').value,
+        is_published: document.getElementById('edit-is-published').checked
+      };
+
+      // Add photo-specific fields
+      if (type === 'photo') {
+        data.alt_it = document.getElementById('edit-alt-it').value;
+        data.alt_en = document.getElementById('edit-alt-en').value;
+        data.credits = document.getElementById('edit-credits').value;
+        data.taken_date = document.getElementById('edit-taken-date').value;
+        data.is_spotlight = document.getElementById('edit-is-spotlight').checked;
+
+        // ✅ Includi cloudinary_id se è stato modificato
+        const newCloudinaryId = document.getElementById('edit-cloudinary-id').value;
+        if (newCloudinaryId) {
+          data.cloudinary_id = newCloudinaryId;
+        }
+      }
+
+      try {
+        const response = await fetch(`/gallery/api/${type}s/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert('✅ Modifiche salvate!');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
+      }
+    });
+
+    // Initialize drag & drop for reordering
+    const itemsGrid = document.querySelector('.items-grid');
+    if (itemsGrid) {
+      new Sortable(itemsGrid, {
+        animation: 150,
+        handle: '.item-card',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        onEnd: async function(evt) {
+          // Get all items in new order
+          const items = Array.from(itemsGrid.querySelectorAll('.item-card')).map((card, index) => ({
+            id: parseInt(card.dataset.id),
+            display_order: index
+          }));
+
+          // Save new order
+          try {
+            const response = await fetch('/gallery/api/items/reorder', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ items })
+            });
+
+            if (response.ok) {
+              console.log('✅ Ordine salvato');
+            } else {
+              alert('❌ Errore salvataggio ordine');
+              window.location.reload(); // Restore original order
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Errore di connessione');
+            window.location.reload();
+          }
+        }
+      });
+    }
+    <% } %>
   </script>
+
+  <style>
+    .sortable-ghost {
+      opacity: 0.4;
+    }
+    .sortable-chosen {
+      cursor: grabbing !important;
+    }
+    .sortable-drag {
+      opacity: 0.8;
+    }
+    .item-card {
+      cursor: grab;
+    }
+    .item-card:active {
+      cursor: grabbing;
+    }
+  </style>
 </body>
 </html>

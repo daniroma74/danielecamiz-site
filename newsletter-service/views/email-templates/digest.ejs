@@ -192,7 +192,19 @@
         </div>
 
         <% if (post.cover_image) { %>
-          <img src="<%= post.cover_image %>" alt="" class="article-image">
+          <%
+            // ✅ FIX: Converti immagini Cloudinary a JPG per compatibilità email
+            // WebP non è supportato da molti client email (Outlook, Gmail app, etc.)
+            let emailSafeImage = post.cover_image;
+            if (emailSafeImage && emailSafeImage.includes('cloudinary.com/image/upload/')) {
+              // Aggiungi /f_jpg,w_600,q_80/ dopo /upload/ per convertire a JPG
+              emailSafeImage = emailSafeImage.replace(
+                '/image/upload/',
+                '/image/upload/f_jpg,w_600,q_80/'
+              );
+            }
+          %>
+          <img src="<%= emailSafeImage %>" alt="" class="article-image">
         <% } %>
 
         <% if (post.excerpt_it || post.excerpt_en) { %>

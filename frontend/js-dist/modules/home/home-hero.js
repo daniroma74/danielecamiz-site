@@ -1,0 +1,1 @@
+export function initHomeHero(){console.log("[home-hero] Hero initialized")}

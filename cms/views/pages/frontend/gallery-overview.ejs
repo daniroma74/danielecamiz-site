@@ -16,14 +16,14 @@
           <div class="gallery-section-card__preview gallery-section-card__preview--hero">
             <!-- Main hero image -->
             <div class="preview-hero">
-              <img src="<%= section.previewImages[0] %>" alt="<%= section.title %>" loading="lazy">
+              <img src="<%= section.previewImages[0] %>" alt="<%= section.title %>" loading="lazy" width="600" height="450">
             </div>
             <!-- Mini grid overlay (if more than 1 image) -->
             <% if (section.previewImages.length > 1) { %>
               <div class="preview-mini-grid">
                 <% section.previewImages.slice(1, 4).forEach((img, idx) => { %>
                   <div class="preview-mini">
-                    <img src="<%= img %>" alt="<%= section.title %>" loading="lazy">
+                    <img src="<%= img %>" alt="<%= section.title %>" loading="lazy" width="150" height="150">
                   </div>
                 <% }) %>
               </div>
@@ -32,12 +32,10 @@
         <% } else if (section.previewImage) { %>
           <!-- Single preview (video/audio) -->
           <div class="gallery-section-card__preview gallery-section-card__preview--single">
-            <img src="<%= section.previewImage %>" alt="<%= section.title %>" loading="lazy">
-            <% if (section.type === 'videos') { %>
-              <div class="preview-overlay">
-                <i class="fas fa-play-circle"></i>
-              </div>
-            <% } %>
+            <img src="<%= section.previewImage %>" alt="<%= section.title %>" loading="lazy" width="600" height="450">
+            <div class="preview-overlay">
+              <i class="fas fa-play-circle"></i>
+            </div>
           </div>
         <% } else { %>
           <!-- Fallback icon -->

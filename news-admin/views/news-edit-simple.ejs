@@ -1,0 +1,247 @@
+<!-- news-admin/views/news-edit-simple.ejs - VERSIONE SEMPLIFICATA SENZA TAB -->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="cloudinary-cloud" content="<%= config.cloudinary.cloudName %>">
+  <title><%= isNew ? 'Nuovo' : 'Modifica' %> Articolo - News Admin</title>
+
+  <link rel="stylesheet" href="/shared/css/admin-base.css">
+  <link rel="stylesheet" href="/static/css/news-admin.css">
+  <link rel="stylesheet" href="/static/css/news-editor.css">
+
+  <!-- TinyMCE condiviso -->
+  <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
+
+  <!-- Cloudinary Manager condiviso -->
+  <script src="/shared/cloudinary-manager/ui-notifications.js"></script>
+  <script src="/shared/cloudinary-manager/ui-loading.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
+  <script src="/shared/config/editor-config.js"></script>
+
+  <style>
+    /* Layout semplificato - tutto visibile, niente tab */
+    .news-form-simple { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .form-section { background: white; padding: 2rem; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .form-section h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem; }
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #34495e; }
+    .form-control { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
+    .form-control:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+    textarea.form-control { resize: vertical; min-height: 100px; }
+    .help-text { display: block; margin-top: 0.25rem; font-size: 0.875rem; color: #7f8c8d; }
+    .image-upload-area { margin: 1rem 0; }
+    .image-preview { max-width: 500px; border: 2px dashed #ddd; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.3s; }
+    .image-preview:hover { border-color: #3498db; background: #f8f9fa; }
+    .image-preview img { max-width: 100%; height: auto; border-radius: 4px; }
+    .placeholder { text-align: center; padding: 3rem; color: #95a5a6; }
+    .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .btn-primary { background: #3498db; color: white; }
+    .btn-primary:hover { background: #2980b9; }
+    .btn-success { background: #27ae60; color: white; }
+    .btn-success:hover { background: #229954; }
+    .btn-secondary { background: #95a5a6; color: white; }
+    .btn-secondary:hover { background: #7f8c8d; }
+    .btn-remove { position: absolute; top: 0.5rem; right: 0.5rem; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; }
+    .form-actions { position: sticky; bottom: 0; background: white; padding: 1.5rem; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; gap: 1rem; justify-content: flex-end; }
+    .newsletter-toggle { background: linear-gradient(135deg, #4a90e2 0%, #667eea 100%); color: white; padding: 1.5rem; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.3); transition: .4s; border-radius: 34px; }
+    .switch .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+    .switch input:checked + .slider { background-color: rgba(255,255,255,0.5); }
+    .switch input:checked + .slider:before { transform: translateX(26px); }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <div class="page-header">
+      <h1><%= isNew ? '✍️ Nuovo Articolo' : '✏️ Modifica Articolo' %></h1>
+      <div class="actions">
+        <a href="/news" class="btn btn-secondary">← Torna alla lista</a>
+      </div>
+    </div>
+
+    <form id="newsForm" class="news-form-simple">
+      <input type="hidden" id="postId" value="<%= post ? post.id : '' %>">
+
+      <!-- Newsletter Toggle -->
+      <div class="newsletter-toggle">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="font-size: 2rem;">📧</div>
+          <div>
+            <strong style="font-size: 1.1rem; display: block; margin-bottom: 0.25rem;">Includi nella Newsletter</strong>
+            <small style="opacity: 0.9;">Questo articolo verrà inviato nel prossimo digest bimestrale</small>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="include_in_newsletter" name="include_in_newsletter" <%= post && post.include_in_newsletter ? 'checked' : '' %>>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- 1. CONTENUTO ITALIANO -->
+      <div class="form-section">
+        <h3>🇮🇹 Contenuto Italiano</h3>
+        <div class="form-group">
+          <label for="title_it">Titolo *</label>
+          <input type="text" id="title_it" name="title_it" class="form-control" value="<%= post ? post.title_it || '' : '' %>" required>
+        </div>
+        <div class="form-group">
+          <label for="excerpt_it">Estratto (anteprima)</label>
+          <textarea id="excerpt_it" name="excerpt_it" class="form-control" rows="3" maxlength="300" placeholder="Breve descrizione..."><%= post ? post.excerpt_it || '' : '' %></textarea>
+          <small class="help-text">Max 300 caratteri.</small>
+        </div>
+        <div class="form-group">
+          <label for="content_it">Contenuto *</label>
+          <textarea id="content_it" name="content_it" class="form-control editor" required><%= post ? post.content_it || '' : '' %></textarea>
+        </div>
+      </div>
+
+      <!-- 2. CONTENUTO INGLESE -->
+      <div class="form-section">
+        <h3>🇬🇧 Contenuto Inglese (opzionale)</h3>
+        <div class="form-group">
+          <label for="title_en">Title</label>
+          <input type="text" id="title_en" name="title_en" class="form-control" value="<%= post ? post.title_en || '' : '' %>">
+        </div>
+        <div class="form-group">
+          <label for="excerpt_en">Excerpt</label>
+          <textarea id="excerpt_en" name="excerpt_en" class="form-control" rows="3" maxlength="300"><%= post ? post.excerpt_en || '' : '' %></textarea>
+        </div>
+        <div class="form-group">
+          <label for="content_en">Content</label>
+          <textarea id="content_en" name="content_en" class="form-control editor"><%= post ? post.content_en || '' : '' %></textarea>
+        </div>
+      </div>
+
+      <!-- 3. IMMAGINE PRINCIPALE (Cloudinary integrato) -->
+      <div class="form-section">
+        <h3>🖼️ Immagine Principale</h3>
+        <div class="image-upload-area">
+          <div id="coverPreview" class="image-preview" onclick="uploadCover()">
+            <% if (post && post.cover_image) { %>
+              <img src="<%= post.cover_image %>" alt="Cover">
+              <button type="button" class="btn-remove" onclick="event.stopPropagation(); removeCover()">✕</button>
+            <% } else { %>
+              <div class="placeholder">
+                <p>📷 Clicca per caricare immagine da Cloudinary</p>
+                <p class="help-text">Formato consigliato: 1200x630px</p>
+              </div>
+            <% } %>
+          </div>
+          <input type="hidden" id="cover_image" name="cover_image" value="<%= post ? post.cover_image || '' : '' %>">
+        </div>
+      </div>
+
+      <!-- 4. IMPOSTAZIONI -->
+      <div class="form-section">
+        <h3>⚙️ Impostazioni</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="slug">Slug URL *</label>
+            <input type="text" id="slug" name="slug" class="form-control" value="<%= post ? post.slug || '' : '' %>" required>
+            <small class="help-text">URL: <code id="slugPreview"><%= post ? post.slug || 'slug-articolo' : 'slug-articolo' %></code></small>
+          </div>
+          <div class="form-group">
+            <label for="status">Stato</label>
+            <select id="status" name="status" class="form-control">
+              <option value="draft" <%= post && post.status === 'draft' ? 'selected' : '' %>>📝 Bozza</option>
+              <option value="published" <%= post && post.status === 'published' ? 'selected' : '' %>>✅ Pubblicato</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="category">Categoria</label>
+            <select id="category" name="category" class="form-control">
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat %>" <%= post && post.category === cat ? 'selected' : '' %>><%= cat.charAt(0).toUpperCase() + cat.slice(1) %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="author">Autore</label>
+            <input type="text" id="author" name="author" class="form-control" value="<%= post ? post.author || config.defaults.author : config.defaults.author %>">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="publish_date">Data Pubblicazione</label>
+            <input type="datetime-local" id="publish_date" name="publish_date" class="form-control" value="<%= post && post.publish_date ? new Date(post.publish_date).toISOString().slice(0,16) : '' %>">
+          </div>
+          <div class="form-group">
+            <label for="tags">Tags (separati da virgola)</label>
+            <input type="text" id="tags" name="tags" class="form-control" value="<%= post && post.tags ? post.tags.join(', ') : '' %>" placeholder="musica classica, concerti">
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. SEO -->
+      <div class="form-section">
+        <h3>🔍 SEO (opzionale)</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="meta_title_it">Meta Title (IT)</label>
+            <input type="text" id="meta_title_it" name="meta_title_it" class="form-control" maxlength="60" value="<%= post ? post.meta_title_it || '' : '' %>">
+          </div>
+          <div class="form-group">
+            <label for="meta_title_en">Meta Title (EN)</label>
+            <input type="text" id="meta_title_en" name="meta_title_en" class="form-control" maxlength="60" value="<%= post ? post.meta_title_en || '' : '' %>">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="meta_description_it">Meta Description (IT)</label>
+            <textarea id="meta_description_it" name="meta_description_it" class="form-control" rows="2" maxlength="160"><%= post ? post.meta_description_it || '' : '' %></textarea>
+          </div>
+          <div class="form-group">
+            <label for="meta_description_en">Meta Description (EN)</label>
+            <textarea id="meta_description_en" name="meta_description_en" class="form-control" rows="2" maxlength="160"><%= post ? post.meta_description_en || '' : '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hidden fields for gallery and social (mantenuti per compatibilità) -->
+      <input type="hidden" id="gallery_images" name="gallery_images" value="<%= post && post.gallery_images ? JSON.stringify(post.gallery_images) : '[]' %>">
+      <input type="hidden" id="social_share_on_publish" name="social_share_on_publish" value="0">
+      <input type="hidden" id="social_providers" name="social_providers" value="{}">
+      <input type="hidden" id="social_messages" name="social_messages" value="{}">
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/news'">← Annulla</button>
+        <button type="button" class="btn btn-primary" onclick="saveDraft()">💾 Salva Bozza</button>
+        <button type="submit" class="btn btn-success">✅ <%= isNew ? 'Crea' : 'Aggiorna' %> Articolo</button>
+      </div>
+    </form>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    window.cloudinaryConfig = { cloudName: '<%= config.cloudinary.cloudName %>' };
+  </script>
+
+  <script src="/static/js/news-editor.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Init TinyMCE per i campi content
+      if (window.SharedEditor) {
+        window.SharedEditor.init('textarea.editor', 'blog', {
+          height: 600,
+          getUploadOptions: () => ({
+            preset: 'gallery_unsigned',
+            folder: 'danielecamiz/news'
+          })
+        });
+      }
+    });
+  </script>
+</body>
+</html>
