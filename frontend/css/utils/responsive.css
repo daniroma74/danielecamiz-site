@@ -4,6 +4,8 @@
 */
 
 /* ===== NAVBAR (mobile-first via checkbox #nav_toggle) ===== */
+/* DISABILITATO - ora gestito in components/navbar.css */
+/*
 @media (max-width: 1199px) {
   nav.navbar { position: relative; z-index: 100; }
 
@@ -146,6 +148,7 @@
   nav.navbar .lang-switch button { font-size: .8125rem; padding: .25rem .5rem; }
   nav.navbar .nav-center { position: static; }
 }
+*/
 
 @media (min-width: 1200px) {
   /* Desktop layout: menu always visible inline */
