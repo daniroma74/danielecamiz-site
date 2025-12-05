@@ -243,128 +243,30 @@
   <div class="editor-container">
     <!-- SIDEBAR CON FORM -->
     <div class="sidebar">
+      <div style="background: #e3f2fd; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196f3;">
+        <p style="margin: 0; font-size: 0.9rem; color: #555;">
+          <strong>💡 La maggior parte dei dati viene da Concerti</strong><br>
+          Qui puoi solo aggiungere personalizzazioni extra (sottotitolo, colori, opzioni prenotazioni).
+        </p>
+      </div>
+
       <form id="landingForm">
-        <!-- CONTENUTI -->
+        <!-- PERSONALIZZAZIONI EXTRA -->
         <div class="section">
-          <h3 class="section-title">📝 Contenuti</h3>
+          <h3 class="section-title">✨ Personalizzazioni Extra</h3>
 
           <div class="form-group">
-            <label class="form-label">Titolo Hero</label>
-            <input type="text" name="hero_title" class="form-input"
-                   value="<%= concert.hero_title || concert.title %>"
-                   placeholder="<%= concert.title %>">
-            <div class="hint">Il grande titolo in cima alla pagina</div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Sottotitolo</label>
+            <label class="form-label">Sottotitolo (opzionale)</label>
             <input type="text" name="hero_subtitle" class="form-input"
                    value="<%= concert.hero_subtitle || '' %>"
-                   placeholder="Un sottotitolo accattivante">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Descrizione Concerto</label>
-            <textarea name="description_html" class="form-textarea"
-                      placeholder="Racconta di cosa parla questo concerto..."
-            ><%= concert.description_html || concert.description || '' %></textarea>
-            <div class="hint">Puoi usare HTML se vuoi formattare il testo</div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">URL Immagine Hero</label>
-            <input type="url" name="hero_image_url" class="form-input"
-                   value="<%= concert.hero_image_url || '' %>"
-                   placeholder="https://...">
-            <div class="hint">Immagine di sfondo grande (opzionale)</div>
-          </div>
-        </div>
-
-        <!-- SEZIONI VISIBILI -->
-        <div class="section">
-          <h3 class="section-title">👁️ Cosa Mostrare</h3>
-
-          <div class="form-group">
-            <div class="form-checkbox">
-              <input type="checkbox" id="show_program" name="show_program"
-                     <%= concert.show_program ? 'checked' : '' %>>
-              <label for="show_program">Mostra Programma</label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="form-checkbox">
-              <input type="checkbox" id="show_location" name="show_location"
-                     <%= concert.show_location ? 'checked' : '' %>>
-              <label for="show_location">Mostra Luogo e Orario</label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="form-checkbox">
-              <input type="checkbox" id="show_booking_form" name="show_booking_form"
-                     <%= concert.show_booking_form ? 'checked' : '' %>>
-              <label for="show_booking_form">Mostra Form Prenotazione</label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="form-checkbox">
-              <input type="checkbox" id="show_gallery" name="show_gallery"
-                     <%= concert.show_gallery ? 'checked' : '' %>>
-              <label for="show_gallery">Mostra Galleria Foto</label>
-            </div>
-          </div>
-        </div>
-
-        <!-- PRENOTAZIONI -->
-        <div class="section">
-          <h3 class="section-title">📝 Prenotazioni</h3>
-
-          <div class="form-group">
-            <div class="form-checkbox">
-              <input type="checkbox" id="booking_enabled" name="booking_enabled"
-                     <%= concert.booking_enabled ? 'checked' : '' %>>
-              <label for="booking_enabled">Prenotazioni Attive</label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Posti Max per Prenotazione</label>
-            <input type="number" name="max_seats_per_booking" class="form-input"
-                   value="<%= concert.max_seats_per_booking || 4 %>" min="1" max="20">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Scadenza Prenotazioni</label>
-            <input type="date" name="booking_deadline" class="form-input"
-                   value="<%= concert.booking_deadline || '' %>">
-            <div class="hint">Lascia vuoto per nessuna scadenza</div>
-          </div>
-        </div>
-
-        <!-- NEWSLETTER -->
-        <div class="section">
-          <h3 class="section-title">💌 Newsletter</h3>
-
-          <div class="form-group">
-            <div class="form-checkbox">
-              <input type="checkbox" id="newsletter_enabled" name="newsletter_enabled"
-                     <%= concert.newsletter_enabled ? 'checked' : '' %>>
-              <label for="newsletter_enabled">Raccogli Email per Newsletter</label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Testo Invito Newsletter</label>
-            <textarea name="newsletter_text" class="form-textarea"
-            ><%= concert.newsletter_text || 'Vuoi ricevere aggiornamenti sui prossimi concerti?' %></textarea>
+                   placeholder="es: Un evento benefico imperdibile">
+            <div class="hint">Apparirà sotto il titolo principale</div>
           </div>
         </div>
 
         <!-- COLORI -->
         <div class="section">
-          <h3 class="section-title">🎨 Colori</h3>
+          <h3 class="section-title">🎨 Colori Landing Page</h3>
 
           <div class="form-group">
             <label class="form-label">Colore Primario</label>
@@ -378,7 +280,55 @@
                    value="<%= concert.secondary_color || '#4a7c59' %>">
           </div>
         </div>
+
+        <!-- PRENOTAZIONI -->
+        <div class="section">
+          <h3 class="section-title">🎟️ Impostazioni Prenotazioni</h3>
+
+          <div class="form-group">
+            <div class="form-checkbox">
+              <input type="checkbox" id="booking_enabled" name="booking_enabled"
+                     <%= concert.booking_enabled ? 'checked' : '' %>>
+              <label for="booking_enabled">✅ Prenotazioni Attive</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Posti Max per Prenotazione</label>
+            <input type="number" name="max_seats_per_booking" class="form-input"
+                   value="<%= concert.max_seats_per_booking || 4 %>" min="1" max="20">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Scadenza Prenotazioni (opzionale)</label>
+            <input type="date" name="booking_deadline" class="form-input"
+                   value="<%= concert.booking_deadline || '' %>">
+            <div class="hint">Lascia vuoto = sempre aperte</div>
+          </div>
+        </div>
+
+        <!-- NEWSLETTER -->
+        <div class="section">
+          <h3 class="section-title">💌 Newsletter</h3>
+
+          <div class="form-group">
+            <div class="form-checkbox">
+              <input type="checkbox" id="newsletter_enabled" name="newsletter_enabled"
+                     <%= concert.newsletter_enabled ? 'checked' : '' %>>
+              <label for="newsletter_enabled">📧 Raccogli email per newsletter</label>
+            </div>
+          </div>
+        </div>
       </form>
+
+      <div style="background: #fff3e0; padding: 1rem; border-radius: 8px; margin-top: 2rem; border-left: 4px solid #ff9800;">
+        <p style="margin: 0; font-size: 0.85rem; color: #666;">
+          <strong>📝 Per modificare:</strong><br>
+          • Titolo, data, luogo → vai in <strong>Concerti</strong><br>
+          • Programma, descrizione → vai in <strong>Concerti</strong><br>
+          • Locandina → vai in <strong>Concerti</strong>
+        </p>
+      </div>
     </div>
 
     <!-- PREVIEW PANE -->
@@ -401,9 +351,9 @@
       const data = Object.fromEntries(formData);
 
       // Convert checkboxes
-      ['show_program', 'show_location', 'show_booking_form', 'show_gallery',
-       'booking_enabled', 'newsletter_enabled'].forEach(field => {
-        data[field] = form.querySelector(`[name="${field}"]`).checked;
+      ['booking_enabled', 'newsletter_enabled'].forEach(field => {
+        const checkbox = form.querySelector(`[name="${field}"]`);
+        data[field] = checkbox ? checkbox.checked : false;
       });
 
       fetch('/admin/landing/<%= concert.id %>/save', {

@@ -1,0 +1,279 @@
+/* =================================================================
+   PRESS - MODERN CARD DESIGN
+   Modern card-based layout with image previews and better UX
+   ================================================================= */
+
+#press_section {
+  padding: var(--section-padding);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ========== HEADER ========== */
+#press_title {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#press_claim {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.4rem;
+  font-weight: 300;
+  margin-bottom: 3rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ========== CARDS GRID ========== */
+.press-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* ========== QUOTE CARD ========== */
+.press-card {
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(20, 20, 20, 0.8) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0;
+}
+
+.press-card:nth-child(1) { animation-delay: 0.1s; }
+.press-card:nth-child(2) { animation-delay: 0.2s; }
+.press-card:nth-child(3) { animation-delay: 0.3s; }
+.press-card:nth-child(4) { animation-delay: 0.4s; }
+.press-card:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.press-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(212, 175, 55, 0.5);
+  border-color: rgba(212, 175, 55, 0.6);
+}
+
+/* Card with Image */
+.press-card.has-image {
+  grid-template-columns: 280px 1fr;
+}
+
+/* ========== IMAGE SECTION ========== */
+.press-card__image {
+  position: relative;
+  width: 280px;
+  min-height: 200px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+}
+
+.press-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.press-card:hover .press-card__image img {
+  transform: scale(1.05);
+}
+
+/* Badge "In evidenza" */
+.press-card__badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--accent-color);
+  color: #000;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+
+/* ========== CONTENT SECTION ========== */
+.press-card__content {
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Quote Text */
+.press-card__quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.95);
+  position: relative;
+  padding-left: 2rem;
+}
+
+.press-card__quote::before {
+  content: '"';
+  position: absolute;
+  left: 0;
+  top: -0.15rem;
+  font-size: 3rem;
+  color: var(--accent-color);
+  opacity: 0.4;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+/* Meta Info */
+.press-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.press-card__source {
+  font-weight: 700;
+  color: var(--accent-color);
+  font-size: 1rem;
+}
+
+.press-card__author {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.press-card__date {
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: auto;
+}
+
+/* Link Button */
+.press-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 8px;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  align-self: flex-start;
+  margin-top: 0.5rem;
+}
+
+.press-card__link:hover {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(212, 175, 55, 0.15) 100%);
+  border-color: var(--accent-color);
+  transform: translateX(3px);
+}
+
+.press-card__link i {
+  transition: transform 0.25s ease;
+}
+
+.press-card__link:hover i {
+  transform: translateX(3px);
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.1rem;
+  padding: 4rem 2rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  #press_title {
+    font-size: 2.5rem;
+  }
+
+  #press_claim {
+    font-size: 1.1rem;
+  }
+
+  .press-card.has-image {
+    grid-template-columns: 1fr;
+  }
+
+  .press-card__image {
+    width: 100%;
+    height: 240px;
+  }
+
+  .press-card__content {
+    padding: 1.5rem;
+  }
+
+  .press-card__quote {
+    font-size: 1.1rem;
+    padding-left: 1.5rem;
+  }
+
+  .press-card__date {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  #press_title {
+    font-size: 1.8rem;
+  }
+
+  #press_claim {
+    font-size: 1rem;
+  }
+
+  .press-card__content {
+    padding: 1.25rem;
+  }
+
+  .press-card__quote {
+    font-size: 1rem;
+  }
+
+  .press-card__link {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -48,7 +48,7 @@
 
     <!-- LIGHTBOX -->
     <div id="lightbox" class="lightbox">
-      <button class="lightbox__close" aria-label="Close">×</button>
+      <button class="lightbox__close lightbox__close--modern" aria-label="Close">×</button>
       <button class="lightbox__prev" aria-label="Previous">‹</button>
       <button class="lightbox__next" aria-label="Next">›</button>
       <div class="lightbox__content">
@@ -276,6 +276,9 @@
                       frameborder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowfullscreen></iframe>
+              <% if (item.liveBroadcastContent === 'upcoming') { %>
+                <span class="video-badge video-badge--upcoming"><%= (lang === 'en') ? 'Coming Soon' : 'In Arrivo' %></span>
+              <% } %>
             <% } %>
           </div>
           <% if (item.title || item.description) { %>

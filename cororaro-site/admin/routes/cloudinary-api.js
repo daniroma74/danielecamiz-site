@@ -20,11 +20,18 @@ module.exports = () => {
       const { createCloudinaryRoutes } = await import('../../../shared/cloudinary-manager/routes.js');
 
       // Crea l'API Cloudinary con le credenziali di questo sito
-      const cloudinaryAPI = createCloudinaryAPI({
+      const cloudinaryConfig = {
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
         api_secret: process.env.CLOUDINARY_API_SECRET
+      };
+
+      console.log('🔧 Cloudinary API Config:', {
+        cloud_name: cloudinaryConfig.cloud_name,
+        api_key: cloudinaryConfig.api_key ? cloudinaryConfig.api_key.substring(0, 10) + '...' : 'MISSING'
       });
+
+      const cloudinaryAPI = createCloudinaryAPI(cloudinaryConfig);
 
       // Crea il router shared con l'API configurata
       const sharedRouter = createCloudinaryRoutes(cloudinaryAPI);

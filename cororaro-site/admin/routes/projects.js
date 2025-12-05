@@ -31,11 +31,8 @@ module.exports = (db) => {
 
     query += ' ORDER BY sort_order ASC, title ASC';
 
-    db.all(query, params, (err, projects) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const projects = db.prepare(query).all(...params);
 
       res.render('projects/list', {
         title: 'Gestione Progetti Solidarietà',
@@ -46,7 +43,10 @@ module.exports = (db) => {
           status
         }
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // GET /admin/projects/new - Show create form
@@ -86,9 +86,8 @@ module.exports = (db) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         icon || null,
         title,
         description,
@@ -100,27 +99,21 @@ module.exports = (db) => {
         is_featured ? 1 : 0,
         is_active ? 1 : 0,
         sort_order || 0
-      ],
-      function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante la creazione');
-        }
+      );
 
-        res.redirect('/admin/projects');
-      }
-    );
+      res.redirect('/admin/projects');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante la creazione');
+    }
   });
 
   // GET /admin/projects/:id/edit - Show edit form
   router.get('/projects/:id/edit', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.get('SELECT * FROM solidarity_projects WHERE id = ?', [id], (err, project) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const project = db.prepare('SELECT * FROM solidarity_projects WHERE id = ?').get(id);
 
       if (!project) {
         return res.status(404).send('Progetto non trovato');
@@ -132,7 +125,10 @@ module.exports = (db) => {
         project,
         action: 'edit'
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/projects/:id - Update project
@@ -168,9 +164,8 @@ module.exports = (db) => {
       WHERE id = ?
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         icon || null,
         title,
         description,
@@ -183,30 +178,27 @@ module.exports = (db) => {
         is_active ? 1 : 0,
         sort_order || 0,
         id
-      ],
-      (err) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante l\'aggiornamento');
-        }
+      );
 
-        res.redirect('/admin/projects');
-      }
-    );
+      res.redirect('/admin/projects');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
+    }
   });
 
   // POST /admin/projects/:id/delete - Delete project
   router.post('/projects/:id/delete', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.run('DELETE FROM solidarity_projects WHERE id = ?', [id], (err) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore durante l\'eliminazione');
-      }
+    try {
+      db.prepare('DELETE FROM solidarity_projects WHERE id = ?').run(id);
 
       res.redirect('/admin/projects');
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'eliminazione');
+    }
   });
 
   // POST /admin/projects/reorder - Update sort order
@@ -217,20 +209,18 @@ module.exports = (db) => {
       return res.status(400).json({ success: false, error: 'Invalid order data' });
     }
 
-    const stmt = db.prepare('UPDATE solidarity_projects SET sort_order = ? WHERE id = ?');
+    try {
+      const stmt = db.prepare('UPDATE solidarity_projects SET sort_order = ? WHERE id = ?');
 
-    order.forEach(item => {
-      stmt.run([item.sort_order, item.id]);
-    });
-
-    stmt.finalize((err) => {
-      if (err) {
-        console.error('Error updating sort order:', err);
-        return res.status(500).json({ success: false, error: err.message });
-      }
+      order.forEach(item => {
+        stmt.run(item.sort_order, item.id);
+      });
 
       res.json({ success: true });
-    });
+    } catch (err) {
+      console.error('Error updating sort order:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
   });
 
   return router;

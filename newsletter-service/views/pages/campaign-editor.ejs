@@ -19,6 +19,9 @@
     .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .editor-wrapper { background: white; border: 1px solid var(--border); border-radius: 8px; min-height: 400px; }
+
+    /* Fix immagini anteprima */
+    #preview-content img { max-width: 100% !important; height: auto !important; display: block; }
     
     .preview-controls { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
     .preview-btn { padding: 8px 16px; background: white; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
@@ -77,11 +80,54 @@
         </div>
       </div>
 
-      <div class="editor-grid">
-        <!-- EDITOR -->
-        <div>
+      <!-- 1. HEADER -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">📋 Header Email</h3>
+        </div>
+        <div class="form-group">
+          <label>Titolo Header</label>
+          <input type="text" id="header-title" class="form-control" value="<%= campaign && campaign.header_title ? campaign.header_title : 'ICNT - I Concerti nel Tempio' %>" placeholder="ICNT - I Concerti nel Tempio" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Sottotitolo Header</label>
+          <input type="text" id="header-subtitle" class="form-control" value="<%= campaign && campaign.header_subtitle ? campaign.header_subtitle : 'La stagione della Chiesa valdese di piazza Cavour' %>" placeholder="La stagione della Chiesa valdese di piazza Cavour" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Sfondo Header</label>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="color" id="header-bg-picker" class="form-control" value="<%= campaign && campaign.header_bg ? campaign.header_bg : '#667eea' %>" style="width: 60px; height: 40px; padding: 4px; cursor: pointer;" onchange="updateHeaderBackground()">
+            <input type="text" id="header-bg-text" class="form-control" value="<%= campaign && campaign.header_bg ? campaign.header_bg : '#667eea' %>" placeholder="#667eea" style="width: 100px; font-family: monospace;" oninput="syncHeaderBgFromText()">
+          </div>
+        </div>
+      </div>
 
-          <!-- Header & Content -->
+      <!-- INIZIO GRID: Editor a sinistra, Anteprima a destra -->
+      <div class="editor-grid">
+
+        <!-- COLONNA SINISTRA: Forms & Editor -->
+        <div class="editor-column">
+
+          <!-- 2. FOOTER -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">📄 Footer Email</h3>
+        </div>
+        <div class="form-group">
+          <label>Sfondo Footer</label>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="color" id="footer-bg-picker" class="form-control" value="<%= campaign && campaign.footer_bg ? campaign.footer_bg : '#f9f9f9' %>" style="width: 60px; height: 40px; padding: 4px; cursor: pointer;" onchange="updateFooterBackground()">
+            <input type="text" id="footer-bg-text" class="form-control" value="<%= campaign && campaign.footer_bg ? campaign.footer_bg : '#f9f9f9' %>" placeholder="#f9f9f9" style="width: 100px; font-family: monospace;" oninput="syncFooterBgFromText()">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Testo Footer Personalizzato (opzionale)</label>
+          <textarea id="footer-text" class="form-control" rows="3" placeholder="Es: Per info: info@icnt.it | Tel: 06.1234567" oninput="updatePreview()"><%= campaign && campaign.footer_text ? campaign.footer_text : '' %></textarea>
+          <small style="color: var(--text-light);">I link "Gestisci preferenze" e "Cancella iscrizione" verranno aggiunti automaticamente</small>
+        </div>
+      </div>
+
+      <!-- 3. CONTENUTO -->
           <div class="card">
             <div class="card-header">
               <h3 class="card-title">✍️ Contenuto Email</h3>
@@ -98,14 +144,12 @@
               </small>
             </div>
 
-            <div class="form-group">
-              <label>Footer (opzionale)</label>
-              <textarea id="footer-text" class="form-control" rows="2" placeholder="Es: Per info: info@icnt.it | Tel: 06.1234567" onkeyup="updatePreview()"></textarea>
-            </div>
           </div>
-        </div>
 
-        <!-- Preview Column -->
+        </div>
+        <!-- FINE COLONNA SINISTRA -->
+
+        <!-- COLONNA DESTRA: Anteprima -->
         <div class="preview-column">
             <div class="preview-header">
                 <h3>📱 Anteprima Email</h3>
@@ -115,38 +159,41 @@
                 </div>
             </div>
             
-            <div id="email-preview" class="email-preview desktop" style="background: #0b0b0b; padding: 40px 20px; min-height: 600px;">
-                <div class="email-container" style="max-width: 600px; margin: 0 auto; background: #121212; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                    
+            <div id="email-preview" class="email-preview desktop" style="background: #f5f5f5; padding: 40px 20px; min-height: 600px;">
+                <div id="email-container" class="email-container" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+
                     <!-- Header -->
-                    <div class="email-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
-                        <h1 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 32px; font-weight: 400; letter-spacing: 1px;">
+                    <div id="preview-header" class="email-header" style="background: #667eea; padding: 40px 30px; text-align: center;">
+                        <h1 id="preview-header-title" style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 32px; font-weight: 400; letter-spacing: 1px;">
                             ICNT - I Concerti nel Tempio
                         </h1>
-                        <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">
+                        <p id="preview-header-subtitle" style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">
                            La stagione della Chiesa valdese di piazza Cavour
                         </p>
                     </div>
-                    
+
                     <!-- Content -->
-                    <div id="preview-content" style="padding: 40px 30px; color: #f1f1f1; font-size: 16px; line-height: 1.6; background: #121212;">
+                    <div id="preview-content" style="padding: 40px 30px; background: #ffffff; color: #333333; font-size: 16px; line-height: 1.6;">
                         <p style="color:#999;text-align:center;">Il contenuto apparirà qui mentre lo scrivi...</p>
                     </div>
                     
                     <!-- Signature -->
-                    <div class="email-signature" style="padding: 30px; background: #1a1a1a; border-top: 2px solid #2a2a2a;">
-                        <h4 style="margin: 0 0 10px 0; color: #d6b25e; font-size: 18px; font-weight: 600;">
+                    <div class="email-signature" style="padding: 30px; background: #f5f5f5; border-top: 2px solid #ddd;">
+                        <h4 style="margin: 0 0 10px 0; color: #667eea; font-size: 18px; font-weight: 600;">
                             ICNT - I Concerti nel Tempio
                         </h4>
-                        <p style="margin: 5px 0; color: #b8b8b8; font-size: 14px; line-height: 1.5;">
+                        <p style="margin: 5px 0; color: #666; font-size: 14px; line-height: 1.5;">
                             Associazione Culturale<br>
                             Via dei Cristofori 34, 00168 Roma (RM)<br>
                             📧 icnt@danielecamiz.com | 🌐 icnt.danielecamiz.com
                         </p>
                     </div>
-                    
+
                     <!-- Footer -->
-                    <div id="preview-footer" style="padding: 30px 20px; text-align: center; color: #888; font-size: 12px; background: #121212; border-top: 1px solid #2a2a2a;">
+                    <div id="preview-footer" style="padding: 30px 20px; text-align: center; color: #666; font-size: 12px; background: #f9f9f9; border-top: 1px solid #ddd;">
+                        <!-- Custom footer text -->
+                        <div id="preview-footer-custom"></div>
+
                         <p style="margin: 0 0 15px 0; font-size: 13px; color: #aaa;">
                             <strong>Stai ricevendo questa email perché sei iscritto alla newsletter di ICNT</strong>
                         </p>
@@ -157,22 +204,25 @@
                             Non vuoi più ricevere queste email?<br>
                             <span style="color: #d6b25e;">Cancella iscrizione</span>
                         </p>
-                        <div style="margin: 30px auto; width: 60%; height: 1px; background: #2a2a2a;"></div>
-                        <p style="margin: 0 0 8px 0; font-size: 12px; color: #888;">
+                        <div style="margin: 30px auto; width: 60%; height: 1px; background: #ddd;"></div>
+                        <p style="margin: 0 0 8px 0; font-size: 12px; color: #666;">
                             © 2025 ICNT - I Concerti nel Tempio
                         </p>
-                        <p style="margin: 0 0 12px 0; font-size: 11px; color: #666;">
+                        <p style="margin: 0 0 12px 0; font-size: 11px; color: #888;">
                             <strong>C.F.</strong> 97982090587 | <strong>P.IVA</strong> 15010831004
                         </p>
-                        <p style="margin: 0; font-size: 11px; color: #666;">
+                        <p style="margin: 0; font-size: 11px; color: #888;">
                             Via dei Cristofori 34, 00168 Roma (RM)
                         </p>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
+        <!-- FINE COLONNA DESTRA -->
+
       </div>
+      <!-- FINE EDITOR GRID -->
 
       <!-- ACTIONS -->
       <div class="actions-bar">

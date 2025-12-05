@@ -82,26 +82,47 @@ nav.navbar.navbar--fixed{
 
 @media (max-width: 1199px){
   /* Navbar più sottile su mobile */
-  nav.navbar{ padding: 4px 10px; min-height: var(--navbar-h, 48px); letter-spacing: 0.05em; }
+  nav.navbar{ padding: 4px 10px; min-height: var(--navbar-h, 48px); letter-spacing: 0.05em; flex-wrap: nowrap; overflow: visible; }
   .nav-right{ gap: .5rem; }
   .nav-left .logo{ font-size: 1rem; }
   .lang-switch button{ font-size: .85rem; padding: 0 .2rem; }
 
   /* Su mobile/tablet: nascondo il menu inline e mostro l'hamburger */
-  .nav-center{ display:none; }
+  .nav-center{
+    display:none;
+    flex: none !important;  /* RIMUOVE dal flex flow */
+    position: absolute !important;  /* FUORI dal flow già da chiuso */
+  }
   .hamburger{ display:inline-flex; line-height: 1; }
 
   /* Quando il toggle è attivo, mostro un pannello fisso sotto la navbar */
   .nav-toggle:checked ~ .nav-center{
     display:block;
     position:fixed;
-    top: var(--navbar-h);         /* offset: legge da layout.css (48px) */
-    left:0; right:0;
-    background:#000;
-    border-bottom:1px solid rgba(255,255,255,.08);
-    box-shadow: 0 8px 24px rgba(0,0,0,.25);
-    z-index: 998;                 /* sopra ai contenuti, sotto la navbar */
-    padding: 10px 12px;
+    top: 48px;
+    right: 0;
+    left: auto;
+    width: min(320px, 85vw);
+    max-height: calc(100vh - var(--navbar-h) - 20px);
+    overflow-y: auto;
+
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-top: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 0 0 0 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    z-index: 998;
+    padding: 16px 20px;
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
   }
 
   .nav-toggle:checked ~ .nav-center .menu{ display:flex; flex-direction: column; gap:10px; }

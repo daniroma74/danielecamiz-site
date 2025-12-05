@@ -74,6 +74,9 @@
                     <i class="fas fa-download"></i> Scarica
                   </a>
                 <% } %>
+                <button onclick='editAsset(<%= JSON.stringify(doc) %>)' class="btn btn-sm btn-primary">
+                  <i class="fas fa-edit"></i>
+                </button>
                 <button onclick="deleteAsset(<%= doc.id %>, 'documento')" class="btn btn-sm btn-danger">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -122,6 +125,9 @@
                     <i class="fas fa-download"></i> Alta Ris.
                   </a>
                 <% } %>
+                <button onclick='editAsset(<%= JSON.stringify(photo) %>)' class="btn btn-sm btn-primary">
+                  <i class="fas fa-edit"></i>
+                </button>
                 <button onclick="deleteAsset(<%= photo.id %>, 'foto')" class="btn btn-sm btn-danger">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -165,6 +171,9 @@
                     <i class="fab fa-youtube"></i> Guarda
                   </a>
                 <% } %>
+                <button onclick='editAsset(<%= JSON.stringify(video) %>)' class="btn btn-sm btn-primary">
+                  <i class="fas fa-edit"></i>
+                </button>
                 <button onclick="deleteAsset(<%= video.id %>, 'video')" class="btn btn-sm btn-danger">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -181,6 +190,80 @@
     </div>
 
   </main>
+
+  <!-- Edit Modal -->
+  <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto;">
+    <div style="max-width: 800px; margin: 50px auto; background: white; border-radius: 12px; padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">Modifica Asset</h2>
+        <button onclick="closeEditModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">×</button>
+      </div>
+
+      <form id="editForm">
+        <input type="hidden" id="edit_id">
+        <input type="hidden" id="edit_type">
+
+        <!-- Titoli -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Titolo (IT)</label>
+            <input type="text" id="edit_title_it" class="form-control" required>
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Titolo (EN)</label>
+            <input type="text" id="edit_title_en" class="form-control">
+          </div>
+        </div>
+
+        <!-- Categoria (solo per foto e documenti) -->
+        <div id="edit_category_section" style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Categoria</label>
+          <select id="edit_category" class="form-control">
+            <!-- Options will be populated dynamically -->
+          </select>
+        </div>
+
+        <!-- Descrizioni -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Descrizione (IT)</label>
+            <textarea id="edit_description_it" class="form-control" rows="3"></textarea>
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Descrizione (EN)</label>
+            <textarea id="edit_description_en" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- File/URL Section -->
+        <div id="edit_file_section" style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+          <!-- For photos and documents -->
+          <div id="edit_cloudinary_section" style="display: none;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">File Attuale</label>
+            <div id="edit_current_file" style="margin-bottom: 1rem;"></div>
+            <button type="button" onclick="replaceFile()" class="btn btn-secondary">
+              <i class="fas fa-upload"></i> Sostituisci File
+            </button>
+          </div>
+
+          <!-- For videos -->
+          <div id="edit_video_section" style="display: none;">
+            <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">URL YouTube</label>
+            <input type="text" id="edit_youtube_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+            <small style="display: block; margin-top: 0.5rem; color: #666;">Incolla l'URL completo del video YouTube</small>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" onclick="closeEditModal()" class="btn btn-secondary">Annulla</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Salva Modifiche
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script>
     function addDocument() {
@@ -289,6 +372,179 @@
         alert('❌ Errore di connessione');
       }
     }
+
+    let currentEditAsset = null;
+    let newFileData = null;
+
+    function editAsset(asset) {
+      currentEditAsset = asset;
+      newFileData = null;
+
+      // Populate form
+      document.getElementById('edit_id').value = asset.id;
+      document.getElementById('edit_type').value = asset.type;
+      document.getElementById('edit_title_it').value = asset.title_it || '';
+      document.getElementById('edit_title_en').value = asset.title_en || '';
+      document.getElementById('edit_description_it').value = asset.description_it || '';
+      document.getElementById('edit_description_en').value = asset.description_en || '';
+
+      // Setup category dropdown
+      const categorySection = document.getElementById('edit_category_section');
+      const categorySelect = document.getElementById('edit_category');
+
+      if (asset.type === 'photo') {
+        categorySection.style.display = 'block';
+        categorySelect.innerHTML = `
+          <option value="portrait" ${asset.category === 'portrait' ? 'selected' : ''}>🎭 Ritratto</option>
+          <option value="action" ${asset.category === 'action' ? 'selected' : ''}>🎵 In Azione</option>
+          <option value="backstage" ${asset.category === 'backstage' ? 'selected' : ''}>🎬 Backstage</option>
+        `;
+      } else if (asset.type === 'document') {
+        categorySection.style.display = 'block';
+        categorySelect.innerHTML = `
+          <option value="cv" ${asset.category === 'cv' ? 'selected' : ''}>CV</option>
+          <option value="bio" ${asset.category === 'bio' ? 'selected' : ''}>Bio</option>
+        `;
+      } else {
+        categorySection.style.display = 'none';
+      }
+
+      // Setup file section
+      const cloudinarySection = document.getElementById('edit_cloudinary_section');
+      const videoSection = document.getElementById('edit_video_section');
+      const currentFileDiv = document.getElementById('edit_current_file');
+
+      if (asset.type === 'video') {
+        cloudinarySection.style.display = 'none';
+        videoSection.style.display = 'block';
+        document.getElementById('edit_youtube_url').value = asset.youtube_url || '';
+      } else {
+        cloudinarySection.style.display = 'block';
+        videoSection.style.display = 'none';
+
+        if (asset.type === 'photo' && asset.cloudinary_id) {
+          currentFileDiv.innerHTML = `
+            <img src="https://res.cloudinary.com/dnwhnz2xy/image/upload/w_300,h_200,c_fill/${asset.cloudinary_id}"
+                 style="max-width: 100%; border-radius: 8px;">
+          `;
+        } else if (asset.type === 'document') {
+          currentFileDiv.innerHTML = `
+            <p><i class="fas fa-file-pdf"></i> ${asset.title_it || 'Documento'}.${asset.format || 'pdf'}</p>
+          `;
+        }
+      }
+
+      // Show modal
+      document.getElementById('editModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+      currentEditAsset = null;
+      newFileData = null;
+    }
+
+    function replaceFile() {
+      const type = currentEditAsset.type;
+
+      if (type === 'photo') {
+        CloudinaryManager.showImageDialog((result) => {
+          newFileData = result;
+          document.getElementById('edit_current_file').innerHTML = `
+            <img src="${result.url}" style="max-width: 100%; border-radius: 8px;">
+            <p style="color: #4CAF50; margin-top: 0.5rem;">✅ Nuovo file selezionato (sarà salvato dopo aver cliccato "Salva Modifiche")</p>
+          `;
+        }, {
+          folder: 'danielecamiz/presskit/photos',
+          preset: 'gallery_unsigned'
+        });
+      } else if (type === 'document') {
+        CloudinaryManager.showImageDialog((result) => {
+          newFileData = result;
+          document.getElementById('edit_current_file').innerHTML = `
+            <p><i class="fas fa-file-pdf"></i> Nuovo documento caricato</p>
+            <p style="color: #4CAF50;">✅ Sarà salvato dopo aver cliccato "Salva Modifiche"</p>
+          `;
+        }, {
+          folder: 'danielecamiz/presskit',
+          preset: 'gallery_unsigned',
+          resourceType: 'auto',
+          clientAllowedFormats: ['pdf', 'doc', 'docx']
+        });
+      }
+    }
+
+    // Form submit handler
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const id = document.getElementById('edit_id').value;
+      const type = document.getElementById('edit_type').value;
+
+      const data = {
+        type: type,
+        title_it: document.getElementById('edit_title_it').value,
+        title_en: document.getElementById('edit_title_en').value,
+        description_it: document.getElementById('edit_description_it').value,
+        description_en: document.getElementById('edit_description_en').value,
+        is_published: currentEditAsset.is_published
+      };
+
+      // Add category if applicable
+      if (type === 'photo' || type === 'document') {
+        data.category = document.getElementById('edit_category').value;
+      }
+
+      // Handle file updates
+      if (type === 'video') {
+        const youtubeUrl = document.getElementById('edit_youtube_url').value;
+        const match = youtubeUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/);
+        if (match) {
+          data.youtube_id = match[1];
+          data.youtube_url = youtubeUrl;
+        } else {
+          data.youtube_id = currentEditAsset.youtube_id;
+          data.youtube_url = currentEditAsset.youtube_url;
+        }
+      } else {
+        // Photo or document
+        if (newFileData) {
+          // New file uploaded
+          data.cloudinary_id = newFileData.publicId;
+          data.cloudinary_url = newFileData.url || newFileData.secure_url;
+          data.width = newFileData.width;
+          data.height = newFileData.height;
+          data.format = newFileData.format;
+          data.file_size = newFileData.bytes;
+        } else {
+          // Keep existing file
+          data.cloudinary_id = currentEditAsset.cloudinary_id;
+          data.cloudinary_url = currentEditAsset.cloudinary_url;
+          data.width = currentEditAsset.width;
+          data.height = currentEditAsset.height;
+          data.format = currentEditAsset.format;
+          data.file_size = currentEditAsset.file_size;
+        }
+      }
+
+      try {
+        const res = await fetch(`/bio/presskit/assets/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          alert('✅ Modifiche salvate!');
+          window.location.reload();
+        } else {
+          alert('❌ Errore durante il salvataggio');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Errore di connessione');
+      }
+    });
   </script>
 </body>
 </html>

@@ -51,11 +51,13 @@
         <h2 class="section-title"><%= data.highlightsTitle %></h2>
         <div class="links-grid">
           <% data.highlights.forEach(link => { %>
-            <a href="<%= link.url %>" 
-               class="link-card highlight-card" 
+            <a href="<%= link.url %>"
+               class="link-card highlight-card"
                target="<%= link.target %>"
                rel="noopener noreferrer">
-              <% if (link.icon) { %>
+              <% if (link.thumbnail) { %>
+                <img src="<%= link.thumbnail %>" alt="<%= link.text %>" class="link-thumbnail" style="width: 100%; height: auto; border-radius: 8px; margin-bottom: 0.5rem;">
+              <% } else if (link.icon) { %>
                 <img src="/img/icons/<%= link.icon %>" alt="" class="link-icon">
               <% } %>
               <span class="link-text"><%= link.text %></span>

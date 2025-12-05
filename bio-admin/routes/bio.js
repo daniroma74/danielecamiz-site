@@ -159,6 +159,42 @@ router.post('/presskit/assets', async (req, res) => {
   }
 });
 
+// Update press kit asset
+router.put('/presskit/assets/:id', async (req, res) => {
+  try {
+    const { type, category, cloudinary_id, cloudinary_url, youtube_id, youtube_url, title_it, title_en, description_it, description_en, file_size, format, width, height, is_published } = req.body;
+
+    await runQuery(`
+      UPDATE press_kit_files
+      SET type = ?, category = ?,
+          cloudinary_id = ?, cloudinary_url = ?,
+          youtube_id = ?, youtube_url = ?,
+          title_it = ?, title_en = ?,
+          description_it = ?, description_en = ?,
+          file_size = ?, format = ?,
+          width = ?, height = ?,
+          is_published = ?,
+          updated_at = datetime('now')
+      WHERE id = ?
+    `, [
+      type, category || null,
+      cloudinary_id || null, cloudinary_url || null,
+      youtube_id || null, youtube_url || null,
+      title_it || null, title_en || null,
+      description_it || null, description_en || null,
+      file_size || null, format || null,
+      width || null, height || null,
+      is_published ? 1 : 0,
+      req.params.id
+    ]);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating asset:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.delete('/presskit/assets/:id', async (req, res) => {
   try {
     await runQuery('DELETE FROM press_kit_files WHERE id = ?', [req.params.id]);

@@ -28,11 +28,8 @@ module.exports = (db) => {
 
     query += ' ORDER BY sort_order ASC, full_name ASC';
 
-    db.all(query, params, (err, members) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const members = db.prepare(query).all(...params);
 
       res.render('team/list', {
         title: 'Gestione Team',
@@ -43,7 +40,10 @@ module.exports = (db) => {
           role
         }
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // GET /admin/team/new - Show create form
@@ -79,9 +79,8 @@ module.exports = (db) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         full_name,
         role,
         bio || null,
@@ -90,27 +89,21 @@ module.exports = (db) => {
         phone || null,
         sort_order || 0,
         is_active ? 1 : 0
-      ],
-      function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante la creazione');
-        }
+      );
 
-        res.redirect('/admin/team');
-      }
-    );
+      res.redirect('/admin/team');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante la creazione');
+    }
   });
 
   // GET /admin/team/:id/edit - Show edit form
   router.get('/team/:id/edit', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.get('SELECT * FROM team_members WHERE id = ?', [id], (err, member) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const member = db.prepare('SELECT * FROM team_members WHERE id = ?').get(id);
 
       if (!member) {
         return res.status(404).send('Membro non trovato');
@@ -122,7 +115,10 @@ module.exports = (db) => {
         member,
         action: 'edit'
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/team/:id - Update member
@@ -152,9 +148,8 @@ module.exports = (db) => {
       WHERE id = ?
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         full_name,
         role,
         bio || null,
@@ -164,30 +159,27 @@ module.exports = (db) => {
         sort_order || 0,
         is_active ? 1 : 0,
         id
-      ],
-      (err) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante l\'aggiornamento');
-        }
+      );
 
-        res.redirect('/admin/team');
-      }
-    );
+      res.redirect('/admin/team');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
+    }
   });
 
   // POST /admin/team/:id/delete - Delete member
   router.post('/team/:id/delete', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.run('DELETE FROM team_members WHERE id = ?', [id], (err) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore durante l\'eliminazione');
-      }
+    try {
+      db.prepare('DELETE FROM team_members WHERE id = ?').run(id);
 
       res.redirect('/admin/team');
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'eliminazione');
+    }
   });
 
   // POST /admin/team/reorder - Update sort order
@@ -198,20 +190,18 @@ module.exports = (db) => {
       return res.status(400).json({ success: false, error: 'Invalid order data' });
     }
 
-    const stmt = db.prepare('UPDATE team_members SET sort_order = ? WHERE id = ?');
+    try {
+      const stmt = db.prepare('UPDATE team_members SET sort_order = ? WHERE id = ?');
 
-    order.forEach(item => {
-      stmt.run([item.sort_order, item.id]);
-    });
-
-    stmt.finalize((err) => {
-      if (err) {
-        console.error('Error updating sort order:', err);
-        return res.status(500).json({ success: false, error: err.message });
-      }
+      order.forEach(item => {
+        stmt.run(item.sort_order, item.id);
+      });
 
       res.json({ success: true });
-    });
+    } catch (err) {
+      console.error('Error updating sort order:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
   });
 
   return router;

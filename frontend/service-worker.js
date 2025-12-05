@@ -1,7 +1,7 @@
 // Service Worker for danielecamiz.com
 // Provides offline support and caching for better performance
 
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.0.1';
 const CACHE_NAME = `danielecamiz-${CACHE_VERSION}`;
 
 // Assets to cache immediately on install
@@ -90,8 +90,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip cross-origin requests (except Cloudinary)
-  if (url.origin !== location.origin && !url.origin.includes('cloudinary.com')) {
+  // Handle Cloudinary images with network-first strategy
+  if (url.origin.includes('cloudinary.com')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          if (response.ok) {
+            const cache = caches.open(CACHE_NAME);
+            cache.then(c => c.put(request, response.clone()));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // Skip other cross-origin requests
+  if (url.origin !== location.origin) {
     return;
   }
 

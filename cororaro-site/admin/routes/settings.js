@@ -9,11 +9,8 @@ const { requireAuth } = require('../middleware/auth');
 module.exports = (db) => {
   // GET /admin/settings - Show settings form organized by sections
   router.get('/settings', requireAuth, (req, res) => {
-    db.all('SELECT * FROM site_settings ORDER BY setting_key', (err, settings) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const settings = db.prepare('SELECT * FROM site_settings ORDER BY setting_key').all();
 
       // Organize settings by section
       const organized = {
@@ -47,54 +44,50 @@ module.exports = (db) => {
         user: req.session,
         settings: organized
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/settings - Update settings
   router.post('/settings', requireAuth, (req, res) => {
     const updates = req.body; // Object with setting_key => setting_value
-
-    const stmt = db.prepare('UPDATE site_settings SET setting_value = ? WHERE setting_key = ?');
-
-    let updateCount = 0;
     const keys = Object.keys(updates);
-
-    keys.forEach((key, index) => {
-      stmt.run([updates[key], key], (err) => {
-        if (err) {
-          console.error('Error updating setting:', key, err);
-        }
-        updateCount++;
-
-        // When all updates are done, redirect
-        if (updateCount === keys.length) {
-          stmt.finalize(() => {
-            res.redirect('/admin/settings?success=1');
-          });
-        }
-      });
-    });
 
     // If no updates, just redirect
     if (keys.length === 0) {
-      res.redirect('/admin/settings');
+      return res.redirect('/admin/settings');
+    }
+
+    try {
+      const stmt = db.prepare('UPDATE site_settings SET setting_value = ? WHERE setting_key = ?');
+
+      keys.forEach((key) => {
+        stmt.run(updates[key], key);
+      });
+
+      res.redirect('/admin/settings?success=1');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
     }
   });
 
   // GET /admin/settings/values - Get values section
   router.get('/settings/values', requireAuth, (req, res) => {
-    db.all('SELECT * FROM core_values ORDER BY sort_order', (err, values) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const values = db.prepare('SELECT * FROM core_values ORDER BY sort_order').all();
 
       res.render('settings/values', {
         title: 'Valori del Coro',
         user: req.session,
         values: values || []
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/settings/values/:id - Update value
@@ -112,18 +105,14 @@ module.exports = (db) => {
       WHERE id = ?
     `;
 
-    db.run(
-      query,
-      [icon, title, description, sort_order || 0, is_active ? 1 : 0, id],
-      (err) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante l\'aggiornamento');
-        }
+    try {
+      db.prepare(query).run(icon, title, description, sort_order || 0, is_active ? 1 : 0, id);
 
-        res.redirect('/admin/settings/values');
-      }
-    );
+      res.redirect('/admin/settings/values');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
+    }
   });
 
   // POST /admin/settings/values - Create new value
@@ -135,44 +124,44 @@ module.exports = (db) => {
       VALUES (?, ?, ?, ?, 1)
     `;
 
-    db.run(query, [icon, title, description, sort_order || 0], function (err) {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore durante la creazione');
-      }
+    try {
+      db.prepare(query).run(icon, title, description, sort_order || 0);
 
       res.redirect('/admin/settings/values');
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante la creazione');
+    }
   });
 
   // POST /admin/settings/values/:id/delete - Delete value
   router.post('/settings/values/:id/delete', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.run('DELETE FROM core_values WHERE id = ?', [id], (err) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore durante l\'eliminazione');
-      }
+    try {
+      db.prepare('DELETE FROM core_values WHERE id = ?').run(id);
 
       res.redirect('/admin/settings/values');
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'eliminazione');
+    }
   });
 
   // GET /admin/settings/join - Get "Unisciti a Noi" section
   router.get('/settings/join', requireAuth, (req, res) => {
-    db.get('SELECT * FROM join_info WHERE id = 1', (err, joinInfo) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const joinInfo = db.prepare('SELECT * FROM join_info WHERE id = 1').get();
 
       res.render('settings/join', {
         title: 'Unisciti a Noi',
         user: req.session,
         joinInfo: joinInfo || {}
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/settings/join - Update "Unisciti a Noi" section
@@ -198,9 +187,8 @@ module.exports = (db) => {
       ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         title,
         subtitle || null,
         intro_text || null,
@@ -211,16 +199,13 @@ module.exports = (db) => {
         contact_email || null,
         contact_phone || null,
         cta_text || null
-      ],
-      (err) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante l\'aggiornamento');
-        }
+      );
 
-        res.redirect('/admin/settings/join?success=1');
-      }
-    );
+      res.redirect('/admin/settings/join?success=1');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
+    }
   });
 
   return router;

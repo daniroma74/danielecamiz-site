@@ -22,11 +22,8 @@ module.exports = (db) => {
 
     query += ' ORDER BY sort_order ASC, full_name ASC';
 
-    db.all(query, params, (err, maestri) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const maestri = db.prepare(query).all(...params);
 
       res.render('maestri/list', {
         title: 'Gestione Maestri',
@@ -36,7 +33,10 @@ module.exports = (db) => {
           search
         }
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // GET /admin/maestri/new - Show create form
@@ -70,9 +70,8 @@ module.exports = (db) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, 'maestro')
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         full_name,
         bio || null,
         photo_url || null,
@@ -80,27 +79,21 @@ module.exports = (db) => {
         phone || null,
         sort_order || 0,
         is_active ? 1 : 0
-      ],
-      function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante la creazione');
-        }
+      );
 
-        res.redirect('/admin/maestri');
-      }
-    );
+      res.redirect('/admin/maestri');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante la creazione');
+    }
   });
 
   // GET /admin/maestri/:id/edit - Show edit form
   router.get('/maestri/:id/edit', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.get('SELECT * FROM team_members WHERE id = ?', [id], (err, maestro) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const maestro = db.prepare('SELECT * FROM team_members WHERE id = ?').get(id);
 
       if (!maestro) {
         return res.status(404).send('Maestro non trovato');
@@ -112,7 +105,10 @@ module.exports = (db) => {
         maestro,
         action: 'edit'
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/maestri/:id - Update maestro
@@ -140,9 +136,8 @@ module.exports = (db) => {
       WHERE id = ?
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         full_name,
         bio || null,
         photo_url || null,
@@ -151,30 +146,27 @@ module.exports = (db) => {
         sort_order || 0,
         is_active ? 1 : 0,
         id
-      ],
-      (err) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante l\'aggiornamento');
-        }
+      );
 
-        res.redirect('/admin/maestri');
-      }
-    );
+      res.redirect('/admin/maestri');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
+    }
   });
 
   // POST /admin/maestri/:id/delete - Delete maestro
   router.post('/maestri/:id/delete', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.run('DELETE FROM team_members WHERE id = ?', [id], (err) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore durante l\'eliminazione');
-      }
+    try {
+      db.prepare('DELETE FROM team_members WHERE id = ?').run(id);
 
       res.redirect('/admin/maestri');
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'eliminazione');
+    }
   });
 
   return router;

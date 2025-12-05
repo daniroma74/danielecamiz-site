@@ -7,10 +7,15 @@
   "scripts": {
     "dev": "PORT=${PORT:-3026} node --watch server.js",
     "start": "PORT=${PORT:-3026} node server.js",
+    "build": "node scripts/build-assets.js",
+    "build:watch": "nodemon --watch public/css --watch public/js --exec npm run build",
+    "prebuild": "echo 'Building optimized assets...'",
+    "postbuild": "echo 'Build complete! Assets minified.'",
     "pm2:start": "pm2 start ecosystem.config.cjs",
     "pm2:stop": "pm2 stop icnt-stagione",
     "pm2:restart": "pm2 restart icnt-stagione",
-    "pm2:logs": "pm2 logs icnt-stagione"
+    "pm2:logs": "pm2 logs icnt-stagione",
+    "pm2:deploy": "npm run build && pm2 restart icnt-stagione"
   },
   "dependencies": {
     "better-sqlite3": "^9.6.0",
@@ -25,7 +30,12 @@
     "sharp": "^0.34.3"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5"
+    "autoprefixer": "^10.4.22",
+    "cssnano": "^7.1.2",
+    "dotenv": "^16.4.5",
+    "esbuild": "^0.27.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1"
   },
   "engines": {
     "node": ">=18.0.0"

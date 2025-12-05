@@ -1,40 +1,97 @@
 <%
-// DEBUG: cosa arriva nel template?
-console.log('[PRESS TEMPLATE DEBUG]', {
-  'labels': typeof labels,
-  'labels keys': labels ? Object.keys(labels) : 'null',
-  'labels.press': labels?.press,
-  'lang': typeof lang !== 'undefined' ? lang : 'undefined'
-});
+// Helper per formattare le date
+function formatDate(dateStr, lang) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'it-IT', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+// Helper per generare URL Cloudinary ottimizzato
+function cloudinaryUrl(publicId, width = 560) {
+  if (!publicId) return '';
+  if (publicId.startsWith('http')) return publicId; // Already a full URL
+  return `https://res.cloudinary.com/dnwhnz2xy/image/upload/w_${width},c_fill,q_auto,f_auto/${publicId}`;
+}
 %>
-<% if (pageCss) { %>
-  <link rel="stylesheet" href="/css/<%= pageCss %>">
-<% } %>
 
 <section id="press_section">
   <h2 id="press_title" data-i18n-key="press.title"><%= labels?.press?.title || 'Press' %></h2>
   <p class="claim-text" id="press_claim" data-i18n-key="press.claim"><%= labels?.press?.claim || '' %></p>
 
   <% if (pressData && pressData.press && pressData.press.length) { %>
-    <% pressData.press.forEach(item => { %>
-      <div class="press-quote<%= item.interview ? ' interview' : '' %>">
-        <p><em><%= item.quote %></em></p>
-        <div class="press-source">
-          <% if (item.icon) { %><span class="press-icon"><%= item.icon %></span><% } %>
-          <%= item.source %><br />
-          <% if (item.author) { %>
-            <span data-i18n-key="press.article_by"><%= labels?.press?.article_by || 'Article by' %></span> <%= item.author %> –
+    <div class="press-grid">
+      <% pressData.press.forEach(item => {
+        const hasImage = item.source_logo_cloudinary_id || item.image;
+        const imageUrl = cloudinaryUrl(item.source_logo_cloudinary_id || item.image, 560);
+      %>
+        <article class="press-card <%= hasImage ? 'has-image' : '' %>">
+          <% if (hasImage) { %>
+            <div class="press-card__image">
+              <img src="<%= imageUrl %>" alt="<%= item.source %>" loading="lazy">
+              <% if (item.interview) { %>
+                <span class="press-card__badge"><%= lang === 'en' ? 'Featured' : 'In evidenza' %></span>
+              <% } %>
+            </div>
           <% } %>
-          <% if (item.link) { %>
-            <a href="<%= item.link %>" target="_blank" rel="noopener noreferrer" 
-               data-i18n-key="<%= item.interview ? 'press.read_full_article' : 'press.read_article' %>">
-              <%= item.interview ? (labels?.press?.read_full_article || 'Read full article') : (labels?.press?.read_article || 'Read article') %>
-            </a>
-          <% } %>
-        </div>
-      </div>
-    <% }) %>
+
+          <div class="press-card__content">
+            <% if (item.title) { %>
+              <h3 class="press-card__title" style="margin: 0 0 1rem 0; font-size: 1.3rem; color: rgba(255, 255, 255, 0.95); font-weight: 600;">
+                <%= item.title %>
+              </h3>
+            <% } %>
+
+            <% if (item.description) { %>
+              <p class="press-card__description" style="margin: 0 0 1rem 0; font-size: 1rem; color: rgba(255, 255, 255, 0.75); line-height: 1.6;">
+                <%= item.description %>
+              </p>
+            <% } %>
+
+            <blockquote class="press-card__quote">
+              <%= item.quote %>
+            </blockquote>
+
+            <div class="press-card__meta">
+              <strong class="press-card__source"><%= item.source %></strong>
+              <% if (item.author) { %>
+                <span class="press-card__author">
+                  <%= item.author %>
+                  <% if (item.author_role) { %>
+                    <span style="color: rgba(255, 255, 255, 0.5); font-weight: 400;">(<%= item.author_role %>)</span>
+                  <% } %>
+                </span>
+              <% } %>
+              <% if (item.date) { %>
+                <time class="press-card__date" datetime="<%= item.date %>">
+                  <%= formatDate(item.date, lang) %>
+                </time>
+              <% } %>
+            </div>
+
+            <% if (item.link) { %>
+              <a href="<%= item.link %>"
+                 class="press-card__link"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                <span><%= labels?.press?.read_article || (lang === 'en' ? 'Read article' : 'Leggi articolo') %></span>
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            <% } %>
+          </div>
+        </article>
+      <% }) %>
+    </div>
   <% } else { %>
-    <p id="press_no_press" data-i18n-key="press.no_press"><%= labels?.press?.no_press || 'No press available.' %></p>
+    <p class="empty-state" id="press_no_press" data-i18n-key="press.no_press">
+      <%= labels?.press?.no_press || (lang === 'en' ? 'No press coverage available.' : 'Nessuna rassegna stampa disponibile.') %>
+    </p>
   <% } %>
 </section>

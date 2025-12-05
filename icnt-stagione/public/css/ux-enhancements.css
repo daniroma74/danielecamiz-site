@@ -1,0 +1,656 @@
+/* ========================
+   UX ENHANCEMENTS 2025
+   Modern Professional UI
+   ======================== */
+
+/* === Improved Typography Scale === */
+:root {
+  /* Enhanced spacing with better rhythm */
+  --space-xxs: 0.25rem;  /* 4px */
+  --space-xs: 0.5rem;    /* 8px */
+  --space-sm: 0.75rem;   /* 12px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 1.5rem;    /* 24px */
+  --space-xl: 2rem;      /* 32px */
+  --space-2xl: 3rem;     /* 48px */
+  --space-3xl: 4rem;     /* 64px */
+  --space-4xl: 6rem;     /* 96px */
+
+  /* Enhanced animations with better easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+  --ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Better shadow system */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 8px 0 rgba(0, 0, 0, 0.35), 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 16px 0 rgba(0, 0, 0, 0.4), 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 16px 32px 0 rgba(0, 0, 0, 0.45), 0 8px 16px 0 rgba(0, 0, 0, 0.35);
+  --shadow-glow-strong: 0 0 60px rgba(212, 175, 55, 0.25), 0 0 30px rgba(212, 175, 55, 0.15);
+
+  /* Interactive states */
+  --focus-ring: 0 0 0 3px rgba(212, 175, 55, 0.3);
+  --focus-ring-inset: inset 0 0 0 2px rgba(212, 175, 55, 0.5);
+}
+
+/* === Smooth Scroll Improvements === */
+html {
+  scroll-padding-top: 80px; /* Better scroll anchor positioning */
+}
+
+/* === Better Focus Styles (Accessibility++) === */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 4px;
+  transition: box-shadow 200ms var(--ease-out-quart);
+}
+
+button:focus-visible,
+.btn:focus-visible {
+  box-shadow: var(--focus-ring), var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* === Improved Button Styles === */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0); /* GPU acceleration */
+  will-change: transform, box-shadow;
+  transition: all 250ms var(--ease-out-quart);
+  letter-spacing: 0.025em; /* Better readability */
+  font-weight: 500;
+}
+
+/* Ripple effect on click */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s var(--ease-out-expo), height 0.6s var(--ease-out-expo), opacity 0.6s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn:active::before {
+  width: 300px;
+  height: 300px;
+  opacity: 1;
+  transition: 0s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn:active {
+  transform: translateY(0);
+  transition-duration: 100ms;
+}
+
+.btn.primary {
+  box-shadow: var(--shadow-md), 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.btn.primary:hover {
+  box-shadow: var(--shadow-lg), var(--shadow-glow-strong);
+  filter: brightness(1.1);
+}
+
+/* === Enhanced Cards with Better Hover === */
+.card {
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+  transition: all 350ms var(--ease-out-quart);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.card.glass {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* === Event Card Improvements === */
+.event-card {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  transition: all 300ms var(--ease-out-quart);
+}
+
+.event-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out-quart);
+  pointer-events: none;
+}
+
+.event-card:hover::after {
+  opacity: 1;
+}
+
+.event-card:hover {
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(212, 175, 55, 0.15);
+  transform: translateY(-3px) scale(1.005);
+}
+
+/* Staggered animation for event lists */
+.event-card {
+  animation: fadeInUp 0.5s var(--ease-out-expo) backwards;
+}
+
+.event-card:nth-child(1) { animation-delay: 0ms; }
+.event-card:nth-child(2) { animation-delay: 50ms; }
+.event-card:nth-child(3) { animation-delay: 100ms; }
+.event-card:nth-child(4) { animation-delay: 150ms; }
+.event-card:nth-child(5) { animation-delay: 200ms; }
+.event-card:nth-child(n+6) { animation-delay: 250ms; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Filter Chips Enhancement === */
+.filter-chip {
+  transition: all 250ms var(--ease-out-quart);
+  position: relative;
+}
+
+.filter-chip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--gradient-gold);
+  opacity: 0;
+  transition: opacity 250ms var(--ease-out-quart);
+  z-index: -1;
+}
+
+.filter-chip:hover::before {
+  opacity: 0.15;
+}
+
+.filter-chip.active::before {
+  opacity: 1;
+}
+
+.filter-chip:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+/* === Loading States === */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+  border-radius: 8px;
+}
+
+/* === Improved Tooltips === */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  padding: 6px 12px;
+  background: rgba(20, 20, 25, 0.95);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 6px;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 250ms var(--ease-out-quart);
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+[data-tooltip]::after {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(20, 20, 25, 0.95);
+  opacity: 0;
+  transition: all 250ms var(--ease-out-quart);
+  z-index: 1000;
+}
+
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* === Improved Scrollbar === */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-gold-dark) 0%, var(--accent-gold) 100%);
+  border-radius: 10px;
+  border: 2px solid var(--bg-secondary);
+  transition: background 250ms ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-light) 100%);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-gold) var(--bg-secondary);
+}
+
+/* === Better Selection === */
+::selection {
+  background: rgba(212, 175, 55, 0.3);
+  color: var(--text-primary);
+}
+
+::-moz-selection {
+  background: rgba(212, 175, 55, 0.3);
+  color: var(--text-primary);
+}
+
+/* === Smooth Gradient Text === */
+.gradient-text {
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  display: inline-block;
+}
+
+.gradient-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  filter: blur(20px);
+  opacity: 0.5;
+}
+
+/* === Loading Spinner === */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(212, 175, 55, 0.2);
+  border-top-color: var(--accent-gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* === Micro-interactions for Stats === */
+.stat-value {
+  display: inline-block;
+  transition: all 400ms var(--ease-spring);
+}
+
+.stat-item:hover .stat-value {
+  transform: scale(1.15);
+  color: var(--accent-gold);
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+
+/* === Improved Poster Interactions === */
+.poster-frame {
+  transition: all 400ms var(--ease-out-quart);
+  position: relative;
+}
+
+.poster-frame::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: var(--gradient-gold);
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out-quart);
+  z-index: -1;
+  filter: blur(10px);
+}
+
+.poster-frame:hover::before {
+  opacity: 0.6;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.poster-overlay {
+  transition: all 350ms var(--ease-out-quart);
+}
+
+.poster-link:hover .poster-overlay {
+  backdrop-filter: blur(8px);
+}
+
+.poster-zoom {
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all 350ms var(--ease-spring);
+  display: inline-block;
+}
+
+.poster-link:hover .poster-zoom {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* === Hero Section Enhancement === */
+.hero-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 200%;
+  background: radial-gradient(ellipse, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.hero-section:hover::before {
+  opacity: 1;
+}
+
+/* === Next Event Card Enhancement === */
+.next-event-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: var(--space-xl);
+  background: rgba(255, 255, 255, 0.02);
+  transition: all 400ms var(--ease-out-quart);
+}
+
+.next-event-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+  transition: left 800ms var(--ease-out-quart);
+}
+
+.next-event-card:hover::before {
+  left: 100%;
+}
+
+.next-event-card:hover {
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-xl), var(--shadow-glow);
+  transform: scale(1.02);
+}
+
+/* === Badge Animations === */
+.next-event-badge,
+.filter-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.next-event-badge::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.next-event-card:hover .next-event-badge::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* === Accessibility: Reduced Motion === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .poster-frame::before,
+  .next-event-card::before {
+    animation: none !important;
+  }
+}
+
+/* === Dark Mode Refinements === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --bg-card-hover: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* === Mobile Optimizations === */
+@media (max-width: 768px) {
+  /* Larger touch targets */
+  .btn,
+  .filter-chip,
+  .event-card {
+    min-height: 44px; /* iOS recommendation */
+  }
+
+  /* Better spacing on mobile */
+  .card {
+    padding: var(--space-lg);
+  }
+
+  /* Disable hover effects on touch devices */
+  @media (hover: none) {
+    .card:hover,
+    .event-card:hover,
+    .btn:hover {
+      transform: none;
+    }
+
+    .poster-frame:hover::before {
+      opacity: 0;
+    }
+  }
+}
+
+/* === Print Optimizations === */
+@media print {
+  .btn,
+  .filter-chip,
+  .poster-actions {
+    display: none !important;
+  }
+
+  .event-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+
+/* === High Contrast Mode Support === */
+@media (prefers-contrast: high) {
+  .card {
+    border: 2px solid var(--text-primary);
+  }
+
+  .btn {
+    border: 2px solid currentColor;
+  }
+
+  .filter-chip.active {
+    outline: 3px solid var(--accent-gold);
+  }
+}
+
+/* === Smooth Page Transitions === */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.content-area {
+  animation: pageEnter 0.6s var(--ease-out-expo);
+}
+
+/* === Sticky Header Enhancement === */
+.site-header {
+  transition: all 350ms var(--ease-out-quart);
+}
+
+.site-header.scrolled {
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* === Live Stats Highlight === */
+.stat-item.highlight {
+  animation: highlightPulse 1.5s ease-out;
+}
+
+@keyframes highlightPulse {
+  0%, 100% {
+    background: transparent;
+    transform: scale(1);
+  }
+  50% {
+    background: rgba(212, 175, 55, 0.15);
+    transform: scale(1.05);
+  }
+}
+
+/* === Image Loaded State === */
+img.loaded {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* === Success State for Copy Buttons === */
+.btn.success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  transform: scale(1.05);
+  animation: successPulse 0.5s ease-out;
+}
+
+@keyframes successPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+}

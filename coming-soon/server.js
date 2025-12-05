@@ -14,8 +14,8 @@ app.get('*', (req, res) => {
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daniele Camiz - Baritono | Coming Soon</title>
+  <meta name="viewport" content="width=device-width, initial-scal
+  <title>Daniele Camiz - Direttore d'Orchestra | Coming Soon</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -75,10 +75,10 @@ app.get('*', (req, res) => {
 <body>
   <div class="container">
     <h1>Daniele Camiz</h1>
-    <h2>Baritono</h2>
+    <h2>Direttore d'Orchestra</h2>
     <p>
-      Il nuovo sito è attualmente in costruzione.<br>
-      A breve sarà online con tutti i contenuti aggiornati.
+      Ci siamo quasi!<br>
+      Il nuovo sito sarà online a breve.
     </p>
     <p>
       <a href="mailto:info@danielecamiz.com" class="email">info@danielecamiz.com</a>

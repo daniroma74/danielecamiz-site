@@ -224,28 +224,23 @@
       </div>
     </div>
 
-    <!-- ========== LINK PRENOTAZIONI ========== -->
-    <div style="background: #fce4ec; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #e91e63;">
-      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🔗 Link per Prenotazioni</h2>
+    <!-- ========== LANDING PAGE ========== -->
+    <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196f3;">
+      <h2 style="margin-top: 0; color: #333; font-size: 1.3rem;">🌐 Landing Page</h2>
 
-      <div style="margin-bottom: 1.5rem;">
-        <label for="ticket_url" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.1rem;">
-          🎟️ Link Eventbrite o altro (facoltativo)
-        </label>
-        <input
-          type="url"
-          id="ticket_url"
-          name="ticket_url"
-          value="<%= concert.ticket_url || '' %>"
-          placeholder="https://..."
-          style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1.1rem; font-family: inherit;"
-        >
-        <small style="display: block; margin-top: 0.5rem; color: #666;">
-          💬 Se hai un link per le prenotazioni, incollalo qui
-        </small>
+      <div style="background: #fff; padding: 1.2rem; border-radius: 8px; border: 2px solid #2196f3;">
+        <p style="margin: 0 0 1rem 0; font-size: 1.1rem;">
+          <strong>✅ Landing page automatica</strong>
+        </p>
+        <p style="margin: 0; color: #666; font-size: 1rem;">
+          Una volta salvato, il concerto avrà una landing page dedicata su:<br>
+          <strong style="color: #2196f3;">https://<%= concert.slug || 'slug-concerto' %>.cororaro.it</strong>
+        </p>
+        <p style="margin: 1rem 0 0 0; color: #666; font-size: 0.95rem;">
+          💡 I dati del concerto (titolo, data, luogo, locandina, programma) vengono sincronizzati automaticamente con la landing page. Le prenotazioni avvengono direttamente dalla LP.
+        </p>
       </div>
     </div>
-
 
     <!-- ========== BOTTONI ========== -->
     <div style="display: flex; gap: 1.5rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid #ddd;">
@@ -268,8 +263,6 @@
 </div>
 
 <!-- Scripts -->
-<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
-<script src="/shared/js/cloudinary-widget.js"></script>
 <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
 <script src="/shared/config/editor-config.js"></script>
 
@@ -351,30 +344,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ========== CLOUDINARY LOCANDINA ==========
 function scegliLocandina() {
-  const cloudName = '<%= process.env.CLOUDINARY_CLOUD_NAME || "demo" %>';
-
-  if (typeof openCloudinaryPicker === 'undefined') {
+  if (typeof CloudinaryManager === 'undefined') {
     alert('❌ Sistema upload non disponibile. Contatta l\'amministratore.');
     return;
   }
 
-  const config = {
-    cloudName: cloudName,
-    uploadPreset: 'cororaro_concerts',
-    folder: 'cororaro/concerts'
-  };
-
-  openCloudinaryPicker(config, function(imageData) {
-    // Aggiorna campo hidden
+  CloudinaryManager.showImageDialog(function(imageData) {
+    // Aggiorna campo hidden con URL
     document.getElementById('poster_url').value = imageData.url;
 
     // Mostra preview
     document.getElementById('poster-preview').innerHTML =
       '<img src="' + imageData.url + '" alt="Locandina" style="max-width: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">' +
       '<p style="color: green; margin-top: 1rem;">✅ Locandina caricata con successo!</p>';
-  }, {
-    multiple: false,
-    cropping: false
   });
 }
 </script>

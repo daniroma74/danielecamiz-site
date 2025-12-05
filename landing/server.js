@@ -48,7 +48,15 @@ app.use(routeByDomain);
 app.use((req, res, next) => {
   if (req.isEventAdmin) {
     // Apply hybrid authentication for admin routes
-    return ensureAuthenticated(req, res, () => adminRoutes(req, res, next));
+    ensureAuthenticated(req, res, next);
+  } else {
+    next();
+  }
+});
+
+app.use((req, res, next) => {
+  if (req.isEventAdmin) {
+    return adminRoutes(req, res, next);
   }
   next();
 });

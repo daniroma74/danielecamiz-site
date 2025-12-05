@@ -1,1 +1,36 @@
-!function(){"use strict";"serviceWorker"in navigator?"localhost"!==location.hostname&&"127.0.0.1"!==location.hostname?(window.addEventListener("load",async()=>{try{const e=await navigator.serviceWorker.register("/service-worker.js",{scope:"/"});console.log("[SW] Registration successful:",e.scope),setInterval(()=>{e.update()},36e5),e.addEventListener("updatefound",()=>{const n=e.installing;console.log("[SW] New service worker found, installing..."),n.addEventListener("statechange",()=>{"installed"===n.state&&navigator.serviceWorker.controller&&function(){const e=document.createElement("div");e.className="sw-update-notification",e.innerHTML='\n      <div class="sw-update-content">\n        <p><strong>Nuovo aggiornamento disponibile!</strong></p>\n        <p>Clicca per aggiornare la pagina e vedere le ultime modifiche.</p>\n        <button onclick="window.swUpdateAndReload()">Aggiorna ora</button>\n        <button onclick="this.parentElement.parentElement.remove()">Più tardi</button>\n      </div>\n    ',document.body.appendChild(e),setTimeout(()=>{e.parentElement&&e.remove()},3e4)}()})})}catch(e){console.error("[SW] Registration failed:",e)}}),window.swUpdateAndReload=async function(){const e=await navigator.serviceWorker.getRegistration();e&&e.waiting&&(e.waiting.postMessage("SKIP_WAITING"),navigator.serviceWorker.addEventListener("controllerchange",()=>{window.location.reload()}))},window.swClearCache=async function(){const e=await navigator.serviceWorker.getRegistration();e&&e.active&&(e.active.postMessage("CLEAR_CACHE"),console.log("[SW] Cache clear requested"))}):console.log("[SW] Skipping registration on localhost"):console.log("[SW] Service Workers not supported in this browser")}();
+/**
+ * Service Worker Registration - DISABLED
+ * Service Worker is disabled to prevent caching issues with Cloudinary images
+ */
+
+(function() {
+  'use strict';
+
+  console.log('[SW] Service Worker registration is DISABLED');
+
+  // Unregister any existing service workers
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for (let registration of registrations) {
+        registration.unregister().then(function(success) {
+          if (success) {
+            console.log('[SW] Service Worker unregistered successfully');
+          }
+        });
+      }
+    });
+  }
+
+  // Clear all caches
+  if ('caches' in window) {
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          console.log('[SW] Deleting cache:', cacheName);
+          return caches.delete(cacheName);
+        })
+      );
+    });
+  }
+
+})();

@@ -150,6 +150,12 @@ export async function saveEvent(req, res) {
     const show_share_buttons = data.show_share_buttons === true || data.show_share_buttons === 1 || data.show_share_buttons === '1' ? 1 : 0;
     const booking_enabled = data.booking_enabled === true || data.booking_enabled === 1 || data.booking_enabled === '1' ? 1 : 0;
     const show_hero_title = data.show_hero_title !== undefined ? (data.show_hero_title === true || data.show_hero_title === 1 || data.show_hero_title === '1' ? 1 : 0) : 1;
+
+    console.log('=== CHECKBOX VALUES ===');
+    console.log('show_counter:', data.show_counter, '->', show_counter);
+    console.log('booking_enabled:', data.booking_enabled, '->', booking_enabled);
+    console.log('show_share_buttons:', data.show_share_buttons, '->', show_share_buttons);
+    console.log('show_hero_title:', data.show_hero_title, '->', show_hero_title);
     
     if (existingSettings) {
       await queryDB(db, `
@@ -300,34 +306,46 @@ export async function renderBookings(req, res) {
   try {
     const db = req.app.locals.db;
     const slug = req.params.slug;
-    
+
     const concert = await getOne(db, 'SELECT * FROM concerts WHERE slug = ?', [slug]);
-    
+
     if (!concert) {
       return res.status(404).send('Evento non trovato');
     }
-    
+
+    // Carica anche le landing_settings per avere max_capacity
+    const landingSettings = await getOne(db,
+      'SELECT * FROM landing_settings WHERE concert_id = ?',
+      [concert.id]
+    );
+
     const bookings = await queryDB(db,
-      `SELECT * FROM bookings 
-       WHERE event_id = ? 
+      `SELECT * FROM bookings
+       WHERE event_id = ?
        ORDER BY created_at DESC`,
       [concert.id]
     );
-    
+
     const totalSeats = bookings
       .filter(b => b.status === 'confirmed')
       .reduce((sum, b) => sum + b.seats, 0);
-    
+
     const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
-    
+
+    // Merge concert + landingSettings per avere max_capacity disponibile
+    const eventData = {
+      ...concert,
+      ...(landingSettings || {})
+    };
+
     res.render('pages/admin/bookings', {
-      event: concert,
+      event: eventData,
       bookings,
       totalSeats,
       confirmedBookings,
       title: `Prenotazioni: ${concert.title}`
     });
-    
+
   } catch (error) {
     console.error('Bookings error:', error);
     res.status(500).json({ success: false, error: error.message });

@@ -17,33 +17,33 @@
       padding: 0;
       width: 100% !important;
       min-width: 100%;
-      background-color: #0b0b0b;
+      background-color: #f5f5f5;
       font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    
+
     /* Container */
     .wrapper {
       width: 100%;
-      background-color: #0b0b0b;
+      background-color: #f5f5f5;
       padding: 40px 0;
     }
     
     .container {
       max-width: 600px;
       margin: 0 auto;
-      background-color: #121212;
+      background-color: #ffffff;
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-    
+
     /* Header */
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: {{HEADER_BG}};
       padding: 40px 30px;
       text-align: center;
     }
-    
+
     .header h1 {
       margin: 0;
       color: #ffffff;
@@ -52,7 +52,7 @@
       font-weight: 400;
       letter-spacing: 1px;
     }
-    
+
     .header p {
       margin: 10px 0 0 0;
       color: rgba(255,255,255,0.9);
@@ -62,28 +62,26 @@
     /* Content */
     .content {
       padding: 40px 30px;
-      color: #f1f1f1;
+      background-color: #ffffff;
+      color: #333333;
       font-size: 16px;
       line-height: 1.6;
     }
     
     .content h2 {
-      color: #d6b25e;
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: 28px;
       margin: 30px 0 15px;
       font-weight: 400;
     }
-    
+
     .content h3 {
-      color: #d6b25e;
       font-size: 22px;
       margin: 20px 0 10px;
     }
-    
+
     .content p {
       margin: 0 0 20px;
-      color: #f1f1f1;
     }
     
     .content a {
@@ -168,7 +166,8 @@
       text-align: center;
       color: #888;
       font-size: 12px;
-      border-top: 1px solid #2a2a2a;
+      background: {{FOOTER_BG}};
+      border-top: 1px solid #ddd;
     }
     
     .footer p {
@@ -211,8 +210,8 @@
     <div class="container">
       <!-- Header -->
       <div class="header">
-        <h1>ICNT - I Concerti nel Tempio</h1>
-        <p></p>
+        <h1>{{HEADER_TITLE}}</h1>
+        <p>{{HEADER_SUBTITLE}}</p>
       </div>
       
       <!-- Contenuto principale -->
@@ -233,6 +232,8 @@
       
       <!-- Footer legale -->
       <div class="footer">
+        {{FOOTER_CUSTOM}}
+
         <p style="margin: 0 0 15px 0; font-size: 13px; color: #aaa;">
           <strong>Stai ricevendo questa email perché sei iscritto alla newsletter di ICNT</strong>
         </p>

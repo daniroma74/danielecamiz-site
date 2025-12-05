@@ -10,29 +10,36 @@
   <!-- Meta Description -->
   <meta name="description" content="<%= event.meta_description || event.description_short || event.title %>">
   
- <% 
-    // Determina immagine migliore per social
-    const socialImage = event.social_image_override || 
-                       event.hero_image_override || 
-                       (event.poster_cloudinary_id ? 
-                         'https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1200,h_630,q_auto/' + event.poster_cloudinary_id : 
-                         '');
-    
+ <%
+    // Cache busting timestamp per forzare aggiornamento OG image
+    const cacheVersion = event.updated_at ? new Date(event.updated_at).getTime() : Date.now();
+
+    // Determina immagine migliore per social (con cache busting)
+    const socialImage = event.social_image_override ||
+                       event.hero_image_override ||
+                       (event.poster_horizontal_cloudinary ?
+                         `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1200,h_630,q_auto/${event.poster_horizontal_cloudinary}?v=${cacheVersion}` :
+                         (event.poster_cloudinary_id ?
+                           `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1200,h_630,q_auto/${event.poster_cloudinary_id}?v=${cacheVersion}` :
+                           ''));
+
     const eventUrl = `https://${event.slug}.danielecamiz.com`;
     const eventDate = new Date(event.date);
     const eventDateTime = `${event.date}T${event.starts_at || '20:00'}:00`;
-    
+
     // Calcola date per schema.org
     const startDate = new Date(`${event.date}T${event.starts_at || '20:00'}:00`);
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
     const startDateTime = startDate.toISOString().slice(0, -5);
     const endDateTime = endDate.toISOString().slice(0, -5);
-    
-    const schemaImage = event.social_image_override || 
-                        event.hero_image_override || 
-                        (event.poster_cloudinary_id ? 
-                          `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1200,h_630,q_auto/${event.poster_cloudinary_id}` : 
-                          'https://icnt.danielecamiz.com/images/default-event.jpg');
+
+    const schemaImage = event.social_image_override ||
+                        event.hero_image_override ||
+                        (event.poster_horizontal_cloudinary ?
+                          `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1200,h_630,q_auto/${event.poster_horizontal_cloudinary}?v=${cacheVersion}` :
+                          (event.poster_cloudinary_id ?
+                            `https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1200,h_630,q_auto/${event.poster_cloudinary_id}?v=${cacheVersion}` :
+                            'https://icnt.danielecamiz.com/images/default-event.jpg'));
   %>
   
   <!-- Open Graph / Facebook -->
@@ -126,6 +133,23 @@
 </head>
 <body>
 
+<!-- Banner Archivio (se evento passato) -->
+<% if (event.isArchived) { %>
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <i class="fas fa-archive" style="font-size: 1.25rem;"></i>
+      <span style="font-weight: 600; font-size: 1.05rem;">
+        Evento Archiviato - <%= new Date(event.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+      </span>
+    </div>
+    <a href="https://events-admin.danielecamiz.com/archive" style="color: white; text-decoration: underline; font-weight: 500; white-space: nowrap;">
+      <i class="fas fa-arrow-left"></i> Torna all'Archivio
+    </a>
+  </div>
+</div>
+<% } %>
+
 <!-- Hero Section -->
 <% 
   const showTitle = event.show_hero_title !== 0;
@@ -178,7 +202,7 @@
           </div>
           <% } %>
         </div>
-        
+
         <% if (event.show_counter) { %>
           <div id="countdown" class="countdown">
             <div class="countdown-item">
@@ -195,7 +219,7 @@
             </div>
           </div>
         <% } %>
-        
+
         <% if (event.booking_enabled !== 0) { %>
           <a href="#booking" class="btn-cta">
             <i class="fas fa-ticket-alt"></i> Prenota Ora

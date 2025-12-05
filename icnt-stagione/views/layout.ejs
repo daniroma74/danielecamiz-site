@@ -106,11 +106,15 @@
     }
   </style>
   
-  <!-- Main Styles - FIX #9: Assicuriamoci che i CSS siano caricati con versioning -->
-  <link rel="stylesheet" href="/public/css/style.css?v=<%= Date.now() %>">
-  <link rel="stylesheet" href="/public/css/lightbox.css?v=<%= Date.now() %>">
-  <link rel="stylesheet" href="/public/css/share.css?v=<%= Date.now() %>">
-  <link rel="stylesheet" href="/public/css/cookie-banner.css?v=<%= Date.now() %>">
+  <!-- Main Styles - Optimized for production -->
+  <% const cssPath = NODE_ENV === 'production' ? '/public/css-dist' : '/public/css'; %>
+  <% const cacheBuster = `?v=${Date.now()}`; %>
+  <link rel="stylesheet" href="<%= cssPath %>/style.css<%= cacheBuster %>">
+  <link rel="stylesheet" href="<%= cssPath %>/lightbox.css<%= cacheBuster %>">
+  <link rel="stylesheet" href="<%= cssPath %>/share.css<%= cacheBuster %>">
+  <link rel="stylesheet" href="<%= cssPath %>/cookie-banner.css<%= cacheBuster %>">
+  <!-- UX Enhancements 2025 -->
+  <link rel="stylesheet" href="/public/css/ux-enhancements.css<%= cacheBuster %>">
   
   <!-- FIX #3: PWA Icons and Manifest -->
   <link rel="icon" type="image/png" sizes="32x32" href="/public/img/icon-32.png">
@@ -214,9 +218,12 @@
     };
   </script>
   
-  <!-- Main Scripts -->
-  <script src="/public/js/app.js?v=<%= Date.now() %>" defer></script>
-  <script src="/public/js/share.js?v=<%= Date.now() %>" defer></script>
+  <!-- Main Scripts - Optimized for production -->
+  <% const jsPath = NODE_ENV === 'production' ? '/public/js-dist' : '/public/js'; %>
+  <script src="<%= jsPath %>/app.js<%= cacheBuster %>" defer></script>
+  <script src="<%= jsPath %>/share.js<%= cacheBuster %>" defer></script>
+  <!-- UX Interactions 2025 -->
+  <script src="/public/js/ux-interactions.js<%= cacheBuster %>" defer></script>
   
   <!-- Cookie Consent Handler -->
   <script>
@@ -300,7 +307,8 @@
   <script>
     if ('serviceWorker' in navigator && location.protocol === 'https:') {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        const swPath = '<%= NODE_ENV === "production" ? "/sw.min.js" : "/sw.js" %>';
+        navigator.serviceWorker.register(swPath)
           .then((registration) => {
             console.log('ServiceWorker registered:', registration.scope);
           })

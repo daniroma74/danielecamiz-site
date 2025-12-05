@@ -30,11 +30,8 @@ module.exports = (db) => {
 
     query += ' ORDER BY sort_order ASC, created_at DESC';
 
-    db.all(query, params, (err, images) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const images = db.prepare(query).all(...params);
 
       res.render('gallery-images/list', {
         title: 'Gestione Galleria',
@@ -45,7 +42,10 @@ module.exports = (db) => {
           status
         }
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // GET /admin/gallery-images/new - Show create form
@@ -81,36 +81,29 @@ module.exports = (db) => {
       ) VALUES (?, ?, ?, ?, ?, ?, 1)
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         title || null,
         caption || null,
         cloudinary_id || null,
         image_url,
         thumbnail_url || null,
         category || 'group'
-      ],
-      function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante la creazione');
-        }
+      );
 
-        res.redirect('/admin/gallery-images');
-      }
-    );
+      res.redirect('/admin/gallery-images');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante la creazione');
+    }
   });
 
   // GET /admin/gallery-images/:id/edit - Show edit form
   router.get('/gallery-images/:id/edit', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.get('SELECT * FROM gallery_images WHERE id = ?', [id], (err, image) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const image = db.prepare('SELECT * FROM gallery_images WHERE id = ?').get(id);
 
       if (!image) {
         return res.status(404).send('Immagine non trovata');
@@ -122,7 +115,10 @@ module.exports = (db) => {
         image,
         action: 'edit'
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/gallery-images/:id - Update image
@@ -149,9 +145,8 @@ module.exports = (db) => {
       WHERE id = ?
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         title || null,
         caption || null,
         cloudinary_id || null,
@@ -159,30 +154,27 @@ module.exports = (db) => {
         thumbnail_url || null,
         category || 'group',
         id
-      ],
-      (err) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante l\'aggiornamento');
-        }
+      );
 
-        res.redirect('/admin/gallery-images');
-      }
-    );
+      res.redirect('/admin/gallery-images');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
+    }
   });
 
   // POST /admin/gallery-images/:id/delete - Delete image
   router.post('/gallery-images/:id/delete', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.run('DELETE FROM gallery_images WHERE id = ?', [id], (err) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore durante l\'eliminazione');
-      }
+    try {
+      db.prepare('DELETE FROM gallery_images WHERE id = ?').run(id);
 
       res.redirect('/admin/gallery-images');
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'eliminazione');
+    }
   });
 
   // POST /admin/gallery-images/reorder - Update sort order
@@ -193,20 +185,18 @@ module.exports = (db) => {
       return res.status(400).json({ success: false, error: 'Invalid order data' });
     }
 
-    const stmt = db.prepare('UPDATE gallery_images SET sort_order = ? WHERE id = ?');
+    try {
+      const stmt = db.prepare('UPDATE gallery_images SET sort_order = ? WHERE id = ?');
 
-    order.forEach(item => {
-      stmt.run([item.sort_order, item.id]);
-    });
-
-    stmt.finalize((err) => {
-      if (err) {
-        console.error('Error updating sort order:', err);
-        return res.status(500).json({ success: false, error: err.message });
-      }
+      order.forEach(item => {
+        stmt.run(item.sort_order, item.id);
+      });
 
       res.json({ success: true });
-    });
+    } catch (err) {
+      console.error('Error updating sort order:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
   });
 
   // POST /admin/gallery-images/bulk-upload - Bulk upload from Cloudinary
@@ -217,28 +207,26 @@ module.exports = (db) => {
       return res.status(400).json({ success: false, error: 'Invalid images data' });
     }
 
-    const stmt = db.prepare(`
-      INSERT INTO gallery_images (cloudinary_id, image_url, thumbnail_url, category, is_published)
-      VALUES (?, ?, ?, ?, 1)
-    `);
+    try {
+      const stmt = db.prepare(`
+        INSERT INTO gallery_images (cloudinary_id, image_url, thumbnail_url, category, is_published)
+        VALUES (?, ?, ?, ?, 1)
+      `);
 
-    images.forEach(img => {
-      stmt.run([
-        img.cloudinary_id,
-        img.url,
-        img.thumbnail || img.url,
-        img.category || 'group'
-      ]);
-    });
-
-    stmt.finalize((err) => {
-      if (err) {
-        console.error('Error bulk uploading:', err);
-        return res.status(500).json({ success: false, error: err.message });
-      }
+      images.forEach(img => {
+        stmt.run(
+          img.cloudinary_id,
+          img.url,
+          img.thumbnail || img.url,
+          img.category || 'group'
+        );
+      });
 
       res.json({ success: true, count: images.length });
-    });
+    } catch (err) {
+      console.error('Error bulk uploading:', err);
+      res.status(500).json({ success: false, error: err.message });
+    }
   });
 
   return router;

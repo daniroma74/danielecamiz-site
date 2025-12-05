@@ -145,28 +145,6 @@ section {
   box-shadow: var(--card-shadow);
 }
 
-/* ====== SKIP LINK (Accessibility - WCAG 2.1 AA) ====== */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--accent-color);
-  color: #000;
-  padding: 8px 16px;
-  text-decoration: none;
-  font-family: var(--font-ui);
-  font-weight: 600;
-  z-index: 10000;
-  border-radius: 0 0 4px 0;
-  transition: top 0.3s;
-}
-
-.skip-link:focus {
-  top: 0;
-  outline: 3px solid var(--light-accent);
-  outline-offset: 2px;
-}
-
 /* ====== REDUCED MOTION SUPPORT ====== */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -14,17 +14,6 @@
   <%- include('../partials/header') %>
 
   <main class="admin-main">
-    <!-- TABS -->
-    <%- include('../../../shared/partials/admin-tabs', {
-      tabs: [
-        { label: 'Concerti', url: '/admin/dashboard', icon: 'calendar-alt' },
-        { label: 'Repertorio', url: '/admin/repertoire', icon: 'music' },
-        { label: 'Performers', url: '/admin/performers', icon: 'users' }
-      ],
-      currentPath: '/admin/concert',
-      baseUrl: 'admin'
-    }) %>
-
     <div class="content-header" style="margin-bottom: 2rem;">
       <h2>
         <i class="fas fa-<%= isNew ? 'plus' : 'edit' %>"></i>

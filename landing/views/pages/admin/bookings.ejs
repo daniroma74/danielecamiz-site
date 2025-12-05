@@ -380,13 +380,13 @@
         <div class="stat-label">Check-in Effettuati</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value"><%= (event.max_capacity || 200) - bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.seats || 0), 0) %></div>
+        <div class="stat-value"><%= (event.venue_capacity || 200) - bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.seats || 0), 0) %></div>
         <div class="stat-label">Posti Rimanenti</div>
       </div>
     </div>
 
-    <% 
-      const maxCapacity = event.max_capacity || 200;
+    <%
+      const maxCapacity = event.venue_capacity || 200;
       const totalSeats = bookings.filter(b => b.status === 'confirmed').reduce((sum, b) => sum + (b.seats || 0), 0);
       const fillPercentage = Math.min((totalSeats / maxCapacity) * 100, 100);
     %>

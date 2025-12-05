@@ -8,17 +8,24 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": ["press", "admin", "cms"],
+  "keywords": [
+    "press",
+    "admin",
+    "cms"
+  ],
   "author": "Daniele Camiz",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "ejs": "^3.1.9",
-    "dotenv": "^16.3.1",
-    "sqlite3": "^5.1.6",
-    "cookie-parser": "^1.4.6",
     "bcrypt": "^5.1.1",
-    "jsonwebtoken": "^9.0.2"
+    "cheerio": "^1.1.2",
+    "cloudinary": "^2.8.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

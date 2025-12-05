@@ -12,7 +12,7 @@ import {
   recalculateStats
 } from '../controllers/adminController.js';
 import { renderCheckin } from '../controllers/checkinController.js';
-import { renderArchive, renderArchivedEvent } from '../controllers/archiveController.js';
+import { renderArchive, renderArchivedEvent, renderSnapshot } from '../controllers/archiveController.js';
 
 const router = Router();
 
@@ -22,7 +22,8 @@ router.get('/dashboard', renderDashboard);
 
 // Archivio
 router.get('/archive', renderArchive);
-router.get('/archive/:slug', renderArchivedEvent);
+router.get('/archive/snapshot/:slug', renderSnapshot);  // Visualizza snapshot HTML
+// router.get('/archive/:slug', renderArchivedEvent); // Non più usato - apre subdomain direttamente
 
 // Editor
 router.get('/editor', renderEditorFromConcert);

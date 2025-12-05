@@ -96,6 +96,9 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
         <article class="video-item">
           <a class="video-thumb" href="https://www.youtube.com/watch?v=<%= v.id %>" target="_blank" rel="noopener">
             <img class="youtube-thumbnail" src="<%= v.thumbnail %>" alt="<%= safe(v.title, 'YouTube video') %>">
+            <% if (v.liveBroadcastContent === 'upcoming') { %>
+              <span class="video-badge video-badge--upcoming"><%= (lang === 'en') ? 'Coming Soon' : 'In Arrivo' %></span>
+            <% } %>
           </a>
           <h4 class="video-title">
             <a href="https://www.youtube.com/watch?v=<%= v.id %>" target="_blank" rel="noopener"><%= safe(v.title, '') %></a>
@@ -259,7 +262,7 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
 <div id="news_modal" class="news-modal hidden" aria-hidden="true">
   <div class="news-modal_backdrop" data-close="1"></div>
   <div class="news-modal_dialog" role="dialog" aria-modal="true" aria-labelledby="news_modal_title">
-    <button id="news_modal_close" class="btn" data-close="1" aria-label="Close">×</button>
+    <button id="news_modal_close" class="btn close-btn-standard" data-close="1" aria-label="Close">×</button>
     <div id="news_modal_body" class="news-modal_body"></div>
   </div>
 </div>
@@ -268,7 +271,7 @@ function safe(val, fb = '') { return (typeof val === 'string' && val.trim()) ? v
 <div id="concert_lightbox" class="concert-lightbox hidden" aria-hidden="true">
   <div class="lightbox-backdrop" data-close="1"></div>
   <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="concert_lightbox_title" tabindex="-1">
-    <button class="lightbox-close btn" data-close="1" aria-label="Close">×</button>
+    <button class="lightbox-close btn close-btn-standard" data-close="1" aria-label="Close">×</button>
     <div class="lightbox-content" id="concert_lightbox_content"></div>
   </div>
 </div>

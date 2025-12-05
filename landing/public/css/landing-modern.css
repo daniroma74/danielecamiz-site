@@ -1287,13 +1287,73 @@ body {
     grid-template-columns: 1fr;
   }
   
-  /* Performers Mobile */
+  /* Performers Mobile - COMPACT */
   .performers-grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
-  
+
   .performers-cards {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* Performer Cards Compact */
+  .performer-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .performer-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .performer-photo-round {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 0.75rem;
+    border-width: 2px;
+  }
+
+  /* Performer Cards Expanded - VERY COMPACT */
+  .performer-card-expanded {
+    border-radius: 12px;
+  }
+
+  .performer-card-header {
+    padding: 1.5rem 1rem;
+    min-height: 120px;
+  }
+
+  .performer-card-header i {
+    font-size: 2.5rem;
+  }
+
+  .performer-photo-circle {
+    width: 80px;
+    height: 80px;
+    border-width: 3px;
+  }
+
+  .performer-card-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .performer-card-content .performer-role {
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.75rem;
+  }
+
+  .performer-card-content .performer-name {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .performer-card-content .performer-instrument {
+    font-size: 0.95rem;
   }
   
   /* Program Mobile */

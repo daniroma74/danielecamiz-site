@@ -6,6 +6,55 @@ const express = require('express');
 const router = express.Router();
 const { requireAuth } = require('../middleware/auth');
 
+/**
+ * Sincronizza automaticamente i dati del concerto con la landing page
+ */
+function syncConcertToLanding(db, concertId, concertData) {
+  const {
+    title,
+    description,
+    poster_url,
+    program,
+    cause
+  } = concertData;
+
+  // Verifica se esiste già una landing
+  const existing = db.prepare('SELECT id FROM concert_landing_settings WHERE concert_id = ?').get(concertId);
+
+  // Prepara descrizione HTML
+  let descriptionHtml = '';
+  if (cause) descriptionHtml += `<h3>🌍 A sostegno di</h3><p>${cause}</p>`;
+  if (program) descriptionHtml += `<h3>🎵 Programma</h3><p>${program}</p>`;
+  if (description) descriptionHtml += `<h3>📋 Dettagli</h3><p>${description}</p>`;
+
+  if (existing) {
+    // Aggiorna
+    db.prepare(`
+      UPDATE concert_landing_settings SET
+        hero_title = ?,
+        hero_image_url = ?,
+        description_html = ?,
+        show_program = 1,
+        show_location = 1,
+        show_booking_form = 1,
+        booking_enabled = 1,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE concert_id = ?
+    `).run(title, poster_url, descriptionHtml, concertId);
+  } else {
+    // Crea nuova landing
+    db.prepare(`
+      INSERT INTO concert_landing_settings (
+        concert_id, hero_title, hero_image_url, description_html,
+        show_program, show_location, show_booking_form,
+        booking_enabled, max_seats_per_booking
+      ) VALUES (?, ?, ?, ?, 1, 1, 1, 1, 4)
+    `).run(concertId, title, poster_url, descriptionHtml);
+  }
+
+  console.log(`✅ Landing page sincronizzata per concerto ID ${concertId}`);
+}
+
 module.exports = (db) => {
   // GET /admin/concerts - List all concerts
   router.get('/concerts', requireAuth, (req, res) => {
@@ -30,33 +79,32 @@ module.exports = (db) => {
     query += ' ORDER BY date DESC LIMIT ? OFFSET ?';
     params.push(limit, offset);
 
-    // Get total count
-    db.get(countQuery, countParams, (err, countRow) => {
+    try {
+      // Get total count
+      const countRow = db.prepare(countQuery).get(...countParams);
       const total = countRow ? countRow.total : 0;
       const totalPages = Math.ceil(total / limit);
 
       // Get concerts
-      db.all(query, params, (err, concerts) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore database');
-        }
+      const concerts = db.prepare(query).all(...params);
 
-        res.render('concerts/list', {
-          title: 'Gestione Concerti',
-          user: req.session,
-          concerts: concerts || [],
-          pagination: {
-            page,
-            totalPages,
-            total
-          },
-          filters: {
-            search
-          }
-        });
+      res.render('concerts/list', {
+        title: 'Gestione Concerti',
+        user: req.session,
+        concerts: concerts || [],
+        pagination: {
+          page,
+          totalPages,
+          total
+        },
+        filters: {
+          search
+        }
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // GET /admin/concerts/new - Show create form
@@ -81,20 +129,18 @@ module.exports = (db) => {
       cause,
       program,
       description,
-      poster_url,
-      ticket_url
+      poster_url
     } = req.body;
 
     const query = `
       INSERT INTO concerts (
         title, slug, date, time, location, address, cause, program,
-        description, poster_url, ticket_url, is_published
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+        description, poster_url, is_published
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      const result = db.prepare(query).run(
         title,
         slug,
         date,
@@ -104,29 +150,27 @@ module.exports = (db) => {
         cause || null,
         program || null,
         description || null,
-        poster_url || null,
-        ticket_url || null
-      ],
-      function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante la creazione');
-        }
+        poster_url || null
+      );
 
-        res.redirect('/admin/concerts');
-      }
-    );
+      const concertId = result.lastInsertRowid;
+
+      // Sincronizza automaticamente con landing page
+      syncConcertToLanding(db, concertId, req.body);
+
+      res.redirect('/admin/concerts');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante la creazione');
+    }
   });
 
   // GET /admin/concerts/:id/edit - Show edit form
   router.get('/concerts/:id/edit', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.get('SELECT * FROM concerts WHERE id = ?', [id], (err, concert) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore database');
-      }
+    try {
+      const concert = db.prepare('SELECT * FROM concerts WHERE id = ?').get(id);
 
       if (!concert) {
         return res.status(404).send('Concerto non trovato');
@@ -138,7 +182,10 @@ module.exports = (db) => {
         concert,
         action: 'edit'
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/concerts/:id - Update concert
@@ -154,8 +201,7 @@ module.exports = (db) => {
       cause,
       program,
       description,
-      poster_url,
-      ticket_url
+      poster_url
     } = req.body;
 
     const query = `
@@ -170,14 +216,12 @@ module.exports = (db) => {
         program = ?,
         description = ?,
         poster_url = ?,
-        ticket_url = ?,
         is_published = 1
       WHERE id = ?
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         title,
         slug,
         date,
@@ -188,32 +232,30 @@ module.exports = (db) => {
         program || null,
         description || null,
         poster_url || null,
-        ticket_url || null,
         id
-      ],
-      (err) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante l\'aggiornamento');
-        }
+      );
 
-        res.redirect('/admin/concerts');
-      }
-    );
+      // Sincronizza automaticamente con landing page
+      syncConcertToLanding(db, id, req.body);
+
+      res.redirect('/admin/concerts');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
+    }
   });
 
   // POST /admin/concerts/:id/delete - Delete concert
   router.post('/concerts/:id/delete', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.run('DELETE FROM concerts WHERE id = ?', [id], (err) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Errore durante l\'eliminazione');
-      }
-
+    try {
+      db.prepare('DELETE FROM concerts WHERE id = ?').run(id);
       res.redirect('/admin/concerts');
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'eliminazione');
+    }
   });
 
   return router;

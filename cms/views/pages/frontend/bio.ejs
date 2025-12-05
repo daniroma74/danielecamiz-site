@@ -95,7 +95,7 @@
 <div id="bio_modal" class="modal modal-target" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="bio_modal_title">
   <a href="#" class="modal__backdrop" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>"></a>
   <div class="modal__dialog">
-    <a href="#" class="modal__close" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
+    <a href="#" class="modal__close close-btn-standard" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
     <div class="modal__content">
       <h3 class="modal-title" id="bio_modal_title"><%= bioTitle %></h3>
       <% if (bioIntro) { %><p><%= bioIntro %></p><% } %>
@@ -107,7 +107,7 @@
 <div id="curriculum_modal" class="modal modal-target" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="curriculum_modal_title">
   <a href="#" class="modal__backdrop" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>"></a>
   <div class="modal__dialog">
-    <a href="#" class="modal__close" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
+    <a href="#" class="modal__close close-btn-standard" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
     <div class="modal__content">
       <h3 class="modal-title" id="curriculum_modal_title"><%= cvTitle %></h3>
       <% if (cvLong) { %><div class="rich-text" id="curriculum_long"><%- cvLong %></div>
@@ -119,7 +119,7 @@
 <div id="story_modal" class="modal modal-target modal-full" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="story_modal_title">
   <a href="#" class="modal__backdrop" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>"></a>
   <div class="modal__dialog">
-    <a href="#" class="modal__close" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
+    <a href="#" class="modal__close close-btn-standard" aria-label="<%= (lang==='en'?'Close':'Chiudi') %>">×</a>
     <div class="modal__content">
       <h3 class="modal-title" id="story_modal_title"><%= storyTitle %></h3>
       <% if (storyHtml) { %><div class="rich-text" id="story_content"><%- storyHtml %></div>

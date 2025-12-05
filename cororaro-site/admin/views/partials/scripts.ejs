@@ -2,12 +2,15 @@
 <script src="/shared/cloudinary-manager/client.js"></script>
 <script>
   // Inizializza CloudinaryManager con account Coro Raro
-  CloudinaryManager.init({
+  const coroRaroCloudinaryConfig = {
     cloudName: '<%= process.env.CLOUDINARY_CLOUD_NAME %>',
     defaultFolder: 'cororaro',
     defaultPreset: 'cororaro_general',
     apiPrefix: '/admin/cloudinary'
-  });
+  };
+
+  console.log('🎵 Inizializzazione CloudinaryManager Coro Raro:', coroRaroCloudinaryConfig);
+  CloudinaryManager.init(coroRaroCloudinaryConfig);
 </script>
 
 <!-- Common scripts -->

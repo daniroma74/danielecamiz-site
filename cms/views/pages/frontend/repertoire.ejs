@@ -22,39 +22,63 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
 %>
 
 <main class="repertoire-page-new">
-  <!-- Hero Section -->
-  <section class="rep-hero">
+  <!-- Hero Section - Compact Modern -->
+  <section class="rep-hero-modern">
     <div class="rep-container">
-      <h1 class="rep-hero-title"><%= L.title || _t('repertoire.title', lang === 'en' ? 'Repertoire' : 'Repertorio') %></h1>
-      <p class="rep-hero-subtitle"><%= L.subtitle || L.claim || (lang === 'en' ? 'My musical journey' : 'Il mio percorso musicale') %></p>
+      <div class="rep-hero-content">
+        <div class="rep-hero-text">
+          <h1 class="rep-hero-title"><%= L.title || _t('repertoire.title', lang === 'en' ? 'Repertoire' : 'Repertorio') %></h1>
+          <p class="rep-hero-subtitle"><%= L.subtitle || L.claim || (lang === 'en' ? 'Explore my musical journey through numbers' : 'Esplora il mio percorso musicale attraverso i numeri') %></p>
+        </div>
 
-      <!-- Stats Cards -->
-      <div class="rep-stats-grid">
-        <div class="rep-stat-card">
-          <div class="rep-stat-number"><%= stats.total_works %></div>
-          <div class="rep-stat-label"><%= lang === 'en' ? 'Works' : 'Brani' %></div>
-        </div>
-        <div class="rep-stat-card">
-          <div class="rep-stat-number"><%= stats.total_composers %></div>
-          <div class="rep-stat-label"><%= lang === 'en' ? 'Composers' : 'Compositori' %></div>
-        </div>
-        <div class="rep-stat-card">
-          <div class="rep-stat-number"><%= stats.total_concerts %></div>
-          <div class="rep-stat-label"><%= lang === 'en' ? 'Concerts' : 'Concerti' %></div>
+        <!-- Stats Inline -->
+        <div class="rep-stats-inline">
+          <div class="rep-stat-inline">
+            <span class="rep-stat-number"><%= stats.total_works %></span>
+            <span class="rep-stat-label"><%= lang === 'en' ? 'Works' : 'Brani' %></span>
+          </div>
+          <div class="rep-stat-divider"></div>
+          <div class="rep-stat-inline">
+            <span class="rep-stat-number"><%= stats.total_composers %></span>
+            <span class="rep-stat-label"><%= lang === 'en' ? 'Composers' : 'Compositori' %></span>
+          </div>
+          <div class="rep-stat-divider"></div>
+          <div class="rep-stat-inline">
+            <span class="rep-stat-number"><%= stats.total_concerts %></span>
+            <span class="rep-stat-label"><%= lang === 'en' ? 'Concerts' : 'Concerti' %></span>
+          </div>
         </div>
       </div>
 
-      <!-- Quick Guide -->
-      <div class="rep-quick-guide">
-        <div class="rep-guide-icon"><i class="fas fa-compass"></i></div>
-        <div class="rep-guide-content">
-          <h3 class="rep-guide-title"><%= lang === 'en' ? 'Explore the Repertoire' : 'Esplora il Repertorio' %></h3>
-          <p class="rep-guide-text">
-            <%= lang === 'en'
-              ? 'Use the tabs below to discover works by different views: most performed pieces, composers with their complete catalogs, historical periods, or search through everything.'
-              : 'Usa le schede qui sotto per scoprire i brani da diverse prospettive: i più eseguiti, i compositori con i loro cataloghi completi, i periodi storici, o cerca tra tutto il repertorio.'
-            %>
-          </p>
+      <!-- Quick Access Cards -->
+      <div class="rep-quick-access">
+        <div class="rep-access-card" data-scroll-to="highlights">
+          <div class="rep-access-icon"><i class="fas fa-star"></i></div>
+          <div class="rep-access-content">
+            <h3><%= lang === 'en' ? 'Highlights' : 'In Evidenza' %></h3>
+            <p><%= lang === 'en' ? 'Most performed works' : 'Brani più eseguiti' %></p>
+          </div>
+        </div>
+        <div class="rep-access-card" data-scroll-to="composers">
+          <div class="rep-access-icon"><i class="fas fa-user-music"></i></div>
+          <div class="rep-access-content">
+            <h3><%= lang === 'en' ? 'By Composer' : 'Per Compositore' %></h3>
+            <p><%= lang === 'en' ? 'Complete catalogs' : 'Cataloghi completi' %></p>
+          </div>
+        </div>
+        <div class="rep-access-card" data-scroll-to="timeline">
+          <div class="rep-access-icon"><i class="fas fa-clock"></i></div>
+          <div class="rep-access-content">
+            <h3><%= lang === 'en' ? 'Timeline' : 'Cronologia' %></h3>
+            <p><%= lang === 'en' ? 'Historical periods' : 'Periodi storici' %></p>
+          </div>
+        </div>
+        <div class="rep-access-card" data-scroll-to="all-works">
+          <div class="rep-access-icon"><i class="fas fa-th-list"></i></div>
+          <div class="rep-access-content">
+            <h3><%= lang === 'en' ? 'All Works' : 'Tutti i Brani' %></h3>
+            <p><%= lang === 'en' ? 'Complete list' : 'Elenco completo' %></p>
+          </div>
         </div>
       </div>
     </div>
@@ -73,7 +97,7 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
 
         <div class="rep-top-composers-grid">
           <% topComposers.forEach((composer, index) => { %>
-            <div class="rep-top-composer-card" data-rank="<%= index + 1 %>">
+            <div class="rep-top-composer-card" data-rank="<%= index + 1 %>" data-composer-id="<%= composer.id %>" data-composer-name="<%= composer.name %>">
               <div class="rep-top-composer-rank"><%= index + 1 %></div>
               <div class="rep-top-composer-avatar <%= composer.portrait_url ? 'has-portrait' : '' %>">
                 <% if (composer.portrait_url) { %>
@@ -126,7 +150,7 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
           <%= lang === 'en' ? 'Artists I have performed with' : 'Artisti con cui ho collaborato' %>
         </p>
 
-        <button class="rep-collaborators-toggle" onclick="document.querySelector('.rep-collaborators').classList.toggle('expanded')">
+        <button class="rep-collaborators-toggle" id="collaboratorsToggle">
           <i class="fas fa-chevron-down"></i>
           <span class="toggle-text-show"><%= lang === 'en' ? 'Explore Collaborators' : 'Esplora Collaboratori' %></span>
           <span class="toggle-text-hide"><%= lang === 'en' ? 'Hide Collaborators' : 'Nascondi Collaboratori' %></span>
@@ -143,15 +167,14 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
 
               <% collaborators.soloistGroups.forEach((group, groupIdx) => { %>
                 <div style="margin-bottom: 20px;">
-                  <h4 style="color: #d4af37; font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid #d4af37; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 10px;"
-                      onclick="toggleSoloistGroup('soloist-group-<%= groupIdx %>')">
+                  <h4 class="soloist-group-toggle" data-group-id="soloist-group-<%= groupIdx %>" style="color: #d4af37; font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid #d4af37; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-chevron-down" id="icon-soloist-group-<%= groupIdx %>" style="font-size: 12px; transition: transform 0.3s; transform: rotate(-90deg);"></i>
                     <span><%= group.instrument %> <span style="color: #9ca3af; font-size: 14px; font-weight: 400;">(<%= group.soloists.length %>)</span></span>
                   </h4>
 
                   <div id="soloist-group-<%= groupIdx %>" class="rep-collab-list" style="display: none;">
                     <% group.soloists.forEach(soloist => { %>
-                      <div class="rep-collab-item">
+                      <div class="rep-collab-item clickable-performer" data-performer-name="<%= soloist.name %>" data-performer-role="soloist">
                         <div class="rep-collab-name"><%= soloist.name %></div>
                         <% if (group.instrument === 'Voce' && soloist.displayInstrument) { %>
                           <div class="rep-collab-instrument"><%= soloist.displayInstrument %></div>
@@ -174,7 +197,7 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
               </h3>
               <div class="rep-collab-list">
                 <% collaborators.orchestras.forEach(orchestra => { %>
-                  <div class="rep-collab-item">
+                  <div class="rep-collab-item clickable-performer" data-performer-name="<%= orchestra.name %>" data-performer-role="orchestra">
                     <div class="rep-collab-name"><%= orchestra.name %></div>
                     <div class="rep-collab-badge"><%= orchestra.concert_count %></div>
                   </div>
@@ -192,7 +215,7 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
               </h3>
               <div class="rep-collab-list">
                 <% collaborators.choruses.forEach(chorus => { %>
-                  <div class="rep-collab-item">
+                  <div class="rep-collab-item clickable-performer" data-performer-name="<%= chorus.name %>" data-performer-role="chorus">
                     <div class="rep-collab-name"><%= chorus.name %></div>
                     <div class="rep-collab-badge"><%= chorus.concert_count %></div>
                   </div>
@@ -251,7 +274,7 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
         <h3 class="rep-subsection-title"><%= lang === 'en' ? 'Most Performed Works' : 'Brani Più Eseguiti' %></h3>
         <div class="rep-works-grid">
           <% frequentlyPerformed.slice(0, 8).forEach(work => { %>
-            <div class="rep-work-card">
+            <div class="rep-work-card rep-work-row" data-work-id="<%= work.id %>" data-composer-name="<%= work.composer_name %>">
               <div class="rep-work-header">
                 <h4 class="rep-work-title">
                   <%= work.title || (lang === 'en' ? 'Untitled' : 'Senza titolo') %>
@@ -267,7 +290,11 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
               <div class="rep-work-meta">
                 <span class="rep-work-perf-count">
                   <i class="fas fa-calendar-check"></i>
-                  <%= work.performance_count %> <%= lang === 'en' ? 'performances' : 'esecuzioni' %>
+                  <% if (work.partial_performances > 0) { %>
+                    <%= work.complete_performances %> <%= lang === 'en' ? 'complete' : 'complete' %><% if (work.partial_performances > 0) { %>, <%= work.partial_performances %> <%= lang === 'en' ? 'partial' : 'parziali' %><% } %>
+                  <% } else { %>
+                    <%= work.complete_performances %> <%= lang === 'en' ? (work.complete_performances === 1 ? 'performance' : 'performances') : (work.complete_performances === 1 ? 'esecuzione' : 'esecuzioni') %>
+                  <% } %>
                 </span>
               </div>
             </div>
@@ -279,7 +306,7 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
         <h3 class="rep-subsection-title"><%= lang === 'en' ? 'Upcoming Concerts' : 'Prossimi Concerti' %></h3>
         <div class="rep-works-grid">
           <% comingSoon.slice(0, 8).forEach(work => { %>
-            <div class="rep-work-card rep-work-card-new">
+            <div class="rep-work-card rep-work-card-new rep-work-row" data-work-id="<%= work.id %>" data-composer-name="<%= work.composer_name %>">
               <div class="rep-work-header">
                 <h4 class="rep-work-title">
                   <%= work.title || (lang === 'en' ? 'Untitled' : 'Senza titolo') %>
@@ -334,7 +361,7 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
             </button>
             <div class="rep-composer-works" id="composer_<%= composer.id %>" style="display: none;">
               <% composer.works.forEach(work => { %>
-                <div class="rep-work-item <%= isUpcoming(work.id) ? 'upcoming' : '' %>">
+                <div class="rep-work-item <%= isUpcoming(work.id) ? 'upcoming' : '' %>" data-work-id="<%= work.id %>" data-composer-name="<%= composer.full_name %>">
                   <span class="rep-work-item-title">
                     <%= work.title %>
                     <% if (work.catalogue) { %>
@@ -425,7 +452,7 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
                           </h4>
                           <div class="rep-timeline-works-list">
                             <% decadeWorks.forEach(work => { %>
-                              <div class="rep-timeline-work-item">
+                              <div class="rep-timeline-work-item rep-timeline-work" data-work-id="<%= work.id %>">
                                 <span class="rep-timeline-work-year"><%= work.year %></span>
                                 <div class="rep-timeline-work-info">
                                   <div class="rep-timeline-work-title"><%= work.title %></div>
@@ -454,9 +481,9 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
       </div>
       <div class="rep-works-list">
         <% works.forEach(work => { %>
-          <div class="rep-work-row <%= isUpcoming(work.id) ? 'upcoming' : '' %>" data-search="<%= (work.title + ' ' + work.composer_name).toLowerCase() %>">
+          <div class="rep-work-row <%= isUpcoming(work.id) ? 'upcoming' : '' %>" data-search="<%= (work.title + ' ' + work.composer_name).toLowerCase() %>" data-work-id="<%= work.id %>" data-composer-name="<%= work.composer_name %>">
             <div class="rep-work-row-main">
-              <h4 class="rep-work-row-title"><%= work.title %></h4>
+              <h4 class="rep-work-row-title rep-work-title"><%= work.title %></h4>
               <p class="rep-work-row-composer"><%= work.composer_name %></p>
             </div>
             <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -477,7 +504,586 @@ const upcomingBadge = lang === 'en' ? 'Coming Soon' : 'In Programma';
   </div>
 </main>
 
+<!-- Work Concerts History Modal -->
+<div id="workConcertsModal" class="work-modal" style="display: none;">
+  <div class="work-modal-overlay"></div>
+  <div class="work-modal-content">
+    <div class="work-modal-header">
+      <h3 id="modalWorkTitle"></h3>
+      <button class="work-modal-close close-btn-standard" aria-label="Close modal">×</button>
+    </div>
+    <div class="work-modal-body">
+      <p id="modalWorkComposer" style="color: #d4af37; margin-bottom: 1.5rem; font-size: 1.1rem;"></p>
+      <h4 style="color: #f0f0f0; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-calendar-alt" style="color: #d4af37;"></i>
+        <%= lang === 'en' ? 'Concert History' : 'Storico Concerti' %>
+      </h4>
+      <div id="modalConcertsList">
+        <div class="loading-spinner" style="text-align: center; padding: 2rem;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #d4af37;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Concert Detail Modal -->
+<div id="concertDetailModal" class="work-modal" style="display: none;">
+  <div class="work-modal-overlay"></div>
+  <div class="work-modal-content">
+    <div class="work-modal-header">
+      <h3 id="concertModalTitle"></h3>
+      <button class="work-modal-close concert-modal-close close-btn-standard" aria-label="Close modal">×</button>
+    </div>
+    <div class="work-modal-body">
+      <div id="concertModalDetails">
+        <div class="loading-spinner" style="text-align: center; padding: 2rem;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #d4af37;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.work-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.work-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}
+
+.work-modal-content {
+  position: relative;
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 16px;
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease;
+}
+
+.work-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 2rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  gap: 1rem;
+}
+
+.work-modal-header h3 {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  margin: 0;
+  flex: 1;
+}
+
+.work-modal-close {
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 2rem !important;
+  font-weight: 300 !important;
+  cursor: pointer !important;
+  padding: 8px !important;
+  width: auto !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  flex-shrink: 0 !important;
+  opacity: 0.9 !important;
+}
+
+.work-modal-close:hover {
+  color: #d4af37 !important;
+  opacity: 1 !important;
+  transform: rotate(90deg) scale(1.1) !important;
+}
+
+.work-modal-close i {
+  color: #fff !important;
+  font-size: 2rem !important;
+}
+
+.work-modal-body {
+  padding: 2rem;
+  max-height: calc(80vh - 120px);
+  overflow-y: auto;
+}
+
+.concert-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(212, 175, 55, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.concert-history-item:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: #d4af37;
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.concert-history-date {
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 0.95rem;
+  min-width: 110px;
+}
+
+.concert-history-details {
+  flex: 1;
+  padding: 0 1rem;
+}
+
+.concert-history-title {
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.concert-history-location {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.concert-history-icon {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  transition: transform 0.3s, color 0.3s;
+}
+
+.concert-history-item:hover .concert-history-icon {
+  transform: translateX(4px);
+  color: var(--gold);
+}
+
+/* Make composer cards clickable */
+.rep-top-composer-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.rep-top-composer-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(212, 175, 55, 0.25);
+}
+
+.rep-work-item-title, .rep-work-title {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.rep-work-item-title:hover, .rep-work-title:hover {
+  color: var(--gold);
+}
+
+.rep-work-item {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.rep-work-item:hover {
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateX(4px);
+}
+
+.rep-work-row {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.rep-work-row:hover {
+  background: rgba(212, 175, 55, 0.05);
+  transform: translateX(4px);
+}
+
+.clickable-performer {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clickable-performer:hover {
+  background: rgba(212, 175, 55, 0.1);
+  transform: translateX(4px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .work-modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .work-modal-header {
+    padding: 1.5rem;
+  }
+
+  .work-modal-body {
+    padding: 1.5rem;
+  }
+
+  .concert-history-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .concert-history-date {
+    min-width: auto;
+  }
+
+  .concert-history-details {
+    padding: 0;
+  }
+
+  .concert-history-icon {
+    display: none;
+  }
+}
+
+/* ========== MODERN 2025 DESIGN ========== */
+
+/* Hero Modern - Compact */
+.rep-hero-modern {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  padding: 3rem 0 2rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.rep-hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  margin-bottom: 2.5rem;
+}
+
+.rep-hero-text {
+  flex: 1;
+}
+
+.rep-hero-modern .rep-hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.5px;
+}
+
+.rep-hero-modern .rep-hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Stats Inline */
+.rep-stats-inline {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.rep-stat-inline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rep-stat-inline .rep-stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.rep-stat-inline .rep-stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rep-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(212, 175, 55, 0.2);
+}
+
+/* Quick Access Cards */
+.rep-quick-access {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.rep-access-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid rgba(212, 175, 55, 0.15);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rep-access-card:hover {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2);
+}
+
+.rep-access-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+  border-radius: 10px;
+  font-size: 1.5rem;
+  color: var(--gold);
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+
+.rep-access-card:hover .rep-access-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.rep-access-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.rep-access-content p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Sticky Tabs Navigation */
+.rep-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, #1a1a1a 0%, rgba(26, 26, 26, 0.98) 100%);
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  margin: 0 -2rem 2rem;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rep-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.rep-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  background: transparent;
+  border: 2px solid rgba(212, 175, 55, 0.2);
+  border-radius: 50px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.rep-tab i {
+  font-size: 1.1rem;
+  transition: transform 0.3s;
+}
+
+.rep-tab:hover {
+  background: rgba(212, 175, 55, 0.05);
+  border-color: var(--gold);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.rep-tab.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+}
+
+.rep-tab.active i {
+  transform: scale(1.1);
+}
+
+.rep-tab-badge {
+  padding: 0.25rem 0.625rem;
+  background: rgba(212, 175, 55, 0.2);
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.rep-tab.active .rep-tab-badge {
+  background: var(--gold);
+  color: #1a1a1a;
+}
+
+.rep-tab-count {
+  padding: 0.25rem 0.625rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+.rep-view {
+  animation: fadeIn 0.4s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .rep-hero-modern {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .rep-hero-content {
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .rep-hero-modern .rep-hero-title {
+    font-size: 2rem;
+  }
+
+  .rep-stats-inline {
+    width: 100%;
+    gap: 1rem;
+    padding: 1.25rem 1rem;
+  }
+
+  .rep-stat-inline .rep-stat-number {
+    font-size: 1.75rem;
+  }
+
+  .rep-stat-inline .rep-stat-label {
+    font-size: 0.75rem;
+  }
+
+  .rep-quick-access {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .rep-access-card {
+    padding: 1.25rem;
+  }
+
+  .rep-tabs {
+    margin: 0 -1rem 1.5rem;
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+
+  .rep-tab {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+</style>
+
 <script>
+// Quick Access Cards - Smooth scroll to sections
+document.querySelectorAll('.rep-access-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const viewName = card.dataset.scrollTo;
+    // Activate the corresponding tab
+    document.querySelectorAll('.rep-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.rep-view').forEach(v => v.classList.remove('active'));
+
+    const tabBtn = document.querySelector(`.rep-tab[data-view="${viewName}"]`);
+    const viewEl = document.getElementById(viewName + 'View');
+
+    if (tabBtn) tabBtn.classList.add('active');
+    if (viewEl) {
+      viewEl.classList.add('active');
+      // Smooth scroll to tabs
+      setTimeout(() => {
+        document.querySelector('.rep-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  });
+});
+
 // Tab switching (desktop)
 document.querySelectorAll('.rep-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -586,6 +1192,508 @@ document.querySelectorAll('.rep-timeline-expand-btn').forEach(btn => {
       btn.textContent = btn.textContent.includes('Hide') ? 'View works' : 'Vedi brani';
       btn.prepend(icon);
     }
+  });
+});
+
+// Work concert history functionality
+function openWorkModal(workId, workTitle, composerName) {
+  const modal = document.getElementById('workConcertsModal');
+  const modalTitle = document.getElementById('modalWorkTitle');
+  const modalComposer = document.getElementById('modalWorkComposer');
+  const concertsList = document.getElementById('modalConcertsList');
+
+  // Set title and composer
+  modalTitle.textContent = workTitle;
+  modalComposer.textContent = composerName;
+
+  // Show modal with loading spinner
+  modal.style.display = 'flex';
+  concertsList.innerHTML = '<div class="loading-spinner" style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--gold);"></i></div>';
+
+  // Fetch concerts
+  fetch('/api/repertoire/work/' + workId)
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      if (data.success && data.performances && data.performances.length > 0) {
+        const lang = '<%= lang %>';
+        const concertsHTML = data.performances.map(function(concert) {
+          const concertDate = new Date(concert.date);
+          const dateStr = concertDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'it-IT', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+
+          const concertTitle = concert.title || (lang === 'en' ? 'Concert' : 'Concerto');
+          const concertLocation = concert.location || '';
+
+          return '<div class="concert-history-item" data-concert-id="' + concert.id + '">' +
+              '<div class="concert-history-date">' + dateStr + '</div>' +
+              '<div class="concert-history-details">' +
+                '<div class="concert-history-title">' + concertTitle + '</div>' +
+                (concertLocation ? '<div class="concert-history-location"><i class="fas fa-map-marker-alt"></i> ' + concertLocation + '</div>' : '') +
+              '</div>' +
+              '<div class="concert-history-icon">' +
+                '<i class="fas fa-chevron-right"></i>' +
+              '</div>' +
+            '</div>';
+        }).join('');
+
+        concertsList.innerHTML = concertsHTML;
+
+        // Add click handlers to concert items - open detail modal instead of navigation
+        document.querySelectorAll('.concert-history-item').forEach(function(item) {
+          item.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const concertId = this.getAttribute('data-concert-id');
+            openConcertDetailModal(concertId);
+          });
+        });
+      } else {
+        const lang = '<%= lang %>';
+        concertsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">' +
+            '<i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>' +
+            '<p>' + (lang === 'en' ? 'No concert history available' : 'Nessuno storico disponibile') + '</p>' +
+          '</div>';
+      }
+    })
+    .catch(function(error) {
+      console.error('Error fetching work concerts:', error);
+      const lang = '<%= lang %>';
+      concertsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">' +
+          '<i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #ff6b6b;"></i>' +
+          '<p>' + (lang === 'en' ? 'Error loading concert history' : 'Errore caricamento storico') + '</p>' +
+        '</div>';
+    });
+
+  // Prevent body scroll when modal is open
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWorkModal() {
+  const modal = document.getElementById('workConcertsModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// Concert detail modal functionality
+function openConcertDetailModal(concertId) {
+  const modal = document.getElementById('concertDetailModal');
+  const modalTitle = document.getElementById('concertModalTitle');
+  const modalDetails = document.getElementById('concertModalDetails');
+
+  // Show modal with loading spinner
+  modal.style.display = 'flex';
+  modalTitle.textContent = '<%= lang === "en" ? "Loading..." : "Caricamento..." %>';
+  modalDetails.innerHTML = '<div class="loading-spinner" style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--gold);"></i></div>';
+
+  // Fetch concert details
+  fetch('/api/repertoire/concert/' + concertId)
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      if (data.success && data.concert) {
+        const lang = '<%= lang %>';
+        const concert = data.concert;
+        const program = data.program || [];
+
+        // Set title
+        modalTitle.textContent = concert.title || (lang === 'en' ? 'Concert' : 'Concerto');
+
+        // Build concert details HTML
+        let detailsHTML = '<div style="margin-bottom: 2rem;">';
+
+        // Date
+        if (concert.date) {
+          const concertDate = new Date(concert.date);
+          const dateStr = concertDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'it-IT', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          detailsHTML += '<div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">' +
+              '<i class="fas fa-calendar-alt" style="color: #d4af37; font-size: 1.2rem;"></i>' +
+              '<span style="color: #f0f0f0; font-size: 1.1rem;">' + dateStr + '</span>' +
+            '</div>';
+        }
+
+        // Location
+        if (concert.location) {
+          detailsHTML += '<div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">' +
+              '<i class="fas fa-map-marker-alt" style="color: #d4af37; font-size: 1.2rem;"></i>' +
+              '<span style="color: #d0d0d0; font-size: 1rem;">' + concert.location + '</span>' +
+            '</div>';
+        }
+
+        // Performers
+        if (concert.performers) {
+          detailsHTML += '<div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.5rem;">' +
+              '<i class="fas fa-users" style="color: #d4af37; font-size: 1.2rem; margin-top: 2px;"></i>' +
+              '<span style="color: #d0d0d0; font-size: 0.95rem;">' + concert.performers + '</span>' +
+            '</div>';
+        }
+
+        detailsHTML += '</div>';
+
+        // Program
+        if (program.length > 0) {
+          detailsHTML += '<div style="border-top: 1px solid rgba(212, 175, 55, 0.2); padding-top: 1.5rem;">' +
+              '<h4 style="color: #f0f0f0; margin-bottom: 1rem; font-size: 1.2rem;">' +
+                '<i class="fas fa-list-music" style="color: #d4af37;"></i> ' +
+                (lang === 'en' ? 'Program' : 'Programma') +
+              '</h4>' +
+              '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+
+          program.forEach(function(item, idx) {
+            const workTitle = item.title || '';
+            const composerName = item.composer_name || '';
+            const catalogue = item.catalogue ? ' ' + item.catalogue : '';
+            const workKey = item.work_key ? ', ' + item.work_key : '';
+            const movementTitle = item.movement_title ? ' - ' + item.movement_title : '';
+
+            detailsHTML += '<div style="padding: 1rem; background: rgba(255, 255, 255, 0.03); border-left: 3px solid #d4af37; border-radius: 4px;">' +
+                '<div style="color: #d4af37; font-weight: 600; margin-bottom: 0.25rem;">' + composerName + '</div>' +
+                '<div style="color: #f0f0f0; font-size: 1.05rem;">' + workTitle + catalogue + workKey + movementTitle + '</div>' +
+              '</div>';
+          });
+
+          detailsHTML += '</div></div>';
+        }
+
+        modalDetails.innerHTML = detailsHTML;
+      } else {
+        const lang = '<%= lang %>';
+        modalTitle.textContent = lang === 'en' ? 'Concert Not Found' : 'Concerto Non Trovato';
+        modalDetails.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">' +
+            '<i class="fas fa-exclamation-circle" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>' +
+            '<p>' + (lang === 'en' ? 'Concert details not available' : 'Dettagli concerto non disponibili') + '</p>' +
+          '</div>';
+      }
+    })
+    .catch(function(error) {
+      console.error('Error fetching concert details:', error);
+      const lang = '<%= lang %>';
+      modalTitle.textContent = lang === 'en' ? 'Error' : 'Errore';
+      modalDetails.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">' +
+          '<i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #ff6b6b;"></i>' +
+          '<p>' + (lang === 'en' ? 'Error loading concert details' : 'Errore caricamento dettagli concerto') + '</p>' +
+        '</div>';
+    });
+
+  // Prevent body scroll when modal is open
+  document.body.style.overflow = 'hidden';
+}
+
+function closeConcertDetailModal() {
+  const modal = document.getElementById('concertDetailModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// Composer concerts modal functionality
+function openComposerConcertsModal(composerId, composerName) {
+  const modal = document.getElementById('workConcertsModal');
+  const modalTitle = document.getElementById('modalWorkTitle');
+  const modalComposer = document.getElementById('modalWorkComposer');
+  const concertsList = document.getElementById('modalConcertsList');
+
+  const lang = '<%= lang %>';
+
+  // Set title and subtitle
+  modalTitle.textContent = lang === 'en' ? 'Concert History' : 'Storico Concerti';
+  modalComposer.textContent = composerName;
+
+  // Show modal with loading spinner
+  modal.style.display = 'flex';
+  concertsList.innerHTML = '<div class="loading-spinner" style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--gold);"></i></div>';
+
+  // Fetch composer concerts
+  fetch('/api/repertoire/composer/' + composerId + '/concerts')
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      if (data.success && data.concerts && data.concerts.length > 0) {
+        const concertsHTML = data.concerts.map(function(concert) {
+          const concertDate = new Date(concert.date);
+          const dateStr = concertDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'it-IT', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+
+          const concertTitle = concert.title || (lang === 'en' ? 'Concert' : 'Concerto');
+          const concertLocation = concert.location || '';
+          const worksCount = concert.works_count || 0;
+
+          return '<div class="concert-history-item" data-concert-id="' + concert.id + '">' +
+              '<div class="concert-history-date">' + dateStr + '</div>' +
+              '<div class="concert-history-details">' +
+                '<div class="concert-history-title">' + concertTitle + '</div>' +
+                (concertLocation ? '<div class="concert-history-location"><i class="fas fa-map-marker-alt"></i> ' + concertLocation + '</div>' : '') +
+                (worksCount > 0 ? '<div style="color: #d4af37; font-size: 0.85rem; margin-top: 0.25rem;"><i class="fas fa-music"></i> ' + worksCount + ' ' + (lang === 'en' ? 'works' : 'brani') + '</div>' : '') +
+              '</div>' +
+              '<div class="concert-history-icon">' +
+                '<i class="fas fa-chevron-right"></i>' +
+              '</div>' +
+            '</div>';
+        }).join('');
+
+        concertsList.innerHTML = concertsHTML;
+
+        // Add click handlers to concert items
+        document.querySelectorAll('.concert-history-item').forEach(function(item) {
+          item.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const concertId = this.getAttribute('data-concert-id');
+            closeWorkModal();
+            setTimeout(function() {
+              openConcertDetailModal(concertId);
+            }, 300);
+          });
+        });
+      } else {
+        concertsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">' +
+            '<i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>' +
+            '<p>' + (lang === 'en' ? 'No concerts found for this composer' : 'Nessun concerto trovato per questo compositore') + '</p>' +
+          '</div>';
+      }
+    })
+    .catch(function(error) {
+      console.error('Error fetching composer concerts:', error);
+      concertsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">' +
+          '<i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #ff6b6b;"></i>' +
+          '<p>' + (lang === 'en' ? 'Error loading concerts' : 'Errore caricamento concerti') + '</p>' +
+        '</div>';
+    });
+
+  // Prevent body scroll when modal is open
+  document.body.style.overflow = 'hidden';
+}
+
+// Performer concerts modal functionality
+function openPerformerConcertsModal(performerName, performerRole) {
+  const modal = document.getElementById('workConcertsModal');
+  const modalTitle = document.getElementById('modalWorkTitle');
+  const modalComposer = document.getElementById('modalWorkComposer');
+  const concertsList = document.getElementById('modalConcertsList');
+
+  const lang = '<%= lang %>';
+  const roleNames = {
+    'soloist': lang === 'en' ? 'Soloist' : 'Solista',
+    'orchestra': lang === 'en' ? 'Orchestra' : 'Orchestra',
+    'chorus': lang === 'en' ? 'Chorus' : 'Coro'
+  };
+
+  // Set title and subtitle
+  modalTitle.textContent = lang === 'en' ? 'Concert History' : 'Storico Concerti';
+  modalComposer.textContent = performerName + (performerRole ? ' - ' + roleNames[performerRole] : '');
+
+  // Show modal with loading spinner
+  modal.style.display = 'flex';
+  concertsList.innerHTML = '<div class="loading-spinner" style="text-align: center; padding: 2rem;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--gold);"></i></div>';
+
+  // Fetch performer concerts
+  const url = '/api/repertoire/performer/concerts?name=' + encodeURIComponent(performerName) +
+              (performerRole ? '&role=' + encodeURIComponent(performerRole) : '');
+
+  fetch(url)
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      if (data.success && data.concerts && data.concerts.length > 0) {
+        const concertsHTML = data.concerts.map(function(concert) {
+          const concertDate = new Date(concert.date);
+          const dateStr = concertDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'it-IT', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+
+          const concertTitle = concert.title || (lang === 'en' ? 'Concert' : 'Concerto');
+          const concertLocation = concert.location || '';
+          const worksCount = concert.works_count || 0;
+
+          return '<div class="concert-history-item" data-concert-id="' + concert.id + '">' +
+              '<div class="concert-history-date">' + dateStr + '</div>' +
+              '<div class="concert-history-details">' +
+                '<div class="concert-history-title">' + concertTitle + '</div>' +
+                (concertLocation ? '<div class="concert-history-location"><i class="fas fa-map-marker-alt"></i> ' + concertLocation + '</div>' : '') +
+                (worksCount > 0 ? '<div style="color: #d4af37; font-size: 0.85rem; margin-top: 0.25rem;"><i class="fas fa-music"></i> ' + worksCount + ' ' + (lang === 'en' ? 'works' : 'brani') + '</div>' : '') +
+              '</div>' +
+              '<div class="concert-history-icon">' +
+                '<i class="fas fa-chevron-right"></i>' +
+              '</div>' +
+            '</div>';
+        }).join('');
+
+        concertsList.innerHTML = concertsHTML;
+
+        // Add click handlers to concert items
+        document.querySelectorAll('.concert-history-item').forEach(function(item) {
+          item.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const concertId = this.getAttribute('data-concert-id');
+            closeWorkModal();
+            setTimeout(function() {
+              openConcertDetailModal(concertId);
+            }, 300);
+          });
+        });
+      } else {
+        concertsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">' +
+            '<i class="fas fa-calendar-times" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>' +
+            '<p>' + (lang === 'en' ? 'No concerts found for this performer' : 'Nessun concerto trovato per questo artista') + '</p>' +
+          '</div>';
+      }
+    })
+    .catch(function(error) {
+      console.error('Error fetching performer concerts:', error);
+      concertsList.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">' +
+          '<i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #ff6b6b;"></i>' +
+          '<p>' + (lang === 'en' ? 'Error loading concerts' : 'Errore caricamento concerti') + '</p>' +
+        '</div>';
+    });
+
+  // Prevent body scroll when modal is open
+  document.body.style.overflow = 'hidden';
+}
+
+// Initialize on DOM load
+document.addEventListener('DOMContentLoaded', function() {
+  // Modal close handlers
+  const modal = document.getElementById('workConcertsModal');
+  const closeBtn = document.querySelector('.work-modal-close');
+  const overlay = document.querySelector('.work-modal-overlay');
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeWorkModal);
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', closeWorkModal);
+  }
+
+  // Concert detail modal close handlers
+  const concertModal = document.getElementById('concertDetailModal');
+  const concertCloseBtn = document.querySelector('.concert-modal-close');
+  const concertOverlay = concertModal ? concertModal.querySelector('.work-modal-overlay') : null;
+
+  if (concertCloseBtn) {
+    concertCloseBtn.addEventListener('click', closeConcertDetailModal);
+  }
+
+  if (concertOverlay) {
+    concertOverlay.addEventListener('click', closeConcertDetailModal);
+  }
+
+  // ESC key handler for both modals
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      if (concertModal && concertModal.style.display === 'flex') {
+        closeConcertDetailModal();
+      } else if (modal && modal.style.display === 'flex') {
+        closeWorkModal();
+      }
+    }
+  });
+
+  // Collaborators toggle
+  const collabToggle = document.getElementById('collaboratorsToggle');
+  if (collabToggle) {
+    collabToggle.addEventListener('click', function() {
+      const section = document.querySelector('.rep-collaborators');
+      if (section) {
+        section.classList.toggle('expanded');
+      }
+    });
+  }
+
+  // Work title click handlers - All Works and Composer sections
+  document.querySelectorAll('.rep-work-item').forEach(function(item) {
+    const titleEl = item.querySelector('.rep-work-item-title');
+    if (titleEl && item.dataset.workId) {
+      titleEl.style.cursor = 'pointer';
+      titleEl.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const workId = item.dataset.workId;
+        const workTitle = titleEl.textContent.trim();
+        const composerName = item.dataset.composerName || '';
+        openWorkModal(workId, workTitle, composerName);
+      });
+    }
+  });
+
+  // Work cards - Highlights and upcoming sections - ENTIRE CARD CLICKABLE
+  document.querySelectorAll('.rep-work-card').forEach(function(card) {
+    if (card.dataset.workId) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const workId = card.dataset.workId;
+        const titleEl = card.querySelector('.rep-work-title');
+        const workTitle = titleEl ? titleEl.textContent.trim() : '';
+        const composerName = card.dataset.composerName || '';
+        openWorkModal(workId, workTitle, composerName);
+      });
+    }
+  });
+
+  // All works list (fallback for rep-work-row that are not cards)
+  document.querySelectorAll('.rep-work-row:not(.rep-work-card)').forEach(function(row) {
+    const titleEl = row.querySelector('.rep-work-title');
+    if (titleEl && row.dataset.workId) {
+      titleEl.style.cursor = 'pointer';
+      titleEl.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const workId = row.dataset.workId;
+        const workTitle = titleEl.textContent.trim();
+        const composerName = row.dataset.composerName || '';
+        openWorkModal(workId, workTitle, composerName);
+      });
+    }
+  });
+
+  // Timeline view
+  document.querySelectorAll('.rep-timeline-work').forEach(function(workEl) {
+    const titleEl = workEl.querySelector('.rep-timeline-work-title');
+    if (titleEl && workEl.dataset.workId) {
+      workEl.style.cursor = 'pointer';
+      workEl.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const workId = workEl.dataset.workId;
+        const workTitle = titleEl.textContent.trim();
+        const composerEl = workEl.querySelector('.rep-timeline-work-composer');
+        const composerName = composerEl ? composerEl.textContent.trim() : '';
+        openWorkModal(workId, workTitle, composerName);
+      });
+    }
+  });
+
+  // Composer cards click handlers
+  document.querySelectorAll('.rep-top-composer-card').forEach(function(card) {
+    if (card.dataset.composerId) {
+      card.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const composerId = card.dataset.composerId;
+        const composerName = card.dataset.composerName || '';
+        openComposerConcertsModal(composerId, composerName);
+      });
+    }
+  });
+
+  // Soloist group toggle handlers
+  document.querySelectorAll('.soloist-group-toggle').forEach(function(toggle) {
+    toggle.addEventListener('click', function() {
+      const groupId = this.getAttribute('data-group-id');
+      toggleSoloistGroup(groupId);
+    });
+  });
+
+  // Performer click handlers (soloists, orchestras, choruses)
+  document.querySelectorAll('.clickable-performer').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const performerName = this.getAttribute('data-performer-name');
+      const performerRole = this.getAttribute('data-performer-role');
+      openPerformerConcertsModal(performerName, performerRole);
+    });
   });
 });
 </script>

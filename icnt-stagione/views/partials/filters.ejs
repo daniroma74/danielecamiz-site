@@ -1,5 +1,141 @@
-<div class="container filters">
-  <a class="chip <%= filter==='all'?'active':'' %>" href="/stagione/<%= code %>?f=all">Tutto</a>
-  <a class="chip <%= filter==='icnt'?'active':'' %>" href="/stagione/<%= code %>?f=icnt">ICNT</a>
-  <a class="chip <%= filter==='msc'?'active':'' %>" href="/stagione/<%= code %>?f=msc">MSC</a>
+<div class="filters-container">
+  <div class="filters-label">Filtra per:</div>
+  <div class="filters-chips">
+    <a class="filter-chip <%= filter==='all'?'active':'' %>" href="/stagione/<%= code %>?f=all">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 8h12M8 2v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>Tutti i concerti</span>
+      <span class="filter-count"><%= data.allCount %></span>
+    </a>
+
+    <a class="filter-chip <%= filter==='icnt'?'active':'' %>" href="/stagione/<%= code %>?f=icnt">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 1l1.5 3 3.5.5-2.5 2.5.5 3.5L8 9l-3 1.5.5-3.5L3 4.5l3.5-.5L8 1z"/>
+      </svg>
+      <span>Solo ICNT</span>
+      <span class="filter-count"><%= events.filter(e => !e.mscNumber).length %></span>
+    </a>
+
+    <a class="filter-chip <%= filter==='msc'?'active':'' %>" href="/stagione/<%= code %>?f=msc">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M3 1v6l5 3 5-3V1M3 7v6l5 3 5-3V7"/>
+      </svg>
+      <span>Mozart Challenge</span>
+      <span class="filter-count"><%= events.filter(e => e.mscNumber).length %></span>
+    </a>
+  </div>
 </div>
+
+<style>
+.filters-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-lg);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.filters-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filters-chips {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.filter-chip svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.filter-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-active);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.filter-chip:hover svg {
+  opacity: 1;
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  border-color: transparent;
+  color: #000;
+  font-weight: 600;
+}
+
+.filter-chip.active svg {
+  opacity: 1;
+}
+
+.filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-xs);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: var(--space-xxs);
+}
+
+.filter-chip.active .filter-count {
+  background: rgba(0, 0, 0, 0.3);
+  color: #000;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .filters-chips {
+    width: 100%;
+  }
+
+  .filter-chip {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+}
+</style>

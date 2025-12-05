@@ -3,15 +3,15 @@ import { getOne, queryDB } from '../config/database.js';
 
 export async function getEventBySlug(db, slug) {
   const event = await getOne(db, `
-    SELECT c.*, 
+    SELECT c.*,
            ls.*,
-           (SELECT COALESCE(SUM(seats), 0) FROM bookings 
+           (SELECT COALESCE(SUM(seats), 0) FROM bookings
             WHERE event_id = c.id AND status = 'confirmed') as booking_count
     FROM concerts c
     LEFT JOIN landing_settings ls ON ls.concert_id = c.id
     WHERE c.slug = ?
   `, [slug]);
-  
+
   if (!event) return null;
   
   // ✅ CARICA PROGRAMMA CON SOLISTI
@@ -113,22 +113,29 @@ export async function getEventBySlug(db, slug) {
 export async function renderLanding(req, res, next) {
   try {
     const db = req.app.locals.db;
-    let slug = req.headers.host?.split('.')[0] || req.query.event || 'default';
-    
+    // ✅ Rimuovi porta dall'host prima dello split
+    const hostWithoutPort = req.headers.host?.split(':')[0] || '';
+    let slug = hostWithoutPort.split('.')[0] || req.query.event || 'default';
+
     // Gestisci sottodomini speciali
     if (['www', 'staging', 'danielecamiz-site', 'events-admin', 'localhost'].includes(slug)) {
       slug = req.query.event || 'default';
     }
-    
+
     const event = await getEventBySlug(db, slug);
-    
+
     if (!event) {
       return res.status(404).render('pages/error', {
         status: 404,
         message: 'Evento non trovato'
       });
     }
-    
+
+    // Determina se l'evento è archiviato
+    const eventDate = new Date(event.date);
+    const now = new Date();
+    event.isArchived = eventDate < now;
+
     res.render('pages/landing', { event });
   } catch (error) {
     console.error('Landing error:', error);

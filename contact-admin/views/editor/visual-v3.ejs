@@ -531,10 +531,26 @@
                     </div>
                 </div>
 
+                <!-- CATEGORY TABS -->
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.5rem;">
+                    <button @click="currentCategory = 'highlight'" :class="{ 'btn': true, 'btn-primary': currentCategory === 'highlight', 'btn-secondary': currentCategory !== 'highlight' }">
+                        ⭐ In Evidenza
+                    </button>
+                    <button @click="currentCategory = 'social'" :class="{ 'btn': true, 'btn-primary': currentCategory === 'social', 'btn-secondary': currentCategory !== 'social' }">
+                        📱 Social
+                    </button>
+                    <button @click="currentCategory = 'contact'" :class="{ 'btn': true, 'btn-primary': currentCategory === 'contact', 'btn-secondary': currentCategory !== 'contact' }">
+                        ✉️ Contatti
+                    </button>
+                    <button @click="currentCategory = 'extra'" :class="{ 'btn': true, 'btn-primary': currentCategory === 'extra', 'btn-secondary': currentCategory !== 'extra' }">
+                        🔗 Extra
+                    </button>
+                </div>
+
                 <!-- VISUAL DRAG & DROP EDITOR -->
                 <div class="visual-editor">
                     <div class="visual-editor-header">
-                        <h2>📁 Gestione Gruppi e Link (Linktree-style)</h2>
+                        <h2>📁 Gestione {{ getCategoryLabel(currentCategory) }}</h2>
                     </div>
 
                     <!-- CREATE NEW GROUP -->
@@ -639,46 +655,64 @@
                         <p class="bio">{{ settings.bio_it || 'Breve biografia...' }}</p>
                     </div>
 
-                    <!-- Preview Groups -->
-                    <div class="section" v-if="visibleHighlights.length > 0">
-                        <h2 class="section-title">In Evidenza</h2>
+                    <!-- Preview for current category -->
+                    <div class="section" v-if="visibleLinksInCategory.length > 0">
+                        <h2 class="section-title">{{ getCategoryLabel(currentCategory) }}</h2>
 
-                        <!-- Ungrouped links -->
-                        <div v-if="getVisibleLinksInGroup(null).length > 0" class="highlight-group">
-                            <div class="highlights-grid">
-                                <a v-for="link in getVisibleLinksInGroup(null)"
+                        <!-- HIGHLIGHTS: Grid with thumbnails -->
+                        <template v-if="currentCategory === 'highlight'">
+                            <!-- Ungrouped links -->
+                            <div v-if="getVisibleLinksInGroup(null).length > 0" class="highlight-group">
+                                <div class="highlights-grid">
+                                    <a v-for="link in getVisibleLinksInGroup(null)"
+                                       :key="link.id"
+                                       :href="link.url || '#'"
+                                       target="_blank"
+                                       class="highlight-card">
+                                        <img v-if="getThumbnail(link)"
+                                             :src="getThumbnail(link)"
+                                             :alt="link.title_it"
+                                             class="highlight-thumbnail"
+                                             @error="$event.target.style.display='none'">
+                                        <span class="link-text">{{ link.title_it || 'Link' }}</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Grouped links -->
+                            <div v-for="group in visibleGroups" :key="group.id" class="highlight-group">
+                                <h3 class="group-title">{{ group.name }}</h3>
+                                <div class="highlights-grid">
+                                    <a v-for="link in getVisibleLinksInGroup(group.id)"
+                                       :key="link.id"
+                                       :href="link.url || '#'"
+                                       target="_blank"
+                                       class="highlight-card">
+                                        <img v-if="getThumbnail(link)"
+                                             :src="getThumbnail(link)"
+                                             :alt="link.title_it"
+                                             class="highlight-thumbnail"
+                                             @error="$event.target.style.display='none'">
+                                        <span class="link-text">{{ link.title_it || 'Link' }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- SOCIAL/CONTACT/EXTRA: Button list -->
+                        <template v-else>
+                            <div class="links-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <a v-for="link in visibleLinksInCategory"
                                    :key="link.id"
                                    :href="link.url || '#'"
                                    target="_blank"
-                                   class="highlight-card">
-                                    <img v-if="getThumbnail(link)"
-                                         :src="getThumbnail(link)"
-                                         :alt="link.title_it"
-                                         class="highlight-thumbnail"
-                                         @error="$event.target.style.display='none'">
-                                    <span class="link-text">{{ link.title_it || 'Link' }}</span>
+                                   class="link-button"
+                                   style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: white; border: 2px solid #e0e0e0; border-radius: 12px; text-decoration: none; color: #2c3e50; transition: all 0.2s;">
+                                    <img v-if="link.icon" :src="`/contact-public/img/icons/${link.icon}`" style="width: 24px; height: 24px;">
+                                    <span style="flex: 1; font-weight: 600;">{{ link.title_it || 'Link' }}</span>
                                 </a>
                             </div>
-                        </div>
-
-                        <!-- Grouped links -->
-                        <div v-for="group in visibleGroups" :key="group.id" class="highlight-group">
-                            <h3 class="group-title">{{ group.name }}</h3>
-                            <div class="highlights-grid">
-                                <a v-for="link in getVisibleLinksInGroup(group.id)"
-                                   :key="link.id"
-                                   :href="link.url || '#'"
-                                   target="_blank"
-                                   class="highlight-card">
-                                    <img v-if="getThumbnail(link)"
-                                         :src="getThumbnail(link)"
-                                         :alt="link.title_it"
-                                         class="highlight-thumbnail"
-                                         @error="$event.target.style.display='none'">
-                                    <span class="link-text">{{ link.title_it || 'Link' }}</span>
-                                </a>
-                            </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -700,7 +734,8 @@
             data() {
                 return {
                     settings: <%- JSON.stringify(settings) %>,
-                    links: <%- JSON.stringify(links.filter(l => l.category === 'highlight')) %>,
+                    allLinks: <%- JSON.stringify(links) %>,
+                    currentCategory: 'highlight',
                     groups: <%- JSON.stringify(groups) %>,
                     saveStatus: '',
                     saveTimeout: null,
@@ -712,8 +747,14 @@
                 };
             },
             computed: {
+                links() {
+                    return this.allLinks.filter(l => l.category === this.currentCategory);
+                },
+                visibleLinksInCategory() {
+                    return this.links.filter(l => l.visible);
+                },
                 visibleHighlights() {
-                    return this.links.filter(l => l.visible && l.category === 'highlight');
+                    return this.allLinks.filter(l => l.visible && l.category === 'highlight');
                 },
                 visibleGroups() {
                     return this.groups
@@ -722,6 +763,14 @@
                 },
                 sortedGroups() {
                     return [...this.groups].sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
+                }
+            },
+            watch: {
+                currentCategory() {
+                    // Re-initialize drag & drop when category changes
+                    this.$nextTick(() => {
+                        this.initDragAndDrop();
+                    });
                 }
             },
             mounted() {
@@ -985,6 +1034,15 @@
                         console.error('Load groups error:', error);
                     }
                 },
+                getCategoryLabel(category) {
+                    const labels = {
+                        'highlight': 'In Evidenza',
+                        'social': 'Social',
+                        'contact': 'Contatti',
+                        'extra': 'Extra'
+                    };
+                    return labels[category] || category;
+                },
                 addLinkToGroup(groupId) {
                     const maxOrder = Math.max(...this.links.map(l => l.order_index || 0), 0);
                     const newLink = {
@@ -992,14 +1050,14 @@
                         title_it: 'Nuovo Link',
                         title_en: 'New Link',
                         url: 'https://example.com',
-                        category: 'highlight',
+                        category: this.currentCategory,
                         icon: 'internet-gold.svg',
                         visible: true,
                         group_id: groupId,
                         order_index: maxOrder + 1
                     };
-                    this.links.push(newLink);
-                    console.log('[AddLink] Created new link in group:', groupId);
+                    this.allLinks.push(newLink);
+                    console.log('[AddLink] Created new link in category:', this.currentCategory, 'group:', groupId);
                 },
                 async saveLink(link) {
                     try {
@@ -1039,9 +1097,9 @@
                 async deleteLink(id) {
                     if (!confirm('Eliminare questo link?')) return;
 
-                    const index = this.links.findIndex(l => l.id === id);
+                    const index = this.allLinks.findIndex(l => l.id === id);
                     if (index > -1) {
-                        this.links.splice(index, 1);
+                        this.allLinks.splice(index, 1);
                     }
 
                     if (id > 0) {

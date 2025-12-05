@@ -48,9 +48,17 @@
     if (!opts.preset) throw new Error('Preset Cloudinary mancante');
     formData.append('upload_preset', opts.preset);
 
-    // Solo folder senza anno per evitare errori con preset
-    if (opts.folder) formData.append('folder', opts.folder);
-    if (opts.public_id) formData.append('public_id', opts.public_id);
+    // IMPORTANTE: Passa solo 'folder' che andrà nel public_id esattamente come specificato
+    // Il preset NON deve avere configurazioni "Folder" che aggiungono /year/ o altro
+    // Se il preset ha una config Folder, questa sovrascrive il parametro folder qui passato
+    if (opts.folder) {
+      formData.append('folder', opts.folder);
+    }
+
+    // public_id completo sovrascrive completamente folder+filename
+    if (opts.public_id) {
+      formData.append('public_id', opts.public_id);
+    }
 
     // Determine resource type (image or raw for documents)
     const resourceType = opts.resourceType || 'image';
@@ -118,6 +126,10 @@
   // ============================================
 
   function showImageDialog(callback, options = {}) {
+    console.log('🎵 showImageDialog chiamato con options:', options);
+    console.log('🎵 DEFAULT_FOLDER corrente:', DEFAULT_FOLDER);
+    console.log('🎵 DEFAULT_PRESET corrente:', DEFAULT_PRESET);
+
     const folder = options.folder || '';
     const preset = options.preset || DEFAULT_PRESET;
     const resourceType = options.resourceType || 'image';
@@ -223,7 +235,8 @@
       fileInput.setAttribute('accept', 'image/*');
     }
 
-    let currentFolder = folder || DEFAULT_FOLDER;
+    // ✅ Usa DEFAULT_FOLDER dinamico configurato da init(), non il fallback hardcoded
+    let currentFolder = folder || options.folder || DEFAULT_FOLDER;
     let selectedImage = null;
 
     // ============================================

@@ -58,11 +58,11 @@
       <div style="display: flex; align-items: center; gap: 1rem;">
         <i class="fas fa-archive"></i>
         <span>
-          Evento Archiviato - 
-          <%= new Date(event.date).toLocaleDateString('it-IT', { 
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric' 
+          Evento Archiviato -
+          <%= new Date(archive.date).toLocaleDateString('it-IT', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
           }) %>
         </span>
       </div>
@@ -73,52 +73,52 @@
   </div>
 
   <!-- Hero Section -->
-  <section class="hero" style="background-image: url('https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1920,h_800,q_auto,e_grayscale/<%= event.poster_cloudinary_id || 'placeholder' %>')">
+  <section class="hero" style="background-image: url('https://res.cloudinary.com/dnwhnz2xy/image/upload/c_fill,w_1920,h_800,q_auto,e_grayscale/<%= archive.poster_cloudinary_id || 'placeholder' %>')">
     <div class="hero-overlay">
       <div class="hero-content">
         <div class="event-date-badge">
-          <%= new Date(event.date).toLocaleDateString('it-IT', { 
-            weekday: 'long', 
-            day: 'numeric', 
-            month: 'long', 
-            year: 'numeric' 
+          <%= new Date(archive.date).toLocaleDateString('it-IT', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
           }) %>
         </div>
-        <h1 class="event-title"><%= event.title %></h1>
-        <% if (event.subtitle) { %>
-          <p class="event-subtitle"><%= event.subtitle %></p>
+        <h1 class="event-title"><%= archive.title %></h1>
+        <% if (archive.subtitle) { %>
+          <p class="event-subtitle"><%= archive.subtitle %></p>
         <% } %>
         <div class="event-meta">
-          <span><i class="fas fa-clock"></i> <%= event.starts_at || '20:00' %></span>
-          <span><i class="fas fa-map-marker-alt"></i> <%= event.location %></span>
+          <span><i class="fas fa-clock"></i> <%= archive.starts_at || '20:00' %></span>
+          <span><i class="fas fa-map-marker-alt"></i> <%= archive.location %></span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Performers -->
-  <% if (event.performers.conductor || event.performers.orchestra || event.performers.soloists.length > 0) { %>
+  <% if (archive.performers.conductor || archive.performers.orchestra || archive.performers.soloists.length > 0) { %>
     <section class="performers-section">
       <div class="container">
         <h2>Interpreti</h2>
-        
-        <% if (event.performers.conductor) { %>
+
+        <% if (archive.performers.conductor) { %>
           <div class="performer">
-            <strong>Direttore:</strong> <%= event.performers.conductor %>
+            <strong>Direttore:</strong> <%= archive.performers.conductor %>
           </div>
         <% } %>
-        
-        <% if (event.performers.orchestra) { %>
+
+        <% if (archive.performers.orchestra) { %>
           <div class="performer">
-            <strong>Orchestra:</strong> <%= event.performers.orchestra %>
+            <strong>Orchestra:</strong> <%= archive.performers.orchestra %>
           </div>
         <% } %>
-        
-        <% if (event.performers.soloists.length > 0) { %>
+
+        <% if (archive.performers.soloists.length > 0) { %>
           <div class="soloists">
             <strong>Solisti:</strong>
             <ul>
-              <% event.performers.soloists.forEach(soloist => { %>
+              <% archive.performers.soloists.forEach(soloist => { %>
                 <li><%= soloist.name %><% if (soloist.instrument) { %> (<%= soloist.instrument %>)<% } %></li>
               <% }) %>
             </ul>
@@ -129,12 +129,12 @@
   <% } %>
 
   <!-- Program -->
-  <% if (event.program && event.program.length > 0) { %>
+  <% if (archive.program && archive.program.length > 0) { %>
     <section class="program-section">
       <div class="container">
         <h2>Programma</h2>
         <div class="program-list">
-          <% event.program.forEach(work => { %>
+          <% archive.program.forEach(work => { %>
             <div class="program-item">
               <div class="composer"><%= work.composer %></div>
               <div class="work-title">
@@ -165,23 +165,23 @@
       </div>
       <div class="booking-stats" style="text-align: center; padding: 2rem;">
         <p style="font-size: 1.2rem; color: #666;">
-          <strong><%= event.bookingStats.count %></strong> persone hanno partecipato<br>
-          (<strong><%= event.bookingStats.seats %></strong> posti occupati)
+          <strong><%= archive.bookingStats.count %></strong> persone hanno partecipato<br>
+          (<strong><%= archive.bookingStats.seats %></strong> posti occupati)
         </p>
       </div>
     </div>
   </section>
 
   <!-- Gallery (se presente) -->
-  <% if (event.gallery_images) { %>
+  <% if (archive.gallery_images) { %>
     <section class="gallery-section">
       <div class="container">
         <h2>Galleria</h2>
         <div class="gallery-grid">
-          <% 
-            const images = typeof event.gallery_images === 'string' 
-              ? JSON.parse(event.gallery_images) 
-              : event.gallery_images;
+          <%
+            const images = typeof archive.gallery_images === 'string'
+              ? JSON.parse(archive.gallery_images)
+              : archive.gallery_images;
             
             images.forEach(img => { 
           %>

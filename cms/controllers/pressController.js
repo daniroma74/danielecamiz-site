@@ -110,18 +110,21 @@ async function loadPressFromDb(lang = 'it') {
     const quotesRows = await new Promise((resolve, reject) => {
       db.all(
         `SELECT id,
+                CASE WHEN ? = 'en' THEN title_en ELSE title_it END as title,
+                CASE WHEN ? = 'en' THEN description_en ELSE description_it END as description,
                 CASE WHEN ? = 'en' THEN quote_en ELSE quote_it END as quote,
                 source,
-                CASE WHEN ? = 'en' THEN source_role_en ELSE source_role_it END as author,
+                CASE WHEN ? = 'en' THEN author_en ELSE author_it END as author,
+                CASE WHEN ? = 'en' THEN source_role_en ELSE source_role_it END as author_role,
+                source_logo_cloudinary_id,
                 published_date as date,
                 url,
                 is_featured as interview,
-                display_order,
                 created_at
          FROM press_quotes
          WHERE is_published = 1
-         ORDER BY display_order ASC, CASE WHEN published_date IS NULL THEN 1 ELSE 0 END, published_date DESC, created_at DESC`,
-        [lang, lang],
+         ORDER BY published_date DESC`,
+        [lang, lang, lang, lang, lang],
         (err, r) => (err ? reject(err) : resolve(r || []))
       );
     });
@@ -142,10 +145,14 @@ async function loadPressFromDb(lang = 'it') {
 
     const mappedQuotes = quotesRows.map(r => ({
       id: r.id,
+      title: r.title || '',
+      description: r.description || '',
       quote: r.quote || '',
       source: r.source || '',
       author: r.author || '',
+      author_role: r.author_role || '',
       link: r.url || '',
+      source_logo_cloudinary_id: r.source_logo_cloudinary_id || '',
       interview: r.interview ? true : false,
       icon: r.interview ? '✦' : '',
       date: r.date || r.created_at,

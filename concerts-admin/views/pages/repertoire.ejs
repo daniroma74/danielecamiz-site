@@ -18,17 +18,6 @@
 
   <!-- MAIN CONTENT -->
   <main class="admin-main">
-    <!-- TABS -->
-    <%- include('../../../shared/partials/admin-tabs', {
-      tabs: [
-        { label: 'Concerti', url: '/admin/dashboard', icon: 'calendar-alt' },
-        { label: 'Repertorio', url: '/admin/repertoire', icon: 'music' },
-        { label: 'Performers', url: '/admin/performers', icon: 'users' }
-      ],
-      currentPath: '/admin/repertoire',
-      baseUrl: 'admin'
-    }) %>
-
     <!-- ACTION BUTTON -->
     <div style="display: flex; justify-content: flex-end; margin-bottom: 1.5rem;">
       <button onclick="showAddWork()" class="btn btn-primary">
@@ -128,6 +117,8 @@
             </button>
           </div>
           <div class="composer-works" id="composer-works-<%= group.composer_id %>" style="<%= index === 0 ? '' : 'display: none;' %>">
+
+            <!-- DESKTOP TABLE VIEW -->
             <div class="works-table-container">
               <table class="works-table">
                 <thead>
@@ -207,11 +198,83 @@
                 </tbody>
               </table>
             </div>
+
+            <!-- MOBILE CARD VIEW -->
+            <div class="works-mobile-cards">
+              <% group.works.forEach(work => { %>
+                <div class="work-mobile-card">
+                  <div class="work-mobile-card-header">
+                    <div class="work-mobile-title">
+                      <strong><%= work.title %></strong>
+                      <% if (work.subtitle) { %>
+                        <small><%= work.subtitle %></small>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <div class="work-mobile-meta">
+                    <% if (work.catalogue) { %>
+                      <span class="work-catalogue"><%= work.catalogue %></span>
+                    <% } %>
+                    <span class="category-badge">
+                      <%= work.category_label || 'Non categorizzato' %>
+                    </span>
+                  </div>
+
+                  <% if (work.past_count > 0 || work.future_count > 0) { %>
+                    <div class="work-mobile-stats">
+                      <% if (work.past_count > 0) { %>
+                        <span class="stat-badge past clickable concert-count-badge"
+                              data-work-id="<%= work.id %>"
+                              data-work-title="<%= work.title.replace(/"/g, '&quot;') %>"
+                              title="Esecuzioni passate">
+                          <i class="fas fa-check-circle"></i>
+                          <%= work.past_count %>
+                        </span>
+                      <% } %>
+                      <% if (work.future_count > 0) { %>
+                        <span class="stat-badge future clickable concert-count-badge"
+                              data-work-id="<%= work.id %>"
+                              data-work-title="<%= work.title.replace(/"/g, '&quot;') %>"
+                              title="Concerti futuri">
+                          <i class="fas fa-calendar-plus"></i>
+                          <%= work.future_count %>
+                        </span>
+                      <% } %>
+                    </div>
+                  <% } %>
+
+                  <div class="work-mobile-actions">
+                    <button onclick="editWork(<%= work.id %>)"
+                            class="btn-icon"
+                            title="Modifica">
+                      <i class="fas fa-edit"></i>
+                      <span>Modifica</span>
+                    </button>
+                    <button onclick="showWorkDetails(<%= work.id %>)"
+                            class="btn-icon btn-movements"
+                            title="Dettagli">
+                      <i class="fas fa-list"></i>
+                      <span>Dettagli</span>
+                    </button>
+                    <button onclick="deleteWork(<%= work.id %>, '<%= work.title.replace(/'/g, "\\'") %>')"
+                            class="btn-icon btn-danger"
+                            title="Elimina">
+                      <i class="fas fa-trash"></i>
+                      <span>Elimina</span>
+                    </button>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+
           </div>
         </div>
       <% }) %>
     <% } else { %>
       <!-- FLAT VIEW (with filters) -->
+
+      <!-- DESKTOP TABLE VIEW -->
       <div class="works-table-container">
         <table class="works-table">
           <thead>
@@ -309,6 +372,91 @@
             <% } %>
           </tbody>
         </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW -->
+      <div class="works-mobile-cards">
+        <% if (works && works.length > 0) { %>
+          <% works.forEach(work => { %>
+            <div class="work-mobile-card">
+              <div class="work-mobile-card-header">
+                <div class="work-mobile-title">
+                  <strong><%= work.title %></strong>
+                  <% if (work.subtitle) { %>
+                    <small><%= work.subtitle %></small>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="work-mobile-composer">
+                <i class="fas fa-user-tie"></i>
+                <%= work.composer_name || work.composer_short || '-' %>
+              </div>
+
+              <div class="work-mobile-meta">
+                <% if (work.catalogue) { %>
+                  <span class="work-catalogue"><%= work.catalogue %></span>
+                <% } %>
+                <span class="category-badge">
+                  <%= work.category_label || 'Non categorizzato' %>
+                </span>
+              </div>
+
+              <% if (work.past_count > 0 || work.future_count > 0) { %>
+                <div class="work-mobile-stats">
+                  <% if (work.past_count > 0) { %>
+                    <span class="stat-badge past clickable concert-count-badge"
+                          data-work-id="<%= work.id %>"
+                          data-work-title="<%= work.title.replace(/"/g, '&quot;') %>"
+                          title="Esecuzioni passate">
+                      <i class="fas fa-check-circle"></i>
+                      <%= work.past_count %>
+                    </span>
+                  <% } %>
+                  <% if (work.future_count > 0) { %>
+                    <span class="stat-badge future clickable concert-count-badge"
+                          data-work-id="<%= work.id %>"
+                          data-work-title="<%= work.title.replace(/"/g, '&quot;') %>"
+                          title="Concerti futuri">
+                      <i class="fas fa-calendar-plus"></i>
+                      <%= work.future_count %>
+                    </span>
+                  <% } %>
+                </div>
+              <% } %>
+
+              <div class="work-mobile-actions">
+                <button onclick="editWork(<%= work.id %>)"
+                        class="btn-icon"
+                        title="Modifica">
+                  <i class="fas fa-edit"></i>
+                  <span>Modifica</span>
+                </button>
+                <button onclick="showWorkDetails(<%= work.id %>)"
+                        class="btn-icon btn-movements"
+                        title="Dettagli">
+                  <i class="fas fa-list"></i>
+                  <span>Dettagli</span>
+                </button>
+                <button onclick="deleteWork(<%= work.id %>, '<%= work.title.replace(/'/g, "\\'") %>')"
+                        class="btn-icon btn-danger"
+                        title="Elimina">
+                  <i class="fas fa-trash"></i>
+                  <span>Elimina</span>
+                </button>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="empty-state" style="padding: 40px 20px;">
+            <i class="fas fa-music fa-3x"></i>
+            <h3>Nessun brano trovato</h3>
+            <p>Aggiungi il primo brano al repertorio</p>
+            <button onclick="showAddWork()" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Nuovo Brano
+            </button>
+          </div>
+        <% } %>
       </div>
     <% } %>
 

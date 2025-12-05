@@ -336,8 +336,8 @@ router.post('/concerts', async (req, res, next) => {
     const isFuture = selectedDate >= today ? 1 : 0;
     
     const result = await dbPromise.run(
-      `INSERT INTO concerts 
-       (title, subtitle, date, starts_at, location, slug, 
+      `INSERT INTO concerts
+       (title, subtitle, date, starts_at, location, slug,
         description_short, description_html,
         is_future, program_notes, program_details,
         poster_vertical_cloudinary, poster_horizontal_cloudinary, tags)
@@ -348,7 +348,7 @@ router.post('/concerts', async (req, res, next) => {
         date,
         starts_at || '20:00',
         location,
-        isFuture ? slug : null,
+        slug || null,  // ✅ FIX: Permetti slug anche per eventi passati
         description_short || null,
         description_html || null,
         isFuture,
@@ -531,7 +531,7 @@ router.put('/concerts/:id', async (req, res, next) => {
         date,
         starts_at || '20:00',
         location,
-        isFuture ? slug : null,
+        slug || null,  // ✅ FIX: Mantieni slug anche per eventi passati
         description_short || null,
         description_html || null,
         isFuture,

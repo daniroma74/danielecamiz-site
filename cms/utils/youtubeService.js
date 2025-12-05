@@ -76,7 +76,9 @@ function normalizeItems(json) {
       title: it.snippet?.title || '',
       thumbnail: it.snippet?.thumbnails?.medium?.url
         || it.snippet?.thumbnails?.default?.url
-        || ''
+        || '',
+      liveBroadcastContent: it.snippet?.liveBroadcastContent || 'none',
+      description: it.snippet?.description || ''
     }));
 }
 
@@ -89,7 +91,9 @@ function normalizePlaylistItems(json) {
       title: it.snippet?.title || '',
       thumbnail: it.snippet?.thumbnails?.medium?.url
         || it.snippet?.thumbnails?.default?.url
-        || ''
+        || '',
+      liveBroadcastContent: it.snippet?.liveBroadcastContent || 'none',
+      description: it.snippet?.description || ''
     }));
 }
 

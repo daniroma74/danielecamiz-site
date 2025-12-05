@@ -177,3 +177,45 @@ export async function getLatestVideosFromPlaylist(playlistId, max = 3) {
     return PLAYLIST_CACHE.items.length ? PLAYLIST_CACHE.items : [];
   }
 }
+
+/**
+ * Get details of a single video by ID
+ * @param {string} videoId - YouTube video ID
+ * @returns {Promise<{id: string, title: string, description: string, thumbnail: string} | null>}
+ */
+export async function getVideoDetails(videoId) {
+  const API_KEY = process.env.YT_API_KEY;
+  if (!API_KEY || !videoId) return null;
+
+  const url =
+    `https://www.googleapis.com/youtube/v3/videos` +
+    `?key=${encodeURIComponent(API_KEY)}` +
+    `&id=${encodeURIComponent(videoId)}` +
+    `&part=snippet`;
+
+  try {
+    const json = await fetchJson(url);
+    if (json?.error) {
+      console.error('YouTube Video API error:', json.error);
+      return null;
+    }
+
+    const item = json?.items?.[0];
+    if (!item) {
+      console.warn('[YouTube] Video not found:', videoId);
+      return null;
+    }
+
+    return {
+      id: item.id,
+      title: item.snippet?.title || '',
+      description: item.snippet?.description || '',
+      thumbnail: item.snippet?.thumbnails?.medium?.url
+        || item.snippet?.thumbnails?.default?.url
+        || `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
+    };
+  } catch (err) {
+    console.error('YouTube video fetch error:', err.message || err);
+    return null;
+  }
+}

@@ -131,6 +131,19 @@ app.get('/sw.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sw.js'));
 });
 
+// Minified Service Worker for production
+app.get('/sw.min.js', (req, res) => {
+  res.set('Cache-Control', 'no-cache');
+  res.set('Content-Type', 'application/javascript');
+  const swPath = path.join(__dirname, 'public', 'sw.min.js');
+  res.sendFile(swPath, (err) => {
+    if (err) {
+      // Fallback to non-minified version if minified doesn't exist
+      res.sendFile(path.join(__dirname, 'public', 'sw.js'));
+    }
+  });
+});
+
 app.get('/manifest.json', (req, res) => {
   res.set('Cache-Control', 'no-cache');
   res.json({
@@ -166,6 +179,7 @@ app.locals.TZ = TZ;
 // Global variables for ALL views
 app.locals.BASE_URL = BASE_URL;
 app.locals.GA_MEASUREMENT_ID = GA_MEASUREMENT_ID;
+app.locals.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Middleware to ensure all views have required variables
 app.use((req, res, next) => {
@@ -288,8 +302,9 @@ function readEventsFromDb({ seasonCode }) {
 
     const mscNum = (t) => {
       if (!t) return null;
-      const m = /MSC\s*([0-9]+)/i.exec(t);
-      return m ? m[1] : null;
+      // Match "Mozart Symphonies Challenge N.19" or "MSC 19" or similar
+      const m = /(?:Mozart Symphonies Challenge|MSC)\s*[Nn]?\.?\s*([0-9]+)/i.exec(t);
+      return m ? parseInt(m[1]) : null;
     };
 
     return rows.map(r => ({
@@ -297,7 +312,7 @@ function readEventsFromDb({ seasonCode }) {
       season: seasonCode,
       time: r.time || DEFAULT_START_TIME,
       endTime: r.endTime || null,
-      type: (r.title || '').match(/MSC/i) ? 'msc' : 'icnt',
+      type: mscNum(r.title || '') ? 'msc' : 'icnt',
       mscNumber: mscNum(r.title || ''),
       detailUrl: resolveDetailUrl(r.slug)
     }));
@@ -418,7 +433,12 @@ app.get('/next', (req, res) => {
 // Main season page
 app.get('/stagione/:code', (req, res) => {
   try {
-    const code = req.params.code || SEASON_CODE;
+    let code = req.params.code || SEASON_CODE;
+    // Normalize season code: "2025" -> "2025-26"
+    if (/^\d{4}$/.test(code)) {
+      const year = parseInt(code);
+      code = `${year}-${(year + 1).toString().slice(-2)}`;
+    }
     const filter = (req.query.f || 'all').toLowerCase();
     const eventsAll = getEvents(code);
     const events = filter === 'all' 
@@ -441,7 +461,13 @@ app.get('/stagione/:code', (req, res) => {
         locale: 'it_IT'
       },
       ui: { code, filter },
-      data: { events, nextEvent, allCount: eventsAll.length },
+      data: {
+        events,
+        nextEvent,
+        allCount: eventsAll.length,
+        icntCount: eventsAll.filter(e => !e.mscNumber).length,
+        mscCount: eventsAll.filter(e => e.mscNumber).length
+      },
       stats: {
         bookings: stats.bookings,
         visitors: stats.currentVisitors.size

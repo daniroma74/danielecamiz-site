@@ -57,7 +57,8 @@ app.get('/logout', handleLogout);
 app.use('/press', pressRoutes);
 
 // Cloudinary API routes (uses shared credentials from cms/.env)
-app.use('/api/cloudinary', cloudinaryRoutes);
+// Mounted at /api/cloudinary to match CloudinaryManager client expectations
+app.use('/api/cloudinary', ensureAuthenticated, cloudinaryRoutes);
 
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err.stack);

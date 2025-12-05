@@ -127,7 +127,7 @@
   <!-- LIGHTBOX (only for photo mode) -->
   <% if (!isOverviewMode) { %>
     <div id="lightbox" role="dialog" aria-modal="true" tabindex="-1" aria-label="Image viewer">
-      <span class="lightbox-close" aria-label="Close" onclick="closeGallery()">×</span>
+      <button class="lightbox-close close-btn-standard" aria-label="Close" onclick="closeGallery()">×</button>
       <div class="lightbox-image-wrapper">
         <span class="lightbox-arrow left" onclick="prevGallery()" aria-label="Previous">‹</span>
         <img id="lightbox_img" alt="" />

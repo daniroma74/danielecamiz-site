@@ -3,6 +3,7 @@
 import { queryDB, getOne, runDB } from '../config/database.js';
 import { sendNewsletterEmail } from '../services/mailService.js';
 import { applyInlineStyles } from '../utils/inlineStyles.js';
+import juice from 'juice';
 
 const BASE_URL = process.env.BASE_URL || 'https://newsletter-admin.danielecamiz.com';
 
@@ -123,33 +124,46 @@ export async function renderCampaignEditor(req, res, next) {
 export async function saveCampaign(req, res, next) {
   try {
     const db = req.app.locals.db;
-    const { id, name, subject, preheader, content } = req.body;
-    
-    console.log('💾 Salvataggio campagna:', { id, name, subject, preheader, contentLength: content?.length });
-    
+    const { id, name, subject, preheader, content, header_bg, header_title, header_subtitle, footer_bg, footer_text } = req.body;
+
+    console.log('💾 Salvataggio campagna:', { id, name, subject, preheader, header_bg, footer_bg, contentLength: content?.length });
+
     if (!name || !subject) {
-      return res.json({ 
-        success: false, 
-        error: 'Nome e oggetto sono obbligatori' 
+      return res.json({
+        success: false,
+        error: 'Nome e oggetto sono obbligatori'
       });
     }
-    
+
     if (id) {
       await runDB(db, `
-        UPDATE newsletter_campaigns 
-        SET name = ?, subject = ?, preheader = ?, content_json = ?, updated_at = datetime('now')
+        UPDATE newsletter_campaigns
+        SET name = ?, subject = ?, preheader = ?, content_json = ?,
+            header_bg = ?, header_title = ?, header_subtitle = ?,
+            footer_bg = ?, footer_text = ?,
+            updated_at = datetime('now')
         WHERE id = ?
-      `, [name, subject, preheader || null, content || '', id]);
-      
+      `, [name, subject, preheader || null, content || '',
+          header_bg || '#667eea',
+          header_title || 'ICNT - I Concerti nel Tempio',
+          header_subtitle || 'La stagione della Chiesa valdese di piazza Cavour',
+          footer_bg || '#f9f9f9',
+          footer_text || '', id]);
+
       console.log('✅ Campagna aggiornata:', id);
       res.json({ success: true, id });
     } else {
       const result = await runDB(db, `
-        INSERT INTO newsletter_campaigns 
-        (name, subject, preheader, content_json, status, created_at, updated_at)
-        VALUES (?, ?, ?, ?, 'draft', datetime('now'), datetime('now'))
-      `, [name, subject, preheader || null, content || '']);
-      
+        INSERT INTO newsletter_campaigns
+        (name, subject, preheader, content_json, header_bg, header_title, header_subtitle, footer_bg, footer_text, status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', datetime('now'), datetime('now'))
+      `, [name, subject, preheader || null, content || '',
+          header_bg || '#667eea',
+          header_title || 'ICNT - I Concerti nel Tempio',
+          header_subtitle || 'La stagione della Chiesa valdese di piazza Cavour',
+          footer_bg || '#f9f9f9',
+          footer_text || '']);
+
       console.log('✅ Nuova campagna creata:', result.lastID);
       res.json({ success: true, id: result.lastID });
     }
@@ -183,21 +197,38 @@ export async function sendCampaign(req, res, next) {
     if (test_email) {
       const testToken = Buffer.from(test_email).toString('base64');
       
-      const preheader = campaign.preheader ? 
+      const preheader = campaign.preheader ?
         `<div style="display:none;font-size:1px;color:#0b0b0b;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${campaign.preheader}</div>` : '';
-      
-      const styledContent = applyInlineStyles(campaign.content_json || '');
-      
-      const testHtml = htmlTemplate
+
+      // Contenuto semplice senza wrapper
+      const content = campaign.content_json || '';
+
+      const footerCustom = campaign.footer_text ?
+        `<p style="margin: 0 0 20px 0; color: #aaa; font-size: 14px; line-height: 1.5;">${campaign.footer_text.replace(/\n/g, '<br>')}</p>` : '';
+
+      let testHtml = htmlTemplate
+        .replace('{{HEADER_BG}}', campaign.header_bg || '#667eea')
+        .replace('{{FOOTER_BG}}', campaign.footer_bg || '#f9f9f9')
+        .replace('{{HEADER_TITLE}}', campaign.header_title || 'ICNT - I Concerti nel Tempio')
+        .replace('{{HEADER_SUBTITLE}}', campaign.header_subtitle || 'La stagione della Chiesa valdese di piazza Cavour')
         .replace('{{SUBJECT}}', campaign.subject)
         .replace('{{PREHEADER}}', preheader)
-        .replace('{{CONTENT}}', styledContent)
+        .replace('{{CONTENT}}', content)
+        .replace('{{FOOTER_CUSTOM}}', footerCustom)
         .replace('{{MANAGE_LINK}}', `${BASE_URL}/newsletter/manage?email=${encodeURIComponent(test_email)}`)
         .replace('{{UNSUBSCRIBE_LINK}}', `${BASE_URL}/api/unsubscribe/${testToken}`)
         .replace('{{YEAR}}', new Date().getFullYear())
         .replace('{{EMAIL}}', test_email)
         .replace('{{TRACKING_PIXEL}}', '');
-      
+
+      // Convert <style> CSS to inline styles for email client compatibility
+      testHtml = juice(testHtml);
+
+      // DEBUG: Salva l'HTML finale per vedere cosa viene inviato
+      const fs = await import('fs/promises');
+      await fs.writeFile('/tmp/newsletter-final.html', testHtml);
+      console.log('💾 HTML finale salvato in /tmp/newsletter-final.html');
+
       await sendNewsletterEmail(test_email, `[TEST] ${campaign.subject}`, testHtml);
       return res.json({ success: true, message: 'Test inviato' });
     }
@@ -215,25 +246,37 @@ export async function sendCampaign(req, res, next) {
     let sent = 0;
     let failed = 0;
     
-    const preheader = campaign.preheader ? 
+    const preheader = campaign.preheader ?
       `<div style="display:none;font-size:1px;color:#0b0b0b;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${campaign.preheader}</div>` : '';
-    
-    const styledContent = applyInlineStyles(campaign.content_json || '');
-    
+
+    // Contenuto semplice senza wrapper
+    const content = campaign.content_json || '';
+
+    const footerCustom = campaign.footer_text ?
+      `<p style="margin: 0 0 20px 0; color: #aaa; font-size: 14px; line-height: 1.5;">${campaign.footer_text.replace(/\n/g, '<br>')}</p>` : '';
+
     for (const subscriber of subscribers) {
       try {
         const unsubToken = Buffer.from(subscriber.email).toString('base64');
-        
-        const personalizedHtml = htmlTemplate
+
+        let personalizedHtml = htmlTemplate
+          .replace('{{FOOTER_BG}}', campaign.footer_bg || '#f9f9f9')
+          .replace('{{HEADER_BG}}', campaign.header_bg || '#667eea')
+          .replace('{{HEADER_TITLE}}', campaign.header_title || 'ICNT - I Concerti nel Tempio')
+          .replace('{{HEADER_SUBTITLE}}', campaign.header_subtitle || 'La stagione della Chiesa valdese di piazza Cavour')
           .replace('{{SUBJECT}}', campaign.subject)
           .replace('{{PREHEADER}}', preheader)
-          .replace('{{CONTENT}}', styledContent)
+          .replace('{{CONTENT}}', content)
+          .replace('{{FOOTER_CUSTOM}}', footerCustom)
           .replace('{{MANAGE_LINK}}', `${BASE_URL}/newsletter/manage?email=${encodeURIComponent(subscriber.email)}`)
           .replace('{{UNSUBSCRIBE_LINK}}', `${BASE_URL}/api/unsubscribe/${unsubToken}`)
           .replace('{{YEAR}}', new Date().getFullYear())
           .replace('{{EMAIL}}', subscriber.email)
           .replace('{{TRACKING_PIXEL}}', `<img src="${BASE_URL}/api/track/${id}/${subscriber.id}/open.gif" width="1" height="1" style="display:none;" alt="">`);
-        
+
+        // Convert <style> CSS to inline styles for email client compatibility
+        personalizedHtml = juice(personalizedHtml);
+
         await sendNewsletterEmail(subscriber.email, campaign.subject, personalizedHtml);
         sent++;
         
@@ -739,7 +782,7 @@ export async function sendTestDigest(req, res) {
 
     const emailSubject = subject || 'Newsletter Daniele Camiz';
 
-    const html = await ejs.renderFile(templatePath, {
+    let html = await ejs.renderFile(templatePath, {
       lang: 'it',
       subject: emailSubject,
       posts: posts,
@@ -747,6 +790,9 @@ export async function sendTestDigest(req, res) {
       notes: notes || null,
       unsubscribeUrl: `${BASE_URL}/newsletter/manage?email=${encodeURIComponent(email)}`
     });
+
+    // Apply inline styles for email client compatibility
+    html = applyInlineStyles(html);
 
     // Send test email
     await sendNewsletterEmail(email, `[TEST] ${emailSubject}`, html);
@@ -830,7 +876,7 @@ export async function sendDigest(req, res) {
         const lang = subscriber.lang || 'it';
         const introText = lang === 'it' ? (introIt || null) : (introEn || null);
 
-        const html = await ejs.renderFile(templatePath, {
+        let html = await ejs.renderFile(templatePath, {
           lang: lang,
           subject: campaignSubject,
           posts: posts,
@@ -838,6 +884,9 @@ export async function sendDigest(req, res) {
           notes: notes || null,
           unsubscribeUrl: `${BASE_URL}/newsletter/manage?email=${encodeURIComponent(subscriber.email)}`
         });
+
+        // Apply inline styles for email client compatibility
+        html = applyInlineStyles(html);
 
         await sendNewsletterEmail(subscriber.email, campaignSubject, html);
         sent++;

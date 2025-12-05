@@ -173,7 +173,9 @@
                            alt="<%= item.alt_it || item.title_it %>">
                     <% } else if (item.item_type === 'video' && item.youtube_id) { %>
                       <div class="video-preview">
-                        <img src="https://img.youtube.com/vi/<%= item.youtube_id %>/mqdefault.jpg" alt="<%= item.title_it %>">
+                        <img src="https://img.youtube.com/vi/<%= item.youtube_id %>/hqdefault.jpg"
+                             alt="<%= item.title_it %>"
+                             onerror="this.onerror=null; this.src='https://img.youtube.com/vi/<%= item.youtube_id %>/default.jpg'; this.parentElement.classList.add('thumbnail-failed');">
                         <span class="play-icon">▶️</span>
                       </div>
                     <% } else if (item.item_type === 'audio') { %>
@@ -322,6 +324,29 @@
                 </div>
               </div>
 
+              <!-- YouTube ID (solo video) -->
+              <div id="edit-video-section" style="display: none; margin-bottom: 1.5rem;">
+                <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; border: 2px solid #ffc107;">
+                  <h4 style="margin-top: 0; color: #856404;">🎬 Modifica Video YouTube</h4>
+                  <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                    Puoi correggere l'ID YouTube se hai inserito quello sbagliato. Inserisci solo l'ID (es: dQw4w9WgXcQ) o l'URL completo.
+                  </p>
+                  <div class="form-group">
+                    <label for="edit-youtube-id">YouTube ID o URL</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <input type="text" id="edit-youtube-id" class="form-control" placeholder="dQw4w9WgXcQ o https://www.youtube.com/watch?v=dQw4w9WgXcQ" style="flex: 1;">
+                      <button type="button" class="btn btn-primary" onclick="fetchYouTubeMetadata()" style="white-space: nowrap;">
+                        <i class="fas fa-download"></i> Carica da YouTube
+                      </button>
+                    </div>
+                    <small style="display: block; margin-top: 0.5rem; color: #666;">
+                      Clicca "Carica da YouTube" per auto-compilare titolo e descrizione
+                    </small>
+                    <div id="yt_fetch_status" style="margin-top: 0.5rem; display: none;"></div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Pubblicazione -->
               <div class="form-group">
                 <label class="checkbox-label">
@@ -361,6 +386,56 @@
   <script>
     const isNew = <%= isNew ? 'true' : 'false' %>;
     const collectionId = document.getElementById('collection-id').value;
+
+    /**
+     * Extract YouTube video ID from URL or return as-is if already an ID
+     * Supports:
+     * - https://www.youtube.com/watch?v=VIDEO_ID
+     * - https://www.youtube.com/watch?v=VIDEO_ID&si=...
+     * - https://youtu.be/VIDEO_ID
+     * - https://youtu.be/VIDEO_ID?si=...
+     * - https://www.youtube.com/embed/VIDEO_ID
+     * - VIDEO_ID (direct ID)
+     * - VIDEO_ID?si=... (ID with params)
+     */
+    function extractYouTubeId(input) {
+      if (!input) return '';
+
+      // Remove whitespace
+      input = input.trim();
+
+      // Direct ID (11 characters, alphanumeric + - and _)
+      if (/^[A-Za-z0-9_-]{11}$/.test(input)) {
+        return input;
+      }
+
+      // Extract from various YouTube URL formats
+      const patterns = [
+        // youtu.be/VIDEO_ID or youtu.be/VIDEO_ID?si=...
+        /youtu\.be\/([A-Za-z0-9_-]{11})/,
+        // youtube.com/watch?v=VIDEO_ID (with or without other params)
+        /[?&]v=([A-Za-z0-9_-]{11})/,
+        // youtube.com/embed/VIDEO_ID
+        /youtube\.com\/embed\/([A-Za-z0-9_-]{11})/
+      ];
+
+      for (const pattern of patterns) {
+        const match = input.match(pattern);
+        if (match && match[1]) {
+          return match[1];
+        }
+      }
+
+      // If it looks like an ID with extra params (e.g., "VIDEO_ID?si=...")
+      const idMatch = input.match(/^([A-Za-z0-9_-]{11})/);
+      if (idMatch && idMatch[1]) {
+        return idMatch[1];
+      }
+
+      // If no pattern matched, return empty string (invalid input)
+      console.warn('Could not extract YouTube ID from:', input);
+      return '';
+    }
 
     // Auto-sync checkbox toggle
     const autoSyncCheckbox = document.getElementById('is_auto_sync');
@@ -535,8 +610,15 @@
     }
 
     function openVideoModal() {
-      const youtubeId = prompt('Inserisci YouTube Video ID:');
-      if (youtubeId) createVideo(youtubeId);
+      const input = prompt('Inserisci YouTube Video ID o URL completo:\n\nEsempi:\n- dQw4w9WgXcQ\n- https://www.youtube.com/watch?v=dQw4w9WgXcQ\n- https://youtu.be/dQw4w9WgXcQ');
+      if (input) {
+        const youtubeId = extractYouTubeId(input.trim());
+        if (youtubeId) {
+          createVideo(youtubeId);
+        } else {
+          alert('❌ ID YouTube non valido. Riprova.');
+        }
+      }
     }
 
     function openAudioModal() {
@@ -576,13 +658,29 @@
 
     async function createVideo(youtubeId) {
       try {
+        // Fetch YouTube metadata first
+        const metadataResponse = await fetch(`/gallery/api/videos/youtube-metadata/${youtubeId}`);
+        let title = `Video ${youtubeId}`;
+        let thumbnail = '';
+
+        if (metadataResponse.ok) {
+          const metadata = await metadataResponse.json();
+          title = metadata.title || title;
+          thumbnail = metadata.thumbnail || '';
+          console.log('📹 YouTube metadata fetched:', { title, thumbnail });
+        } else {
+          console.warn('⚠️ Could not fetch YouTube metadata, using default title');
+        }
+
+        // Create video with fetched title
         const response = await fetch('/gallery/api/videos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             collection_id: collectionId,
             youtube_id: youtubeId,
-            title_it: `Video ${youtubeId}`,
+            title_it: title,
+            title_en: title,
             is_published: true,
             is_whitelisted: true
           })
@@ -667,6 +765,7 @@
 
         // Show/hide fields based on type
         const photoSection = document.getElementById('edit-photo-section');
+        const videoSection = document.getElementById('edit-video-section');
         const altSection = document.getElementById('edit-alt-section');
         const creditsSection = document.getElementById('edit-credits-section');
         const dateSection = document.getElementById('edit-date-section');
@@ -674,6 +773,7 @@
 
         if (type === 'photo') {
           photoSection.style.display = 'block';
+          videoSection.style.display = 'none';
           altSection.style.display = 'block';
           creditsSection.style.display = 'block';
           dateSection.style.display = 'block';
@@ -695,8 +795,18 @@
                    style="width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
             `;
           }
+        } else if (type === 'video') {
+          photoSection.style.display = 'none';
+          videoSection.style.display = 'block';
+          altSection.style.display = 'none';
+          creditsSection.style.display = 'none';
+          dateSection.style.display = 'none';
+          spotlightSection.style.display = 'none';
+
+          document.getElementById('edit-youtube-id').value = item.youtube_id || '';
         } else {
           photoSection.style.display = 'none';
+          videoSection.style.display = 'none';
           altSection.style.display = 'none';
           creditsSection.style.display = 'none';
           dateSection.style.display = 'none';
@@ -717,6 +827,81 @@
 
     function closeEditModal() {
       document.getElementById('edit-item-modal').style.display = 'none';
+    }
+
+    // Fetch YouTube metadata and populate fields
+    async function fetchYouTubeMetadata() {
+      const youtubeInput = document.getElementById('edit-youtube-id').value.trim();
+      const statusDiv = document.getElementById('yt_fetch_status');
+
+      if (!youtubeInput) {
+        statusDiv.innerHTML = '<span style="color: #f44336;">⚠️ Inserisci prima un ID o URL YouTube</span>';
+        statusDiv.style.display = 'block';
+        return;
+      }
+
+      // Extract YouTube ID from URL if needed
+      const videoId = extractYouTubeId(youtubeInput);
+      if (!videoId) {
+        statusDiv.innerHTML = '<span style="color: #f44336;">❌ ID YouTube non valido</span>';
+        statusDiv.style.display = 'block';
+        return;
+      }
+
+      statusDiv.innerHTML = '<span style="color: #2196F3;"><i class="fas fa-spinner fa-spin"></i> Caricamento metadata da YouTube...</span>';
+      statusDiv.style.display = 'block';
+
+      try {
+        const response = await fetch(`/gallery/api/videos/youtube-metadata/${videoId}`);
+
+        if (!response.ok) {
+          throw new Error('Video non trovato o errore API YouTube');
+        }
+
+        const data = await response.json();
+
+        // Auto-popola i campi IT e EN con i dati YouTube
+        if (data.title) {
+          // Popola solo se i campi sono vuoti
+          if (!document.getElementById('edit-title-it').value) {
+            document.getElementById('edit-title-it').value = data.title;
+          }
+          if (!document.getElementById('edit-title-en').value) {
+            document.getElementById('edit-title-en').value = data.title;
+          }
+        }
+
+        if (data.description) {
+          // Estrai solo il primo paragrafo (fino al primo doppio line break)
+          let shortDesc = data.description.split(/\n\n|\r\n\r\n/)[0].trim();
+
+          // Se il primo paragrafo è diverso dalla descrizione completa, aggiungi [...]
+          if (shortDesc !== data.description.trim()) {
+            shortDesc += ' [...]';
+          }
+
+          if (!document.getElementById('edit-description-it').value) {
+            document.getElementById('edit-description-it').value = shortDesc;
+          }
+          if (!document.getElementById('edit-description-en').value) {
+            document.getElementById('edit-description-en').value = shortDesc;
+          }
+        }
+
+        // Update the YouTube ID field with cleaned ID
+        document.getElementById('edit-youtube-id').value = videoId;
+
+        statusDiv.innerHTML = '<span style="color: #4CAF50;">✅ Metadata caricati! (IT/EN popolati con i dati YouTube)</span>';
+
+        // Hide status after 5 seconds
+        setTimeout(() => {
+          statusDiv.style.display = 'none';
+        }, 5000);
+
+      } catch (error) {
+        console.error('Error fetching YouTube metadata:', error);
+        statusDiv.innerHTML = '<span style="color: #f44336;">❌ Errore: ' + error.message + '</span>';
+      }
     }
 
     // Handle "Change Photo" button
@@ -781,6 +966,15 @@
         const newCloudinaryId = document.getElementById('edit-cloudinary-id').value;
         if (newCloudinaryId) {
           data.cloudinary_id = newCloudinaryId;
+        }
+      }
+
+      // Add video-specific fields
+      if (type === 'video') {
+        const youtubeInput = document.getElementById('edit-youtube-id').value.trim();
+        if (youtubeInput) {
+          // Extract YouTube ID from URL or use as-is if already an ID
+          data.youtube_id = extractYouTubeId(youtubeInput);
         }
       }
 

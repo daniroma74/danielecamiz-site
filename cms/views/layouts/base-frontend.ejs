@@ -73,6 +73,9 @@
     <% }) %>
     <link rel="stylesheet" href="<%= RESP %>?v=<%= Date.now() %>"><!-- responsive.css sempre ultimo -->
 
+    <!-- CLOSE BUTTON STANDARDIZED - SITE WIDE -->
+    <link rel="stylesheet" href="/css/components/close-button-standard.css?v=<%= Date.now() %>">
+
     <!-- CSS PER-PAGINA (pageStyles preferito; compat: cssFiles) -->
     <%
       const __cssA = Array.isArray(pageStyles) ? pageStyles : [];
@@ -125,11 +128,6 @@
   </head>
 
   <body class="<%= bodyClass || '' %>">
-    <!-- Skip to main content link (accessibility) -->
-    <a href="#main_content" class="skip-link">
-      <%= lang === 'en' ? 'Skip to main content' : 'Vai al contenuto principale' %>
-    </a>
-
     <%-
       // Navbar frontend
       include('../partials/frontend/navbar', { lang, labels })
@@ -163,6 +161,8 @@
     <% }) %>
 
     <!-- Service Worker Registration (PWA) -->
+    <!-- DISABLED: blocca caricamento immagini da Cloudinary
     <script src="/js/sw-register.js?v=<%= Date.now() %>" defer></script>
+    -->
   </body>
 </html>

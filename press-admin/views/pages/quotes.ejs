@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="/shared/css/admin-base.css">
   <link rel="stylesheet" href="/static/css/press-admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="/shared/cloudinary-manager/ui-notifications.js"></script>
+  <script src="/shared/cloudinary-manager/ui-loading.js"></script>
+  <script src="/shared/cloudinary-manager/client.js"></script>
 </head>
 <body>
   <%- include('../partials/header') %>
@@ -16,8 +19,7 @@
     <%- include('../../../shared/partials/admin-tabs', {
       tabs: [
         { label: 'Dashboard', url: '/press', icon: 'home' },
-        { label: 'Articoli', url: '/press/articles', icon: 'newspaper' },
-        { label: 'Citazioni', url: '/press/quotes', icon: 'quote-right' }
+        { label: 'Rassegna Stampa', url: '/press/quotes', icon: 'newspaper' }
       ],
       currentPath: '/press/quotes',
       baseUrl: 'press'
@@ -25,80 +27,212 @@
 
     <!-- Content -->
     <div class="page-header">
-      <h2>Citazioni</h2>
-      <button onclick="showQuoteModal()" class="btn btn-primary">Nuova Citazione</button>
+      <h2>Rassegna Stampa</h2>
+      <button onclick="showQuoteModal()" class="btn btn-primary">Nuovo Contenuto</button>
     </div>
 
         <% if (quotes && quotes.length > 0) { %>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Citazione (IT)</th>
-                <th>Fonte</th>
-                <th>Data</th>
-                <th>Ordine</th>
-                <th>Azioni</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% quotes.forEach(quote => { %>
-                <tr>
-                  <td><%= quote.quote_it?.substring(0, 80) %><%= quote.quote_it?.length > 80 ? '...' : '' %></td>
-                  <td><%= quote.source %></td>
-                  <td><%= quote.published_date || '-' %></td>
-                  <td><%= quote.display_order %></td>
-                  <td>
-                    <button onclick='editQuote(<%= JSON.stringify(quote) %>)' class="btn btn-sm">Modifica</button>
-                    <button onclick="deleteQuote(<%= quote.id %>)" class="btn btn-sm btn-danger">Elimina</button>
-                  </td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
+          <div class="quotes-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+            <% quotes.forEach(quote => { %>
+              <div class="quote-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative;">
+                <% if (quote.source_logo_cloudinary_id) { %>
+                  <img src="https://res.cloudinary.com/dnwhnz2xy/image/upload/w_80,h_80,c_fill/<%= quote.source_logo_cloudinary_id %>"
+                       style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;"
+                       alt="<%= quote.source %>">
+                <% } %>
+
+                <% if (quote.title_it) { %>
+                  <h4 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #333; line-height: 1.3;">
+                    <%= quote.title_it %>
+                  </h4>
+                <% } %>
+
+                <p style="margin: 0 0 1rem 0; font-style: italic; color: #666; font-size: 0.95rem; line-height: 1.4;">
+                  "<%= quote.quote_it?.substring(0, 120) %><%= quote.quote_it?.length > 120 ? '...' : '' %>"
+                </p>
+
+                <div style="margin-bottom: 1rem; font-size: 0.9rem; color: #888;">
+                  <strong style="color: #d4af37;"><%= quote.source %></strong>
+                  <% if (quote.published_date) { %>
+                    <br><time><%= quote.published_date %></time>
+                  <% } %>
+                  <% if (!quote.is_published) { %>
+                    <span style="background: #f44336; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem;">Non pubblicato</span>
+                  <% } %>
+                  <% if (quote.is_featured) { %>
+                    <span style="background: #2196F3; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem;">★ In evidenza</span>
+                  <% } %>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <button onclick='editQuote(<%= JSON.stringify(quote).replace(/'/g, "\\'") %>)' class="btn btn-sm" style="flex: 1; min-width: 100px;">
+                    <i class="fas fa-edit"></i> Modifica
+                  </button>
+                  <button onclick="deleteQuote(<%= quote.id %>)" class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            <% }) %>
+          </div>
         <% } else { %>
-          <p>Nessuna citazione presente.</p>
+          <p style="text-align: center; color: #999; margin: 3rem 0;">Nessun contenuto presente. Clicca "Nuovo Contenuto" per iniziare.</p>
         <% } %>
   </main>
 
-  <div id="quoteModal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <span class="close" onclick="closeQuoteModal()">&times;</span>
-      <h2 id="modalTitle">Nuova Citazione</h2>
+  <div id="quoteModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; overflow-y: auto; padding: 2rem;">
+    <div class="modal-content" style="max-width: 900px; background: white; margin: 0 auto; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto;">
+      <span class="close" onclick="closeQuoteModal()" style="position: sticky; top: 0; right: 0; float: right; font-size: 2rem; cursor: pointer; z-index: 10;">&times;</span>
+      <h2 id="modalTitle" style="margin-top: 0;">Nuova Citazione</h2>
+
+      <div style="background: #f0f8ff; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #2196F3;">
+        <p style="margin: 0; font-size: 0.9rem; color: #333;">
+          <strong>Suggerimento:</strong> Usa questo form per citazioni semplici che linkano ad articoli esterni.
+          Per articoli completi su di te (con testo completo e media), usa la sezione <strong>Articoli</strong>.
+        </p>
+      </div>
+
       <form id="quoteForm">
         <input type="hidden" id="quote_id" name="id">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="quote_it">Citazione (IT) *</label>
-            <textarea id="quote_it" name="quote_it" rows="4" required></textarea>
+
+        <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <h3 style="margin-top: 0; color: #2196F3; font-size: 1.1rem;">📝 Contenuto</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="title_it">Titolo Articolo (IT)</label>
+              <input type="text" id="title_it" name="title_it" placeholder="es: Daniele Camiz dirige un concerto straordinario">
+              <small style="color: #666;">Titolo dell'articolo originale</small>
+            </div>
+            <div class="form-group">
+              <label for="title_en">Titolo Articolo (EN)</label>
+              <input type="text" id="title_en" name="title_en" placeholder="eg: Daniele Camiz conducts an extraordinary concert">
+              <small style="color: #666;">Original article title</small>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="quote_en">Citazione (EN)</label>
-            <textarea id="quote_en" name="quote_en" rows="4"></textarea>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="description_it">Descrizione breve (IT)</label>
+              <textarea id="description_it" name="description_it" rows="2" placeholder="Breve sommario dell'articolo..."></textarea>
+              <small style="color: #666;">Opzionale - contesto dell'articolo</small>
+            </div>
+            <div class="form-group">
+              <label for="description_en">Descrizione breve (EN)</label>
+              <textarea id="description_en" name="description_en" rows="2" placeholder="Brief article summary..."></textarea>
+              <small style="color: #666;">Optional - article context</small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="quote_it">Citazione/Estratto (IT) *</label>
+              <textarea id="quote_it" name="quote_it" rows="4" required placeholder="Inserisci la citazione in italiano..."></textarea>
+              <small style="color: #666;">La parte citata dell'articolo</small>
+            </div>
+            <div class="form-group">
+              <label for="quote_en">Citazione/Estratto (EN)</label>
+              <textarea id="quote_en" name="quote_en" rows="4" placeholder="Inserisci la citazione in inglese (opzionale)..."></textarea>
+              <small style="color: #666;">Optional quote/excerpt</small>
+            </div>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="source">Fonte *</label>
-            <input type="text" id="source" name="source" required>
+
+        <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <h3 style="margin-top: 0; color: #2196F3; font-size: 1.1rem;">📰 Fonte</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="source">Nome Fonte/Testata *</label>
+              <input type="text" id="source" name="source" required placeholder="es: La Repubblica, The Guardian">
+              <small style="color: #666;">Il nome della testata giornalistica</small>
+            </div>
+            <div class="form-group">
+              <label for="published_date">Data Pubblicazione</label>
+              <input type="date" id="published_date" name="published_date">
+            </div>
           </div>
-          <div class="form-group">
-            <label for="published_date">Data</label>
-            <input type="date" id="published_date" name="published_date">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="author_it">Autore Articolo (IT)</label>
+              <input type="text" id="author_it" name="author_it" placeholder="es: Mario Rossi">
+              <small style="color: #666;">Nome dell'autore dell'articolo</small>
+            </div>
+            <div class="form-group">
+              <label for="author_en">Autore Articolo (EN)</label>
+              <input type="text" id="author_en" name="author_en" placeholder="eg: John Smith">
+              <small style="color: #666;">Author's name</small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="source_role_it">Ruolo Autore (IT)</label>
+              <input type="text" id="source_role_it" name="source_role_it" placeholder="es: Critico musicale">
+              <small style="color: #666;">Opzionale - ruolo/qualifica dell'autore</small>
+            </div>
+            <div class="form-group">
+              <label for="source_role_en">Ruolo Autore (EN)</label>
+              <input type="text" id="source_role_en" name="source_role_en" placeholder="eg: Music critic">
+              <small style="color: #666;">Optional - author's role</small>
+            </div>
           </div>
         </div>
-        <div class="form-row">
+
+        <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <h3 style="margin-top: 0; color: #2196F3; font-size: 1.1rem;">🔗 Articolo / Media</h3>
+
           <div class="form-group">
-            <label for="url">URL</label>
-            <input type="url" id="url" name="url">
+            <label for="url">URL Articolo</label>
+            <div class="input-with-button">
+              <input type="url" id="url" name="url" placeholder="https://...">
+              <button type="button" class="btn btn-primary" onclick="fetchOGPreview()">
+                <i class="fas fa-download"></i> Carica Preview
+              </button>
+            </div>
+            <small style="color: #666;">Link all'articolo online - clicca "Carica Preview" per auto-compilare titolo/descrizione/immagine</small>
+            <div id="og_preview_status" style="margin-top: 0.5rem; display: none;"></div>
           </div>
+
           <div class="form-group">
-            <label for="display_order">Ordine</label>
-            <input type="number" id="display_order" name="display_order" value="0">
+              <label for="source_logo_cloudinary_id">Immagine Articolo / Logo</label>
+              <div class="input-with-button">
+                <input type="text" id="source_logo_cloudinary_id" name="source_logo_cloudinary_id"
+                       placeholder="danielecamiz/press/...">
+                <button type="button" class="btn btn-sm" onclick="openCloudinaryPicker()">
+                  <i class="fas fa-cloud"></i> Scegli
+                </button>
+              </div>
+              <small style="color: #666;">Foto dell'articolo o logo della testata (da Cloudinary)</small>
+              <div id="image_preview" style="margin-top: 0.5rem; display: none;">
+                <img id="preview_img" src="" alt="Preview"
+                     style="max-width: 200px; border: 1px solid #ddd; border-radius: 4px; display: block;">
+              </div>
+            </div>
           </div>
         </div>
-        <div class="form-actions">
-          <button type="button" onclick="closeQuoteModal()" class="btn btn-outline">Annulla</button>
-          <button type="submit" class="btn btn-primary">Salva</button>
+
+        <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <h3 style="margin-top: 0; color: #2196F3; font-size: 1.1rem;">⚙️ Opzioni Pubblicazione</h3>
+
+          <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <label style="margin: 0; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 1rem; background: white; border-radius: 6px; border: 2px solid #e0e0e0; transition: all 0.2s;" onmouseover="this.style.borderColor='#d4af37'" onmouseout="this.style.borderColor='#e0e0e0'">
+              <input type="checkbox" id="is_published" name="is_published" value="1" checked style="width: 22px; height: 22px; cursor: pointer; accent-color: #4CAF50;">
+              <span style="font-size: 1.05rem;"><strong>✓ Pubblicato</strong> - Visibile sul sito pubblico</span>
+            </label>
+
+            <label style="margin: 0; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 1rem; background: white; border-radius: 6px; border: 2px solid #e0e0e0; transition: all 0.2s;" onmouseover="this.style.borderColor='#d4af37'" onmouseout="this.style.borderColor='#e0e0e0'">
+              <input type="checkbox" id="is_featured" name="is_featured" value="1" style="width: 22px; height: 22px; cursor: pointer; accent-color: #2196F3;">
+              <span style="font-size: 1.05rem;"><strong>★ In evidenza</strong> - Mostra badge speciale nella card</span>
+            </label>
+
+            <small style="color: #666; font-style: italic; margin-top: 0.5rem; padding: 0.5rem;">
+              📅 <strong>Ordinamento automatico:</strong> Le citazioni vengono mostrate dal più recente al più vecchio in base alla data di pubblicazione.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-actions" style="position: sticky; bottom: 0; background: white; padding: 1.5rem 0 0 0; margin: 1.5rem -2rem -2rem -2rem; padding: 1.5rem 2rem; border-top: 2px solid #e0e0e0; display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" onclick="closeQuoteModal()" class="btn btn-outline" style="min-width: 120px;">Annulla</button>
+          <button type="submit" class="btn btn-primary" style="min-width: 150px;"><i class="fas fa-save"></i> Salva</button>
         </div>
       </form>
     </div>
@@ -109,6 +243,8 @@
       document.getElementById('modalTitle').textContent = 'Nuova Citazione';
       document.getElementById('quoteForm').reset();
       document.getElementById('quote_id').value = '';
+      document.getElementById('is_published').checked = true; // Default pubblicato
+      document.getElementById('image_preview').style.display = 'none';
       document.getElementById('quoteModal').style.display = 'block';
     }
 
@@ -119,13 +255,140 @@
     function editQuote(quote) {
       document.getElementById('modalTitle').textContent = 'Modifica Citazione';
       document.getElementById('quote_id').value = quote.id;
+      document.getElementById('title_it').value = quote.title_it || '';
+      document.getElementById('title_en').value = quote.title_en || '';
+      document.getElementById('description_it').value = quote.description_it || '';
+      document.getElementById('description_en').value = quote.description_en || '';
       document.getElementById('quote_it').value = quote.quote_it || '';
       document.getElementById('quote_en').value = quote.quote_en || '';
       document.getElementById('source').value = quote.source || '';
+      document.getElementById('author_it').value = quote.author_it || '';
+      document.getElementById('author_en').value = quote.author_en || '';
+      document.getElementById('source_role_it').value = quote.source_role_it || '';
+      document.getElementById('source_role_en').value = quote.source_role_en || '';
+      document.getElementById('source_logo_cloudinary_id').value = quote.source_logo_cloudinary_id || '';
       document.getElementById('published_date').value = quote.published_date || '';
       document.getElementById('url').value = quote.url || '';
-      document.getElementById('display_order').value = quote.display_order || 0;
+      document.getElementById('is_published').checked = quote.is_published == 1;
+      document.getElementById('is_featured').checked = quote.is_featured == 1;
+
+      // Preview immagine se presente
+      if (quote.source_logo_cloudinary_id) {
+        updateImagePreview(quote.source_logo_cloudinary_id);
+      }
+
       document.getElementById('quoteModal').style.display = 'block';
+    }
+
+    // Fetch Open Graph preview
+    async function fetchOGPreview() {
+      const url = document.getElementById('url').value;
+      const statusDiv = document.getElementById('og_preview_status');
+
+      if (!url) {
+        statusDiv.innerHTML = '<span style="color: #f44336;">⚠️ Inserisci prima un URL</span>';
+        statusDiv.style.display = 'block';
+        return;
+      }
+
+      statusDiv.innerHTML = '<span style="color: #2196F3;"><i class="fas fa-spinner fa-spin"></i> Caricamento metadata...</span>';
+      statusDiv.style.display = 'block';
+
+      try {
+        const response = await fetch('/press/fetch-og-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          const data = result.data;
+
+          // Auto-popola i campi IT e EN (stessi dati, traduci manualmente se necessario)
+          if (data.title) {
+            if (!document.getElementById('title_it').value) {
+              document.getElementById('title_it').value = data.title;
+            }
+            if (!document.getElementById('title_en').value) {
+              document.getElementById('title_en').value = data.title;
+            }
+          }
+          if (data.description) {
+            if (!document.getElementById('description_it').value) {
+              document.getElementById('description_it').value = data.description;
+            }
+            if (!document.getElementById('description_en').value) {
+              document.getElementById('description_en').value = data.description;
+            }
+          }
+
+          // Auto-carica immagine su Cloudinary
+          if (data.cloudinaryId) {
+            document.getElementById('source_logo_cloudinary_id').value = data.cloudinaryId;
+            updateImagePreview(data.cloudinaryId);
+            statusDiv.innerHTML = '<span style="color: #4CAF50;">✅ Metadata e immagine caricati! (IT/EN popolati - traduci se necessario)</span>';
+          } else {
+            statusDiv.innerHTML = '<span style="color: #4CAF50;">✅ Metadata caricati! (IT/EN popolati - traduci se necessario)</span>';
+          }
+
+          // Nascondi messaggio dopo 5 secondi
+          setTimeout(() => {
+            statusDiv.style.display = 'none';
+          }, 5000);
+        } else {
+          statusDiv.innerHTML = `<span style="color: #f44336;">⚠️ ${result.error || 'Errore caricamento metadata'}</span>`;
+        }
+      } catch (error) {
+        console.error('Error fetching OG data:', error);
+        statusDiv.innerHTML = '<span style="color: #f44336;">⚠️ Errore di connessione</span>';
+      }
+    }
+
+    function updateImagePreview(cloudinaryId) {
+      if (!cloudinaryId) {
+        document.getElementById('image_preview').style.display = 'none';
+        return;
+      }
+
+      const previewUrl = `https://res.cloudinary.com/dnwhnz2xy/image/upload/w_200,c_fit,q_auto/${cloudinaryId}`;
+      document.getElementById('preview_img').src = previewUrl;
+      document.getElementById('image_preview').style.display = 'block';
+    }
+
+    // Listener per preview quando si cambia manualmente l'ID
+    document.addEventListener('DOMContentLoaded', function() {
+      const cloudinaryInput = document.getElementById('source_logo_cloudinary_id');
+      cloudinaryInput.addEventListener('blur', function() {
+        updateImagePreview(this.value);
+      });
+    });
+
+    function openCloudinaryPicker() {
+      if (!window.CloudinaryManager) {
+        alert('Cloudinary Manager non disponibile');
+        return;
+      }
+
+      try {
+        // Use showImageDialog with correct options and callback
+        window.CloudinaryManager.showImageDialog(
+          function(result) {
+            if (result && result.publicId) {
+              document.getElementById('source_logo_cloudinary_id').value = result.publicId;
+              updateImagePreview(result.publicId);
+            }
+          },
+          {
+            folder: 'danielecamiz/press',
+            preset: 'gallery_unsigned'
+          }
+        );
+      } catch (error) {
+        console.error('Errore apertura Cloudinary:', error);
+        alert('Errore nell\'apertura del media manager: ' + error.message);
+      }
     }
 
     document.getElementById('quoteForm').addEventListener('submit', async (e) => {
@@ -134,6 +397,12 @@
       const data = Object.fromEntries(formData);
       const id = data.id;
       delete data.id;
+
+      // Fix checkbox values (FormData doesn't include unchecked checkboxes)
+      data.is_published = document.getElementById('is_published').checked ? '1' : '0';
+      data.is_featured = document.getElementById('is_featured').checked ? '1' : '0';
+
+      console.log('Saving data:', data); // Debug
 
       try {
         const url = id ? `/press/quotes/${id}` : '/press/quotes';
@@ -146,12 +415,16 @@
         });
 
         if (res.ok) {
+          alert('Salvato con successo!');
           window.location.reload();
         } else {
-          alert('Errore durante il salvataggio');
+          const error = await res.text();
+          console.error('Save error:', error);
+          alert('Errore durante il salvataggio: ' + error);
         }
       } catch (error) {
-        alert('Errore di connessione');
+        console.error('Connection error:', error);
+        alert('Errore di connessione: ' + error.message);
       }
     });
 

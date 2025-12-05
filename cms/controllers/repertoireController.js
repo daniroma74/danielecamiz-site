@@ -64,7 +64,6 @@ export async function debugRepertoire(req, res) {
 /* ========== PAGE CONTROLLER ========== */
 export async function getRepertoirePage(req, res) {
   const lang = res.locals.lang === 'en' ? 'en' : 'it';
-  const esc = (s='') => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
   try {
     const db = req.app?.locals?.db || (await initDatabase());
@@ -81,11 +80,21 @@ export async function getRepertoirePage(req, res) {
           cp.concert_id,
           w.duration_minutes as work_duration,
           w.composer_id,
-          -- If movement_id is NULL = complete work, else estimate from movements
+          -- Performance weight: 1.0 for complete work, proportional for partial
+          CASE
+            -- No movement_id means complete work performed
+            WHEN MAX(cp.movement_id) IS NULL THEN 1.0
+            -- All movements performed = complete performance
+            WHEN COUNT(DISTINCT cp.movement_id) >= COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = w.id), 1)
+            THEN 1.0
+            -- Otherwise proportional weight
+            ELSE CAST(COUNT(DISTINCT cp.movement_id) AS FLOAT) /
+                 COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = w.id), 1)
+          END as weight,
+          -- Duration calculation
           CASE
             WHEN COUNT(cp.movement_id) = 0 THEN w.duration_minutes
             WHEN SUM(m.duration_minutes) > 0 THEN SUM(m.duration_minutes)
-            -- Fallback: estimate duration as (work_duration / total_movements) * performed_movements
             ELSE ROUND(w.duration_minutes * COUNT(cp.movement_id) * 1.0 /
                  COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = w.id), 1))
           END as actual_duration
@@ -97,16 +106,12 @@ export async function getRepertoirePage(req, res) {
       SELECT c.*,
              COUNT(DISTINCT w.id) AS works_count,
              COUNT(DISTINCT wp.concert_id) AS concerts_count,
-             -- Count unique work-concert combinations (not individual movements)
-             COUNT(DISTINCT wp.work_id || '-' || wp.concert_id) AS total_performances,
+             -- Weighted performances (considers partial performances)
+             ROUND(SUM(wp.weight), 1) AS total_performances,
              SUM(w.duration_minutes) AS total_minutes,
              (SELECT SUM(actual_duration) FROM work_performances WHERE composer_id = c.id) AS total_performed_minutes,
-             -- Advanced ranking score:
-             -- unique_performances × 100 (most important: actual use)
-             -- + performed_minutes × 0.5 (stage time)
-             -- + num_works × 10 (repertoire breadth)
-             -- + num_concerts × 20 (concert frequency)
-             (COUNT(DISTINCT wp.work_id || '-' || wp.concert_id) * 100) +
+             -- Advanced ranking score with weighted performances
+             (SUM(wp.weight) * 100) +
              ((SELECT SUM(actual_duration) FROM work_performances WHERE composer_id = c.id) * 0.5) +
              (COUNT(DISTINCT w.id) * 10) +
              (COUNT(DISTINCT wp.concert_id) * 20) AS ranking_score
@@ -127,23 +132,69 @@ export async function getRepertoirePage(req, res) {
     `).catch(e => { console.error('[Repertoire] categories:', e); return []; });
 
     const stats = await qGet(db, `
-      SELECT 
-        (SELECT COUNT(*) FROM composers)                         AS total_composers,
-        (SELECT COUNT(*) FROM works)                             AS total_works,
+      WITH performance_weights AS (
+        SELECT
+          cp.work_id,
+          cp.concert_id,
+          CASE
+            -- No movement_id means complete work performed
+            WHEN MAX(cp.movement_id) IS NULL THEN 1.0
+            -- All movements performed = complete performance
+            WHEN COUNT(DISTINCT cp.movement_id) >= COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = cp.work_id), 1)
+            THEN 1.0
+            -- Otherwise proportional weight
+            ELSE CAST(COUNT(DISTINCT cp.movement_id) AS FLOAT) /
+                 COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = cp.work_id), 1)
+          END AS weight
+        FROM concert_program cp
+        GROUP BY cp.work_id, cp.concert_id
+      )
+      SELECT
+        (SELECT COUNT(*) FROM composers) AS total_composers,
+        (SELECT COUNT(*) FROM works) AS total_works,
         (SELECT COUNT(DISTINCT concert_id) FROM concert_program) AS total_concerts,
-        (SELECT COUNT(*) FROM concert_program)                   AS total_performances
+        (SELECT ROUND(SUM(weight), 0) FROM performance_weights) AS total_performances
     `).catch(e => {
       console.error('[Repertoire] stats:', e);
       return { total_composers:0, total_works:0, total_concerts:0, total_performances:0 };
     });
 
     const topWorks = await qAll(db, `
+      WITH performance_weights AS (
+        SELECT
+          cp.work_id,
+          cp.concert_id,
+          COUNT(DISTINCT cp.movement_id) as performed_movements,
+          (SELECT COUNT(*) FROM movements WHERE work_id = cp.work_id) as total_movements,
+          CASE
+            -- No movement_id means complete work performed
+            WHEN MAX(cp.movement_id) IS NULL THEN 1.0
+            -- All movements performed = complete performance
+            WHEN COUNT(DISTINCT cp.movement_id) >= COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = cp.work_id), 1)
+            THEN 1.0
+            -- Otherwise proportional weight
+            ELSE CAST(COUNT(DISTINCT cp.movement_id) AS FLOAT) /
+                 COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = cp.work_id), 1)
+          END AS weight,
+          CASE
+            -- No movement_id = complete
+            WHEN MAX(cp.movement_id) IS NULL THEN 1
+            -- All movements performed = complete
+            WHEN COUNT(DISTINCT cp.movement_id) >= COALESCE((SELECT COUNT(*) FROM movements WHERE work_id = cp.work_id), 1)
+            THEN 1
+            ELSE 0
+          END AS is_complete
+        FROM concert_program cp
+        GROUP BY cp.work_id, cp.concert_id
+      )
       SELECT w.*,
              c.full_name AS composer_name,
-             COUNT(cp.id) AS performance_count
+             SUM(CASE WHEN pw.is_complete = 1 THEN 1 ELSE 0 END) AS complete_performances,
+             SUM(CASE WHEN pw.is_complete = 0 THEN 1 ELSE 0 END) AS partial_performances,
+             ROUND(SUM(pw.weight), 2) AS performance_count
       FROM works w
-      JOIN composers c        ON w.composer_id = c.id
-      JOIN concert_program cp ON cp.work_id = w.id
+      JOIN composers c ON w.composer_id = c.id
+      JOIN performance_weights pw ON pw.work_id = w.id
       GROUP BY w.id
       ORDER BY performance_count DESC
       LIMIT 10
@@ -354,6 +405,7 @@ export async function getRepertoirePage(req, res) {
       timelineByPeriod,
       pageStyles: [
         '/css/pages/repertoire/repertoire-new.css',
+        '/css/pages/repertoire/repertoire-collaborators-compact.css',
       ],
       pageScripts: ['/js/modules/repertoire/repertoire.js'],
     });

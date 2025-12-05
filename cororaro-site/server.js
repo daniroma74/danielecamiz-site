@@ -8,22 +8,17 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 const session = require('express-session');
 const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 const PORT = process.env.PORT || 3120;
 
-// Database connection
+// Database connection with better-sqlite3
 const DB_PATH = path.join(__dirname, 'db', 'cororaro.db');
-const db = new sqlite3.Database(DB_PATH, (err) => {
-  if (err) {
-    console.error('❌ Error opening database:', err.message);
-  } else {
-    console.log('✅ Database connected');
-  }
-});
+const db = new Database(DB_PATH);
+console.log('✅ Database connected (better-sqlite3):', DB_PATH);
 
 // View Engine Setup for Admin
 app.set('view engine', 'ejs');
@@ -208,14 +203,8 @@ app.get('/api/repertoire', (req, res) => {
     ORDER BY c.name, r.sort_order, r.title
   `;
 
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({
-        success: false,
-        message: 'Errore durante il recupero del repertorio'
-      });
-    }
+  try {
+    const rows = db.prepare(query).all();
 
     // Group songs by country
     const countries = {};
@@ -257,7 +246,13 @@ app.get('/api/repertoire', (req, res) => {
       data: repertoire,
       count: repertoire.length
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante il recupero del repertorio'
+    });
+  }
 });
 
 /**
@@ -291,14 +286,8 @@ app.get('/api/repertoire/:countryCode', (req, res) => {
     ORDER BY r.sort_order, r.title
   `;
 
-  db.all(query, [countryCode.toUpperCase()], (err, rows) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({
-        success: false,
-        message: 'Errore durante il recupero del repertorio'
-      });
-    }
+  try {
+    const rows = db.prepare(query).all(countryCode.toUpperCase());
 
     if (rows.length === 0) {
       return res.status(404).json({
@@ -333,7 +322,13 @@ app.get('/api/repertoire/:countryCode', (req, res) => {
       success: true,
       data: country
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante il recupero del repertorio'
+    });
+  }
 });
 
 // ============================================
@@ -359,18 +354,18 @@ app.get('/api/concerts', (req, res) => {
     ORDER BY date ASC
   `;
 
-  db.all(query, [], (err, concerts) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({ success: false, message: 'Errore database' });
-    }
+  try {
+    const concerts = db.prepare(query).all();
 
     res.json({
       success: true,
       data: concerts,
       count: concerts.length
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    return res.status(500).json({ success: false, message: 'Errore database' });
+  }
 });
 
 /**
@@ -384,18 +379,18 @@ app.get('/api/projects', (req, res) => {
     ORDER BY sort_order ASC, title ASC
   `;
 
-  db.all(query, [], (err, projects) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({ success: false, message: 'Errore database' });
-    }
+  try {
+    const projects = db.prepare(query).all();
 
     res.json({
       success: true,
       data: projects,
       count: projects.length
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    return res.status(500).json({ success: false, message: 'Errore database' });
+  }
 });
 
 /**
@@ -409,18 +404,18 @@ app.get('/api/maestri', (req, res) => {
     ORDER BY sort_order ASC, full_name ASC
   `;
 
-  db.all(query, [], (err, maestri) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({ success: false, message: 'Errore database' });
-    }
+  try {
+    const maestri = db.prepare(query).all();
 
     res.json({
       success: true,
       data: maestri,
       total: maestri.length
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    return res.status(500).json({ success: false, message: 'Errore database' });
+  }
 });
 
 /**
@@ -428,11 +423,8 @@ app.get('/api/maestri', (req, res) => {
  * Get all site settings
  */
 app.get('/api/settings', (req, res) => {
-  db.all('SELECT * FROM site_settings', [], (err, settings) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({ success: false, message: 'Errore database' });
-    }
+  try {
+    const settings = db.prepare('SELECT * FROM site_settings').all();
 
     // Convert to object
     const settingsObj = {};
@@ -444,7 +436,10 @@ app.get('/api/settings', (req, res) => {
       success: true,
       data: settingsObj
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    return res.status(500).json({ success: false, message: 'Errore database' });
+  }
 });
 
 /**
@@ -458,17 +453,17 @@ app.get('/api/values', (req, res) => {
     ORDER BY sort_order ASC
   `;
 
-  db.all(query, [], (err, values) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({ success: false, message: 'Errore database' });
-    }
+  try {
+    const values = db.prepare(query).all();
 
     res.json({
       success: true,
       data: values
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    return res.status(500).json({ success: false, message: 'Errore database' });
+  }
 });
 
 /**
@@ -490,18 +485,18 @@ app.get('/api/gallery', (req, res) => {
 
   query += ' ORDER BY sort_order ASC, created_at DESC';
 
-  db.all(query, params, (err, images) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({ success: false, message: 'Errore database' });
-    }
+  try {
+    const images = db.prepare(query).all(params);
 
     res.json({
       success: true,
       data: images,
       count: images.length
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    return res.status(500).json({ success: false, message: 'Errore database' });
+  }
 });
 
 /**
@@ -509,17 +504,17 @@ app.get('/api/gallery', (req, res) => {
  * Get "Unisciti a Noi" section info
  */
 app.get('/api/join-info', (req, res) => {
-  db.get('SELECT * FROM join_info WHERE id = 1', [], (err, info) => {
-    if (err) {
-      console.error('❌ Database error:', err.message);
-      return res.status(500).json({ success: false, message: 'Errore database' });
-    }
+  try {
+    const info = db.prepare('SELECT * FROM join_info WHERE id = 1').get();
 
     res.json({
       success: true,
       data: info || {}
     });
-  });
+  } catch (err) {
+    console.error('❌ Database error:', err.message);
+    return res.status(500).json({ success: false, message: 'Errore database' });
+  }
 });
 
 // ============================================

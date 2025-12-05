@@ -1,6 +1,7 @@
 import express from 'express';
 import { ensureAuthenticated } from '../middleware/hybridAuth.js';
 import { allQuery, getQuery, runQuery } from '../utils/database.js';
+import { getVideoDetails } from '../utils/youtubeService.js';
 
 const router = express.Router();
 
@@ -486,6 +487,57 @@ router.get('/api/videos/:id', async (req, res) => {
   }
 });
 
+// API: Fetch YouTube video metadata
+router.get('/api/videos/youtube-metadata/:videoId', async (req, res) => {
+  try {
+    const videoId = req.params.videoId;
+    const metadata = await getVideoDetails(videoId);
+
+    if (!metadata) {
+      return res.status(404).json({ error: 'Video not found or YouTube API error' });
+    }
+
+    res.json(metadata);
+  } catch (error) {
+    console.error('Error fetching YouTube metadata:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Helper function to extract YouTube ID from URL or return as-is if already an ID
+function extractYouTubeId(input) {
+  if (!input) return '';
+
+  input = String(input).trim();
+
+  // Direct ID (11 characters, alphanumeric + - and _)
+  if (/^[A-Za-z0-9_-]{11}$/.test(input)) {
+    return input;
+  }
+
+  // Extract from various YouTube URL formats
+  const patterns = [
+    /youtu\.be\/([A-Za-z0-9_-]{11})/,
+    /[?&]v=([A-Za-z0-9_-]{11})/,
+    /youtube\.com\/embed\/([A-Za-z0-9_-]{11})/
+  ];
+
+  for (const pattern of patterns) {
+    const match = input.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+
+  // If it looks like an ID with extra params (e.g., "VIDEO_ID?si=...")
+  const idMatch = input.match(/^([A-Za-z0-9_-]{11})/);
+  if (idMatch && idMatch[1]) {
+    return idMatch[1];
+  }
+
+  return '';
+}
+
 // API: Add video
 router.post('/api/videos', async (req, res) => {
   try {
@@ -494,6 +546,12 @@ router.post('/api/videos', async (req, res) => {
       timecode, is_spotlight, is_whitelisted, is_published, display_order, duration
     } = req.body;
 
+    // Clean YouTube ID
+    const cleanYouTubeId = extractYouTubeId(youtube_id);
+    if (!cleanYouTubeId) {
+      return res.status(400).json({ error: 'Invalid YouTube ID or URL' });
+    }
+
     const result = await runQuery(`
       INSERT INTO gallery_items (
         collection_id, item_type, youtube_id, title_it, title_en, description_it, description_en,
@@ -501,7 +559,7 @@ router.post('/api/videos', async (req, res) => {
       )
       VALUES (?, 'video', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
-      collection_id || null, youtube_id, title_it, title_en, description_it, description_en,
+      collection_id || null, cleanYouTubeId, title_it, title_en, description_it, description_en,
       timecode, is_spotlight ? 1 : 0, is_whitelisted ? 1 : 0, is_published ? 1 : 0,
       display_order || 0, duration
     ]);
@@ -517,19 +575,43 @@ router.post('/api/videos', async (req, res) => {
 router.put('/api/videos/:id', async (req, res) => {
   try {
     const {
-      title_it, title_en, description_it, description_en,
+      youtube_id, title_it, title_en, description_it, description_en,
       is_published, display_order
     } = req.body;
 
-    await runQuery(`
-      UPDATE gallery_items
-      SET title_it = ?, title_en = ?, description_it = ?, description_en = ?,
-          is_published = ?, display_order = ?, updated_at = datetime('now')
-      WHERE id = ? AND item_type = 'video'
-    `, [
-      title_it, title_en, description_it, description_en,
-      is_published ? 1 : 0, display_order || 0, req.params.id
-    ]);
+    // If youtube_id is provided, update it too (allows fixing wrong IDs)
+    let sql, params;
+    if (youtube_id !== undefined) {
+      // Clean YouTube ID
+      const cleanYouTubeId = extractYouTubeId(youtube_id);
+      if (!cleanYouTubeId) {
+        return res.status(400).json({ error: 'Invalid YouTube ID or URL' });
+      }
+
+      sql = `
+        UPDATE gallery_items
+        SET youtube_id = ?, title_it = ?, title_en = ?, description_it = ?, description_en = ?,
+            is_published = ?, display_order = ?, updated_at = datetime('now')
+        WHERE id = ? AND item_type = 'video'
+      `;
+      params = [
+        cleanYouTubeId, title_it, title_en, description_it, description_en,
+        is_published ? 1 : 0, display_order || 0, req.params.id
+      ];
+    } else {
+      sql = `
+        UPDATE gallery_items
+        SET title_it = ?, title_en = ?, description_it = ?, description_en = ?,
+            is_published = ?, display_order = ?, updated_at = datetime('now')
+        WHERE id = ? AND item_type = 'video'
+      `;
+      params = [
+        title_it, title_en, description_it, description_en,
+        is_published ? 1 : 0, display_order || 0, req.params.id
+      ];
+    }
+
+    await runQuery(sql, params);
 
     res.json({ success: true });
   } catch (error) {

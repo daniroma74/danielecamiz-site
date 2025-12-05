@@ -1,0 +1,47 @@
+/* ========================================
+   STANDARDIZED CLOSE BUTTON - SITE WIDE
+   White circle with black X
+   ======================================== */
+
+.close-btn-standard,
+.modal-close-standard,
+.lightbox__close--modern {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  background: #fff !important;
+  border: none !important;
+  color: #000 !important;
+  font-size: 2.5rem !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  width: 45px !important;
+  height: 45px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  z-index: 10001 !important;
+  font-weight: 300 !important;
+  line-height: 1 !important;
+  font-family: Arial, sans-serif !important;
+}
+
+.close-btn-standard:hover,
+.modal-close-standard:hover,
+.lightbox__close--modern:hover {
+  background: #f0f0f0 !important;
+  transform: scale(1.1) rotate(90deg) !important;
+}
+
+/* For modals that need the close button in different position */
+.close-btn-standard.top-left {
+  right: auto !important;
+  left: 20px !important;
+}
+
+.close-btn-standard.bottom-right {
+  top: auto !important;
+  bottom: 20px !important;
+}

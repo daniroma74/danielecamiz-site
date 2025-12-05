@@ -241,4 +241,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('TinyMCE o SharedEditor non disponibile');
   }
 });
+
+// Salva il contenuto TinyMCE prima del submit
+document.querySelector('form').addEventListener('submit', function(e) {
+  if (typeof tinymce !== 'undefined') {
+    tinymce.triggerSave();
+  }
+});
 </script>

@@ -6,9 +6,9 @@
 /* Cookie Banner */
 .cookie-banner {
   position: fixed;
-  bottom: 20px;
+  bottom: 100px;
   left: 20px;
-  right: 20px;
+  right: auto;
   max-width: 500px;
   background: linear-gradient(135deg, rgba(10, 10, 12, 0.98) 0%, rgba(20, 20, 24, 0.98) 100%);
   backdrop-filter: blur(20px);
@@ -23,7 +23,7 @@
 
 @keyframes slideUpBounce {
   from {
-    transform: translateY(120%);
+    transform: translateY(0);
     opacity: 0;
   }
   to {

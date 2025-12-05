@@ -272,9 +272,9 @@ export async function getGalleryCollectionsByType(req, res) {
     const titleCol = lang === 'en' ? 'title_en' : 'title_it';
     const descCol = lang === 'en' ? 'description_en' : 'description_it';
 
-    // Get collections of this type
+    // Get collections of this type OR mixed collections that contain items of this type
     const collections = await qAll(db, `
-      SELECT
+      SELECT DISTINCT
         gc.id,
         gc.slug,
         gc.type,
@@ -286,11 +286,20 @@ export async function getGalleryCollectionsByType(req, res) {
         gc.display_order,
         gc.is_auto_sync,
         gc.auto_sync_max_videos,
+        (SELECT COUNT(*) FROM gallery_items WHERE collection_id = gc.id AND is_published = 1 AND item_type = ?) as typed_item_count,
         (SELECT COUNT(*) FROM gallery_items WHERE collection_id = gc.id AND is_published = 1) as item_count
       FROM gallery_collections gc
-      WHERE gc.type = ? AND gc.is_published = 1
+      WHERE gc.is_published = 1 AND (
+        gc.type = ? OR
+        (gc.type = 'mixed' AND EXISTS (
+          SELECT 1 FROM gallery_items gi
+          WHERE gi.collection_id = gc.id
+            AND gi.item_type = ?
+            AND gi.is_published = 1
+        ))
+      )
       ORDER BY gc.is_featured DESC, gc.display_order ASC, gc.created_at DESC
-    `, [dbType]);
+    `, [dbType, dbType, dbType]);
 
     // Resolve covers and auto-set for auto-sync video collections
     for (const c of collections) {
@@ -403,6 +412,7 @@ export async function getGalleryCollectionDetail(req, res) {
           duration: null,
           is_spotlight: 0,
           display_order: 0,
+          liveBroadcastContent: video.liveBroadcastContent || 'none',
           media: {
             thumbnail: video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`,
             url: `https://www.youtube.com/watch?v=${video.id}`,

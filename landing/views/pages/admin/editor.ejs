@@ -4,22 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Editor - <%= event.title || 'Nuovo Evento' %></title>
-  
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/shared/css/admin-base.css">
-  <link rel="stylesheet" href="/public/css/admin-editor.css">
+  <link rel="stylesheet" href="/public/css/admin-editor.css?v=<%= Date.now() %>">
 
   <style>
     /* Hide admin header for this full-screen editor */
     .admin-header { display: none; }
   </style>
-  
+
   <!-- Cloudinary Upload Widget -->
   <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
   <script src="/shared/cloudinary-manager/ui-notifications.js"></script>
   <script src="/shared/cloudinary-manager/ui-loading.js"></script>
   <script src="/shared/cloudinary-manager/client.js"></script>
-  
+
   <!-- TinyMCE Shared -->
   <script src="/shared/vendor/tinymce/tinymce.min.js"></script>
   <script src="/shared/config/editor-config.js"></script>
@@ -27,81 +27,86 @@
 <body>
   <%- include('../../partials/admin-header') %>
 
-  <!-- Top Nav -->
-  <nav class="top-nav">
-    <div class="nav-brand">
-      <i class="fas fa-edit"></i>
-      <span>Editor Landing: <%= event.title %></span>
+  <!-- Sticky Top Header -->
+  <header class="editor-header">
+    <div class="header-left">
+      <a href="/" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+        <span>Dashboard</span>
+      </a>
+      <div class="header-title">
+        <h1><%= event.title %></h1>
+        <div class="subtitle">
+          <i class="fas fa-calendar"></i>
+          <%= new Date(event.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+        </div>
+      </div>
     </div>
-    <div class="nav-actions">
-      <a href="/" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Dashboard
+    <div class="header-actions">
+      <a href="/bookings/<%= event.slug %>" class="btn btn-secondary btn-sm">
+        <i class="fas fa-list"></i>
+        <span class="btn-text">Prenotazioni</span>
       </a>
-      <a href="/bookings/<%= event.slug %>" class="btn btn-secondary">
-        <i class="fas fa-list"></i> Prenotazioni
-      </a>
-      <a href="https://<%= event.slug %>.danielecamiz.com" target="_blank" class="btn btn-primary">
-        <i class="fas fa-external-link-alt"></i> Vedi Landing
+      <a href="https://<%= event.slug %>.danielecamiz.com" target="_blank" class="btn btn-secondary btn-sm">
+        <i class="fas fa-external-link-alt"></i>
+        <span class="btn-text">Vedi Landing</span>
       </a>
       <button type="button" class="btn btn-primary" id="saveBtn">
         <i class="fas fa-save"></i> Salva
       </button>
     </div>
-  </nav>
-  
-  <!-- Editor Container -->
-  <div class="editor-container">
-    
-    <!-- Sidebar Tabs -->
-    <aside class="editor-sidebar">
-      <div class="tabs">
-        <button class="tab active" data-tab="info">
+  </header>
+
+  <!-- Main Layout: Sidebar + Content -->
+  <div class="editor-layout">
+
+    <!-- Sticky Sidebar Navigation -->
+    <nav class="editor-nav">
+      <ul class="nav-list">
+        <li class="nav-item active" data-section="info">
           <i class="fas fa-info-circle"></i>
-          <span>Info</span>
-        </button>
-        <button class="tab" data-tab="design">
+          Info
+        </li>
+        <li class="nav-item" data-section="design">
           <i class="fas fa-palette"></i>
-          <span>Design</span>
-        </button>
-        <button class="tab" data-tab="contenuti">
+          Design
+        </li>
+        <li class="nav-item" data-section="contenuti">
           <i class="fas fa-file-alt"></i>
-          <span>Contenuti</span>
-        </button>
-        <button class="tab" data-tab="performers">
+          Contenuti
+        </li>
+        <li class="nav-item" data-section="performers">
           <i class="fas fa-users"></i>
-          <span>Artisti</span>
-        </button>
-        <button class="tab" data-tab="gallery">
+          Artisti
+        </li>
+        <li class="nav-item" data-section="gallery">
           <i class="fas fa-images"></i>
-          <span>Galleria</span>
-        </button>
-        <button class="tab" data-tab="booking">
+          Galleria
+        </li>
+        <li class="nav-item" data-section="booking">
           <i class="fas fa-ticket-alt"></i>
-          <span>Prenotazioni</span>
-        </button>
-        <button class="tab" data-tab="anteprima">
-          <i class="fas fa-eye"></i>
-          <span>Anteprima</span>
-        </button>
+          Prenotazioni
+        </li>
+      </ul>
+      <div class="nav-progress">
+        <div class="progress-bar"></div>
       </div>
-    </aside>
-    
-    <!-- Main Content -->
-    <main class="editor-main">
+    </nav>
+
+    <!-- Scrollable Content Area -->
+    <div class="editor-content">
       <form id="editorForm">
-        
+
         <!-- Hidden inputs -->
         <input type="hidden" id="gallery_images" name="gallery_images" value='<%= event.gallery_images || "[]" %>'>
         <input type="hidden" id="performers_photos" name="performers_photos" value='<%= event.performers_photos || "{}" %>'>
         <input type="hidden" id="faqs" name="faqs" value='<%= event.faqs || "[]" %>'>
-        
-        <!-- TAB INFO -->
-        <div class="tab-content active" data-content="info">
-          <div class="content-header">
-            <h2>Informazioni Evento</h2>
-            <p class="subtitle">Dati base gestiti da Concerts Admin</p>
-          </div>
-          
+
+        <!-- SECTION INFO -->
+        <section id="section-info" class="editor-section">
+          <h2 class="section-title">Informazioni Evento</h2>
+          <p class="section-subtitle">Dati base gestiti da Concerts Admin</p>
+
           <div class="info-card">
             <div class="info-row">
               <div class="info-label">Titolo:</div>
@@ -137,15 +142,15 @@
               </div>
             </div>
           </div>
-          
+
           <div class="alert alert-info">
             <i class="fas fa-info-circle"></i>
             <div>
-              <strong>Per modificare titolo, data, programma o artisti</strong>, 
+              <strong>Per modificare titolo, data, programma o artisti</strong>,
               vai su <a href="https://archive.danielecamiz.com/admin/concert/<%= event.id %>/edit" target="_blank">Concerts Admin</a>
             </div>
           </div>
-          
+
           <% if (event.bookingStats) { %>
           <div class="booking-stats">
             <div class="stat-box">
@@ -158,24 +163,21 @@
             </div>
           </div>
           <% } %>
-        </div>
-        
-        <!-- TAB DESIGN -->
-        <div class="tab-content" data-content="design">
-          <div class="content-header">
-            <h2>Design & Layout</h2>
-            <p class="subtitle">Personalizza l'aspetto della landing</p>
-          </div>
-          
-          <!-- Hero Section -->
+        </section>
+
+        <!-- SECTION DESIGN -->
+        <section id="section-design" class="editor-section">
+          <h2 class="section-title">Design & Layout</h2>
+          <p class="section-subtitle">Personalizza l'aspetto della landing</p>
+
           <div class="form-section">
             <h3>Hero Section</h3>
-            
+
             <!-- Toggle Mostra Titolo -->
             <div class="form-group">
               <label class="toggle-switch">
-                <input type="checkbox" 
-                       name="show_hero_title" 
+                <input type="checkbox"
+                       name="show_hero_title"
                        id="show_hero_title"
                        <%= event.show_hero_title !== 0 ? 'checked' : '' %>>
                 <span class="toggle-slider"></span>
@@ -183,7 +185,7 @@
               </label>
               <small class="help-text">Se disattivato, il poster sarà mostrato a pieno schermo senza testo sovrapposto</small>
             </div>
-            
+
             <!-- Hero Image Override -->
             <div class="form-group">
               <label>Hero Image</label>
@@ -213,7 +215,7 @@
               </div>
               <input type="hidden" id="hero_image_override" name="hero_image_override" value="<%= event.hero_image_override || '' %>">
             </div>
-            
+
             <!-- Social Image -->
             <div class="form-group">
               <label>Immagine Social (Open Graph)</label>
@@ -238,7 +240,7 @@
               </div>
               <input type="hidden" id="social_image_override" name="social_image_override" value="<%= event.social_image_override || '' %>">
             </div>
-            
+
             <!-- Toggles -->
             <div class="form-group">
               <label class="toggle-switch">
@@ -247,7 +249,7 @@
                 <span class="toggle-label">Mostra countdown evento</span>
               </label>
             </div>
-            
+
             <div class="form-group">
               <label class="toggle-switch">
                 <input type="checkbox" name="show_share_buttons" id="show_share_buttons" <%= event.show_share_buttons ? 'checked' : '' %>>
@@ -256,58 +258,59 @@
               </label>
             </div>
           </div>
-        </div>
-        
-        <!-- TAB CONTENUTI -->
-        <div class="tab-content" data-content="contenuti">
-          <div class="content-header">
-            <h2>Contenuti Testuali</h2>
-            <p class="subtitle">Descrizioni e note di programma</p>
-          </div>
-          
+        </section>
+
+        <!-- SECTION CONTENUTI -->
+        <section id="section-contenuti" class="editor-section">
+          <h2 class="section-title">Contenuti Testuali</h2>
+          <p class="section-subtitle">Descrizioni e note di programma</p>
+
           <div class="form-section">
             <!-- Titolo Override -->
             <div class="form-group">
               <label for="event_title_override">Titolo Personalizzato (opzionale)</label>
-              <input type="text" 
-                     id="event_title_override" 
-                     name="event_title_override" 
+              <input type="text"
+                     id="event_title_override"
+                     name="event_title_override"
+                     class="form-input"
                      value="<%= event.event_title_override || '' %>"
                      placeholder="Lascia vuoto per usare il titolo da Concerts Admin">
             </div>
-            
+
             <!-- Meta Description -->
             <div class="form-group">
               <label for="meta_description">Meta Description (SEO)</label>
-              <textarea id="meta_description" 
-                        name="meta_description" 
-                        rows="3" 
+              <textarea id="meta_description"
+                        name="meta_description"
+                        class="form-textarea"
+                        rows="3"
                         maxlength="160"><%= event.meta_description || '' %></textarea>
               <div class="char-count">
                 <span id="metaCharCount">0</span> / 160
               </div>
             </div>
-            
+
             <!-- Event Description -->
             <div class="form-group">
               <label for="event_description">Note di Sala</label>
-              <textarea id="event_description" 
-                        name="event_description" 
+              <textarea id="event_description"
+                        name="event_description"
+                        class="form-textarea"
                         rows="10"><%= event.event_description || '' %></textarea>
               <small class="help-text">Editor rich text - puoi formattare il testo</small>
             </div>
-            
+
             <!-- Tags -->
             <div class="form-group">
               <label for="event_tags">Tag Evento (separati da virgola)</label>
               <textarea id="event_tags"
                         name="event_tags"
                         rows="3"
-                        class="form-control"
+                        class="form-textarea"
                         placeholder="Es: Beethoven, Sinfonie, Classica, Mozart, Orchestra"><%= event.event_tags || '' %></textarea>
               <small class="help-text">Inserisci i tag separati da virgola. Questi aiutano gli utenti a trovare l'evento e migliorano la SEO.</small>
             </div>
-            
+
             <!-- FAQ -->
             <div class="form-group">
               <label>Domande Frequenti (FAQ)</label>
@@ -317,43 +320,37 @@
               </button>
             </div>
           </div>
-        </div>
-        
-        <!-- TAB PERFORMERS -->
-        <div class="tab-content" data-content="performers">
-          <div class="content-header">
-            <h2>Foto Artisti</h2>
-            <p class="subtitle">Carica foto per direttore, orchestra e solisti</p>
-          </div>
-          
+        </section>
+
+        <!-- SECTION PERFORMERS -->
+        <section id="section-performers" class="editor-section">
+          <h2 class="section-title">Foto Artisti</h2>
+          <p class="section-subtitle">Carica foto per direttore, orchestra e solisti</p>
+
           <div class="form-section">
             <div id="performersPhotosManager"></div>
           </div>
-        </div>
-        
-        <!-- TAB GALLERY -->
-        <div class="tab-content" data-content="gallery">
-          <div class="content-header">
-            <h2>Galleria Foto</h2>
-            <p class="subtitle">Gestisci le foto dell'evento</p>
-          </div>
-          
+        </section>
+
+        <!-- SECTION GALLERY -->
+        <section id="section-gallery" class="editor-section">
+          <h2 class="section-title">Galleria Foto</h2>
+          <p class="section-subtitle">Gestisci le foto dell'evento</p>
+
           <div class="form-section">
             <button type="button" class="btn btn-primary" id="addGalleryBtn">
               <i class="fas fa-plus"></i> Aggiungi Foto
             </button>
-            
+
             <div class="gallery-grid" id="galleryGrid"></div>
           </div>
-        </div>
-        
-        <!-- TAB BOOKING -->
-        <div class="tab-content" data-content="booking">
-          <div class="content-header">
-            <h2>Impostazioni Prenotazioni</h2>
-            <p class="subtitle">Configura il form di prenotazione</p>
-          </div>
-          
+        </section>
+
+        <!-- SECTION BOOKING -->
+        <section id="section-booking" class="editor-section">
+          <h2 class="section-title">Impostazioni Prenotazioni</h2>
+          <p class="section-subtitle">Configura il form di prenotazione</p>
+
           <div class="form-section">
             <div class="form-group">
               <label class="toggle-switch">
@@ -362,68 +359,38 @@
                 <span class="toggle-label">Prenotazioni Attive</span>
               </label>
             </div>
-            
+
             <div class="form-group">
               <label for="venue_capacity">Capienza Venue</label>
-              <input type="number" 
-                     id="venue_capacity" 
-                     name="venue_capacity" 
+              <input type="number"
+                     id="venue_capacity"
+                     name="venue_capacity"
+                     class="form-input"
                      min="0"
                      value="<%= event.venue_capacity || '' %>"
                      placeholder="Es: 300">
             </div>
-            
+
             <div class="form-group">
               <label for="booking_disclaimer">Avviso Prenotazioni</label>
-              <textarea id="booking_disclaimer" 
-                        name="booking_disclaimer" 
+              <textarea id="booking_disclaimer"
+                        name="booking_disclaimer"
+                        class="form-textarea"
                         rows="3"><%= event.booking_disclaimer || '' %></textarea>
             </div>
           </div>
-        </div>
-        
-        <!-- TAB ANTEPRIMA -->
-        <div class="tab-content" data-content="anteprima">
-          <div class="content-header">
-            <h2>Anteprima Landing</h2>
-            <p class="subtitle">Visualizza come apparirà la landing page</p>
-          </div>
-          
-          <div class="preview-toolbar">
-            <div class="device-selector">
-              <button type="button" class="device-btn active" data-device="desktop">
-                <i class="fas fa-desktop"></i> Desktop
-              </button>
-              <button type="button" class="device-btn" data-device="tablet">
-                <i class="fas fa-tablet-alt"></i> Tablet
-              </button>
-              <button type="button" class="device-btn" data-device="mobile">
-                <i class="fas fa-mobile-alt"></i> Mobile
-              </button>
-            </div>
-            
-            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('previewFrame').src = document.getElementById('previewFrame').src">
-              <i class="fas fa-sync"></i> Ricarica
-            </button>
-          </div>
-          
-          <div class="preview-container">
-            <iframe id="previewFrame" 
-                    class="preview-iframe desktop" 
-                    src="https://<%= event.slug %>.danielecamiz.com"></iframe>
-          </div>
-        </div>
-        
+        </section>
+
       </form>
-    </main>
+    </div>
   </div>
-  
+
   <script>
     window.EVENT_DATA = {
       slug: '<%= event.slug %>',
       performers: <%- JSON.stringify(event.performers) %>
     };
   </script>
-  <script src="/public/js/admin-editor.js"></script>
+  <script src="/public/js/admin-editor.js?v=<%= Date.now() %>"></script>
 </body>
 </html>

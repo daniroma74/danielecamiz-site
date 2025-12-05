@@ -1,7 +1,5 @@
-<!-- Layout con poster fisso a sinistra su desktop -->
-<div class="season-layout">
-  <!-- Poster Sidebar - Fisso a sinistra su desktop -->
-  <aside class="poster-sidebar" id="poster_sidebar">
+<!-- Poster Sidebar - COMPLETAMENTE FISSO FUORI DAL LAYOUT -->
+<aside class="poster-sidebar" id="poster_sidebar">
     <div class="poster-inner">
       <div class="poster-frame">
         <a class="poster-link" 
@@ -29,15 +27,21 @@
       </div>
       
       <div class="poster-actions">
-        <a class="btn primary small full-width" 
-           href="/public/img/poster/poster-1200x1710.webp" 
+        <a class="btn primary small full-width"
+           href="/public/img/poster/poster-1200x1710.webp"
            download="ICNT-Stagione-<%= ui.code %>.webp">
-          📥 Scarica Locandina
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin-right: 6px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Scarica Locandina
         </a>
-        <a class="btn ghost small full-width" 
-           href="/q.svg" 
+        <a class="btn ghost small full-width"
+           href="/q.svg"
            download="ICNT-QR-<%= ui.code %>.svg">
-          🔗 Scarica QR Code
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="margin-right: 6px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+          </svg>
+          Scarica QR Code
         </a>
       </div>
       
@@ -53,8 +57,10 @@
         </div>
       </div>
     </div>
-  </aside>
-  
+</aside>
+
+<!-- Layout principale senza sidebar -->
+<div class="season-layout">
   <!-- Main Content Area - Scrollabile -->
   <div class="content-area">
     <div class="content-inner">
@@ -104,25 +110,56 @@
         </div>
       </section>
       
+      <!-- Mobile Poster Card -->
+      <section class="mobile-poster-card card glass" id="mobile_poster_card">
+        <a href="/public/img/poster/poster-1200x1710.webp" target="_blank" class="poster-card-link">
+          <div class="poster-card-thumbnail">
+            <img src="/public/img/poster/poster-480x684.webp" alt="Locandina Stagione <%= ui.code %>" loading="lazy">
+          </div>
+          <div class="poster-card-content">
+            <h3>Locandina Stagione <%= ui.code %></h3>
+            <p>Tocca per visualizzare la locandina completa</p>
+            <div class="poster-card-actions">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Visualizza</span>
+            </div>
+          </div>
+        </a>
+      </section>
+
       <!-- Filters Section -->
       <section class="filters-section card glass" id="filters_section">
         <div class="filters-wrapper">
-          <h3 class="filters-title">Filtra per tipo:</h3>
+          <h3 class="filters-title">Filtra concerti:</h3>
           <div class="filters-chips">
-            <a href="?f=all" 
-               class="chip <%= ui.filter === 'all' ? 'active' : '' %>"
+            <a href="?f=all"
+               class="filter-chip <%= ui.filter === 'all' ? 'active' : '' %>"
                data-filter="all">
-              Tutti (<%= data.allCount %>)
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <span>Tutti i concerti</span>
+              <span class="filter-count"><%= data.allCount %></span>
             </a>
-            <a href="?f=icnt" 
-               class="chip <%= ui.filter === 'icnt' ? 'active' : '' %>"
+            <a href="?f=icnt"
+               class="filter-chip <%= ui.filter === 'icnt' ? 'active' : '' %>"
                data-filter="icnt">
-              Solo ICNT
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span>Solo ICNT</span>
+              <span class="filter-count"><%= data.icntCount %></span>
             </a>
-            <a href="?f=msc" 
-               class="chip <%= ui.filter === 'msc' ? 'active' : '' %>"
+            <a href="?f=msc"
+               class="filter-chip <%= ui.filter === 'msc' ? 'active' : '' %>"
                data-filter="msc">
-              Solo MSC
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+              <span>Mozart Symphonies Challenge</span>
+              <span class="filter-count"><%= data.mscCount %></span>
             </a>
           </div>
         </div>
@@ -183,34 +220,46 @@
                   </div>
                   
                   <% if (event.description_short) { %>
-                    <p class="event-description"><%= event.description_short %></p>
+                    <div class="event-description"><%- event.description_short %></div>
                   <% } %>
                 </div>
                 
                 <!-- Actions Column -->
                 <div class="event-actions">
                   <% if (event.detailUrl) { %>
-                    <a href="<%= event.detailUrl %>" 
-                       class="btn primary small"
+                    <a href="<%= event.detailUrl %>"
+                       class="btn-action primary"
                        target="_blank"
-                       rel="noopener">
-                      Dettagli
+                       rel="noopener"
+                       aria-label="Dettagli <%= event.title %>">
+                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Info</span>
                     </a>
                   <% } %>
-                  
-                  <button class="btn ghost small icon-btn share-btn"
+
+                  <button class="btn-action secondary share-btn"
                           type="button"
                           data-title="<%- (event.title || '').replace(/"/g,'&quot;') %>"
                           data-url="<%- (event.detailUrl || '') %>"
-                          title="Condividi">
-                    📤
+                          title="Condividi evento"
+                          aria-label="Condividi <%= event.title %>">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    <span>Condividi</span>
                   </button>
-                  
-                  <a href="/ics/<%= event.slug %>.ics" 
-                     class="btn ghost small icon-btn"
+
+                  <a href="/ics/<%= event.slug %>.ics"
+                     class="btn-action secondary"
                      download
-                     title="Aggiungi al calendario">
-                    📅
+                     title="Aggiungi al calendario"
+                     aria-label="Scarica calendario <%= event.title %>">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>Calendario</span>
                   </a>
                 </div>
               </article>
@@ -226,10 +275,7 @@
   </div>
 </div>
 
-<!-- Mobile Poster Modal -->
-<div class="mobile-poster-trigger" id="mobile_poster_trigger">
-  <span>📷 Locandina</span>
-</div>
+<!-- Mobile Poster Modal rimosso - ora è una card integrata -->
 
 <script>
   // niente onclick inline: aggancio qui (la tua CSP lo consente)
@@ -251,13 +297,7 @@
       });
     });
 
-    // Mobile: apri la locandina in nuova scheda (nessun “forza download”)
-    var t = document.getElementById('mobile_poster_trigger');
-    if (t) {
-      t.addEventListener('click', function(){
-        window.open('/public/img/poster/poster-1200x1710.webp', '_blank');
-      });
-    }
+    // Mobile poster trigger rimosso - ora è una card integrata
   })();
 </script>
 
@@ -269,18 +309,20 @@
   position: relative;
 }
 
-/* Poster Sidebar - Fisso a sinistra */
+/* Poster Sidebar - COMPLETAMENTE FISSO */
 .poster-sidebar {
-  position: sticky;
-  top: var(--header-height);
+  position: fixed;
+  top: 0;
   left: 0;
   width: 400px;
-  height: calc(100vh - var(--header-height));
+  height: 100vh;
   padding: 2rem;
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.03) 0%, transparent 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  overflow-y: auto;
+  overflow: hidden;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
 }
 
 .poster-inner {
@@ -369,6 +411,7 @@
 /* Content Area - Scrollabile */
 .content-area {
   flex: 1;
+  margin-left: 400px;
   overflow-y: auto;
   padding: 2rem;
   background: var(--bg-primary);
@@ -379,40 +422,87 @@
   margin: 0 auto;
 }
 
+/* Mobile Poster Card */
+.mobile-poster-card {
+  display: none;
+  margin-bottom: 1.5rem;
+}
+
+.poster-card-link {
+  display: flex;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.poster-card-link:hover {
+  transform: translateX(4px);
+}
+
+.poster-card-thumbnail {
+  width: 100px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.poster-card-thumbnail img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.poster-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.poster-card-content h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.poster-card-content p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.75rem 0;
+}
+
+.poster-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--accent-gold);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.poster-card-actions svg {
+  flex-shrink: 0;
+}
+
 /* Mobile Layout */
 @media (max-width: 1024px) {
   .season-layout {
     flex-direction: column;
   }
-  
+
   .poster-sidebar {
     display: none;
   }
-  
-  .mobile-poster-trigger {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    background: var(--gradient-gold);
-    color: var(--bg-primary);
-    padding: 12px 20px;
-    border-radius: 30px;
-    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
-    z-index: 100;
-    cursor: pointer;
-    font-weight: 600;
-    transition: transform 0.3s ease;
+
+  .mobile-poster-card {
     display: block;
   }
-  
-  .mobile-poster-trigger:active {
-    transform: scale(0.95);
-  }
-}
 
-@media (min-width: 1025px) {
-  .mobile-poster-trigger {
-    display: none;
+  .content-area {
+    margin-left: 0;
   }
 }
 
@@ -513,10 +603,81 @@
 
 .filters-chips {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   flex-wrap: wrap;
+  flex: 1;
 }
 
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.filter-chip svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.filter-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.filter-chip:hover svg {
+  opacity: 1;
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  border-color: transparent;
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+  transform: scale(1.05);
+}
+
+.filter-chip.active svg {
+  opacity: 1;
+}
+
+.filter-chip:active {
+  transform: scale(0.98);
+}
+
+.filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.filter-chip.active .filter-count {
+  background: rgba(0, 0, 0, 0.3);
+  color: #000;
+}
+
+/* Legacy support */
 .chip {
   padding: 0.5rem 1rem;
   background: rgba(255, 255, 255, 0.05);
@@ -670,17 +831,78 @@
   font-size: 0.9rem;
   color: var(--text-secondary);
   line-height: 1.5;
+  margin-top: 0.5rem;
+}
+
+.event-description p {
   margin: 0;
 }
 
 /* Event Actions */
 .event-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-/* Buttons */
+/* Modern Action Buttons */
+.btn-action {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 80px;
+  padding: 12px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-action svg {
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+.btn-action span {
+  font-size: 0.75rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.btn-action:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.btn-action.primary {
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  border-color: transparent;
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-action.primary:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-action.secondary {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Legacy button support for other pages */
 .btn {
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -770,24 +992,40 @@
   .hero-title {
     font-size: 2rem;
   }
-  
+
   .event-card {
     grid-template-columns: 80px 1fr;
     gap: 1rem;
     padding: 1rem;
   }
-  
+
   .event-actions {
     grid-column: 1 / -1;
     margin-top: 1rem;
+    justify-content: flex-start;
   }
-  
+
+  .btn-action {
+    min-width: 70px;
+    padding: 10px 8px;
+    gap: 4px;
+  }
+
+  .btn-action svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .btn-action span {
+    font-size: 0.7rem;
+  }
+
   .filters-wrapper {
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;
   }
-  
+
   .next-event-info {
     flex-direction: column;
     gap: 0.5rem;

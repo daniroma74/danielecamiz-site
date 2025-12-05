@@ -51,6 +51,39 @@
   transition: all 0.4s var(--ease-smooth);
 }
 
+/* Video badge (Coming Soon / In Arrivo) */
+.video-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: var(--font-ui, Montserrat, Arial, sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 3;
+  pointer-events: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.video-badge--upcoming {
+  background: linear-gradient(135deg, #d4af37 0%, #c9a135 100%);
+  color: #1a1a1a;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    box-shadow: 0 2px 12px rgba(212, 175, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 2px 20px rgba(212, 175, 55, 0.7);
+  }
+}
+
 /* Play button overlay */
 .video-thumb::before {
   content: '▶';

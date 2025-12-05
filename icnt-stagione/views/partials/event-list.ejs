@@ -2,68 +2,314 @@
   <% if (events && events.length > 0) { %>
     <ul class="event-ul" role="list">
       <% events.forEach((event, index) => { %>
-        <li class="event-card" 
+        <%
+        const eventDate = new Date(event.date);
+        const isPast = eventDate < new Date();
+        %>
+        <li class="event-card <%= isPast ? 'event-past' : '' %>"
             data-type="<%= event.mscNumber ? 'msc' : 'icnt' %>"
             role="article"
-            aria-label="Evento <%= event.title %>"
             style="animation-delay: <%= index * 0.05 %>s">
-          
+
+          <!-- Status Badge per eventi passati -->
+          <% if (isPast) { %>
+            <div class="event-status-badge">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Concluso
+            </div>
+          <% } %>
+
           <!-- Data -->
           <div class="event-date">
-            <div class="d"><%= new Date(event.date).getDate() %></div>
-            <div class="m"><%= new Date(event.date).toLocaleString('it', { month: 'short' }).toUpperCase() %></div>
-            <div class="y"><%= new Date(event.date).getFullYear() %></div>
+            <div class="d"><%= eventDate.getDate() %></div>
+            <div class="m"><%= eventDate.toLocaleString('it', { month: 'short' }).toUpperCase() %></div>
+            <div class="y"><%= eventDate.getFullYear() %></div>
           </div>
-          
+
           <!-- Main Content -->
           <div class="event-main">
             <div class="event-title">
               <h3><%= event.title %></h3>
               <% if (event.mscNumber) { %>
-                <img class="msc-wordmark" 
-                     src="/public/img/logo_msc.png" 
-                     alt="MSC"
-                     loading="lazy">
-                <span class="msc-badge" 
-                      data-tooltip="Concerto MSC">
-                  MSC <%= event.mscNumber %>
-                </span>
+                <span class="msc-badge">MSC #<%= event.mscNumber %></span>
               <% } %>
             </div>
-            
+
             <% if (event.subtitle) { %>
               <div class="event-subtitle"><%= event.subtitle %></div>
             <% } %>
+
+            <div class="event-meta">
+              <span class="event-time">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <%= event.time || '20:00' %>
+              </span>
+            </div>
           </div>
-          
+
           <!-- Actions -->
           <div class="event-actions">
+            <!-- Link Info/Dettagli -->
             <% if (event.detailUrl) { %>
-              <a href="<%= event.detailUrl %>" 
-                 class="btn small primary"
+              <a href="<%= event.detailUrl %>"
+                 class="btn-icon primary"
                  target="_blank"
                  rel="noopener"
-                 aria-label="Dettagli evento <%= event.title %>">
-                <span>Dettagli</span>
+                 title="Maggiori informazioni"
+                 aria-label="Dettagli <%= event.title %>">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="btn-label">Dettagli</span>
               </a>
             <% } %>
-            
-            <% if (event.slug) { %>
-              <a href="/ics/<%= event.slug %>.ics" 
-                 class="btn small ghost"
+
+            <!-- Calendario (solo eventi futuri) -->
+            <% if (!isPast && event.slug) { %>
+              <a href="/ics/<%= event.slug %>.ics"
+                 class="btn-icon"
                  download
-                 data-tooltip="Aggiungi al calendario"
-                 aria-label="Scarica ICS per <%= event.title %>">
-                📅
+                 title="Aggiungi al calendario"
+                 aria-label="Scarica calendario <%= event.title %>">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="btn-label">Calendario</span>
               </a>
+            <% } %>
+
+            <!-- Condividi -->
+            <button class="btn-icon"
+                    onclick="shareEvent('<%= event.title %>', '<%= event.detailUrl || '' %>')"
+                    title="Condividi evento"
+                    aria-label="Condividi <%= event.title %>">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              <span class="btn-label">Condividi</span>
+            </button>
+
+            <!-- Video (solo eventi passati, se disponibile) -->
+            <% if (isPast && event.videoUrl) { %>
+              <a href="<%= event.videoUrl %>"
+                 class="btn-icon"
+                 target="_blank"
+                 rel="noopener"
+                 title="Guarda il video"
+                 aria-label="Video <%= event.title %>">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="btn-label">Video</span>
+              </a>
+            <% } else if (isPast) { %>
+              <button class="btn-icon" disabled title="Video non disponibile">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span class="btn-label">Video</span>
+              </button>
             <% } %>
           </div>
         </li>
       <% }); %>
     </ul>
   <% } else { %>
-    <div class="empty">
-      <p>Nessun evento programmato al momento.</p>
+    <div class="empty-state">
+      <svg width="80" height="80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <h3>Nessun evento trovato</h3>
+      <p>Prova a modificare i filtri</p>
     </div>
   <% } %>
 </div>
+
+<script>
+function shareEvent(title, url) {
+  if (navigator.share) {
+    navigator.share({ title, url }).catch(() => {});
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(url || window.location.href);
+    alert('Link copiato!');
+  }
+}
+</script>
+
+<style>
+/* Event Card */
+.event-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  margin-bottom: var(--space-md);
+  transition: all 0.25s ease;
+}
+
+.event-card:hover {
+  border-color: var(--border-active);
+  background: var(--bg-card-hover);
+}
+
+.event-card.event-past {
+  opacity: 0.65;
+}
+
+/* Status Badge */
+.event-status-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(100, 100, 110, 0.25);
+  border: 1px solid rgba(100, 100, 110, 0.4);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* MSC Badge */
+.msc-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 12px;
+  margin-left: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* Event Meta */
+.event-meta {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: 6px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.event-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* PULSANTI AZIONI - PROFESSIONALI */
+.event-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 70px;
+  padding: 10px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-icon svg {
+  flex-shrink: 0;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.btn-icon.primary {
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  border-color: transparent;
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-icon.primary:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+}
+
+.btn-icon:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-label {
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state svg {
+  margin: 0 auto 20px;
+  color: var(--accent-gold);
+  opacity: 0.3;
+}
+
+.empty-state h3 {
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-size: 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-card {
+    flex-wrap: wrap;
+  }
+
+  .event-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .btn-icon {
+    min-width: 60px;
+    padding: 8px 6px;
+  }
+
+  .btn-label {
+    font-size: 0.65rem;
+  }
+}
+</style>

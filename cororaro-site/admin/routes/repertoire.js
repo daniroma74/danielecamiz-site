@@ -43,43 +43,44 @@ module.exports = (db) => {
     query += ' ORDER BY c.name, r.title LIMIT ? OFFSET ?';
     params.push(limit, offset);
 
-    // Get total count
-    db.get(countQuery, countParams, (err, countRow) => {
+    try {
+      // Get total count
+      const countRow = db.prepare(countQuery).get(...countParams);
       const total = countRow ? countRow.total : 0;
       const totalPages = Math.ceil(total / limit);
 
       // Get songs
-      db.all(query, params, (err, songs) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore database');
-        }
+      const songs = db.prepare(query).all(...params);
 
-        // Get all countries for filter
-        db.all('SELECT * FROM countries ORDER BY name', (err, countries) => {
-          res.render('repertoire/list', {
-            title: 'Gestione Repertorio',
-            user: req.session,
-            songs: songs || [],
-            countries: countries || [],
-            pagination: {
-              page,
-              totalPages,
-              total
-            },
-            filters: {
-              search,
-              country: countryFilter
-            }
-          });
-        });
+      // Get all countries for filter
+      const countries = db.prepare('SELECT * FROM countries ORDER BY name').all();
+
+      res.render('repertoire/list', {
+        title: 'Gestione Repertorio',
+        user: req.session,
+        songs: songs || [],
+        countries: countries || [],
+        pagination: {
+          page,
+          totalPages,
+          total
+        },
+        filters: {
+          search,
+          country: countryFilter
+        }
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // GET /admin/repertoire/new - Show create form
   router.get('/repertoire/new', requireAuth, (req, res) => {
-    db.all('SELECT * FROM countries ORDER BY name', (err, countries) => {
+    try {
+      const countries = db.prepare('SELECT * FROM countries ORDER BY name').all();
+
       res.render('repertoire/form', {
         title: 'Nuovo Brano',
         user: req.session,
@@ -87,7 +88,10 @@ module.exports = (db) => {
         countries: countries || [],
         action: 'create'
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore database');
+    }
   });
 
   // POST /admin/repertoire - Create new song
@@ -109,9 +113,8 @@ module.exports = (db) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, 1)
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         country_id,
         title,
         description || null,
@@ -119,37 +122,39 @@ module.exports = (db) => {
         lyrics_original || null,
         lyrics_italian || null,
         language || null
-      ],
-      function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante la creazione');
-        }
+      );
 
-        res.redirect('/admin/repertoire?success=created');
-      }
-    );
+      res.redirect('/admin/repertoire?success=created');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante la creazione');
+    }
   });
 
   // GET /admin/repertoire/:id/edit - Show edit form
   router.get('/repertoire/:id/edit', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.get('SELECT * FROM repertoire WHERE id = ?', [id], (err, song) => {
-      if (err || !song) {
+    try {
+      const song = db.prepare('SELECT * FROM repertoire WHERE id = ?').get(id);
+
+      if (!song) {
         return res.status(404).send('Brano non trovato');
       }
 
-      db.all('SELECT * FROM countries ORDER BY name', (err, countries) => {
-        res.render('repertoire/form', {
-          title: 'Modifica Brano',
-          user: req.session,
-          song,
-          countries: countries || [],
-          action: 'edit'
-        });
+      const countries = db.prepare('SELECT * FROM countries ORDER BY name').all();
+
+      res.render('repertoire/form', {
+        title: 'Modifica Brano',
+        user: req.session,
+        song,
+        countries: countries || [],
+        action: 'edit'
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(404).send('Brano non trovato');
+    }
   });
 
   // POST /admin/repertoire/:id - Update song
@@ -179,9 +184,8 @@ module.exports = (db) => {
       WHERE id = ?
     `;
 
-    db.run(
-      query,
-      [
+    try {
+      db.prepare(query).run(
         country_id,
         title,
         description || null,
@@ -190,60 +194,53 @@ module.exports = (db) => {
         lyrics_italian || null,
         language || null,
         id
-      ],
-      function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send('Errore durante l\'aggiornamento');
-        }
+      );
 
-        res.redirect('/admin/repertoire?success=updated');
-      }
-    );
+      res.redirect('/admin/repertoire?success=updated');
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).send('Errore durante l\'aggiornamento');
+    }
   });
 
   // POST /admin/repertoire/:id/delete - Delete song
   router.post('/repertoire/:id/delete', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.run('DELETE FROM repertoire WHERE id = ?', [id], function (err) {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({
-          success: false,
-          message: 'Errore durante l\'eliminazione'
-        });
-      }
+    try {
+      db.prepare('DELETE FROM repertoire WHERE id = ?').run(id);
 
       res.json({
         success: true,
         message: 'Brano eliminato con successo'
       });
-    });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).json({
+        success: false,
+        message: 'Errore durante l\'eliminazione'
+      });
+    }
   });
 
   // POST /admin/repertoire/:id/toggle - Toggle active status
   router.post('/repertoire/:id/toggle', requireAuth, (req, res) => {
     const { id } = req.params;
 
-    db.run(
-      'UPDATE repertoire SET is_active = NOT is_active WHERE id = ?',
-      [id],
-      function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).json({
-            success: false,
-            message: 'Errore durante l\'aggiornamento'
-          });
-        }
+    try {
+      db.prepare('UPDATE repertoire SET is_active = NOT is_active WHERE id = ?').run(id);
 
-        res.json({
-          success: true,
-          message: 'Stato aggiornato con successo'
-        });
-      }
-    );
+      res.json({
+        success: true,
+        message: 'Stato aggiornato con successo'
+      });
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).json({
+        success: false,
+        message: 'Errore durante l\'aggiornamento'
+      });
+    }
   });
 
   return router;

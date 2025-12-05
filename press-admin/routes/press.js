@@ -1,6 +1,8 @@
 import express from 'express';
 import { ensureAuthenticated } from '../middleware/hybridAuth.js';
 import { allQuery, getQuery, runQuery } from '../utils/database.js';
+import { fetchOpenGraphData } from '../utils/og-fetcher.js';
+import { uploadImageToCloudinary } from '../utils/cloudinary-upload.js';
 
 const router = express.Router();
 
@@ -65,7 +67,7 @@ router.get('/quotes', async (req, res) => {
   try {
     const quotes = await allQuery(`
       SELECT * FROM press_quotes
-      ORDER BY display_order ASC, published_date DESC, created_at DESC
+      ORDER BY published_date DESC
     `);
 
     res.render('pages/quotes', {
@@ -185,12 +187,16 @@ router.delete('/articles/:id', async (req, res) => {
 
 router.post('/quotes', async (req, res) => {
   try {
-    const { quote_it, quote_en, source, source_role_it, source_role_en, published_date, url, is_published, is_featured, display_order } = req.body;
+    const { title_it, title_en, description_it, description_en, quote_it, quote_en, source, author_it, author_en, source_role_it, source_role_en, source_logo_cloudinary_id, published_date, url, is_published, is_featured } = req.body;
+
+    // Convert string '0'/'1' to proper boolean
+    const isPublished = (is_published === '1' || is_published === 1 || is_published === true) ? 1 : 0;
+    const isFeatured = (is_featured === '1' || is_featured === 1 || is_featured === true) ? 1 : 0;
 
     const result = await runQuery(`
-      INSERT INTO press_quotes (quote_it, quote_en, source, source_role_it, source_role_en, published_date, url, is_published, is_featured, display_order)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [quote_it, quote_en, source, source_role_it, source_role_en, published_date, url, is_published ? 1 : 0, is_featured ? 1 : 0, display_order || 0]);
+      INSERT INTO press_quotes (title_it, title_en, description_it, description_en, quote_it, quote_en, source, author_it, author_en, source_role_it, source_role_en, source_logo_cloudinary_id, published_date, url, is_published, is_featured)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [title_it, title_en, description_it, description_en, quote_it, quote_en, source, author_it, author_en, source_role_it, source_role_en, source_logo_cloudinary_id, published_date, url, isPublished, isFeatured]);
 
     res.json({ success: true, id: result.lastID });
   } catch (error) {
@@ -201,13 +207,17 @@ router.post('/quotes', async (req, res) => {
 
 router.put('/quotes/:id', async (req, res) => {
   try {
-    const { quote_it, quote_en, source, source_role_it, source_role_en, published_date, url, is_published, is_featured, display_order } = req.body;
+    const { title_it, title_en, description_it, description_en, quote_it, quote_en, source, author_it, author_en, source_role_it, source_role_en, source_logo_cloudinary_id, published_date, url, is_published, is_featured } = req.body;
+
+    // Convert string '0'/'1' to proper boolean
+    const isPublished = (is_published === '1' || is_published === 1 || is_published === true) ? 1 : 0;
+    const isFeatured = (is_featured === '1' || is_featured === 1 || is_featured === true) ? 1 : 0;
 
     await runQuery(`
       UPDATE press_quotes
-      SET quote_it = ?, quote_en = ?, source = ?, source_role_it = ?, source_role_en = ?, published_date = ?, url = ?, is_published = ?, is_featured = ?, display_order = ?, updated_at = datetime('now')
+      SET title_it = ?, title_en = ?, description_it = ?, description_en = ?, quote_it = ?, quote_en = ?, source = ?, author_it = ?, author_en = ?, source_role_it = ?, source_role_en = ?, source_logo_cloudinary_id = ?, published_date = ?, url = ?, is_published = ?, is_featured = ?, updated_at = datetime('now')
       WHERE id = ?
-    `, [quote_it, quote_en, source, source_role_it, source_role_en, published_date, url, is_published ? 1 : 0, is_featured ? 1 : 0, display_order || 0, req.params.id]);
+    `, [title_it, title_en, description_it, description_en, quote_it, quote_en, source, author_it, author_en, source_role_it, source_role_en, source_logo_cloudinary_id, published_date, url, isPublished, isFeatured, req.params.id]);
 
     res.json({ success: true });
   } catch (error) {
@@ -222,6 +232,44 @@ router.delete('/quotes/:id', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting quote:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Open Graph metadata fetcher with automatic Cloudinary upload
+router.post('/fetch-og-data', async (req, res) => {
+  try {
+    const { url } = req.body;
+
+    if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+
+    // Validate URL format
+    try {
+      new URL(url);
+    } catch {
+      return res.status(400).json({ error: 'Invalid URL format' });
+    }
+
+    // Fetch Open Graph data
+    const ogData = await fetchOpenGraphData(url);
+
+    // If image found, upload to Cloudinary
+    if (ogData.image) {
+      try {
+        const cloudinaryId = await uploadImageToCloudinary(ogData.image, 'danielecamiz/press');
+        ogData.cloudinaryId = cloudinaryId;
+        ogData.cloudinaryUrl = `https://res.cloudinary.com/dnwhnz2xy/image/upload/${cloudinaryId}`;
+      } catch (uploadError) {
+        console.warn('[OG Fetch] Image upload failed, continuing without it:', uploadError.message);
+        // Continue without image - not critical
+      }
+    }
+
+    res.json({ success: true, data: ogData });
+  } catch (error) {
+    console.error('Error fetching OG data:', error);
     res.status(500).json({ error: error.message });
   }
 });

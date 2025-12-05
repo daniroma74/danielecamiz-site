@@ -16,8 +16,7 @@
     <%- include('../../../shared/partials/admin-tabs', {
       tabs: [
         { label: 'Dashboard', url: '/press', icon: 'home' },
-        { label: 'Articoli', url: '/press/articles', icon: 'newspaper' },
-        { label: 'Citazioni', url: '/press/quotes', icon: 'quote-right' }
+        { label: 'Rassegna Stampa', url: '/press/quotes', icon: 'newspaper' }
       ],
       currentPath: '/press',
       baseUrl: 'press'
@@ -25,52 +24,33 @@
 
         <div class="stats-grid">
           <div class="stat-card">
-            <h3><i class="fas fa-file-alt"></i> Articoli</h3>
-            <p class="stat-number"><%= stats.articles %></p>
-            <a href="/press/articles" class="stat-link">Visualizza tutti</a>
-          </div>
-          <div class="stat-card">
-            <h3><i class="fas fa-quote-right"></i> Citazioni</h3>
+            <h3><i class="fas fa-newspaper"></i> Rassegna Stampa</h3>
             <p class="stat-number"><%= stats.quotes %></p>
-            <a href="/press/quotes" class="stat-link">Visualizza tutti</a>
+            <a href="/press/quotes" class="stat-link">Gestisci tutti</a>
           </div>
         </div>
 
         <div class="content-grid">
-          <div class="content-section">
-            <h2>Articoli Recenti</h2>
-            <% if (recentArticles && recentArticles.length > 0) { %>
-              <ul class="item-list">
-                <% recentArticles.forEach(article => { %>
-                  <li>
-                    <a href="/press/articles/<%= article.id %>/edit">
-                      <%= article.title || 'Senza titolo' %>
-                    </a>
-                    <span class="date"><%= article.date || '' %></span>
-                  </li>
-                <% }) %>
-              </ul>
-            <% } else { %>
-              <p>Nessun articolo presente</p>
-            <% } %>
-            <a href="/press/articles/new" class="btn btn-primary">Nuovo Articolo</a>
-          </div>
-
-          <div class="content-section">
-            <h2>Citazioni Recenti</h2>
+          <div class="content-section" style="grid-column: 1/-1;">
+            <h2>Contenuti Recenti</h2>
             <% if (recentQuotes && recentQuotes.length > 0) { %>
               <ul class="item-list">
                 <% recentQuotes.forEach(quote => { %>
                   <li>
-                    <strong><%= quote.source %></strong>:
-                    "<%= quote.quote_it?.substring(0, 100) %><%= quote.quote_it?.length > 100 ? '...' : '' %>"
+                    <strong><%= quote.source %></strong>
+                    <% if (quote.title_it) { %>
+                      - <%= quote.title_it %>
+                    <% } else { %>
+                      : "<%= quote.quote_it?.substring(0, 100) %><%= quote.quote_it?.length > 100 ? '...' : '' %>"
+                    <% } %>
+                    <span class="date"><%= quote.published_date || '' %></span>
                   </li>
                 <% }) %>
               </ul>
             <% } else { %>
-              <p>Nessuna citazione presente</p>
+              <p>Nessun contenuto presente</p>
             <% } %>
-            <a href="/press/quotes" class="btn btn-primary">Gestisci Citazioni</a>
+            <a href="/press/quotes" class="btn btn-primary">Gestisci Rassegna Stampa</a>
           </div>
         </div>
   </main>

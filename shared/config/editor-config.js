@@ -96,16 +96,16 @@ function initSharedEditor(selector, preset = 'default', customConfig = {}) {
 
   // Handler di upload che RITORNA una Promise (richiesto da TinyMCE 8)
   const promiseUploadHandler = function (blobInfo, success, failure /*, progress */) {
-    const getOpts = (typeof customConfig.getUploadOptions === 'function')
-      ? customConfig.getUploadOptions
-      : () => ({ preset: 'gallery_unsigned', folder: 'danielecamiz/newsletter' });
-
-    const opts = getOpts() || {};
-
     if (!window.CloudinaryManager) {
       if (typeof failure === 'function') failure('CloudinaryManager non disponibile');
       return Promise.reject(new Error('CloudinaryManager non disponibile'));
     }
+
+    // ✅ Usa configurazione CloudinaryManager globale (già inizializzato per ogni sito)
+    // Permetti override solo se esplicitamente fornito
+    const opts = (typeof customConfig.getUploadOptions === 'function')
+      ? customConfig.getUploadOptions()
+      : {};
 
     return window.CloudinaryManager
       .upload(blobInfo.blob(), opts)
@@ -143,11 +143,11 @@ function initSharedEditor(selector, preset = 'default', customConfig = {}) {
         tooltip: 'Scegli o carica immagine da Cloudinary',
         onAction: function() {
           if (typeof window.CloudinaryManager !== 'undefined' && window.CloudinaryManager.showImageDialog) {
-            const getOpts = (typeof customConfig.getUploadOptions === 'function')
-              ? customConfig.getUploadOptions
-              : () => ({ preset: 'gallery_unsigned', folder: 'danielecamiz/newsletter' });
-
-            const opts = getOpts() || {};
+            // ✅ Usa configurazione CloudinaryManager globale (già inizializzato per ogni sito)
+            // Permetti override solo se esplicitamente fornito
+            const opts = (typeof customConfig.getUploadOptions === 'function')
+              ? customConfig.getUploadOptions()
+              : {};
 
             window.CloudinaryManager.showImageDialog((result) => {
               editor.insertContent(`<img src="${result.url}" alt="" style="max-width: 100%; height: auto;">`);
