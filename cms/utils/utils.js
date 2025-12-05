@@ -91,7 +91,7 @@ export function getBaseRenderData(lang, labels, overrides = {}) {
     'base/base.css',
     'components/layout.css',
     'utils/helpers.css',
-    'utils/responsive.css'
+    'utils/responsive-fixed.css'
   ];
   const pageCss  = Array.isArray(overrides.pageCss) ? overrides.pageCss : [];
   const cssFiles = [...defaultCss, ...pageCss];

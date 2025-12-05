@@ -58,12 +58,12 @@
       const inArr   = Array.isArray(cssGlobal) ? cssGlobal.filter(Boolean) : [];
       const isStr   = v => typeof v === 'string';
       const isComp  = h => isStr(h) && h.includes('/frontend/css/components/');
-      const isResp  = h => isStr(h) && h.includes('/frontend/css/utils/responsive.css');
+      const isResp  = h => isStr(h) && (h.includes('utils/responsive.css') || h.includes('utils/responsive-fixed.css'));
 
       const comps   = inArr.filter(isComp);
       const others  = inArr.filter(h => !isComp(h) && !isResp(h));
       // stampiamo responsive sempre per ultimo (se assente lo iniettiamo)
-      const RESP    = '/frontend/css/utils/responsive.css';
+      const RESP    = '/frontend/css/utils/responsive-fixed.css';
     %>
     <% comps.forEach(href => { %>
       <link rel="stylesheet" href="<%= href %>?v=<%= Date.now() %>">
@@ -71,7 +71,7 @@
     <% others.forEach(href => { %>
       <link rel="stylesheet" href="<%= href %>?v=<%= Date.now() %>">
     <% }) %>
-    <link rel="stylesheet" href="<%= RESP %>?v=<%= Date.now() %>"><!-- responsive.css sempre ultimo -->
+    <link rel="stylesheet" href="<%= RESP %>?v=<%= Date.now() %>"><!-- responsive-fixed.css sempre ultimo -->
 
     <!-- CLOSE BUTTON STANDARDIZED - SITE WIDE -->
     <link rel="stylesheet" href="/css/components/close-button-standard.css?v=<%= Date.now() %>">
@@ -84,7 +84,7 @@
       __css.forEach(function(href){
         const h = (typeof href === 'string' && href[0] !== '/') ? ('/css/' + href) : href;
     %>
-      <link rel="stylesheet" href="<%= h %>">
+      <link rel="stylesheet" href="<%= h %>?v=<%= Date.now() %>">
     <% }); %>
     <!-- RSS feed (News) -->
     <link rel="alternate" type="application/rss+xml" title="News RSS" href="/news/feed.xml">

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { margin: 0; font-family: monospace; font-size: 12px; }
+#debug { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,200,0,0.95); color: #000; padding: 15px; z-index: 100000; max-height: 50vh; overflow: auto; }
+#debug pre { margin: 5px 0; white-space: pre-wrap; }
+#debug button { background: #000; color: #fff; border: none; padding: 8px 15px; margin: 5px 5px 0 0; cursor: pointer; font-weight: bold; }
+</style>
+</head>
+<body>
+<div id="debug">
+  <button onclick="runCheck()">CHECK NOW</button>
+  <button onclick="toggleMenu()">TOGGLE MENU</button>
+  <button onclick="document.getElementById('output').innerHTML = ''">CLEAR</button>
+  <button onclick="location.reload()">RELOAD</button>
+  <div id="output"></div>
+</div>
+
+<script>
+fetch('http://localhost:3001/')
+  .then(r => r.text())
+  .then(html => {
+    // Remove any existing debug element from fetched HTML
+    html = html.replace(/<div id="debug">[\s\S]*?<\/div>/g, '');
+
+    // Inject into a container
+    const container = document.createElement('div');
+    container.innerHTML = html;
+    document.body.insertBefore(container, document.getElementById('debug'));
+
+    setTimeout(runCheck, 500);
+  })
+  .catch(err => {
+    document.getElementById('output').innerHTML = '<pre style="color:red">ERROR LOADING PAGE: ' + err.message + '</pre>';
+  });
+
+function toggleMenu() {
+  const toggle = document.getElementById('nav_toggle');
+  if (toggle) {
+    toggle.checked = !toggle.checked;
+    setTimeout(runCheck, 100);
+  }
+}
+
+function runCheck() {
+  const output = document.getElementById('output');
+  const nav = document.querySelector('nav.navbar');
+  const navCenter = document.querySelector('.nav-center');
+  const toggle = document.getElementById('nav_toggle');
+  const hamburger = document.querySelector('.hamburger');
+
+  if (!nav || !navCenter) {
+    output.innerHTML = '<pre style="color:red">ERROR: Navbar elements not found!</pre>';
+    return;
+  }
+
+  const navRect = nav.getBoundingClientRect();
+  const centerRect = navCenter.getBoundingClientRect();
+  const centerComputed = window.getComputedStyle(navCenter);
+  const hamburgerComputed = hamburger ? window.getComputedStyle(hamburger) : null;
+
+  // Get ALL CSS rules that match .nav-center
+  const allRules = [];
+  for (let sheet of document.styleSheets) {
+    try {
+      for (let rule of sheet.cssRules || []) {
+        if (rule.cssText && rule.cssText.includes('nav-center')) {
+          allRules.push({
+            selector: rule.selectorText,
+            css: rule.cssText.substring(0, 200),
+            href: sheet.href || 'inline'
+          });
+        }
+      }
+    } catch(e) {
+      // CORS error, skip
+    }
+  }
+
+  const report = `
+═══════════════════════════════════════════════════
+🔍 LIVE SITE DEBUG REPORT
+═══════════════════════════════════════════════════
+
+📐 VIEWPORT:
+  Width: ${window.innerWidth}px × Height: ${window.innerHeight}px
+  Mobile mode: ${window.innerWidth < 1200 ? '✅ YES (<1200px)' : '❌ NO (≥1200px)'}
+
+📏 NAVBAR:
+  Height: ${navRect.height}px
+  Position: top=${navRect.top}px, bottom=${navRect.bottom}px
+  Computed min-height: ${window.getComputedStyle(nav).minHeight}
+
+🍔 HAMBURGER:
+  Display: ${hamburgerComputed ? hamburgerComputed.display : 'N/A'}
+  ${hamburgerComputed && hamburgerComputed.display === 'none' ? '❌ HIDDEN' : '✅ VISIBLE'}
+
+✅ CHECKBOX:
+  Checked: ${toggle ? toggle.checked : 'N/A'}
+  ${toggle && toggle.checked ? '✅ MENU SHOULD BE OPEN' : '❌ MENU SHOULD BE CLOSED'}
+
+🎯 .NAV-CENTER COMPUTED STYLES:
+  display: ${centerComputed.display}
+  position: ${centerComputed.position}
+  top: ${centerComputed.top}
+  right: ${centerComputed.right}
+  left: ${centerComputed.left}
+  width: ${centerComputed.width}
+  z-index: ${centerComputed.zIndex}
+
+📍 .NAV-CENTER POSITION (getBoundingClientRect):
+  top: ${centerRect.top}px
+  left: ${centerRect.left}px
+  right: ${centerRect.right}px
+  bottom: ${centerRect.bottom}px
+  width: ${centerRect.width}px
+  height: ${centerRect.height}px
+
+🚨 IS MENU VISIBLE IN VIEWPORT?
+  ${centerRect.top >= 0 && centerRect.top < window.innerHeight && centerRect.height > 10 ? '✅ YES - Menu is in viewport' : '❌ NO - Menu is OUTSIDE viewport'}
+  ${centerRect.top < 0 ? '⚠️  Menu is ABOVE viewport (top is negative)' : ''}
+  ${centerRect.top > window.innerHeight ? '⚠️  Menu is BELOW viewport (top > window height)' : ''}
+
+📜 CSS RULES MATCHING .nav-center (${allRules.length} found):
+${allRules.map((r, i) => `  ${i+1}. ${r.selector}\n     ${r.css.substring(0, 150)}...\n     From: ${r.href.substring(r.href.lastIndexOf('/') + 1)}`).join('\n')}
+
+═══════════════════════════════════════════════════
+`;
+
+  output.innerHTML = '<pre>' + report + '</pre>';
+  console.log(report);
+}
+
+// Auto-update on resize
+window.addEventListener('resize', runCheck);
+</script>
+</body>
+</html>
